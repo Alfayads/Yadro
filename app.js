@@ -7,7 +7,7 @@ const nocache = require('nocache');
 const keys = require('./config/keys');
 const path = require('path')
 
-dotenv.config();
+
 const app = express();
 // Initialising Session
 app.use(session({
@@ -34,5 +34,5 @@ app.use('/admin', adminRouter);
 //Listening to the port
 app.listen(keys.port, err => {
     if (err) throw err;
-    console.log(`Server Started at http://localhost:${PORT}`);
+    console.log(`Server Started at http://localhost:${keys.port}`);
 })

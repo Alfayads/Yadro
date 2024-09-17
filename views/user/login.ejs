@@ -1,0 +1,42 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Document</title>
+  <link rel="stylesheet" href="/css/signup.css">
+  <script src="https://cdn.tailwindcss.com"></script>
+</head>
+
+<body>
+  <!-- Navbar including -->
+  <%- include('../layouts/header.ejs') %>
+
+  <main class="container mx-auto px-4 py-8 flex">
+    <div class="w-1/2">
+      <img src="/images/signup.png" alt="Shopping concept" class="w-full h-auto">
+    </div>
+    <div class="w-1/2 pl-8">
+      <h1 class="text-3xl font-bold mb-2">Log In</h1>
+      <p class="text-gray-600 mb-8">log into your existing account</p>
+      <form>
+        <form>
+
+          <input type="text" placeholder="Email or Phone Number" class="custom-input">
+          <input type="password" placeholder="Password" class="custom-input">
+          <button type="submit" class="create-account-btn w-full mb-4">Log In</button>
+        </form>
+
+        <p class="text-center text-gray-600">
+          Don't have an Account? <a href="/signup" class="login-link">Sign up</a>
+        </p>
+    </div>
+  </main>
+
+
+  <!-- footer including -->
+  <%- include('../layouts/footer.ejs') %>
+</body>
+
+</html>

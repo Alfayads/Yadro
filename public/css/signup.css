@@ -1,0 +1,92 @@
+body {
+    font-family: 'Arial', sans-serif;
+}
+
+.custom-input {
+    border: none;
+    border-bottom: 1px solid #e2e8f0;
+    padding: 0.5rem 0;
+    margin-bottom: 1.5rem;
+    width: 100%;
+    font-size: 1rem;
+    transition: border-color 0.3s;
+}
+
+.custom-input:focus {
+    outline: none;
+    border-bottom-color: #4a5568;
+}
+
+.custom-input::placeholder {
+    color: #a0aec0;
+}
+
+.create-account-btn {
+    background-color: #e53e3e;
+    color: white;
+    padding: 0.75rem;
+    border-radius: 0.25rem;
+    font-weight: 600;
+    transition: background-color 0.3s;
+}
+
+.create-account-btn:hover {
+    background-color: #c53030;
+}
+
+.google-btn {
+    border: 1px solid #e2e8f0;
+    padding: 0.75rem;
+    border-radius: 0.25rem;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-weight: 600;
+    transition: background-color 0.3s;
+}
+
+.google-btn:hover {
+    background-color: #f7fafc;
+}
+
+.login-link {
+    color: #4299e1;
+    text-decoration: none;
+    font-weight: 600;
+}
+
+.login-link:hover {
+    text-decoration: underline;
+}
+
+.footer-input {
+    background-color: transparent;
+    border: 1px solid #4a5568;
+    color: #fff;
+    padding: 0.5rem;
+    width: 100%;
+}
+
+.footer-input::placeholder {
+    color: #a0aec0;
+}
+
+.footer-submit {
+    background-color: #4a5568;
+    color: white;
+    padding: 0.5rem;
+    cursor: pointer;
+}
+
+.footer-submit:hover {
+    background-color: #2d3748;
+}
+
+.footer-link {
+    color: #a0aec0;
+    text-decoration: none;
+}
+
+.footer-link:hover {
+    color: #fff;
+}
