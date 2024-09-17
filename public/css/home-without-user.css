@@ -1,0 +1,20 @@
+.countdown-timer {
+    font-variant-numeric: tabular-nums;
+}
+
+.product-card {
+    transition: transform 0.3s ease-in-out;
+}
+
+.product-card:hover {
+    transform: translateY(-5px);
+}
+
+.category-icon {
+    transition: background-color 0.3s ease;
+}
+
+.category-icon:hover {
+    background-color: #EF4444;
+    color: white;
+}

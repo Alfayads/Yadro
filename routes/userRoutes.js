@@ -3,6 +3,7 @@ const user_router = express.Router();
 
 const authController = require('../controllers/authController');
 
+user_router.get('/', authController.getHomeWithoutUser)
 user_router.get('/signup', authController.getSignup);
 user_router.get('/login', authController.getLogin);
 

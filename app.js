@@ -3,6 +3,7 @@ const session = require('express-session');
 const bodyParser = require('body-parser');
 const userRouter = require('./routes/userRoutes');
 const adminRouter = require('./routes/adminRoutes');
+const ConnectDB = require('./config/db');
 const nocache = require('nocache');
 const keys = require('./config/keys');
 const path = require('path')
@@ -15,6 +16,9 @@ app.use(session({
     resave: false,
     saveUninitialized: true,
 }))
+
+ConnectDB();
+
 app.use(nocache());
 app.use(express.json());
 app.use(bodyParser.json())
