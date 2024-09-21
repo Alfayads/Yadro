@@ -1,0 +1,41 @@
+<header class="container mx-auto px-4 py-4 flex justify-around items-center border-b">
+  <a href="/" class="text-2xl font-bold">Yadro</a>
+  <nav>
+    <ul class="flex space-x-6">
+      <li><a href="#" class="text-gray-600 hover:text-gray-900">Home</a></li>
+      <li><a href="#" class="text-gray-600 hover:text-gray-900">Contact</a></li>
+      <li><a href="#" class="text-gray-600 hover:text-gray-900">About</a></li>
+      <li><a href="#category" class="text-gray-600 hover:text-gray-900">Categories</a></li>
+    </ul>
+  </nav>
+  <div class="flex relative">
+    <input type="email" placeholder="Search Your Products ...." class="footer-input" style="color: black; border-radius: 50px; width: 380px; padding-left: 10px; outline: none; border: 1px grey solid;">
+
+    <i class="fa-solid fa-magnifying-glass absolute right-3 top-3"></i>
+
+  </div>
+
+  <div class="flex items-center space-x-4">
+    <div class="relative">
+      <button class="text-transparent hover:text-red-500 text-xl p-2  focus:outline-none focus:ring-2 focus:ring-red-300">
+        <i class="fas fa-heart text-black"></i>
+      </button>
+      <span class="absolute top-3 right-2 transform translate-x-1/2 -translate-y-1/2 h-4 w-4 bg-red-500 text-white text-xs font-bold rounded-full flex items-center justify-center">0</span>
+    </div>
+
+    <div class="relative">
+      <button class="text-black hover:text-green-500 text-xl p-3  focus:outline-none focus:ring-2 focus:ring-green-300">
+        <i class="fas fa-shopping-cart"></i>
+      </button>
+      <span class="absolute top-4 right-2 transform translate-x-1/2 -translate-y-1/2 h-4 w-4 bg-green-500 text-white text-xs font-bold rounded-full flex items-center justify-center">0</span>
+    </div>
+
+    <div class="relative">
+      <button class="text-black hover:text-blue-500 text-xl p-2 focus:outline-none focus:ring-2 focus:ring-blue-300">
+        <i class="fas fa-user"></i>
+      </button>
+    </div>
+
+    <a href="/logout" class="bg-red-500 text-white px-4 py-2 rounded hover:bg-red-600">Log out</a>
+  </div>
+</header>

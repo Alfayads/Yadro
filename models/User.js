@@ -11,17 +11,25 @@ const userSchema = mongoose.Schema({
     },
     email: {
         type: String,
-        required: true
+        required: true,
+    },
+    phone: {
+        type: String,
+        required: false,
+        sparse: true,
+        default: null
+    },
+    googleId: {
+        type: String,
+        unique: true,
+        sparse: true,
+        default: null
     },
     password: {
         type: String,
         required: true
     },
-    mobile: {
-        type: String,
-        required: false
-    },
-    enable: {
+    verify: {
         type: Boolean,
         required: true,
         default: false
@@ -29,7 +37,46 @@ const userSchema = mongoose.Schema({
     gender: {
         type: String,
         required: true
-    }
+    },
+    isBlocked: {
+        type: Boolean,
+        default: false
+    },
+    isAdmin: {
+        type: Boolean,
+        default: false
+    },
+    cart: [{
+        type: mongoose.Schema.Types.ObjectId,
+        ref: "Cart"
+    }],
+    wallet: {
+        type: Number,
+        default: 0
+    },
+    wishlist: [{
+        type: mongoose.Schema.Types.ObjectId,
+        ref: "Wishlist"
+    }],
+    orderHistory: [{
+        type: mongoose.Schema.Types.ObjectId,
+        ref: "Order"
+    }],
+    createdOn: {
+        type: Date,
+        default: Date.now,
+    },
+    referalCode: {
+        type: String,
+    },
+    redeemed: {
+        type: Boolean
+    },
+    redeemedUser: [{
+        type: mongoose.Schema.Types.ObjectId,
+        ref: "User"
+    }],
+
 
 })
 

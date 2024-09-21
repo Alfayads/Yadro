@@ -20,23 +20,43 @@
     <div class="w-1/2 pl-8">
       <h1 class="text-3xl font-bold mb-2">Create an account</h1>
       <p class="text-gray-600 mb-8">Enter your details below</p>
-      <form>
-        <form>
-          <input type="text" placeholder="Name" class="custom-input">
-          <input type="text" placeholder="Email or Phone Number" class="custom-input">
-          <input type="password" placeholder="Password" class="custom-input">
-          <input type="password" placeholder="Confirm Password" class="custom-input">
-          <button type="submit" class="create-account-btn w-full mb-4">Create Account</button>
-        </form>
-        <button class="google-btn w-full mb-6">
-          <img src="/images/Icon-Google.png" alt="Google" class="w-5 h-5 mr-3">
-          Sign up with Google
-        </button>
-        <p class="text-center text-gray-600">
-          Already have an account? <a href="/login" class="login-link">Log in</a>
-        </p>
+      <form method="post" action="/signup" autocomplete="off">
+        <!-- First Name and Last Name Fields -->
+        <div class="flex space-x-4 mb-4">
+          <input name="fname" type="text" placeholder="First Name" class="custom-input w-1/2" required>
+          <input name="lname" type="text" placeholder="Last Name" class="custom-input w-1/2">
+        </div>
+
+        <input name="email" type="text" placeholder="Email" class="custom-input" required>
+        <input name="phone" type="number" placeholder="Phone Number" class="custom-input" required>
+        <input name="password" type="password" placeholder="Password" class="custom-input" required>
+        <input name="cpassword" type="password" placeholder="Confirm Password" class="custom-input" required>
+
+        <!-- Gender Radio Buttons -->
+        <div class="mb-4">
+          <label class="block text-gray-600 mb-2">Gender</label>
+          <div class="flex items-center">
+            <input type="radio" id="male" name="gender" value="male" class="mr-2">
+            <label for="male" class="mr-4">Male</label>
+            <input type="radio" id="female" name="gender" value="female" class="mr-2">
+            <label for="female">Female</label>
+          </div>
+        </div>
+
+        <button type="submit" class="create-account-btn w-full mb-4">Create Account</button>
+      </form>
+
+      <button class="google-btn w-full mb-6">
+        <img src="/images/Icon-Google.png" alt="Google" class="w-5 h-5 mr-3">
+        Sign up with Google
+      </button>
+      <p class="text-center text-gray-600">
+        Already have an account? <a href="/login" class="login-link">Log in</a>
+      </p>
     </div>
   </main>
+
+
 
 
   <!-- footer including -->

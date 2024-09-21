@@ -1,0 +1,37 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Error Find</title>
+  <link rel="stylesheet" href="/css/home-without-user.css">
+  <script src="https://cdn.tailwindcss.com"></script>
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
+  <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:opsz,wght,FILL,GRAD@20..48,100..700,0..1,-50..200" />
+</head>
+
+<body>
+  <%- include('../layouts/header-without-user.ejs') %>
+  <main class="flex-grow container mx-auto px-4 py-8">
+    <div class="text-sm mb-8">
+      <a href="#" class="text-gray-600">Home</a>
+      <span class="mx-2">/</span>
+      <span class="text-gray-400">404 Error</span>
+    </div>
+    <div class="text-center">
+      <% if (error.message !== null) { %>
+      <h1 class="text-xl font-bold mb-4"><%= error.message %></h1>
+      <p class="text-xl text-gray-600 mb-8">Your visited page not found. You may go home page.</p>
+      <a href="/signup" class="bg-red-500 text-white px-6 py-3 rounded-md inline-block">Back to home page</a>
+      <% } else {%>
+      <h1 class="text-6xl font-bold mb-4">404 Not Found</h1>
+      <p class="text-xl text-gray-600 mb-8">Your visited page not found. You may go home page.</p>
+      <a href="/" class="bg-red-500 text-white px-6 py-3 rounded-md inline-block">Back to home page</a>
+      <% } %>
+    </div>
+  </main>
+  <%- include('../layouts/footer.ejs') %>
+</body>
+
+</html>
