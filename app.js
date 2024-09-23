@@ -5,6 +5,7 @@ const userRouter = require('./routes/userRoutes');
 const adminRouter = require('./routes/adminRoutes');
 const ConnectDB = require('./config/db');
 const nocache = require('nocache');
+const flash = require('connect-flash');
 const keys = require('./config/keys');
 const path = require('path')
 
@@ -15,7 +16,18 @@ app.use(session({
     secret: process.env.SESSION_SECRET,
     resave: false,
     saveUninitialized: true,
+    cookie: {
+        maxAge: 24 * 60 * 60 * 1000
+    }
 }))
+
+app.use(flash());
+
+app.use((req, res, next) => {
+    res.locals.success_msg = req.flash('success_msg');
+    res.locals.error_msg = req.flash('error_msg');
+    next()
+})
 
 ConnectDB();
 

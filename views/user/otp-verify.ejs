@@ -4,24 +4,19 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Login - Yadro</title>
-  <link rel="stylesheet" href="/css/signup.css">
+  <title>OTP Verify - Yadro</title>
+  <link rel="stylesheet" href="/css/home-without-user.css">
   <script src="https://cdn.tailwindcss.com"></script>
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
+  <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:opsz,wght,FILL,GRAD@20..48,100..700,0..1,-50..200" />
 </head>
 
 <body>
-  <!-- Navbar including -->
   <%- include('../layouts/header-without-user.ejs') %>
-
-  <main class="container mx-auto px-4 py-8 flex">
+  <main class="flex justify-between items-center p-8">
     <div class="w-1/2">
-      <img src="/images/signup.png" alt="Shopping concept" class="w-full h-auto">
-    </div>
-    <div class="w-1/2 pl-8">
-      <h1 class="text-3xl font-bold mb-2">Log In</h1>
-      <p class="text-gray-600 mb-8">Log into your existing account</p>
+      <h1 class="text-3xl font-bold mb-4">OTP Verification</h1>
 
-      <!-- Error message section -->
       <% if (error_msg.length > 0 ) { %>
       <div class="bg-red-100 border border-red-400 text-red-700 px-4 py-3 rounded relative mb-6" role="alert" id="error-message">
         <strong class="font-bold">Error!</strong>
@@ -36,8 +31,8 @@
       <% } %>
 
       <% if (success_msg.length > 0 ) { %>
-      <div class="bg-green-100 border border-green-400 text-red-700 px-4 py-3 rounded relative mb-6" role="alert" id="error-message">
-        <strong class="font-bold">Success!</strong>
+      <div class="bg-green-100 border border-green-400 text-green-700 px-4 py-3 rounded relative mb-6" role="alert" id="error-message">
+        <strong class="font-bold">Sent!</strong>
         <span class="block sm:inline"><%= success_msg %></span>
         <span class="absolute top-0 bottom-0 right-0 px-4 py-3">
           <svg class="fill-current h-6 w-6 text-green-500" role="button" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20" onclick="document.getElementById('error-message').style.display='none'">
@@ -48,22 +43,19 @@
       </div>
       <% } %>
 
-
-      <form action="/login" method="post" autocomplete="off">
-        <input name="email" type="text" placeholder="Email or Phone Number" class="custom-input">
-        <input name="password" type="password" placeholder="Password" class="custom-input">
-        <button type="submit" class="create-account-btn w-full mb-4">Log In</button>
-      </form>
-
-      <p class="text-center text-gray-600">
-        Don't have an Account? <a href="/signup" class="login-link">Sign up</a>
-      </p>
+      <input type="text" placeholder="Enter OTP here..." class="w-full p-2 mb-4 border rounded">
+      <button class="w-full bg-red-500 text-white py-2 rounded">Verify OTP</button>
+      <button class="w-full text-gray-600 mt-2">Resend OTP</button>
+      <div class="mt-4 text-center">
+        <span class="inline-block bg-black text-white rounded-full w-12 h-12 leading-12">59</span>
+      </div>
+    </div>
+    <div class="w-1/2">
+      <!-- Placeholder for the 3D character image -->
+      <img src="/images/otp-verify.png" alt="otp-verify logo">
+      <div class="w-64 h-64 bg-gray-200 rounded-full"></div>
     </div>
   </main>
-
-
-
-  <!-- footer including -->
   <%- include('../layouts/footer.ejs') %>
 </body>
 

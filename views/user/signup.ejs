@@ -4,7 +4,7 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Document</title>
+  <title>Create Account - Yadro</title>
   <link rel="stylesheet" href="/css/signup.css">
   <script src="https://cdn.tailwindcss.com"></script>
 </head>
@@ -20,6 +20,22 @@
     <div class="w-1/2 pl-8">
       <h1 class="text-3xl font-bold mb-2">Create an account</h1>
       <p class="text-gray-600 mb-8">Enter your details below</p>
+      <!-- Error showing section  -->
+
+      <% if (error_msg.length > 0 ) { %>
+      <div class="bg-red-100 border border-red-400 text-red-700 px-4 py-3 rounded relative mb-6" role="alert" id="error-message">
+        <strong class="font-bold">Error!</strong>
+        <span class="block sm:inline"><%= error_msg %></span>
+        <span class="absolute top-0 bottom-0 right-0 px-4 py-3">
+          <svg class="fill-current h-6 w-6 text-red-500" role="button" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20" onclick="document.getElementById('error-message').style.display='none'">
+            <title>Close</title>
+            <path d="M14.348 5.652a1 1 0 00-1.414-1.414L10 7.172 7.066 4.238a1 1 0 10-1.414 1.414L8.586 10l-2.934 2.934a1 1 0 101.414 1.414L10 12.828l2.934 2.934a1 1 0 101.414-1.414L11.414 10l2.934-2.934z" />
+          </svg>
+        </span>
+      </div>
+      <% } %>
+
+      <!-- form  -->
       <form method="post" action="/signup" autocomplete="off">
         <!-- First Name and Last Name Fields -->
         <div class="flex space-x-4 mb-4">

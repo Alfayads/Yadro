@@ -13,13 +13,16 @@
   "dependencies": {
     "bcrypt": "^5.1.1",
     "body-parser": "^1.20.3",
+    "connect-flash": "^0.1.1",
     "dotenv": "^16.4.5",
     "ejs": "^3.1.10",
     "express": "^4.21.0",
     "express-session": "^1.18.0",
     "flash": "^1.1.0",
     "mongoose": "^8.6.2",
-    "nocache": "^4.0.0"
+    "nocache": "^4.0.0",
+    "nodemailer": "^6.9.15",
+    "otp-generator": "^4.0.1"
   },
   "devDependencies": {
     "nodemon": "^3.1.4"
