@@ -1,7 +1,17 @@
 const Users = require('../models/User');
 const bcrypt = require('bcrypt');
 const OTP = require('otp-generator');
-const nodemailer = require('nodemailer');
+const nodemailer = require('nodemailer')
+
+//Secure Password
+const securePassword = async (password) => {
+    try {
+        const hashedPassword = await bcrypt.hash(password, 10);
+        return hashedPassword;
+    } catch (error) {
+        console.log(error.message);
+    }
+}
 
 // Otp generator function
 const generateOtp = () => {
@@ -108,7 +118,7 @@ const newUser = async (req, res) => {
         }
 
         req.session.otp = otp;
-        req.session.user = email;
+        req.session.user = { fname, lname, gender, email, password, phone };
         req.flash('success_msg', 'OTP Sent Successfully Check Your Email !!! ');
         res.redirect('/otp-verify');
         console.log('OTP => ', otp)
@@ -119,9 +129,6 @@ const newUser = async (req, res) => {
         return res.render('user/error', { error: errorMessage });
     }
 }
-
-
-
 
 
 const getLogin = (req, res) => {
@@ -180,6 +187,44 @@ const getOtpVerify = async (req, res) => {
     }
 }
 
+const verifyOtp = async (req, res) => {
+    try {
+        const { otp } = req.body;
+        const enteredOtp = String(otp).trim();
+        const sessionOtp = String(req.session.otp).trim();
+        console.log('enteredOtp =>', enteredOtp);
+        console.log('sessionOtp => ', sessionOtp);
+
+
+        if (enteredOtp === sessionOtp) {
+            const user = req.session.user;
+            console.log(user);
+            const passwordHash = await securePassword(user.password);
+            const { fname, lname, email, phone, gender } = user;
+            const saveUserData = new Users({
+                fname,
+                lname,
+                gender,
+                email,
+                phone,
+                verify: true,
+                password: passwordHash
+            });
+            await saveUserData.save();
+            req.session.user = saveUserData._id;
+            req.flash('success_msg', `Welcome ${fname} ${lname} Login to Your account ...`);
+            res.redirect('/login')
+        } else {
+            req.flash('error_msg', 'OTP is Incorrect !! Try again ');
+            res.redirect('/otp-verify');
+        }
+    } catch (err) {
+        console.error(err.message);
+        let errorMessage = { message: "An error occurred. Please try again later." };
+        return res.render('user/error', { error: errorMessage });
+    }
+}
+
 module.exports = {
     getSignup,
     getLogin,
@@ -188,5 +233,6 @@ module.exports = {
     newUser,
     getLogout,
     checkUser,
-    getOtpVerify
+    getOtpVerify,
+    verifyOtp
 }

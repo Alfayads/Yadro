@@ -9,11 +9,17 @@
   <script src="https://cdn.tailwindcss.com"></script>
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
   <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:opsz,wght,FILL,GRAD@20..48,100..700,0..1,-50..200" />
+  <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+
 </head>
 
 <body>
   <%- include('../layouts/header-without-user.ejs') %>
-  <main class="flex justify-between items-center p-8">
+  <main class="flex  container justify-between items-center p-8">
+    <div class="w-1/2">
+      <!-- Placeholder for the 3D character image -->
+      <img width="660" src="/images/otp-verify.png" alt="otp-verify logo">
+    </div>
     <div class="w-1/2">
       <h1 class="text-3xl font-bold mb-4">OTP Verification</h1>
 
@@ -43,20 +49,91 @@
       </div>
       <% } %>
 
-      <input type="text" placeholder="Enter OTP here..." class="w-full p-2 mb-4 border rounded">
-      <button class="w-full bg-red-500 text-white py-2 rounded">Verify OTP</button>
-      <button class="w-full text-gray-600 mt-2">Resend OTP</button>
+      <form action="/verify-otp" method="post" onsubmit="return validateOtpForm()">
+        <input id="otp" name="otp" type="text" placeholder="Enter OTP here..." class="w-full p-2 mb-4 border rounded">
+        <button class="w-full bg-red-500 text-white py-2 rounded">Verify OTP</button>
+        <button id="resend-otp" style="display: none;" class="w-full text-gray-600 mt-4">Resend OTP</button>
+      </form>
       <div class="mt-4 text-center">
-        <span class="inline-block bg-black text-white rounded-full w-12 h-12 leading-12">59</span>
+        <span id="timer" class="inline-flex items-center justify-center bg-black text-white rounded w-16 h-10">
+          <strong></strong>
+        </span>
       </div>
     </div>
-    <div class="w-1/2">
-      <!-- Placeholder for the 3D character image -->
-      <img src="/images/otp-verify.png" alt="otp-verify logo">
-      <div class="w-64 h-64 bg-gray-200 rounded-full"></div>
-    </div>
+
   </main>
   <%- include('../layouts/footer.ejs') %>
+
+  <script>
+    let timeLeft = 1 * 60;
+
+    function formatTime(seconds) {
+      const minutes = Math.floor(seconds / 60);
+      const sec = seconds % 60;
+      return `${minutes} : ${sec < 10 ? '0' : ''}${sec}`;
+    }
+
+    function updateTimer() {
+      const timerElement = document.getElementById("timer").getElementsByTagName("strong")[0];
+      const resendButton = document.getElementById("resend-otp");
+
+      if (timeLeft >= 0) {
+        timerElement.textContent = formatTime(timeLeft);
+
+        if (timeLeft === 10) {
+          resendButton.style.display = 'block';
+        }
+        timeLeft--;
+      } else {
+        clearInterval(countdown);
+        timerElement.textContent = "0 : 00";
+      }
+    }
+    const countdown = setInterval(updateTimer, 1000);
+
+    function validateOtpForm() {
+      const InputOtp = document.getElementById('otp').value;
+      $.ajax({
+        type: 'POST',
+        url: '/verify-otp',
+        contentType: 'application/json',
+        data: JSON.stringify({
+          otp: InputOtp
+        }),
+        success: function(res) {
+          if (res.success) {
+            Swal.fire({
+              icon: 'success',
+              title: 'OTP Verified!',
+              text: 'Your OTP has been successfully verified.',
+              showConfirmButton: false,
+              timer: 1500
+            }).then(() => {
+              window.location.href = res.redirectUrl;
+            });
+          } else {
+            Swal.fire({
+              icon: 'error',
+              title: 'Not Verified Try again !!!',
+              text: res.message,
+              showConfirmButton: false,
+              timer: 1500
+            })
+          }
+        },
+        error: function() {
+          Swal.fire({
+            icon: 'error',
+            title: "Invalid OTP !!!",
+            text: 'Try again ... !!!'
+          })
+        }
+      })
+      return false
+    }
+  </script>
+
+
 </body>
 
 </html>
