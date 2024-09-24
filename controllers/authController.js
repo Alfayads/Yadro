@@ -151,7 +151,7 @@ const checkUser = async (req, res) => {
             return res.redirect('/login');
         }
 
-        req.session.user = email;
+        req.session.user_id = ifUser._id;
         return res.redirect('/home');
     } catch (error) {
         console.error(error.message);
@@ -170,6 +170,7 @@ const getLogout = (req, res) => {
             }
             return res.redirect('/login');
         })
+
     } catch (error) {
         console.error(error.message);
         let errorMessage = { message: "An error occurred. Please try again later." };
@@ -179,7 +180,7 @@ const getLogout = (req, res) => {
 
 const getOtpVerify = async (req, res) => {
     try {
-        res.render('user/otp-verify')
+        return res.render('user/otp-verify')
     } catch (error) {
         console.error(error.message);
         let errorMessage = { message: "An error occurred. Please try again later." };
@@ -210,8 +211,10 @@ const verifyOtp = async (req, res) => {
                 verify: true,
                 password: passwordHash
             });
+            if (!user.googleId) {
+                user.googleId = undefined;
+            }
             await saveUserData.save();
-            req.session.user = saveUserData._id;
             req.flash('success_msg', `Welcome ${fname} ${lname} Login to Your account ...`);
             res.redirect('/login')
         } else {

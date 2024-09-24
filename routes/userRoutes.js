@@ -16,7 +16,7 @@ user_router.get('/logout', authController.getLogout);
 //home
 user_router.get('/home', auth.isLogout, authController.getHomeWithUser);
 //otp-verification
-user_router.get('/otp-verify', authController.getOtpVerify)
+user_router.get('/otp-verify', auth.isLogin, authController.getOtpVerify)
 user_router.post('/verify-otp', authController.verifyOtp)
 
 module.exports = user_router;

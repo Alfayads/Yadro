@@ -52,7 +52,7 @@
       <form action="/verify-otp" method="post" onsubmit="return validateOtpForm()">
         <input id="otp" name="otp" type="text" placeholder="Enter OTP here..." class="w-full p-2 mb-4 border rounded">
         <button class="w-full bg-red-500 text-white py-2 rounded">Verify OTP</button>
-        <button id="resend-otp" style="display: none;" class="w-full text-gray-600 mt-4">Resend OTP</button>
+        <button id="resend-otp" style="display: none;" onclick="resendOtp()" class="w-full text-gray-600 mt-4">Resend OTP</button>
       </form>
       <div class="mt-4 text-center">
         <span id="timer" class="inline-flex items-center justify-center bg-black text-white rounded w-16 h-10">
