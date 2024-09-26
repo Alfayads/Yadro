@@ -51,10 +51,14 @@
 
       <form action="/verify-otp" method="post" onsubmit="return validateOtpForm()">
         <input id="otp" name="otp" type="text" placeholder="Enter OTP here..." class="w-full p-2 mb-4 border rounded">
-        <button class="w-full bg-red-500 text-white py-2 rounded">Verify OTP</button>
+        <button class="w-full bg-red-500 text-white py-2 rounded" type="submit">Verify OTP</button>
+
+      </form>
+      <form action="/resend-otp" method="post" class="mt-4 text-center">
         <button id="resend-otp" style="display: none;" onclick="resendOtp()" class="w-full text-gray-600 mt-4">Resend OTP</button>
       </form>
       <div class="mt-4 text-center">
+
         <span id="timer" class="inline-flex items-center justify-center bg-black text-white rounded w-16 h-10">
           <strong></strong>
         </span>
@@ -65,7 +69,7 @@
   <%- include('../layouts/footer.ejs') %>
 
   <script>
-    let timeLeft = 1 * 60;
+    let timeLeft = 20;
 
     function formatTime(seconds) {
       const minutes = Math.floor(seconds / 60);
@@ -130,6 +134,41 @@
         }
       })
       return false
+    }
+
+    function resendOtp() {
+      // Clear the existing countdown interval
+      clearInterval(countdown);
+
+      // Reset the timer
+      timeLeft = 20; // Reset the time back to 20 seconds or the initial value
+      updateTimer(); // Immediately update the UI to reflect the reset timer
+
+      // Start the countdown again
+      countdown = setInterval(updateTimer, 1000);
+
+
+      $.ajax({
+        type: 'POST',
+        url: 'resend-otp',
+        success: function(res) {
+          if (res.success) {
+            Swal.fire({
+              icon: 'success',
+              title: "OTP Resend Successfully",
+              showConfirmButton: false,
+              timer: 1500,
+            });
+          } else {
+            Swal.fire({
+              icon: 'error',
+              title: 'OTP Send Failed, Try Again...',
+              showConfirmButton: false,
+              timer: 1500
+            });
+          }
+        }
+      });
     }
   </script>
 

@@ -1,0 +1,76 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Login - Yadro</title>
+  <link rel="stylesheet" href="/css/admin-login.css">
+  <script src="https://cdn.tailwindcss.com"></script>
+</head>
+
+<body class="flex flex-col min-h-screen items-center justify-between">
+
+  <!-- Heading Section -->
+  <div class="w-full text-center py-6">
+    <h1 class="text-6xl font-extrabold text-gray-800 animate-bounce">Yadro</h1>
+  </div>
+
+  <!-- Main Content -->
+  <div class="flex-grow flex flex-col md:flex-row items-center justify-between space-y-8 md:space-x-20" style="width: 1258px;">
+
+    <img src="/images/admin.png" alt="" width="490px">
+
+    <!-- Form Section -->
+    <div class="form-container w-full mx-auto p-10 rounded-xl shadow-lg glass animate-form">
+      <h2 class="text-4xl font-bold mb-6 text-gray-900 text-center">Admin Login</h2>
+
+      <% if (error_msg.length > 0 ) { %>
+      <div class="bg-red-100 border border-red-400 text-red-700 px-4 py-3 rounded relative mb-6" role="alert" id="error-message">
+        <strong class="font-bold">Error!</strong>
+        <span class="block sm:inline"><%= error_msg %></span>
+        <span class="absolute top-0 bottom-0 right-0 px-4 py-3">
+          <svg class="fill-current h-6 w-6 text-red-500" role="button" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20" onclick="document.getElementById('error-message').style.display='none'">
+            <title>Close</title>
+            <path d="M14.348 5.652a1 1 0 00-1.414-1.414L10 7.172 7.066 4.238a1 1 0 10-1.414 1.414L8.586 10l-2.934 2.934a1 1 0 101.414 1.414L10 12.828l2.934 2.934a1 1 0 101.414-1.414L11.414 10l2.934-2.934z" />
+          </svg>
+        </span>
+      </div>
+      <% } %>
+
+      <form class="space-y-8" method="post" action="/admin/login">
+        <!-- Email Input -->
+        <div class="relative floating-label">
+          <input type="email" id="email" name="email" placeholder=" " class="w-full p-4 text-gray-900 bg-transparent border border-gray-300 rounded-lg focus:outline-none input-field transition-all duration-300 placeholder-transparent">
+          <label style="background-color: white; padding: 3px;" for="email">Email</label>
+        </div>
+
+        <!-- Password Input -->
+        <div class="relative floating-label">
+          <input type="password" name="password" id="password" placeholder=" " class="w-full p-4 text-gray-900 bg-transparent border border-gray-300 rounded-lg focus:outline-none input-field transition-all duration-300 placeholder-transparent">
+          <label style="background-color: white; padding: 3px;" for="password">Password</label>
+        </div>
+
+        <!-- Forgot Password -->
+        <div class="text-right text-gray-500">
+          <a href="#" class="hover:underline">Forgot password?</a>
+        </div>
+
+        <!-- Login Button -->
+        <button type="submit" class="w-full bg-blue-500 text-white p-4 rounded-lg shadow-lg transition-all duration-300 transform hover:translate-y-1">
+          Log In
+        </button>
+      </form>
+    </div>
+  </div>
+
+  <!-- Footer Section -->
+  <footer class="w-full bg-gray-800 text-white py-4">
+    <div class="text-center">
+      <p class="text-sm">2024 © Yadro</p>
+    </div>
+  </footer>
+
+</body>
+
+</html>

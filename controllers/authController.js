@@ -63,6 +63,14 @@ const getHomeWithUser = (req, res) => {
     }
 }
 
+const getAllProducts = (req, res) => {
+    try {
+        return res.render('user/all-products');
+    } catch (error) {
+        console.log(error.message);
+    }
+}
+
 
 const getHomeWithoutUser = (req, res) => {
     try {
@@ -228,14 +236,47 @@ const verifyOtp = async (req, res) => {
     }
 }
 
+const resendOtp = async (req, res) => {
+    try {
+        const { email } = req.session.user;
+        if (!email) {
+            req.flash('error_msg', 'Email not found!');
+            return res.redirect('/otp-verify');
+        }
+
+        // Generate a new OTP
+        const otp = generateOtp();
+        req.session.otp = otp;
+        const emailSent = await sendVerificationEmail(email, otp);
+
+        if (emailSent) {
+            console.log('OTP resent => ', otp);
+            req.flash('success_msg', 'OTP has been resent successfully. Check your email!');
+        } else {
+            console.log('OTP resend failed.');
+            req.flash('error_msg', 'OTP resend failed. Please try again.');
+        }
+
+        return res.redirect('/otp-verify');
+
+    } catch (error) {
+        console.error(error.message);
+        const errorMessage = { message: "An error occurred. Please try again later." };
+        return res.render('user/error', { error: errorMessage });
+    }
+};
+
+
 module.exports = {
     getSignup,
     getLogin,
     getHomeWithoutUser,
     getHomeWithUser,
+    getAllProducts,
     newUser,
     getLogout,
     checkUser,
     getOtpVerify,
-    verifyOtp
+    verifyOtp,
+    resendOtp
 }

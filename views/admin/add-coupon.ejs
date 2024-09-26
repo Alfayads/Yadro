@@ -1,0 +1,196 @@
+<!DOCTYPE html>
+<html lang="en" class="light">
+
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Yadro - Add Coupons</title>
+  <script src="https://cdn.tailwindcss.com"></script>
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
+  <script>
+    tailwind.config = {
+      darkMode: 'class',
+      theme: {
+        extend: {
+          colors: {
+            primary: {
+              light: '#3B82F6',
+              dark: '#60A5FA',
+            }
+          }
+        }
+      }
+    }
+  </script>
+  <style>
+    /* Custom CSS for animations and improved styles */
+    .button {
+      transition: all 0.3s ease;
+    }
+
+    .button:hover {
+      transform: translateY(-2px);
+      box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06);
+    }
+
+    /* Theme Toggle */
+    .theme-toggle {
+      width: 50px;
+      height: 25px;
+      background-color: #e5e7eb;
+      border-radius: 15px;
+      position: relative;
+      cursor: pointer;
+      transition: background-color 0.3s ease;
+    }
+
+    .theme-toggle::after {
+      content: '';
+      position: absolute;
+      width: 21px;
+      height: 21px;
+      border-radius: 50%;
+      background-color: white;
+      top: 2px;
+      left: 2px;
+      transition: transform 0.3s ease;
+    }
+
+    .dark .theme-toggle {
+      background-color: #4B5563;
+    }
+
+    .dark .theme-toggle::after {
+      transform: translateX(25px);
+    }
+
+    /* Animations */
+    @keyframes fadeInUp {
+      from {
+        opacity: 0;
+        transform: translateY(20px);
+      }
+
+      to {
+        opacity: 1;
+        transform: translateY(0);
+      }
+    }
+
+    .fade-in-up {
+      animation: fadeInUp 0.5s ease-out forwards;
+    }
+  </style>
+</head>
+
+<body class="bg-gray-100 font-sans transition-all duration-300 dark:bg-gray-800">
+
+  <div class="flex">
+    <!-- Sidebar -->
+    <%- include('../layouts/admin-sidebar.ejs') %>
+
+    <!-- Main Content -->
+    <div class="flex-1 p-6 ml-64">
+      <div class="flex items-center justify-between mb-6">
+        <h1 class="text-3xl font-bold text-gray-800 dark:text-white fade-in-up">Add Coupons</h1>
+        <div class="flex items-center space-x-4">
+          <div class="theme-toggle" id="themeToggle"></div>
+          <button class="px-4 py-2 bg-blue-500 text-white rounded-lg button">
+            Show All Coupons
+          </button>
+        </div>
+      </div>
+
+      <!-- Add Coupon Form -->
+      <div class="bg-white dark:bg-gray-700 rounded-lg shadow-md p-6 fade-in-up" style="animation-delay: 0.2s;">
+        <form>
+          <div class="mb-4">
+            <label for="couponName" class="block text-gray-700 dark:text-gray-200 font-bold mb-2">Coupon Name</label>
+            <input type="text" id="couponName" name="couponName" placeholder="Type product name here..." class="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 dark:bg-gray-600 dark:border-gray-500 dark:text-white">
+          </div>
+          <div class="grid grid-cols-2 gap-4 mb-4">
+            <div>
+              <label for="couponCode" class="block text-gray-700 dark:text-gray-200 font-bold mb-2">Coupon Code</label>
+              <input type="text" id="couponCode" name="couponCode" placeholder="Type here..." class="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 dark:bg-gray-600 dark:border-gray-500 dark:text-white">
+            </div>
+            <div>
+              <label for="discount" class="block text-gray-700 dark:text-gray-200 font-bold mb-2">Discount</label>
+              <input type="text" id="discount" name="discount" placeholder="Type here..." class="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 dark:bg-gray-600 dark:border-gray-500 dark:text-white">
+            </div>
+          </div>
+          <div class="grid grid-cols-2 gap-4 mb-4">
+            <div>
+              <label for="minimumAmount" class="block text-gray-700 dark:text-gray-200 font-bold mb-2">Minimum Amount</label>
+              <input type="text" id="minimumAmount" name="minimumAmount" placeholder="Type here..." class="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 dark:bg-gray-600 dark:border-gray-500 dark:text-white">
+            </div>
+            <div>
+              <label for="validityTill" class="block text-gray-700 dark:text-gray-200 font-bold mb-2">Validity Till</label>
+              <input type="date" id="validityTill" name="validityTill" class="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 dark:bg-gray-600 dark:border-gray-500 dark:text-white">
+            </div>
+          </div>
+          <div class="flex items-center mb-4">
+            <label for="isActive" class="flex items-center cursor-pointer">
+              <div class="relative">
+                <input type="checkbox" id="isActive" class="sr-only">
+                <div class="w-10 h-4 bg-gray-400 rounded-full shadow-inner"></div>
+                <div class="dot absolute w-6 h-6 bg-white rounded-full shadow -left-1 -top-1 transition"></div>
+              </div>
+              <div class="ml-3 text-gray-700 dark:text-gray-200 font-medium">
+                Active
+              </div>
+            </label>
+          </div>
+          <button type="submit" class="px-4 py-2 bg-blue-500 text-white rounded-lg button">
+            Add Coupon
+          </button>
+        </form>
+      </div>
+    </div>
+  </div>
+
+  <script>
+    document.addEventListener("DOMContentLoaded", function() {
+      // Fade-in animation
+      const fadeElements = document.querySelectorAll('.fade-in-up');
+      fadeElements.forEach((el, index) => {
+        el.style.opacity = "0";
+        setTimeout(() => {
+          el.style.animation = `fadeInUp 0.5s ease-out ${index * 0.1}s forwards`;
+        }, 100);
+      });
+
+      // Theme toggle functionality
+      const themeToggle = document.getElementById('themeToggle');
+      const html = document.documentElement;
+
+      themeToggle.addEventListener('click', () => {
+        html.classList.toggle('dark');
+        localStorage.setItem('theme', html.classList.contains('dark') ? 'dark' : 'light');
+      });
+
+      // Check for saved theme preference or prefer-color-scheme
+      const savedTheme = localStorage.getItem('theme');
+      const prefersDark = window.matchMedia && window.matchMedia('(prefers-color-scheme: dark)').matches;
+
+      if (savedTheme === 'dark' || (!savedTheme && prefersDark)) {
+        html.classList.add('dark');
+      }
+
+      // Toggle button functionality
+      const toggle = document.querySelector('.dot');
+      const input = document.querySelector('#isActive');
+
+      input.addEventListener('change', function() {
+        if (this.checked) {
+          toggle.style.transform = 'translateX(100%)';
+          toggle.style.backgroundColor = '#3B82F6';
+        } else {
+          toggle.style.transform = 'translateX(0)';
+          toggle.style.backgroundColor = '#fff';
+        }
+      });
+    });
+  </script>
+</body>
+
+</html>

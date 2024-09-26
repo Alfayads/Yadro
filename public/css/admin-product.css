@@ -1,0 +1,35 @@
+.transition-transform {
+    transition: transform 0.2s ease;
+}
+
+/* .transition-transform:hover {
+    transform: scale(1.05);
+} */
+
+.button {
+    transition: background-color 0.3s ease, transform 0.3s ease;
+}
+
+.button:hover {
+    background-color: #3b82f6;
+    transform: translateY(-2px);
+}
+
+/* .table-row {
+    transition: background-color 0.2s ease;
+} */
+
+.table-row:hover {
+    background-color: #f9fafb;
+    /* Light gray on hover */
+}
+
+.pagination-button {
+    transition: background-color 0.2s ease, transform 0.2s ease;
+}
+
+.pagination-button:hover {
+    background-color: #e5e7eb;
+    color: black;
+    transform: scale(1.05);
+}

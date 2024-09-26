@@ -1,0 +1,301 @@
+<!DOCTYPE html>
+<html lang="en" class="light">
+
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Add Product</title>
+  <script src="https://cdn.tailwindcss.com"></script>
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
+  <script>
+    tailwind.config = {
+      darkMode: 'class',
+      theme: {
+        extend: {
+          colors: {
+            primary: {
+              light: '#3B82F6',
+              dark: '#60A5FA',
+            }
+          }
+        }
+      }
+    }
+  </script>
+  <style>
+    /* Custom CSS for animations and polished styles */
+    .image-upload {
+      border: 2px dashed #e5e7eb;
+      transition: all 0.3s ease;
+    }
+
+    .image-upload:hover {
+      background-color: #f9fafb;
+      transform: scale(1.02);
+    }
+
+    .section-header {
+      font-size: 1.25rem;
+      font-weight: 600;
+      color: #1f2937;
+      position: relative;
+      display: inline-block;
+    }
+
+    .section-header::after {
+      content: '';
+      position: absolute;
+      left: 0;
+      bottom: -4px;
+      width: 0;
+      height: 2px;
+      background-color: #3b82f6;
+      transition: width 0.4s ease;
+    }
+
+    .section-header:hover::after {
+      width: 100%;
+    }
+
+    .input-box {
+      transition: all 0.3s ease;
+    }
+
+    .input-box:focus-within {
+      transform: translateY(-2px);
+      box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06);
+    }
+
+    /* Animations */
+    @keyframes fadeInUp {
+      from {
+        opacity: 0;
+        transform: translateY(20px);
+      }
+
+      to {
+        opacity: 1;
+        transform: translateY(0);
+      }
+    }
+
+    .fade-in-up {
+      animation: fadeInUp 0.5s ease-out forwards;
+    }
+
+    /* Theme Toggle */
+    .theme-toggle {
+      width: 50px;
+      height: 25px;
+      background-color: #e5e7eb;
+      border-radius: 15px;
+      position: relative;
+      cursor: pointer;
+      transition: background-color 0.3s ease;
+    }
+
+    .theme-toggle::after {
+      content: '';
+      position: absolute;
+      width: 21px;
+      height: 21px;
+      border-radius: 50%;
+      background-color: white;
+      top: 2px;
+      left: 2px;
+      transition: transform 0.3s ease;
+    }
+
+    .dark .theme-toggle {
+      background-color: #4B5563;
+    }
+
+    .dark .theme-toggle::after {
+      transform: translateX(25px);
+    }
+  </style>
+</head>
+
+<body class="bg-gray-100 font-sans transition-colors duration-300 dark:bg-gray-900">
+  <%- include('../layouts/admin-sidebar.ejs') %>
+
+  <div class="container mx-auto p-6 ml-64">
+    <div class="flex justify-between items-center mb-6">
+      <h1 class="text-3xl font-bold text-gray-800 dark:text-gray-200">Add New Product</h1>
+      <div class="theme-toggle" id="themeToggle"></div>
+    </div>
+
+    <!-- General Information Section -->
+    <div class="bg-white dark:bg-gray-800 p-6 rounded-lg shadow-md mb-6 fade-in-up">
+      <h2 class="section-header mb-4 dark:text-gray-200">General Information</h2>
+      <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+        <div class="input-box">
+          <label for="productName" class="block text-sm font-medium text-gray-700 dark:text-gray-300">Product Name</label>
+          <input type="text" id="productName" class="mt-1 p-2 w-full border border-gray-300 rounded-md focus:ring-primary-light focus:border-primary-light dark:bg-gray-700 dark:border-gray-600 dark:text-white" placeholder="Enter product name">
+        </div>
+        <div class="input-box">
+          <label for="stockQuantity" class="block text-sm font-medium text-gray-700 dark:text-gray-300">Stock Quantity</label>
+          <input type="number" id="stockQuantity" class="mt-1 p-2 w-full border border-gray-300 rounded-md focus:ring-primary-light focus:border-primary-light dark:bg-gray-700 dark:border-gray-600 dark:text-white" placeholder="Enter stock quantity">
+        </div>
+        <div class="col-span-2 input-box">
+          <label for="description" class="block text-sm font-medium text-gray-700 dark:text-gray-300">Description</label>
+          <textarea id="description" rows="4" class="mt-1 p-2 w-full border border-gray-300 rounded-md focus:ring-primary-light focus:border-primary-light dark:bg-gray-700 dark:border-gray-600 dark:text-white" placeholder="Enter product description"></textarea>
+        </div>
+      </div>
+    </div>
+
+    <!-- Pricing Section -->
+    <div class="bg-white dark:bg-gray-800 p-6 rounded-lg shadow-md mb-6 fade-in-up" style="animation-delay: 0.2s;">
+      <h2 class="section-header mb-4 dark:text-gray-200">Pricing</h2>
+      <div class="grid grid-cols-1 md:grid-cols-3 gap-6">
+        <div class="input-box">
+          <label for="basePrice" class="block text-sm font-medium text-gray-700 dark:text-gray-300">Base Price</label>
+          <input type="number" id="basePrice" class="mt-1 p-2 w-full border border-gray-300 rounded-md focus:ring-primary-light focus:border-primary-light dark:bg-gray-700 dark:border-gray-600 dark:text-white" placeholder="Enter base price">
+        </div>
+        <div class="input-box">
+          <label for="vatAmount" class="block text-sm font-medium text-gray-700 dark:text-gray-300">VAT Amount (%)</label>
+          <input type="number" id="vatAmount" class="mt-1 p-2 w-full border border-gray-300 rounded-md focus:ring-primary-light focus:border-primary-light dark:bg-gray-700 dark:border-gray-600 dark:text-white" placeholder="Enter VAT percentage">
+        </div>
+        <div class="input-box">
+          <label for="discount" class="block text-sm font-medium text-gray-700 dark:text-gray-300">Discount Percentage</label>
+          <input type="number" id="discount" class="mt-1 p-2 w-full border border-gray-300 rounded-md focus:ring-primary-light focus:border-primary-light dark:bg-gray-700 dark:border-gray-600 dark:text-white" placeholder="Enter discount percentage">
+        </div>
+      </div>
+    </div>
+
+    <!-- Category Section -->
+    <div class="bg-white dark:bg-gray-800 p-6 rounded-lg shadow-md mb-6 fade-in-up" style="animation-delay: 0.4s;">
+      <h2 class="section-header mb-4 dark:text-gray-200">Category & Tags</h2>
+      <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+        <div class="input-box">
+          <label for="category" class="block text-sm font-medium text-gray-700 dark:text-gray-300">Product Category</label>
+          <select id="category" class="mt-1 p-2 w-full border border-gray-300 rounded-md focus:ring-primary-light focus:border-primary-light dark:bg-gray-700 dark:border-gray-600 dark:text-white">
+            <option>Select category</option>
+            <option value="electronics">Electronics</option>
+            <option value="clothing">Clothing</option>
+            <option value="home">Home Appliances</option>
+          </select>
+        </div>
+        <div class="input-box">
+          <label for="tags" class="block text-sm font-medium text-gray-700 dark:text-gray-300">Product Tags</label>
+          <input type="text" id="tags" class="mt-1 p-2 w-full border border-gray-300 rounded-md focus:ring-primary-light focus:border-primary-light dark:bg-gray-700 dark:border-gray-600 dark:text-white" placeholder="Enter product tags">
+        </div>
+      </div>
+    </div>
+
+    <!-- Image Upload Section -->
+    <div class="bg-white dark:bg-gray-800 p-6 rounded-lg shadow-md mb-6 fade-in-up" style="animation-delay: 0.6s;">
+      <h2 class="section-header mb-4 dark:text-gray-200">Upload Images</h2>
+      <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+        <!-- Primary Image Upload -->
+        <div class="image-upload h-32 flex justify-center items-center rounded-md dark:border-gray-600">
+          <label class="cursor-pointer">
+            <input type="file" class="hidden" />
+            <div class="text-gray-500 dark:text-gray-400 flex flex-col items-center">
+              <i class="fas fa-cloud-upload-alt text-3xl mb-2"></i>
+              <span>Upload Primary Image</span>
+            </div>
+          </label>
+        </div>
+
+        <!-- Other Image Uploads -->
+        <div class="image-upload h-32 flex justify-center items-center rounded-md dark:border-gray-600">
+          <label class="cursor-pointer">
+            <input type="file" class="hidden" />
+            <div class="text-gray-500 dark:text-gray-400 flex flex-col items-center">
+              <i class="fas fa-cloud-upload-alt text-2xl mb-2"></i>
+              <span>Upload Image</span>
+            </div>
+          </label>
+        </div>
+
+        <div class="image-upload h-32 flex justify-center items-center rounded-md dark:border-gray-600">
+          <label class="cursor-pointer">
+            <input type="file" class="hidden" />
+            <div class="text-gray-500 dark:text-gray-400 flex flex-col items-center">
+              <i class="fas fa-cloud-upload-alt text-2xl mb-2"></i>
+              <span>Upload Image</span>
+            </div>
+          </label>
+        </div>
+
+        <div class="image-upload h-32 flex justify-center items-center rounded-md dark:border-gray-600">
+          <label class="cursor-pointer">
+            <input type="file" class="hidden" />
+            <div class="text-gray-500 dark:text-gray-400 flex flex-col items-center">
+              <i class="fas fa-cloud-upload-alt text-2xl mb-2"></i>
+              <span>Upload Image</span>
+            </div>
+          </label>
+        </div>
+
+        <div class="image-upload h-32 flex justify-center items-center rounded-md dark:border-gray-600">
+          <label class="cursor-pointer">
+            <input type="file" class="hidden" />
+            <div class="text-gray-500 dark:text-gray-400 flex flex-col items-center">
+              <i class="fas fa-cloud-upload-alt text-2xl mb-2"></i>
+              <span>Upload Image</span>
+            </div>
+          </label>
+        </div>
+      </div>
+    </div>
+
+    <!-- Submit Button -->
+    <div class="flex justify-center mb-6 fade-in-up" style="animation-delay: 0.8s;">
+      <button class="px-6 py-2 bg-primary-light dark:bg-primary-dark text-white font-bold rounded-lg hover:bg-blue-700 dark:hover:bg-blue-600 focus:outline-none transition-all duration-300 transform hover:scale-105 hover:shadow-lg">Add Product</button>
+    </div>
+  </div>
+
+  <!-- JavaScript for animations and theme toggle -->
+  <script>
+    document.addEventListener("DOMContentLoaded", function() {
+      // Fade-in animation
+      const fadeElements = document.querySelectorAll('.fade-in-up');
+      fadeElements.forEach((el, index) => {
+        el.style.opacity = "0";
+        setTimeout(() => {
+          el.style.animation = `fadeInUp 0.5s ease-out ${index * 0.1}s forwards`;
+        }, 100);
+      });
+
+      // Theme toggle functionality
+      const themeToggle = document.getElementById('themeToggle');
+      const html = document.documentElement;
+
+      themeToggle.addEventListener('click', () => {
+        html.classList.toggle('dark');
+        localStorage.setItem('theme', html.classList.contains('dark') ? 'dark' : 'light');
+      });
+
+      // Check for saved theme preference or prefer-color-scheme
+      const savedTheme = localStorage.getItem('theme');
+      const prefersDark = window.matchMedia && window.matchMedia('(prefers-color-scheme: dark)').matches;
+
+      if (savedTheme === 'dark' || (!savedTheme && prefersDark)) {
+        html.classList.add('dark');
+      }
+
+      // File input preview (for demonstration, you can expand this functionality)
+      const fileInputs = document.querySelectorAll('input[type="file"]');
+      fileInputs.forEach(input => {
+        input.addEventListener('change', (e) => {
+          const file = e.target.files[0];
+          if (file) {
+            const reader = new FileReader();
+            reader.onload = (e) => {
+              const img = document.createElement('img');
+              img.src = e.target.result;
+              img.classList.add('w-full', 'h-full', 'object-cover', 'rounded-md');
+              input.parentElement.parentElement.innerHTML = '';
+              input.parentElement.parentElement.appendChild(img);
+            }
+            reader.readAsDataURL(file);
+          }
+        });
+      });
+    });
+  </script>
+</body>
+
+</html>
