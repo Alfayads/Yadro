@@ -1,0 +1,177 @@
+<!DOCTYPE html>
+<html lang="en" class="light">
+
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Add Brand - Yadro</title>
+  <script src="https://cdn.tailwindcss.com"></script>
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
+  <script>
+    tailwind.config = {
+      darkMode: 'class',
+      theme: {
+        extend: {
+          colors: {
+            primary: {
+              light: '#3B82F6',
+              dark: '#60A5FA',
+            }
+          }
+        }
+      }
+    }
+  </script>
+  <style>
+    /* Dark mode toggle styles */
+    .theme-toggle {
+      width: 48px;
+      height: 24px;
+      background-color: #e2e8f0;
+      border-radius: 9999px;
+      position: relative;
+      cursor: pointer;
+      transition: background-color 0.3s;
+    }
+
+    .theme-toggle::after {
+      content: '';
+      position: absolute;
+      top: 2px;
+      left: 2px;
+      width: 20px;
+      height: 20px;
+      background-color: white;
+      border-radius: 50%;
+      transition: transform 0.3s;
+    }
+
+    .dark .theme-toggle {
+      background-color: #4b5563;
+    }
+
+    .dark .theme-toggle::after {
+      transform: translateX(24px);
+    }
+
+    /* Animation for form elements */
+    @keyframes fadeInUp {
+      from {
+        opacity: 0;
+        transform: translateY(20px);
+      }
+
+      to {
+        opacity: 1;
+        transform: translateY(0);
+      }
+    }
+
+    .animate-fadeInUp {
+      animation: fadeInUp 0.5s ease-out forwards;
+    }
+  </style>
+</head>
+
+<body class="bg-gray-100 font-sans dark:bg-gray-800 transition-colors duration-200">
+  <div class="flex">
+    <!-- Sidebar -->
+    <%- include('../layouts/admin-sidebar.ejs') %>
+
+    <!-- Main Content -->
+    <main class="flex-1 p-8 ml-64">
+      <div class="flex justify-between items-center mb-6">
+        <h2 class="text-2xl font-bold dark:text-white">Add New Brand</h2>
+        <div class="theme-toggle" id="themeToggle" title="Toggle dark mode"></div>
+      </div>
+
+      <!-- Add Brand Form -->
+      <div class="bg-white dark:bg-gray-700 shadow-md rounded-lg p-6">
+        <form id="addBrandForm" class="space-y-6">
+          <div class="animate-fadeInUp" style="animation-delay: 0.1s;">
+            <label for="brandName" class="block text-sm font-medium text-gray-700 dark:text-gray-200">Brand Name</label>
+            <input type="text" id="brandName" name="brandName" required class="mt-1 block w-full px-3 py-2 bg-white dark:bg-gray-600 border border-gray-300 dark:border-gray-500 rounded-md shadow-sm focus:outline-none focus:ring-primary-light focus:border-primary-light dark:text-white">
+          </div>
+
+          <div class="animate-fadeInUp" style="animation-delay: 0.2s;">
+            <label for="brandDescription" class="block text-sm font-medium text-gray-700 dark:text-gray-200">Brand Description</label>
+            <textarea id="brandDescription" name="brandDescription" rows="3" class="mt-1 block w-full px-3 py-2 bg-white dark:bg-gray-600 border border-gray-300 dark:border-gray-500 rounded-md shadow-sm focus:outline-none focus:ring-primary-light focus:border-primary-light dark:text-white"></textarea>
+          </div>
+
+          <div class="animate-fadeInUp" style="animation-delay: 0.3s;">
+            <label for="brandLogo" class="block text-sm font-medium text-gray-700 dark:text-gray-200">Brand Logo</label>
+            <div class="mt-1 flex justify-center px-6 pt-5 pb-6 border-2 border-gray-300 dark:border-gray-500 border-dashed rounded-md">
+              <div class="space-y-1 text-center">
+                <svg class="mx-auto h-12 w-12 text-gray-400" stroke="currentColor" fill="none" viewBox="0 0 48 48" aria-hidden="true">
+                  <path d="M28 8H12a4 4 0 00-4 4v20m32-12v8m0 0v8a4 4 0 01-4 4H12a4 4 0 01-4-4v-4m32-4l-3.172-3.172a4 4 0 00-5.656 0L28 28M8 32l9.172-9.172a4 4 0 015.656 0L28 28m0 0l4 4m4-24h8m-4-4v8m-12 4h.02" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" />
+                </svg>
+                <div class="flex text-sm text-gray-600 dark:text-gray-300">
+                  <label for="file-upload" class="relative cursor-pointer bg-white dark:bg-gray-600 rounded-md font-medium text-primary-light hover:text-primary-dark focus-within:outline-none focus-within:ring-2 focus-within:ring-offset-2 focus-within:ring-primary-light">
+                    <span>Upload a file</span>
+                    <input id="file-upload" name="file-upload" type="file" class="sr-only">
+                  </label>
+                  <p class="pl-1">or drag and drop</p>
+                </div>
+                <p class="text-xs text-gray-500 dark:text-gray-400">PNG, JPG, GIF up to 10MB</p>
+              </div>
+            </div>
+          </div>
+
+          <div class="animate-fadeInUp" style="animation-delay: 0.4s;">
+            <label for="brandWebsite" class="block text-sm font-medium text-gray-700 dark:text-gray-200">Brand Website</label>
+            <input type="url" id="brandWebsite" name="brandWebsite" class="mt-1 block w-full px-3 py-2 bg-white dark:bg-gray-600 border border-gray-300 dark:border-gray-500 rounded-md shadow-sm focus:outline-none focus:ring-primary-light focus:border-primary-light dark:text-white">
+          </div>
+
+          <div class="animate-fadeInUp" style="animation-delay: 0.5s;">
+            <label for="brandStatus" class="block text-sm font-medium text-gray-700 dark:text-gray-200">Status</label>
+            <select id="brandStatus" name="brandStatus" class="mt-1 block w-full pl-3 pr-10 py-2 text-base bg-white dark:bg-gray-600 border border-gray-300 dark:border-gray-500 focus:outline-none focus:ring-primary-light focus:border-primary-light sm:text-sm rounded-md dark:text-white">
+              <option>Active</option>
+              <option>Inactive</option>
+            </select>
+          </div>
+
+          <div class="animate-fadeInUp" style="animation-delay: 0.6s;">
+            <button type="submit" class="w-full flex justify-center py-2 px-4 border border-transparent rounded-md shadow-sm text-sm font-medium text-white bg-primary-light hover:bg-primary-dark focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-primary-light">
+              Add Brand
+            </button>
+          </div>
+        </form>
+      </div>
+    </main>
+  </div>
+
+  <script>
+    // Theme toggle functionality
+    const themeToggle = document.getElementById('themeToggle');
+    const html = document.documentElement;
+
+    themeToggle.addEventListener('click', () => {
+      html.classList.toggle('dark');
+      localStorage.setItem('theme', html.classList.contains('dark') ? 'dark' : 'light');
+    });
+
+    // Check for saved theme preference or prefer-color-scheme
+    const savedTheme = localStorage.getItem('theme');
+    const prefersDark = window.matchMedia && window.matchMedia('(prefers-color-scheme: dark)').matches;
+
+    if (savedTheme === 'dark' || (!savedTheme && prefersDark)) {
+      html.classList.add('dark');
+    }
+
+    // Form submission animation
+    const form = document.getElementById('addBrandForm');
+    form.addEventListener('submit', (e) => {
+      e.preventDefault();
+      // Add your form submission logic here
+
+      // Animation example (replace with your actual submission logic)
+      form.classList.add('opacity-50', 'pointer-events-none');
+      setTimeout(() => {
+        form.classList.remove('opacity-50', 'pointer-events-none');
+        alert('Brand added successfully!');
+      }, 1000);
+    });
+  </script>
+</body>
+
+</html>

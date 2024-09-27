@@ -134,7 +134,37 @@ const getOrders = (req, res) => {
     }
 }
 
+const getBrands = (req, res) => {
+    try {
+        return res.render('admin/brand');
+    } catch (error) {
+        console.log(error.message);
+    }
+}
 
+const getAddBrand = (req, res) => {
+    try {
+        return res.render('admin/add-brand');
+    } catch (error) {
+        console.log(error.message);
+    }
+}
+
+const getBanners = (req, res) => {
+    try {
+        return res.render('admin/banner');
+    } catch (error) {
+        console.log(error.message);
+    }
+}
+
+const getAddBanner = (req, res) => {
+    try {
+        return res.render('admin/add-banner');
+    } catch (error) {
+        console.log(error.message);
+    }
+}
 
 module.exports = {
     getHome,
@@ -148,5 +178,9 @@ module.exports = {
     getCustomers,
     getCoupons,
     getAddCoupon,
-    getOrders
+    getOrders,
+    getBrands,
+    getAddBrand,
+    getBanners,
+    getAddBanner
 }
