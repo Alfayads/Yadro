@@ -22,6 +22,22 @@ const addressSchema = mongoose.Schema({
         landMark: {
             type: String,
             required: true
+        },
+        state: {
+            type: String,
+            required: true
+        },
+        pincode: {
+            type: Number,
+            required: true
+        },
+        phone: {
+            type: String,
+            required: true
         }
     }]
 })
+
+
+const Address = mongoose.model('Address', addressSchema);
+module.exports = Address;
