@@ -7,7 +7,8 @@ const userSchema = mongoose.Schema({
     },
     lname: {
         type: String,
-        required: true
+        required: true,
+        default: "",
     },
     email: {
         type: String,
@@ -19,15 +20,13 @@ const userSchema = mongoose.Schema({
         sparse: true,
         default: null
     },
-    // googleId: {
-    //     type: String,
-    //     unique: true,
-    //     sparse: true,
-    //     default: null
-    // },
+    googleId: {
+        type: String,
+        unique: true,
+    },
     password: {
         type: String,
-        required: true
+        required: false
     },
     verify: {
         type: Boolean,
@@ -36,7 +35,7 @@ const userSchema = mongoose.Schema({
     },
     gender: {
         type: String,
-        required: true
+        required: false
     },
     isBlocked: {
         type: Boolean,
@@ -80,5 +79,5 @@ const userSchema = mongoose.Schema({
 
 })
 
-const user = mongoose.model('Users', userSchema);
-module.exports = user;
+const User = mongoose.model('User', userSchema);
+module.exports = User;

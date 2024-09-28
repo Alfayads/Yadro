@@ -159,6 +159,11 @@ const checkUser = async (req, res) => {
             return res.redirect('/login');
         }
 
+        if (ifUser.isBlocked) {
+            req.flash('error_msg', `${ifUser.fname} ${ifUser.lname} is Blocked By Admin`);
+            return res.redirect('/login');
+        }
+
         req.session.user_id = ifUser._id;
         return res.redirect('/home');
     } catch (error) {

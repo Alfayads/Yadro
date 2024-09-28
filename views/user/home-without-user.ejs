@@ -458,7 +458,10 @@
       clickableElements.forEach(element => {
         element.addEventListener('click', function(event) {
           // Check if the clicked element is not part of the popup
-          if (!popup.contains(event.target) && !element.classList.contains('no-popup')) {
+          // and is not a login or signup button in the header
+          if (!popup.contains(event.target) &&
+            !element.classList.contains('no-popup') &&
+            !element.matches('header a[href="/login"], header a[href="/signup"]')) {
             event.preventDefault();
             showPopup();
           }

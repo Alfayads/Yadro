@@ -35,6 +35,8 @@ const checkLogin = async (req, res) => {
             return res.redirect('/admin/login');
         }
 
+
+
         if (!findUser.isAdmin) {
             req.flash('error_msg', 'You are Not Admin !!');
             return res.redirect('/admin/login');
@@ -102,13 +104,108 @@ const getAddCategory = (req, res) => {
     }
 }
 
-const getCustomers = (req, res) => {
+// Customer Controllerr
+
+const getCustomers = async (req, res) => {
     try {
-        return res.render('admin/customers');
+        let search = req.query.search || '';
+        let page = parseInt(req.query.page) || 1;
+        let currentStatus = req.query.status || '';
+
+        let query = {
+            isAdmin: false
+        };
+
+        // Add status filter to the query
+        if (currentStatus === 'blocked') {
+            query.isBlocked = true;
+        } else if (currentStatus === 'active') {
+            query.isBlocked = false;
+        }
+
+        const limit = 5;
+
+        const userData = await Users.find({
+            ...query,
+            $or: [
+                { fname: { $regex: search, $options: "i" } },
+                { lname: { $regex: search, $options: "i" } },
+                { email: { $regex: search, $options: "i" } },
+                { phone: { $regex: search, $options: "i" } },
+            ]
+        }).limit(limit).skip((page - 1) * limit).exec();
+
+        const count = await Users.countDocuments({
+            ...query,
+            $or: [
+                { fname: { $regex: search, $options: "i" } },
+                { lname: { $regex: search, $options: "i" } },
+                { email: { $regex: search, $options: "i" } },
+                { phone: { $regex: search, $options: "i" } },
+            ]
+        });
+
+        return res.render('admin/customers', {
+            data: userData,
+            totalPages: Math.ceil(count / limit),
+            currentPage: page,
+            searchTerm: search,
+            currentStatus
+        });
     } catch (error) {
         console.log(error.message);
     }
 }
+
+
+// Block Customer
+
+const blockCustomer = async (req, res) => {
+    try {
+        let id = req.query.id;
+        const findUser = await Users.findById({ _id: id });
+        await Users.updateOne({ _id: id }, { $set: { isBlocked: true } });
+        req.flash('success_msg', `${findUser.fname} ${findUser.lname} is Blocked Successfully ...`)
+        return res.redirect('/admin/customers');
+    } catch (error) {
+        console.error('Error blocking customer:', error); // Log the error
+        req.flash('error_msg', 'An error occurred while blocking the user.');
+        res.redirect('/admin/customers');
+    }
+}
+
+// UnBlock Customer
+
+const unblockCustomer = async (req, res) => {
+    try {
+        let id = req.query.id;
+        const findUser = await Users.findById({ _id: id });
+        await Users.updateOne({ _id: id }, { $set: { isBlocked: false } });
+        req.flash('success_msg', `${findUser.fname} ${findUser.lname} is Unblocked Successfully ...`)
+        return res.redirect('/admin/customers');
+    } catch (error) {
+        console.error('Error blocking customer:', error); // Log the error
+        req.flash('error_msg', 'An error occurred while blocking the user.');
+        res.redirect('/admin/customers');
+    }
+}
+
+// Delete Customer 
+
+const deleteCustomer = async (req, res) => {
+    try {
+        let id = req.query.id;
+        const findUser = await Users.findById({ _id: id });
+        req.flash('success_msg', `${findUser.fname} ${findUser.lname} is Deleted Successfully ...`)
+        await Users.deleteOne({ _id: id });
+        return res.redirect('/admin/customers');
+    } catch (error) {
+        console.error('Error blocking customer:', error); // Log the error
+        req.flash('error_msg', 'An error occurred while blocking the user.');
+        res.redirect('/admin/customers');
+    }
+}
+
 
 const getCoupons = (req, res) => {
     try {
@@ -176,6 +273,9 @@ module.exports = {
     getCategory,
     getAddCategory,
     getCustomers,
+    blockCustomer,
+    unblockCustomer,
+    deleteCustomer,
     getCoupons,
     getAddCoupon,
     getOrders,

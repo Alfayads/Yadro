@@ -12,7 +12,7 @@ const isLogin = (req, res, next) => {
 
 const isLogout = (req, res, next) => {
     try {
-        if (req.session.user_id) {
+        if (req.session.user_id || req.user) {
             next()
         } else {
             res.redirect('/')

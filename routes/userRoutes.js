@@ -3,6 +3,7 @@ const user_router = express.Router();
 
 const authController = require('../controllers/authController');
 const auth = require('../middlewares/authMiddleware');
+const passport = require('passport');
 
 
 // lead Page
@@ -37,7 +38,16 @@ user_router.get('/logout', authController.getLogout);
 user_router.get('/products', authController.getAllProducts);
 
 
+// Google Authentication
+user_router.get('/auth/google', passport.authenticate('google', { scope: ['profile', 'email'] }))
+user_router.get(
+    '/google/callback',
+    passport.authenticate('google', { failureRedirect: '/signup', failureFlash: true }),
+    (req, res) => {
 
+        res.redirect('/home');
+    }
+);
 
 
 module.exports = user_router;

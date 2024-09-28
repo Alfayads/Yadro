@@ -140,6 +140,31 @@
       background-color: rgba(239, 68, 68, 0.1);
     }
 
+    .tooltip {
+      position: absolute;
+      z-index: 10;
+      display: none;
+    }
+
+    /* Tooltip arrow */
+    .tooltip-arrow {
+      position: absolute;
+      bottom: -6px;
+      left: 50%;
+      transform: translateX(-50%);
+      width: 0;
+      height: 0;
+      border-left: 6px solid transparent;
+      border-right: 6px solid transparent;
+      border-top: 6px solid #2d3748;
+      /* Match tooltip background */
+    }
+
+    /* Show tooltip */
+    .group:hover .tooltip {
+      display: block;
+    }
+
     /* Animations */
     @keyframes fadeInUp {
       from {
@@ -156,6 +181,247 @@
     .fade-in-up {
       animation: fadeInUp 0.5s ease-out forwards;
     }
+
+    .message {
+      animation: fadeInOut 5s ease-in-out forwards;
+    }
+
+    @keyframes fadeInOut {
+
+      0%,
+      100% {
+        opacity: 0;
+        transform: translateY(-20px);
+      }
+
+      10%,
+      90% {
+        opacity: 1;
+        transform: translateY(0);
+      }
+    }
+
+    .search-container {
+      background-color: white;
+      border-radius: 50px;
+      padding: 6px;
+      box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+      display: flex;
+      align-items: center;
+      transition: all 0.3s ease;
+    }
+
+    .dark .search-container {
+      background-color: #374151;
+      box-shadow: 0 4px 6px rgba(255, 255, 255, 0.1);
+    }
+
+    .search-container:focus-within {
+      box-shadow: 0 0 0 3px rgba(59, 130, 246, 0.5);
+    }
+
+    .search-input {
+      border: none;
+      outline: none;
+      padding: 10px 20px;
+      font-size: 16px;
+      flex-grow: 1;
+      background: transparent;
+      color: #1F2937;
+      transition: all 0.3s ease;
+    }
+
+    .dark .search-input {
+      color: #F3F4F6;
+    }
+
+    .search-input::placeholder {
+      color: #9CA3AF;
+    }
+
+    .search-select {
+      border: none;
+      outline: none;
+      padding: 10px;
+      font-size: 16px;
+      background: transparent;
+      color: #1F2937;
+      cursor: pointer;
+      transition: all 0.3s ease;
+    }
+
+    .dark .search-select {
+      color: #F3F4F6;
+    }
+
+    .search-button {
+      background-color: #3B82F6;
+      color: white;
+      border: none;
+      padding: 10px 20px;
+      border-radius: 50px;
+      cursor: pointer;
+      transition: all 0.3s ease;
+      font-weight: bold;
+    }
+
+    .search-button:hover {
+      background-color: #2563EB;
+      transform: translateY(-2px);
+    }
+
+    .search-icon {
+      margin-right: 10px;
+      color: #9CA3AF;
+    }
+
+    @keyframes pulse {
+      0% {
+        box-shadow: 0 0 0 0 rgba(59, 130, 246, 0.7);
+      }
+
+      70% {
+        box-shadow: 0 0 0 10px rgba(59, 130, 246, 0);
+      }
+
+      100% {
+        box-shadow: 0 0 0 0 rgba(59, 130, 246, 0);
+      }
+    }
+
+    .search-button:focus {
+      animation: pulse 1.5s infinite;
+    }
+
+    .dropdown-container {
+      position: relative;
+      min-width: 200px;
+    }
+
+    .dropdown-button {
+      width: 100%;
+      padding: 10px 15px;
+      background-color: #f3f4f6;
+      border: 1px solid #e5e7eb;
+      border-radius: 8px;
+      color: #374151;
+      font-size: 16px;
+      text-align: left;
+      cursor: pointer;
+      transition: all 0.3s ease;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+    }
+
+    .dark .dropdown-button {
+      background-color: #4B5563;
+      border-color: #6B7280;
+      color: #F3F4F6;
+    }
+
+    .dropdown-button:hover {
+      background-color: #e5e7eb;
+    }
+
+    .dark .dropdown-button:hover {
+      background-color: #6B7280;
+    }
+
+    .dropdown-button:focus {
+      outline: none;
+      box-shadow: 0 0 0 3px rgba(59, 130, 246, 0.5);
+    }
+
+    .dropdown-button::after {
+      content: '\25BC';
+      font-size: 12px;
+      transition: transform 0.3s ease;
+    }
+
+    .dropdown-button.open::after {
+      transform: rotate(-180deg);
+    }
+
+    .dropdown-menu {
+      position: absolute;
+      top: 100%;
+      left: 0;
+      width: 100%;
+      background-color: white;
+      border: 1px solid #e5e7eb;
+      border-radius: 8px;
+      box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06);
+      opacity: 0;
+      transform: translateY(-10px);
+      pointer-events: none;
+      transition: all 0.3s ease;
+      z-index: 10;
+    }
+
+    .dark .dropdown-menu {
+      background-color: #374151;
+      border-color: #4B5563;
+    }
+
+    .dropdown-menu.open {
+      opacity: 1;
+      transform: translateY(5px);
+      pointer-events: auto;
+    }
+
+    .dropdown-item {
+      padding: 10px 15px;
+      color: #374151;
+      cursor: pointer;
+      transition: background-color 0.2s ease;
+    }
+
+    .dark .dropdown-item {
+      color: #F3F4F6;
+    }
+
+    .dropdown-item:hover {
+      background-color: #f3f4f6;
+    }
+
+    .dark .dropdown-item:hover {
+      background-color: #4B5563;
+    }
+
+    .dropdown-item:first-child {
+      border-top-left-radius: 8px;
+      border-top-right-radius: 8px;
+    }
+
+    .dropdown-item:last-child {
+      border-bottom-left-radius: 8px;
+      border-bottom-right-radius: 8px;
+    }
+
+    @keyframes dropdownFadeIn {
+      from {
+        opacity: 0;
+        transform: translateY(-20px);
+      }
+
+      to {
+        opacity: 1;
+        transform: translateY(0);
+      }
+    }
+
+    .dropdown-menu.open .dropdown-item {
+      animation: dropdownFadeIn 0.3s ease forwards;
+    }
+
+    .dropdown-menu.open .dropdown-item:nth-child(2) {
+      animation-delay: 0.1s;
+    }
+
+    .dropdown-menu.open .dropdown-item:nth-child(3) {
+      animation-delay: 0.2s;
+    }
   </style>
 </head>
 
@@ -167,25 +433,43 @@
 
     <!-- Main Content -->
     <div class="flex-1 ml-64 p-6">
+      <% if (success_msg.length > 0) { %>
+      <div id="successMessage" class="message bg-green-100 border border-green-400 text-green-700 px-4 py-3 rounded relative mb-6" role="alert">
+        <strong class="font-bold">Success!</strong>
+        <span class="block sm:inline"><%= success_msg %></span>
+      </div>
+      <% } %>
+
+      <% if (error_msg.length > 0) { %>
+      <div id="errorMessage" class="message bg-red-100 border border-red-400 text-red-700 px-4 py-3 rounded relative mb-6" role="alert">
+        <strong class="font-bold">Error!</strong>
+        <span class="block sm:inline"><%= error_msg %></span>
+      </div>
+      <% } %>
+
       <div class="flex items-center justify-between mb-6">
         <h1 class="text-3xl font-bold text-gray-800 dark:text-white fade-in-up">Customers</h1>
         <div class="flex items-center space-x-4">
           <div class="theme-toggle" id="themeToggle"></div>
-          <a href="#" class="add-customer-btn px-4 py-2 bg-green-600 text-white rounded-lg relative overflow-hidden button">
-            <span class="relative z-10">Add Customer</span>
           </a>
         </div>
       </div>
 
       <!-- Search and Filter -->
-      <div class="flex justify-between mb-4 fade-in-up" style="animation-delay: 0.2s;">
-        <input type="text" placeholder="Search customers..." class="px-4 py-2 border border-gray-300 rounded-lg w-1/2 focus:outline-none focus:ring-2 focus:ring-blue-500 transition-all duration-300 dark:bg-gray-700 dark:border-gray-600 dark:text-white" />
-        <select class="px-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 transition-all duration-300 dark:bg-gray-700 dark:border-gray-600 dark:text-white">
-          <option>All Status</option>
-          <option>Active</option>
-          <option>Blocked</option>
-        </select>
-      </div>
+      <form action="/admin/customers" method="GET" class="mb-8 fade-in-up" style="animation-delay: 0.2s;">
+        <div class="search-container flex items-center justify-between">
+          <i class="fas fa-search search-icon ml-4"></i>
+          <input type="text" name="search" placeholder="Search customers..." class="search-input" />
+          <select name="status" class="search-select mr-5">
+            <option value="">All Status</option>
+            <option value="active">Active</option>
+            <option value="blocked">Blocked</option>
+          </select>
+          <button type="submit" class="search-button">
+            Search
+          </button>
+        </div>
+      </form>
 
       <!-- Customers Table -->
       <div class="overflow-x-auto fade-in-up" style="animation-delay: 0.4s;">
@@ -203,22 +487,61 @@
             </tr>
           </thead>
           <tbody class="text-gray-600 dark:text-gray-200">
+
+            <% data.forEach( (customer,index) => { %>
+
+
             <tr class="table-row border-b border-gray-200 dark:border-gray-700 hover:bg-gray-50 dark:hover:bg-gray-600">
-              <td class="py-3 px-6">1</td>
-              <td class="py-3 px-6">Customer Name</td>
-              <td class="py-3 px-6">email@example.com</td>
-              <td class="py-3 px-6">1234567890</td>
+              <td class="py-3 px-6"><%= index+1 %></td>
+              <td class="py-3 px-6"><%= customer.fname + ' ' + customer.lname %></td>
+              <td class="py-3 px-6"><%= customer.email %></td>
+              <td class="py-3 px-6"><%= customer.phone %></td>
               <td class="py-3 px-6">Address</td>
+              <% if (customer.isBlocked === false) { %>
               <td class="py-3 px-6"><span class="bg-green-200 text-green-600 py-1 px-3 rounded-full text-xs">Active</span></td>
+              <% } else { %>
+              <td class="py-3 px-6"><span class="bg-red-200 text-red-600 py-1 px-3 rounded-full text-xs">Blocked</span></td>
+              <% } %>
               <td class="py-3 px-6">24 Jun 2023</td>
               <td class="py-3 px-6">
                 <div class="flex space-x-3">
-                  <button class="action-icon edit-icon" title="Edit"><i class="fas fa-edit"></i></button>
-                  <button class="action-icon view-icon" title="View"><i class="fas fa-eye"></i></button>
-                  <button class="action-icon delete-icon" title="Delete"><i class="fas fa-trash"></i></button>
+
+                  <!-- Block Button with Tooltip -->
+                  <% if (customer.isBlocked === false) { %>
+                  <a href="/admin/blockCustomer?id=<%= customer._id %>" class="relative group action-icon block-icon" title="Block">
+                    <i class="fa-solid fa-lock-open"></i>
+                    <!-- Tooltip -->
+                    <div class="tooltip hidden absolute bottom-full mb-2 w-max text-sm bg-gray-800 text-white p-2 rounded-lg opacity-0 transition-opacity duration-300 group-hover:opacity-100 group-hover:block">
+                      Block
+                      <div class="tooltip-arrow"></div>
+                    </div>
+                  </a>
+                  <% } else { %>
+                  <a href="/admin/unblockCustomer?id=<%= customer._id %>" class="relative group action-icon block-icon" title="Block">
+                    <i class="fa-solid fa-lock"></i>
+                    <!-- Tooltip -->
+                    <div class="tooltip hidden absolute bottom-full mb-2 w-max text-sm bg-gray-800 text-white p-2 rounded-lg opacity-0 transition-opacity duration-300 group-hover:opacity-100 group-hover:block">
+                      Unblock
+                      <div class="tooltip-arrow"></div>
+                    </div>
+                  </a>
+                  <% } %>
+
+                  <!-- Delete Button with Tooltip -->
+                  <a href="/admin/deleteCustomer?id=<%= customer._id %>" class="relative group action-icon delete-icon" title="Delete">
+                    <i class="fas fa-trash"></i>
+                    <!-- Tooltip -->
+                    <div class="tooltip hidden absolute bottom-full mb-2 w-max text-sm bg-gray-800 text-white p-2 rounded-lg opacity-0 transition-opacity duration-300 group-hover:opacity-100 group-hover:block">
+                      Delete
+                      <div class="tooltip-arrow"></div>
+                    </div>
+                  </a>
                 </div>
               </td>
             </tr>
+
+
+            <% })%>
             <!-- Add more rows as needed -->
           </tbody>
         </table>
@@ -226,19 +549,43 @@
 
       <!-- Pagination -->
       <div class="flex justify-between items-center mt-4 fade-in-up" style="animation-delay: 0.6s;">
-        <span class="text-gray-600 dark:text-gray-300">Showing 1-10 of 50 customers</span>
         <div class="flex space-x-2">
-          <button class="pagination-button px-3 py-1 bg-gray-200 dark:bg-gray-600 text-gray-600 dark:text-gray-200 rounded-md hover:bg-gray-300 dark:hover:bg-gray-500 transition-colors duration-300">Previous</button>
-          <button class="pagination-button px-3 py-1 bg-blue-500 text-white rounded-md hover:bg-blue-600 transition-colors duration-300">1</button>
-          <button class="pagination-button px-3 py-1 bg-gray-200 dark:bg-gray-600 text-gray-600 dark:text-gray-200 rounded-md hover:bg-gray-300 dark:hover:bg-gray-500 transition-colors duration-300">2</button>
-          <button class="pagination-button px-3 py-1 bg-gray-200 dark:bg-gray-600 text-gray-600 dark:text-gray-200 rounded-md hover:bg-gray-300 dark:hover:bg-gray-500 transition-colors duration-300">3</button>
-          <button class="pagination-button px-3 py-1 bg-gray-200 dark:bg-gray-600 text-gray-600 dark:text-gray-200 rounded-md hover:bg-gray-300 dark:hover:bg-gray-500 transition-colors duration-300">Next</button>
+          <a href="?page=<%= currentPage-1 %>&search=<%= searchTerm %>" class="pagination-button px-3 py-1 bg-gray-200 dark:bg-gray-600 text-gray-600 dark:text-gray-200 rounded-md hover:bg-gray-300 dark:hover:bg-gray-500 transition-colors duration-300">Previous</a>
+
+          <% for( let i = 0; i < totalPages; i++ ) { %>
+          <a href="?page=<%= i+1 %>&search=<%= searchTerm %>" class="pagination-button px-3 py-1 
+               <%= currentPage == i+1 ? 'bg-blue-500 text-white' : 'bg-gray-100 text-black hover:text-white' %> 
+                rounded-md hover:bg-blue-600 transition-colors duration-300">
+            <%= i+1 %>
+          </a>
+          <% } %>
+
+
+          <a href="?page=<%= currentPage+1 %>&search=<%= searchTerm %>" class="pagination-button px-3 py-1 bg-gray-200 dark:bg-gray-600 text-gray-600 dark:text-gray-200 rounded-md hover:bg-gray-300 dark:hover:bg-gray-500 transition-colors duration-300">Next</a>
         </div>
       </div>
     </div>
   </div>
 
   <script>
+    // Tooltip 
+
+    // Get all buttons with tooltips
+    document.querySelectorAll('.action-icon').forEach((button) => {
+      const tooltip = button.querySelector('.tooltip');
+
+      button.addEventListener('mouseover', () => {
+        tooltip.classList.remove('opacity-0', 'hidden');
+        tooltip.classList.add('opacity-100');
+      });
+
+      button.addEventListener('mouseleave', () => {
+        tooltip.classList.remove('opacity-100');
+        tooltip.classList.add('opacity-0', 'hidden');
+      });
+    });
+
+
     document.addEventListener("DOMContentLoaded", function() {
       // Fade-in animation
       const fadeElements = document.querySelectorAll('.fade-in-up');
@@ -265,6 +612,29 @@
       if (savedTheme === 'dark' || (!savedTheme && prefersDark)) {
         html.classList.add('dark');
       }
+    });
+    document.addEventListener("DOMContentLoaded", function() {
+      // ... (previous script content) ...
+
+      // Auto-hide messages after 5 seconds
+      const messages = document.querySelectorAll('.message');
+      messages.forEach(message => {
+        setTimeout(() => {
+          message.style.display = 'none';
+        }, 5000);
+      });
+
+      // Animate search bar on focus
+      const searchContainer = document.querySelector('.search-container');
+      const searchInput = document.querySelector('.search-input');
+
+      searchInput.addEventListener('focus', () => {
+        searchContainer.style.transform = 'scale(1.02)';
+      });
+
+      searchInput.addEventListener('blur', () => {
+        searchContainer.style.transform = 'scale(1)';
+      });
     });
   </script>
 </body>

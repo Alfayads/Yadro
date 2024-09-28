@@ -4,6 +4,7 @@ const bodyParser = require('body-parser');
 const userRouter = require('./routes/userRoutes');
 const adminRouter = require('./routes/adminRoutes');
 const ConnectDB = require('./config/db');
+const passport = require('./config/passport');
 const nocache = require('nocache');
 const flash = require('connect-flash');
 const keys = require('./config/keys');
@@ -22,6 +23,9 @@ app.use(session({
 }))
 
 app.use(flash());
+
+app.use(passport.initialize());
+app.use(passport.session())
 
 app.use((req, res, next) => {
     res.locals.success_msg = req.flash('success_msg');
