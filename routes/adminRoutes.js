@@ -17,14 +17,23 @@ admin_router.get('/', adminAuth, Controller.getHome);
 admin_router.get('/product', adminAuth, Controller.getProduct);
 
 // Add Product Route
-admin_router.get('/add-product', adminAuth, Controller.getAddProduct);
+admin_router.get('/add-product', adminAuth, Controller.getAddProduct);// for getting add product page
+admin_router.post('/add-product', Controller.addProduct) // for Adding new product
+admin_router.get('/editProduct/:id', Controller.editProduct); //  for getting edit product page
+admin_router.post('/edittedProduct/:id', Controller.edittedProduct) // for editted product route
+admin_router.get('/viewProduct/:id', Controller.viewProduct); // for view the product
+admin_router.get('/deleteProduct/:id', Controller.deleteProduct); // for delete the product
 
 // Category Route
-admin_router.get('/category', adminAuth, Controller.getCategory)
-admin_router.get('/add-category', adminAuth, Controller.getAddCategory);
+admin_router.get('/category', adminAuth, Controller.getCategory) // for get Category page
+admin_router.get('/add-category', adminAuth, Controller.getAddCategory);// for get add Category page
+admin_router.post('/add-category', Controller.addCategory); // Add new Category
+admin_router.get('/edit-category/:id', Controller.getEditCategory) // for get edit Category page
+admin_router.post('/edit-category/:id', Controller.editCategory); // Add edit Category
+admin_router.get('/delete-category/:id', Controller.deleteCategory); // for Delete category
 
 // Customers Route
-admin_router.get('/customers', adminAuth, Controller.getCustomers);
+admin_router.get('/customers', adminAuth, Controller.getCustomers); // for get customer page
 admin_router.get('/blockCustomer', Controller.blockCustomer); // Block Customer
 admin_router.get('/unblockCustomer', Controller.unblockCustomer); // UnBlock Customer
 admin_router.get('/deleteCustomer', Controller.deleteCustomer); // Delete Customer

@@ -1,7 +1,12 @@
-const Users = require('../models/User');
 const bcrypt = require('bcrypt');
 const OTP = require('otp-generator');
 const nodemailer = require('nodemailer')
+
+// Models 
+const Users = require('../models/User');
+const Product = require('../models/Product');
+const Category = require('../models/Category');
+
 
 //Secure Password
 const securePassword = async (password) => {
@@ -53,9 +58,11 @@ const sendVerificationEmail = async (email, otp) => {
 }
 
 
-const getHomeWithUser = (req, res) => {
+const getHomeWithUser = async (req, res) => {
     try {
-        return res.render('user/home-with-user');
+        const products = await Product.find({});
+        const categories = await Category.find({});
+        return res.render('user/home-with-user', { products, categories });
     } catch (error) {
         console.error(error.message);
         let errorMessage = { message: "An error occurred. Please try again later." };

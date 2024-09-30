@@ -7,80 +7,8 @@
   <title>Yadro - Orders</title>
   <script src="https://cdn.tailwindcss.com"></script>
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
-  <script>
-    tailwind.config = {
-      darkMode: 'class',
-      theme: {
-        extend: {
-          colors: {
-            primary: {
-              light: '#3B82F6',
-              dark: '#60A5FA',
-            }
-          }
-        }
-      }
-    }
-  </script>
-  <style>
-    /* Animations */
-    @keyframes fadeInUp {
-      from {
-        opacity: 0;
-        transform: translateY(20px);
-      }
-
-      to {
-        opacity: 1;
-        transform: translateY(0);
-      }
-    }
-
-    .fade-in-up {
-      animation: fadeInUp 0.5s ease-out forwards;
-    }
-
-    /* Theme Toggle */
-    .theme-toggle {
-      width: 50px;
-      height: 25px;
-      background-color: #e5e7eb;
-      border-radius: 15px;
-      position: relative;
-      cursor: pointer;
-      transition: background-color 0.3s ease;
-    }
-
-    .theme-toggle::after {
-      content: '';
-      position: absolute;
-      width: 21px;
-      height: 21px;
-      border-radius: 50%;
-      background-color: white;
-      top: 2px;
-      left: 2px;
-      transition: transform 0.3s ease;
-    }
-
-    .dark .theme-toggle {
-      background-color: #4B5563;
-    }
-
-    .dark .theme-toggle::after {
-      transform: translateX(25px);
-    }
-
-    /* Table Styles */
-    .table-row {
-      transition: all 0.2s ease;
-    }
-
-    .table-row:hover {
-      transform: translateY(-2px);
-      box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06);
-    }
-  </style>
+  <script src="/js/toggle.js"></script>
+  <link rel="stylesheet" href="/css/orders.css">
 </head>
 
 <body class="bg-gray-100 font-sans transition-all duration-300 dark:bg-gray-800">
@@ -167,35 +95,7 @@
     </div>
   </div>
 
-  <script>
-    document.addEventListener("DOMContentLoaded", function() {
-      // Fade-in animation
-      const fadeElements = document.querySelectorAll('.fade-in-up');
-      fadeElements.forEach((el, index) => {
-        el.style.opacity = "0";
-        setTimeout(() => {
-          el.style.animation = `fadeInUp 0.5s ease-out ${index * 0.1}s forwards`;
-        }, 100);
-      });
-
-      // Theme toggle functionality
-      const themeToggle = document.getElementById('themeToggle');
-      const html = document.documentElement;
-
-      themeToggle.addEventListener('click', () => {
-        html.classList.toggle('dark');
-        localStorage.setItem('theme', html.classList.contains('dark') ? 'dark' : 'light');
-      });
-
-      // Check for saved theme preference or prefer-color-scheme
-      const savedTheme = localStorage.getItem('theme');
-      const prefersDark = window.matchMedia && window.matchMedia('(prefers-color-scheme: dark)').matches;
-
-      if (savedTheme === 'dark' || (!savedTheme && prefersDark)) {
-        html.classList.add('dark');
-      }
-    });
-  </script>
+  <script src="/js/orders.js"></script>
 </body>
 
 </html>

@@ -129,6 +129,12 @@
       </div>
       <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
         <!-- Repeat this product card structure for each item -->
+
+
+        <% products.forEach(product => { %>
+
+
+
         <div class="product-card bg-white p-4 rounded shadow relative animate-on-scroll hover:scale-105 transition-transform duration-300">
           <div class="absolute top-4 left-4 bg-red-500 text-white text-xs font-bold px-2 py-1 rounded-full z-20 transform -rotate-12 shadow-lg">
             <span class="off-percentage">25% OFF</span>
@@ -144,10 +150,10 @@
             <img src="/images/headphone.png" alt="Product" class="w-full p-6 h-38 object-cover rounded transition-transform duration-300 group-hover:scale-110 group-hover:shadow-lg">
             <div class="absolute inset-0 bg-black bg-opacity-0 group-hover:bg-opacity-20 transition-opacity duration-300"></div>
           </div>
-          <h3 class="font-semibold mb-2">HAVIT HV-G92 Gamepad</h3>
+          <h3 class="font-semibold mb-2"><%= product.name %></h3>
           <div class="flex justify-start gap-3 items-center mb-2">
-            <span class="text-red-500 font-bold">₹120</span>
-            <span class="text-gray-500 line-through">₹160</span>
+            <span class="text-red-500 font-bold">₹<%= product.salePrice %></span>
+            <span class="text-gray-500 line-through">₹<%= product.regularPrice %></span>
           </div>
           <div class="rating-stars flex items-center mb-2">
             <div class="stars-container flex">
@@ -177,6 +183,13 @@
             </span>
           </button>
         </div>
+
+
+
+        <% }) %>
+
+
+
         <!-- Repeat for other products -->
 
 
@@ -188,30 +201,21 @@
     <section class="my-12">
       <h2 class="text-2xl font-bold mb-6" id="category">Browse By Category</h2>
       <div class="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-6 gap-4">
+
+        <% categories.forEach( category => { %>
+
         <div class="category-item group">
           <div class="category-icon flex flex-col items-center justify-center p-6 border rounded-lg bg-white shadow-md transition-all duration-300 transform hover:scale-105 hover:shadow-lg">
             <div class="icon-wrapper mb-4 p-3 rounded-full bg-gray-100 group-hover:bg-blue-100 transition-colors duration-300">
               <img src="/images/headphone.png" alt="Wired" class="w-16 h-16 object-contain transition-transform duration-300 group-hover:rotate-12">
             </div>
-            <span class="text-sm font-medium text-gray-700 group-hover:text-blue-600 transition-colors duration-300">Wired</span>
+            <span class="text-sm font-medium text-gray-700 group-hover:text-blue-600 transition-colors duration-300"><%= category.name %></span>
           </div>
         </div>
-        <div class="category-item group">
-          <div class="category-icon flex flex-col items-center justify-center p-6 border rounded-lg bg-white shadow-md transition-all duration-300 transform hover:scale-105 hover:shadow-lg">
-            <div class="icon-wrapper mb-4 p-3 rounded-full bg-gray-100 group-hover:bg-green-100 transition-colors duration-300">
-              <img src="/images/airpod.png" alt="Wireless" class="w-16 h-16 object-contain transition-transform duration-300 group-hover:rotate-12">
-            </div>
-            <span class="text-sm font-medium text-gray-700 group-hover:text-green-600 transition-colors duration-300">Wireless</span>
-          </div>
-        </div>
-        <div class="category-item group">
-          <div class="category-icon flex flex-col items-center justify-center p-6 border rounded-lg bg-white shadow-md transition-all duration-300 transform hover:scale-105 hover:shadow-lg">
-            <div class="icon-wrapper mb-4 p-3 rounded-full bg-gray-100 group-hover:bg-purple-100 transition-colors duration-300">
-              <img src="/images/airpodPro.png" alt="Airpods" class="w-16 h-16 object-contain transition-transform duration-300 group-hover:rotate-12">
-            </div>
-            <span class="text-sm font-medium text-gray-700 group-hover:text-purple-600 transition-colors duration-300">Airpods</span>
-          </div>
-        </div>
+
+        <% }) %>
+
+
         <!-- Add more category items as needed -->
       </div>
     </section>

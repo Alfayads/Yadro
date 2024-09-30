@@ -7,63 +7,8 @@
   <title>All Brands - Yadro</title>
   <script src="https://cdn.tailwindcss.com"></script>
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
-  <script>
-    tailwind.config = {
-      darkMode: 'class',
-      theme: {
-        extend: {
-          colors: {
-            primary: {
-              light: '#3B82F6',
-              dark: '#60A5FA',
-            }
-          }
-        }
-      }
-    }
-  </script>
-  <style>
-    /* Toggle button styles */
-    .toggle-checkbox:checked {
-      right: 0;
-      border-color: #68D391;
-    }
-
-    .toggle-checkbox:checked+.toggle-label {
-      background-color: #68D391;
-    }
-
-    /* Dark mode toggle styles */
-    .theme-toggle {
-      width: 48px;
-      height: 24px;
-      background-color: #e2e8f0;
-      border-radius: 9999px;
-      position: relative;
-      cursor: pointer;
-      transition: background-color 0.3s;
-    }
-
-    .theme-toggle::after {
-      content: '';
-      position: absolute;
-      top: 2px;
-      left: 2px;
-      width: 20px;
-      height: 20px;
-      background-color: white;
-      border-radius: 50%;
-      transition: transform 0.3s;
-    }
-
-    .dark .theme-toggle {
-      background-color: #4b5563;
-    }
-
-    .dark .theme-toggle::after {
-      transform: translateX(24px);
-    }
-  </style>
+  <script src="/js/toggle.js"></script>
+  <link rel="stylesheet" href="/css/brand.css">
 </head>
 
 <body class="bg-gray-100 font-sans dark:bg-gray-800 transition-colors duration-200">
@@ -149,24 +94,7 @@
     </main>
   </div>
 
-  <script>
-    // Theme toggle functionality
-    const themeToggle = document.getElementById('themeToggle');
-    const html = document.documentElement;
-
-    themeToggle.addEventListener('click', () => {
-      html.classList.toggle('dark');
-      localStorage.setItem('theme', html.classList.contains('dark') ? 'dark' : 'light');
-    });
-
-    // Check for saved theme preference or prefer-color-scheme
-    const savedTheme = localStorage.getItem('theme');
-    const prefersDark = window.matchMedia && window.matchMedia('(prefers-color-scheme: dark)').matches;
-
-    if (savedTheme === 'dark' || (!savedTheme && prefersDark)) {
-      html.classList.add('dark');
-    }
-  </script>
+  <script src="/js/brand.js"></script>
 </body>
 
 </html>

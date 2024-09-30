@@ -1,0 +1,77 @@
+<!DOCTYPE html>
+<html lang="en" class="light">
+
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Product View - Yadro</title>
+  <script src="https://cdn.tailwindcss.com"></script>
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
+  <script src="/js/toggle.js"></script>
+  <link rel="stylesheet" href="/css/admin-viewProduct.css">
+</head>
+
+<body class="bg-gray-100 font-sans transition-colors duration-300 dark:bg-gray-900">
+  <%- include('../layouts/admin-sidebar.ejs') %>
+  <div class="container mx-auto p-6 ml-64">
+
+    <div class="flex justify-between items-center mb-6">
+      <h1 class="text-3xl font-bold text-gray-800 dark:text-gray-200">Product View</h1>
+      <div class="theme-toggle" id="themeToggle"></div>
+    </div>
+
+    <div class="grid grid-cols-1 md:grid-cols-2 gap-8">
+      <!-- Left side - Image gallery -->
+      <div class="fade-in-up" style="animation-delay: 0.2s;">
+        <div class="image-container mb-4">
+          <img id="mainImage" src="https://via.placeholder.com/600x600" alt="Product Image" class="w-full h-auto rounded-lg shadow-md">
+        </div>
+        <div class="grid grid-cols-5 gap-2">
+          <img src="https://via.placeholder.com/120x120" alt="Thumbnail 1" class="thumbnail w-full h-auto rounded-md cursor-pointer">
+          <img src="https://via.placeholder.com/120x120" alt="Thumbnail 2" class="thumbnail w-full h-auto rounded-md cursor-pointer">
+          <img src="https://via.placeholder.com/120x120" alt="Thumbnail 3" class="thumbnail w-full h-auto rounded-md cursor-pointer">
+          <img src="https://via.placeholder.com/120x120" alt="Thumbnail 4" class="thumbnail w-full h-auto rounded-md cursor-pointer">
+          <img src="https://via.placeholder.com/120x120" alt="Thumbnail 5" class="thumbnail w-full h-auto rounded-md cursor-pointer">
+        </div>
+      </div>
+
+      <!-- Right side - Product details -->
+      <div class="fade-in-up" style="animation-delay: 0.4s;">
+        <h2 class="text-2xl font-bold text-gray-800 dark:text-gray-200 mb-4"><%= product.name %></h2>
+        <p class="text-gray-600 dark:text-gray-400 mb-4">Brand: <%= product.brand %></p>
+        <div class="flex items-center mb-4">
+          <span class="text-yellow-400 mr-1"><i class="fas fa-star"></i></span>
+          <span class="text-yellow-400 mr-1"><i class="fas fa-star"></i></span>
+          <span class="text-yellow-400 mr-1"><i class="fas fa-star"></i></span>
+          <span class="text-yellow-400 mr-1"><i class="fas fa-star"></i></span>
+          <span class="text-gray-400 mr-2"><i class="fas fa-star"></i></span>
+          <span class="text-gray-600 dark:text-gray-400">(4.0) 1,234 reviews</span>
+        </div>
+        <div class="mb-4">
+          <span class="text-3xl font-bold text-gray-800 dark:text-gray-200"><%= product.regularPrice %></span>
+          <span class="text-lg text-gray-500 dark:text-gray-400 line-through ml-2">$129.99</span>
+          <span class="text-green-500 ml-2"><%= product.discount %>% off</span>
+        </div>
+        <p class="text-gray-700 dark:text-gray-300 mb-4">
+          <%= product.description %>
+        </p>
+        <div class="mb-4">
+          <h3 class="section-header mb-2 dark:text-gray-200">Available Colors</h3>
+          <div class="flex space-x-2">
+            <button class="w-8 h-8 rounded-full bg-red-500"></button>
+            <button class="w-8 h-8 rounded-full bg-blue-500"></button>
+            <button class="w-8 h-8 rounded-full bg-green-500"></button>
+            <button class="w-8 h-8 rounded-full bg-yellow-500"></button>
+          </div>
+        </div>
+        <div class="mb-6">
+          <h3 class="section-header mb-2 dark:text-gray-200">Quantity: <%= product.quantity %></h3>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <script src="/js/admin-viewProduct.js"></script>
+</body>
+
+</html>
