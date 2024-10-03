@@ -53,3 +53,114 @@ document.addEventListener("DOMContentLoaded", function () {
         });
     });
 });
+
+
+
+// document.addEventListener("DOMContentLoaded", () => {
+//     const statusToggles = document.querySelectorAll(".toggle-switch input");
+//     const modal = document.getElementById("statusConfirmModal");
+//     const confirmBtn = document.getElementById("confirmBtn");
+//     const cancelBtn = document.getElementById("cancelBtn");
+
+//     let selectedCategoryId = null;
+//     let currentToggle = null;
+
+//     // Handle status toggle click
+//     statusToggles.forEach((toggle) => {
+//         toggle.addEventListener("click", (e) => {
+//             e.preventDefault(); // Prevent default toggle behavior
+//             currentToggle = e.target; // Store the clicked toggle
+//             selectedCategoryId = e.target.closest("tr").dataset.categoryId;
+
+//             // Show the modal with smooth animation
+//             modal.classList.remove("hidden");
+//             modal.querySelector(".modal-content").classList.add("scale-100", "opacity-100");
+//         });
+//     });
+
+//     // Handle "OK" button click
+//     confirmBtn.addEventListener("click", () => {
+//         // Perform the action (e.g., update category status in the backend)
+//         // Assuming a backend call is made to update the category status, here you can toggle the checkbox status:
+//         currentToggle.checked = !currentToggle.checked;
+
+//         // Close modal
+//         closeModal();
+//     });
+
+//     // Handle "Cancel" button click
+//     cancelBtn.addEventListener("click", () => {
+//         closeModal(); // Close modal without making changes
+//     });
+
+//     // Function to close modal
+//     function closeModal() {
+//         modal.querySelector(".modal-content").classList.remove("scale-100", "opacity-100");
+//         setTimeout(() => {
+//             modal.classList.add("hidden");
+//         }, 300); // Match the duration of the CSS transition
+//     }
+// });
+
+
+
+// document.addEventListener('DOMContentLoaded', function () {
+//     const toggles = document.querySelectorAll('.status-toggle');
+//     const statusModal = document.getElementById('statusModal');
+//     const statusMessage = document.getElementById('statusMessage');
+//     const confirmBtn = document.getElementById('confirmBtn');
+//     const cancelBtn = document.getElementById('cancelBtn');
+
+//     let currentToggle = null; // Store the current toggle switch being changed
+
+//     toggles.forEach(toggle => {
+//         toggle.addEventListener('change', function (e) {
+//             currentToggle = this;
+//             const categoryId = this.getAttribute('data-category-id');
+//             const isChecked = this.checked;
+
+//             // Show confirmation modal
+//             statusMessage.textContent = `Do you want to ${isChecked ? 'activate' : 'inactivate'} this category?`;
+//             statusModal.classList.remove('hidden');
+//         });
+//     });
+
+//     // Handle cancel button
+//     cancelBtn.addEventListener('click', function () {
+//         if (currentToggle) {
+//             // Revert the toggle switch to its previous state
+//             currentToggle.checked = !currentToggle.checked;
+//         }
+//         statusModal.classList.add('hidden');
+//     });
+
+//     // Handle confirm button
+//     confirmBtn.addEventListener('click', function () {
+//         const categoryId = currentToggle.getAttribute('data-category-id');
+//         const newStatus = currentToggle.checked ? true : false;
+
+//         // Send AJAX request to the backend
+//         fetch('/admin/update-category-status', {
+//             method: 'POST',
+//             headers: {
+//                 'Content-Type': 'text/html',
+//             },
+//             body: JSON.stringify({ categoryId, newStatus }),
+//         })
+//             .then(response => response.json())
+//             .then(data => {
+//                 if (data) {
+//                     console.log('Status updated successfully.');
+//                 } else {
+//                     console.error('Failed to update status.');
+//                 }
+//                 statusModal.classList.add('hidden');
+//             })
+//             .catch(error => {
+//                 console.error('Error:', error);
+//                 // Revert the toggle switch in case of error
+//                 currentToggle.checked = !currentToggle.checked;
+//                 statusModal.classList.add('hidden');
+//             });
+//     });
+// });

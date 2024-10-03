@@ -1,8 +1,12 @@
 const bcrypt = require('bcrypt');
+const path = require('path');
 
 const Users = require('../models/User');
 const Product = require('../models/Product');
 const Category = require('../models/Category');
+
+
+
 
 
 const getHome = (req, res) => {
@@ -88,17 +92,12 @@ const getProduct = async (req, res) => {
 
             $or: [
                 { name: { $regex: search, $options: "i" } },
-                { category: { $regex: search, $options: "i" } },
             ]
         }).limit(limit).skip((page - 1) * limit).exec();
 
-        console.log(productData)
-
         const count = await Product.countDocuments({
-
             $or: [
                 { name: { $regex: search, $options: "i", } },
-                { category: { $regex: search, $options: "i" } },
             ]
         });
 
@@ -117,9 +116,10 @@ const getProduct = async (req, res) => {
 
 // Add product page
 
-const getAddProduct = (req, res) => {
+const getAddProduct = async (req, res) => {
     try {
-        return res.render('admin/add-product');
+        const categories = await Category.find({});
+        return res.render('admin/add-product', { categories });
     } catch (error) {
         console.log(error.message);
     }
@@ -129,42 +129,68 @@ const getAddProduct = (req, res) => {
 
 const addProduct = async (req, res) => {
     try {
-        const { name, description, stock, price, color, brand, discount, category } = req.body;
-        let findProduct = await Product.findOne({ name });
-        let salePrice = price - (price * (discount / 100));
-        if (findProduct) {
-            req.flash('error_msg', 'Product is Already Addedd');
-            return res.redirect('/admin/product');
+        const { name, description, brand, price, category, quantity, color, discount } = req.body;
+
+        if (!name || !description || !brand || !color || !category || !quantity || !discount || !price) {
+            req.flash('error_msg', 'Please provide all required fields');
+            return res.redirect('/admin/add-product');
         }
-        const newProduct = await new Product({
+
+        let findProduct = await Product.findOne({ name });
+        if (findProduct) {
+            req.flash('error_msg', 'Product Already Exists');
+            return res.redirect('/admin/add-product');
+        }
+
+        const categoryDoc = await Category.findOne({ name: category });
+        if (!categoryDoc) {
+            req.flash('error_msg', 'Invalid category');
+            return res.redirect('/admin/add-product');
+        }
+
+        let imagePaths = [];
+        if (req.files && req.files.length > 0) {
+            imagePaths = req.files.map(file => `/products/${file.filename}`);
+        }
+
+        const newProduct = new Product({
             name,
             description,
-            salePrice: Math.round(salePrice),
-            quantity: stock,
+            brand,
             regularPrice: price,
-            color, brand, discount,
-            category
+            salePrice: (price - (price * (discount / 100))),
+            productOffer: discount,
+            category: categoryDoc._id,
+            quantity: parseInt(quantity),
+            color,
+            status: parseInt(quantity) > 0 ? "Available" : "Out Of Stock",
+            images: imagePaths
         });
-        await newProduct.save();
-        req.flash('success_msg', `${name} Product Added Successfully...`);
-        res.redirect('/admin/product');
-    } catch (error) {
-        console.log(error.message)
-    }
-}
 
+        await newProduct.save();
+        req.flash('success_msg', `${name} Product Added Successfully`);
+        res.redirect('/admin/product');
+
+    } catch (error) {
+        console.error('Error adding product:', error);
+        req.flash('error_msg', 'An error occurred while adding the product');
+        res.redirect('/admin/add-product');
+    }
+};
 // Edit Product
 
 const editProduct = async (req, res) => {
     try {
         const id = req.params.id;
         const product = await Product.findById({ _id: id });
+        const category = await Category.findById({ _id: product.category });
+        const categories = await Category.find({});
         if (!product) {
             req.flash('error_msg', 'Product is Not found');
             return res.redirect('/admin/product')
         }
 
-        return res.render('admin/editProduct', { product });
+        return res.render('admin/editProduct', { product, category, categories });
     } catch (error) {
         console.log(error.message)
     }
@@ -175,24 +201,68 @@ const editProduct = async (req, res) => {
 const edittedProduct = async (req, res) => {
     try {
         const id = req.params.id;
-        const { name, description, stock, price, color, brand, discount, category } = req.body;
-        console.log(name, description)
-        let salePrice = price - (price * (discount / 100));
-        const newProduct = {
+        const { name, description, stock: quantity, price, color, brand, discount, category } = req.body;
+
+        // Check if quantity is valid
+        const parsedQuantity = parseInt(quantity);
+        if (isNaN(parsedQuantity)) {
+            req.flash('error_msg', 'Quantity must be a valid number');
+            return res.redirect(`/admin/product`);
+        }
+
+        // Validate price
+        const parsedPrice = parseFloat(price);
+        if (isNaN(parsedPrice)) {
+            req.flash('error_msg', 'Price must be a valid number');
+            return res.redirect(`/admin/edit-product/${id}`);
+        }
+
+        // Validate category
+        const categoryDoc = await Category.findOne({ name: category });
+        if (!categoryDoc) {
+            req.flash('error_msg', 'Invalid category');
+            return res.redirect('/admin/add-product');
+        }
+
+        // Fetch the existing product
+        const existingProduct = await Product.findById(id);
+        if (!existingProduct) {
+            req.flash('error_msg', 'Product not found');
+            return res.redirect('/admin/product');
+        }
+
+        // Handle image uploads
+        let imagePaths = existingProduct.images; // Start with existing images
+        if (req.files && req.files.length > 0) {
+            // Delete old images
+            existingProduct.images.forEach(imagePath => {
+                const fullPath = path.join(__dirname, '../public/', imagePath);
+                if (fs.existsSync(fullPath)) {
+                    fs.unlinkSync(fullPath);
+                }
+            });
+
+            // Add new image paths
+            imagePaths = req.files.map(file => `/products/${file.filename}`);
+        }
+
+        const updatedProduct = {
             name,
             description,
-            salePrice: Math.round(salePrice),
-            quantity: stock,
-            regularPrice: price,
-            color, brand, discount,
-            category
-        }
-        await Product.updateOne(
-            { _id: id },
-            { $set: newProduct }
-        );
-        req.flash('success_msg', `${name} Editted  Successfully...`);
-        res.redirect('/admin/product');
+            brand,
+            regularPrice: parsedPrice,
+            salePrice: (parsedPrice - (parsedPrice * (discount / 100))),
+            category: categoryDoc._id,
+            productOffer: discount,
+            quantity: parsedQuantity,
+            color,
+            status: parsedQuantity > 0 ? "Available" : "Out Of Stock",
+            images: imagePaths
+        };
+
+        await Product.updateOne({ _id: id }, { $set: updatedProduct });
+        req.flash('success_msg', `${name} Edited Successfully...`);
+        return res.redirect('/admin/product');
     } catch (error) {
         console.log(error.message);
     }
@@ -202,8 +272,10 @@ const edittedProduct = async (req, res) => {
 const viewProduct = async (req, res) => {
     try {
         let id = req.params.id;
+
         const product = await Product.findById({ _id: id });
-        return res.render('admin/viewProduct', { product });
+        const categories = await Category.findById({ _id: product.category });
+        return res.render('admin/viewProduct', { product, categories });
     } catch (error) {
         console.log(error.message);
     }
@@ -228,8 +300,39 @@ const deleteProduct = async (req, res) => {
 
 const getCategory = async (req, res) => {
     try {
-        const categories = await Category.find({});
-        return res.render('admin/category', { categories });
+
+        let search = req.query.search || '';
+        let page = parseInt(req.query.page) || 1;
+
+        const limit = 5;
+
+        const categoryData = await Category.find({
+
+            $or: [
+                { name: { $regex: search, $options: "i" } },
+                { description: { $regex: search, $options: "i" } },
+            ]
+        }).limit(limit).skip((page - 1) * limit).exec();
+
+        console.log(categoryData)
+
+        const count = await Category.countDocuments({
+
+            $or: [
+                { name: { $regex: search, $options: "i", } },
+                { description: { $regex: search, $options: "i" } },
+            ]
+        });
+
+        console.log(count)
+
+        return res.render('admin/category', {
+            currentPage: page,
+            categories: categoryData,
+            totalPages: Math.ceil(count / limit),
+            currentPage: page,
+            searchTerm: search,
+        });
     } catch (error) {
         console.log(error.message)
     }
@@ -242,26 +345,44 @@ const getAddCategory = (req, res) => {
         console.log(error.message);
     }
 }
-
 const addCategory = async (req, res) => {
     try {
-        const { name, description } = req.body;
-        let existCategory = await Product.findOne({ name });
-        if (existCategory) {
-            req.flash('error_msg', 'Already Add This Category Try different ...');
+        const { name, description, offer, isActive } = req.body;
+
+        // Check if category already exists
+        let existingCategory = await Category.findOne({ name });
+        if (existingCategory) {
+            req.flash('error_msg', 'This category already exists. Try a different name.');
             return res.redirect('/admin/category');
         }
-        const newCategory = new Category({
+
+        const newCategory = {
             name,
-            description
-        })
-        await newCategory.save();
+            description,
+            categoryOffer: offer,
+            isListed: isActive ? true : false,
+        };
+
+        // Handle image upload
+        if (req.file) {
+            newCategory.thumbnail = req.file.filename;
+        }
+
+        console.log('New category object:', newCategory);
+
+        const createdCategory = new Category(newCategory);
+        await createdCategory.save();
+
+        console.log('Saved category:', createdCategory);
+
         req.flash('success_msg', `${name} Category is Added Successfully...`);
         return res.redirect('/admin/category');
     } catch (error) {
-        console.log(error.message);
+        console.error('Error adding category:', error);
+        req.flash('error_msg', 'Error adding category: ' + error.message);
+        res.redirect('/admin/category');
     }
-}
+};
 
 
 const getEditCategory = async (req, res) => {
@@ -283,31 +404,76 @@ const getEditCategory = async (req, res) => {
 const editCategory = async (req, res) => {
     try {
         const id = req.params.id;
-        const { name, description } = req.body;
-        const EditCategory = {
+        const { name, description, offer, isActive } = req.body;
+
+        const editCategory = {
             name,
-            description
+            description,
+            categoryOffer: offer,
+            isListed: isActive ? true : false,
+        };
+
+        // Handle image upload for edit
+        if (req.file) {
+            // Delete old image if exists
+            const oldCategory = await Category.findById(id);
+            if (oldCategory.thumbnail) {
+                const oldImagePath = path.join(__dirname, '../uploads/categories', oldCategory.thumbnail);
+                if (fs.existsSync(oldImagePath)) {
+                    fs.unlinkSync(oldImagePath);
+                }
+            }
+            editCategory.thumbnail = req.file.filename;
         }
-        await Category.updateOne({ _id: id }, { $set: EditCategory });
+
+        await Category.updateOne({ _id: id }, { $set: editCategory });
         req.flash('success_msg', `${name} Category is Updated Successfully..`);
         return res.redirect('/admin/category');
     } catch (error) {
         console.log(error.message);
+        req.flash('error_msg', 'Error updating category: ' + error.message);
+        res.redirect('/admin/category');
     }
-}
+};
+
+
+
 
 
 const deleteCategory = async (req, res) => {
     try {
         const id = req.params.id;
-        const category = await Category.findById({ _id: id });
+        const category = await Category.findById(id);
+
+        // Delete associated image if exists
+        if (category.thumbnail) {
+            const imagePath = path.join(__dirname, '../uploads/categories', category.thumbnail);
+            if (fs.existsSync(imagePath)) {
+                fs.unlinkSync(imagePath);
+            }
+        }
+
         await Category.deleteOne({ _id: id });
         req.flash('success_msg', `${category.name} Category is Deleted Successfully ... `);
-        return res.redirect('/admin/category')
+        return res.redirect('/admin/category');
     } catch (error) {
         console.log(error.message);
+        req.flash('error_msg', 'Error deleting category: ' + error.message);
+        res.redirect('/admin/category');
+    }
+};
+
+
+const viewCategory = async (req, res) => {
+    try {
+        const id = req.params.id;
+        const category = await Category.findById({ _id: id });
+        return res.render('admin/viewCategory', { category });
+    } catch (error) {
+        console.log(error.message)
     }
 }
+
 
 // Customer Controllerr
 
@@ -491,6 +657,7 @@ module.exports = {
     getEditCategory,
     editCategory,
     deleteCategory,
+    viewCategory,
 
     getCustomers,
     blockCustomer,

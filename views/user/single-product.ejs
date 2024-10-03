@@ -1,0 +1,266 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Yadro - Product Page</title>
+  <script src="https://cdn.tailwindcss.com"></script>
+  <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.3/css/all.min.css" rel="stylesheet">
+  <link rel="stylesheet" href="/css/single-product.css">
+</head>
+
+<body class="bg-gray-100 font-sans">
+  <%- include('../layouts/header-with-user.ejs') %>
+
+  <main class="container mx-auto px-6 py-8">
+    <div class="flex flex-wrap -mx-4">
+      <div class="w-full md:w-1/2 px-4 mb-8 md:mb-0">
+        <div class="sticky top-0">
+          <div class="mb-6 relative">
+            <img id="mainImage" src="<%= product.images[0] %>" alt="<%= product.name %>" class="w-full rounded-lg shadow-md animate-fadeIn">
+            <% if (product.productOffer > 0) { %>
+            <div class="absolute top-4 left-4 bg-red-500 text-white text-xs font-bold px-2 py-1 rounded-full z-20 transform -rotate-12 shadow-lg animate-pulse">
+              <%= product.productOffer %>% OFF
+            </div>
+            <% } %>
+          </div>
+          <div class="flex -mx-2">
+            <% product.images.forEach((img, index) => { %>
+            <div class="w-1/4 px-2">
+              <img src="<%= img %>" alt="Thumbnail <%= index + 1 %>" class="w-full rounded-lg shadow-sm cursor-pointer hover:opacity-75 transition duration-300">
+            </div>
+            <% }) %>
+          </div>
+        </div>
+      </div>
+      <div class="w-full md:w-1/2 px-4 animate-slideIn">
+        <h1 class="text-3xl font-bold mb-2"><%= product.name %></h1>
+        <p class="text-gray-600 mb-4"><%= product.brand %></p>
+        <div class="flex items-center mb-4">
+          <div class="flex text-yellow-400">
+            <% for (let i = 0; i < 5; i++) { %>
+            <i class="<%= i < Math.floor(product.rating) ? 'fas' : 'far' %> fa-star"></i>
+            <% } %>
+          </div>
+          <span class="text-gray-600 ml-2">(150 Reviews)</span>
+        </div>
+        <p class="text-gray-600 mb-6"><%= product.description %></p>
+        <div class="mb-6">
+          <div class="flex items-center space-x-4">
+            <span class="price-tag text-red-500 text-2xl">₹ <%= product.salePrice %></span>
+            <% if (product.regularPrice > product.salePrice) { %>
+            <span class="original-price text-xl  line-through ">₹ <%= product.regularPrice %></span>
+
+            <span class="discount-percentage text-sm">
+              <%= product.productOffer %>% OFF
+            </span>
+            <% } %>
+          </div>
+        </div>
+
+
+        <div class="mb-6">
+          <h3 class="text-lg font-semibold mb-2">Colour: <%= product.color %></h3>
+          <div class="w-8 h-8 rounded-full" style="background-color:<%= product.color %>;"></div>
+        </div>
+
+        <div class="mb-6">
+          <h3 class="text-lg font-semibold mb-2">Category:</h3>
+          <span class="inline-block bg-gray-200 rounded-full px-3 py-1 text-sm font-semibold text-gray-700 mr-2">
+            <%= category.name %>
+          </span>
+        </div>
+
+        <div class="mb-6">
+          <h3 class="text-lg font-semibold mb-2">Status:</h3>
+          <span class="product-status status-<%= product.status.toLowerCase().replace(' ', '') %> text-sm font-semibold">
+            <%= product.status %>
+          </span>
+        </div>
+
+        <div class="flex items-center mb-6">
+          <div class="flex items-center border border-gray-300 rounded-md">
+            <button class="px-3 py-1 text-gray-600 hover:text-gray-700 focus:outline-none" onclick="updateQuantity(-1)">-</button>
+            <input type="number" id="quantity" class="w-12 text-center border-none custom-number-input" value="1" min="1" max="<%= product.quantity %>">
+            <button class="px-3 py-1 text-gray-600 hover:text-gray-700 focus:outline-none" onclick="updateQuantity(1)">+</button>
+          </div>
+          <span class="ml-4 text-sm text-gray-600">
+            <%= product.quantity %> items available
+          </span>
+        </div>
+
+        <div class="flex items-center mb-6">
+          <button id="buyNowBtn" class="px-6 py-2 bg-red-600 text-white rounded-md hover:bg-red-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-red-500 transition duration-300 ease-in-out transform hover:-translate-y-1">
+            Buy Now
+          </button>
+          <button id="addToCartBtn" class="ml-4 px-6 py-2 bg-gray-800 text-white rounded-md hover:bg-gray-900 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-gray-500 transition duration-300 ease-in-out transform hover:-translate-y-1">
+            Add to Cart
+          </button>
+          <button id="wishlistBtn" class="ml-4 text-gray-600 hover:text-red-600 focus:outline-none transition duration-300 ease-in-out transform hover:-translate-y-1">
+            <i class="far fa-heart text-2xl"></i>
+          </button>
+        </div>
+
+        <div class="border-t border-gray-200 pt-6">
+          <div class="mb-4">
+            <div class="flex items-center text-sm text-gray-600">
+              <i class="fas fa-truck mr-2"></i>
+              <span>Free Delivery</span>
+            </div>
+            <p class="text-xs text-gray-500">Enter your postal code for Delivery Availability</p>
+          </div>
+          <div>
+            <div class="flex items-center text-sm text-gray-600">
+              <i class="fas fa-undo mr-2"></i>
+              <span>Return Delivery</span>
+            </div>
+            <p class="text-xs text-gray-500">Free 30 Days Delivery Returns. Details</p>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Related Items section remains the same -->
+    <section class="mt-16">
+      <h2 class="text-2xl font-bold mb-6">Related Items</h2>
+      <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
+        <% products.forEach(product => { %>
+
+
+
+
+        <div class="product-card bg-white p-4 rounded shadow relative animate-on-scroll hover:scale-105 transition-transform duration-300">
+          <a href="/product-detail/<%= product.id %>">
+            <div class="absolute top-4 left-4 bg-red-500 text-white text-xs font-bold px-2 py-1 rounded-full z-20 transform -rotate-12 shadow-lg">
+              <span class="off-percentage">25% OFF</span>
+            </div>
+            <!-- Like button -->
+            <button class=" z-20 absolute top-2 right-2 bg-white rounded-full p-2 shadow-md hover:bg-gray-100 transition-colors duration-200 like-button" data-liked="false">
+              <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6 transition-colors duration-200" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
+                <path stroke-linecap="round" stroke-linejoin="round" d="M4.318 6.318a4.5 4.5 0 000 6.364L12 20.364l7.682-7.682a4.5 4.5 0 00-6.364-6.364L12 7.636l-1.318-1.318a4.5 4.5 0 00-6.364 0z" />
+              </svg>
+            </button>
+
+            <div class="relative overflow-hidden mb-4">
+
+              <img src="<%= product.images[0] %>" alt="Product" class="w-full p-6 h-38 object-cover rounded transition-transform duration-300 group-hover:scale-110 group-hover:shadow-lg">
+
+              <div class="absolute inset-0 bg-black bg-opacity-0 group-hover:bg-opacity-20 transition-opacity duration-300"></div>
+            </div>
+            <h3 class="font-semibold mb-2"><%= product.name %></h3>
+            <div class="flex justify-start gap-3 items-center mb-2">
+              <span class="text-red-500 font-bold">₹<%= product.salePrice %></span>
+              <span class="text-gray-500 line-through">₹<%= product.regularPrice %></span>
+            </div>
+            <div class="rating-stars flex items-center mb-2">
+              <div class="stars-container flex">
+                <button class="star-btn text-2xl text-gray-300 transition-colors duration-200" data-rating="1">★</button>
+                <button class="star-btn text-2xl text-gray-300 transition-colors duration-200" data-rating="2">★</button>
+                <button class="star-btn text-2xl text-gray-300 transition-colors duration-200" data-rating="3">★</button>
+                <button class="star-btn text-2xl text-gray-300 transition-colors duration-200" data-rating="4">★</button>
+                <button class="star-btn text-2xl text-gray-300 transition-colors duration-200" data-rating="5">★</button>
+              </div>
+              <span class="rating-value ml-2 text-sm font-semibold"></span>
+            </div>
+          </a>
+          <div class="flex items-center justify-between mb-4">
+            <span class="font-semibold">Quantity:</span>
+            <div class="quantity-selector flex items-center border border-gray-300 rounded">
+              <button class="quantity-btn minus bg-gray-100 px-3 py-1 rounded-l hover:bg-gray-200 transition-colors duration-200">-</button>
+              <input type="number" class="quantity-input w-12 text-center border-none focus:outline-none" value="1" min="1" max="99">
+              <button class="quantity-btn plus bg-gray-100 px-3 py-1 rounded-r hover:bg-gray-200 transition-colors duration-200">+</button>
+            </div>
+          </div>
+
+          <button class="w-full bg-red-500 text-white py-2 rounded hover:bg-red-600 transition-colors duration-300 add-to-cart-btn relative overflow-hidden">
+            <span class="add-to-cart-text">Add to Cart</span>
+            <span class="adding-to-cart-text hidden">
+              <i class="fas fa-truck animate-bounce"></i>
+            </span>
+            <span class="added-to-cart-text hidden">
+              <i class="fas fa-check mr-2"></i>Go to Cart
+            </span>
+          </button>
+        </div>
+
+
+
+
+        <% }) %>
+        <!-- Add more related product items here -->
+      </div>
+    </section>
+  </main>
+
+  <%- include('../layouts/footer.ejs') %>
+
+  <script>
+    // Image gallery
+    const thumbnails = document.querySelectorAll('.w-1/4 img');
+    const mainImage = document.getElementById('mainImage');
+
+    thumbnails.forEach(thumb => {
+      thumb.addEventListener('click', function() {
+        mainImage.src = this.src;
+        mainImage.classList.remove('animate-fadeIn');
+        void mainImage.offsetWidth; // Trigger reflow
+        mainImage.classList.add('animate-fadeIn');
+      });
+    });
+
+    // Quantity update
+    function updateQuantity(change) {
+      const quantityInput = document.getElementById('quantity');
+      let newValue = parseInt(quantityInput.value) + change;
+      newValue = Math.max(1, Math.min(newValue, <%= product.quantity %>));
+      quantityInput.value = newValue;
+    }
+
+    // Buy Now button
+    const buyNowBtn = document.getElementById('buyNowBtn');
+    buyNowBtn.addEventListener('click', function() {
+      alert('Redirecting to checkout...');
+      // Add your checkout logic here
+    });
+
+    // Add to Cart button
+    const addToCartBtn = document.getElementById('addToCartBtn');
+    addToCartBtn.addEventListener('click', function() {
+      this.classList.add('animate-pulse');
+      setTimeout(() => {
+        this.classList.remove('animate-pulse');
+        alert('Product added to cart!');
+        // Add your cart logic here
+      }, 1000);
+    });
+
+    // Wishlist toggle
+    const wishlistBtnn = document.getElementById('wishlistBtn');
+    wishlistBtnn.addEventListener('click', function() {
+      const icon = this.querySelector('i');
+      icon.classList.toggle('far');
+      icon.classList.toggle('fas');
+      icon.classList.toggle('text-red-600');
+
+      if (icon.classList.contains('fas')) {
+        alert('Product added to wishlist!');
+      } else {
+        alert('Product removed from wishlist!');
+      }
+      // Add your wishlist logic here
+    });
+
+    // Smooth scroll for anchor links
+    document.querySelectorAll('a[href^="#"]').forEach(anchor => {
+      anchor.addEventListener('click', function(e) {
+        e.preventDefault();
+        document.querySelector(this.getAttribute('href')).scrollIntoView({
+          behavior: 'smooth'
+        });
+      });
+    });
+  </script>
+</body>
+
+</html>

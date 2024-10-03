@@ -14,48 +14,59 @@
 <body class="bg-gray-100 font-sans transition-colors duration-300 dark:bg-gray-900">
   <%- include('../layouts/admin-sidebar.ejs') %>
 
-  <form action="/admin/add-category" method="post">
-
-
+  <form action="/admin/add-category" method="post" enctype="multipart/form-data">
     <div class="container mx-auto p-6 ml-64">
       <div class="flex justify-between items-center mb-6">
         <h1 class="text-3xl font-bold text-gray-800 dark:text-gray-200">Add Category</h1>
         <div class="theme-toggle" id="themeToggle"></div>
       </div>
 
-      <!-- Thumbnail Upload Section -->
       <div class="bg-white dark:bg-gray-800 p-6 rounded-lg shadow-md mb-6 fade-in-up">
         <h2 class="section-header mb-4 dark:text-gray-200">Thumbnail</h2>
-        <div class="image-upload h-48 flex justify-center items-center rounded-md dark:border-gray-600">
+        <div id="dropArea" class="image-upload h-48 flex justify-center items-center rounded-md dark:border-gray-600">
           <label class="cursor-pointer">
-            <input type="file" class="hidden" />
-            <div class="text-gray-500 dark:text-gray-400 flex flex-col items-center">
+
+            <div id="uploadPrompt" class="text-gray-500 dark:text-gray-400 flex flex-col items-center">
               <i class="fas fa-cloud-upload-alt text-3xl mb-2"></i>
               <span>Drag and drop image here, or click to add image</span>
-              <button class="mt-2 px-4 py-2 bg-primary-light dark:bg-primary-dark text-white rounded-md hover:bg-blue-600 dark:hover:bg-blue-500 transition-colors duration-300">Add Image</button>
+              <button type="button" class="mt-2 px-4 py-2 bg-primary-light dark:bg-primary-dark text-white rounded-md hover:bg-blue-600 dark:hover:bg-blue-500 transition-colors duration-300">Add Image</button>
             </div>
+            <input type="file" name="image" id="fileInput" accept="image/*" hidden>
           </label>
+          <img id="previewImage" class="hidden max-h-full max-w-full object-contain" />
         </div>
       </div>
 
       <!-- Category Information Section -->
       <div class="bg-white dark:bg-gray-800 p-6 rounded-lg shadow-md mb-6 fade-in-up" style="animation-delay: 0.2s;">
         <h2 class="section-header mb-4 dark:text-gray-200">Category Information</h2>
-        <div class="grid grid-cols-1 gap-6">
+        <div class="grid grid-cols-2 gap-6">
           <div class="input-box">
             <label for="categoryName" class="block text-sm font-medium text-gray-700 dark:text-gray-300">Category Name</label>
             <input type="text" name="name" id="categoryName" class="mt-1 p-2 w-full border border-gray-300 rounded-md focus:ring-primary-light focus:border-primary-light dark:bg-gray-700 dark:border-gray-600 dark:text-white" placeholder="Type category name here...">
           </div>
           <div class="input-box">
+            <label for="categoryOffer" class="block text-sm font-medium text-gray-700 dark:text-gray-300">Category Offer</label>
+            <input type="text" name="offer" id="categoryOffer" class="mt-1 p-2 w-full border border-gray-300 rounded-md focus:ring-primary-light focus:border-primary-light dark:bg-gray-700 dark:border-gray-600 dark:text-white" placeholder="Type category Offer here...">
+          </div>
+          <div class="input-box">
             <label for="description" class="block text-sm font-medium text-gray-700 dark:text-gray-300">Description</label>
             <textarea id="description" rows="4" name="description" class="mt-1 p-2 w-full border border-gray-300 rounded-md focus:ring-primary-light focus:border-primary-light dark:bg-gray-700 dark:border-gray-600 dark:text-white" placeholder="Type category description here..."></textarea>
+          </div>
+          <!-- New Active/Inactive Toggle Section -->
+          <div class="input-box">
+            <label for="isActive" class="block text-sm font-medium text-gray-700 dark:text-gray-300">Category Status</label>
+            <div class="mt-2 flex items-center">
+              <input type="checkbox" id="isActive" name="isActive" class="form-checkbox h-5 w-5 text-primary-light dark:text-primary-dark rounded border-gray-300 focus:ring-primary-light dark:focus:ring-primary-dark">
+              <label for="isActive" class="ml-2 text-sm text-gray-700 dark:text-gray-300">Active</label>
+            </div>
           </div>
         </div>
       </div>
 
       <!-- Submit Button -->
       <div class="flex justify-center mb-6 fade-in-up" style="animation-delay: 0.4s;">
-        <button class="px-6 py-2 bg-primary-light dark:bg-primary-dark text-white font-bold rounded-lg hover:bg-blue-700 dark:hover:bg-blue-600 focus:outline-none transition-all duration-300 transform hover:scale-105 hover:shadow-lg">Save Category</button>
+        <button type="submit" class="px-6 py-2 bg-primary-light dark:bg-primary-dark text-white font-bold rounded-lg hover:bg-blue-700 dark:hover:bg-blue-600 focus:outline-none transition-all duration-300 transform hover:scale-105 hover:shadow-lg">Save Category</button>
       </div>
     </div>
   </form>

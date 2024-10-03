@@ -60,9 +60,27 @@ const sendVerificationEmail = async (email, otp) => {
 
 const getHomeWithUser = async (req, res) => {
     try {
-        const products = await Product.find({});
+        const products = await Product.find({}).limit(4);
         const categories = await Category.find({});
         return res.render('user/home-with-user', { products, categories });
+    } catch (error) {
+        console.error(error.message);
+        let errorMessage = { message: "An error occurred. Please try again later." };
+        return res.render('user/error', { error: errorMessage });
+    }
+}
+
+const productDetails = async (req, res) => {
+    try {
+        const id = req.params.id;
+        const product = await Product.findById({ _id: id });
+        const category = await Category.findById({ _id: product.category })
+        const products = await Product.find({}).limit(3);
+        if (!product) {
+            req.flash('error_msg', 'Something went wrong!!');
+            return res.redirect('/');
+        }
+        return res.render('user/single-product', { product, products, category });
     } catch (error) {
         console.error(error.message);
         let errorMessage = { message: "An error occurred. Please try again later." };
@@ -284,6 +302,7 @@ module.exports = {
     getLogin,
     getHomeWithoutUser,
     getHomeWithUser,
+    productDetails,
     getAllProducts,
     newUser,
     getLogout,

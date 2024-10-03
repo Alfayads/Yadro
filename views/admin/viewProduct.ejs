@@ -24,19 +24,19 @@
       <!-- Left side - Image gallery -->
       <div class="fade-in-up" style="animation-delay: 0.2s;">
         <div class="image-container mb-4">
-          <img id="mainImage" src="https://via.placeholder.com/600x600" alt="Product Image" class="w-full h-auto rounded-lg shadow-md">
+          <img id="mainImage" src="<%= product.images[0] %>" alt="Product Image" class="w-full h-auto rounded-lg shadow-md">
         </div>
         <div class="grid grid-cols-5 gap-2">
-          <img src="https://via.placeholder.com/120x120" alt="Thumbnail 1" class="thumbnail w-full h-auto rounded-md cursor-pointer">
-          <img src="https://via.placeholder.com/120x120" alt="Thumbnail 2" class="thumbnail w-full h-auto rounded-md cursor-pointer">
-          <img src="https://via.placeholder.com/120x120" alt="Thumbnail 3" class="thumbnail w-full h-auto rounded-md cursor-pointer">
-          <img src="https://via.placeholder.com/120x120" alt="Thumbnail 4" class="thumbnail w-full h-auto rounded-md cursor-pointer">
-          <img src="https://via.placeholder.com/120x120" alt="Thumbnail 5" class="thumbnail w-full h-auto rounded-md cursor-pointer">
+          <% product.images.forEach( image => { %>
+          <img src="<%= image %>" alt="<%= product.name %>" class="thumbnail w-full h-auto rounded-md cursor-pointer">
+          <% }) %>
+
         </div>
       </div>
 
       <!-- Right side - Product details -->
       <div class="fade-in-up" style="animation-delay: 0.4s;">
+        <!-- Product Name, Brand, and Rating -->
         <h2 class="text-2xl font-bold text-gray-800 dark:text-gray-200 mb-4"><%= product.name %></h2>
         <p class="text-gray-600 dark:text-gray-400 mb-4">Brand: <%= product.brand %></p>
         <div class="flex items-center mb-4">
@@ -47,27 +47,80 @@
           <span class="text-gray-400 mr-2"><i class="fas fa-star"></i></span>
           <span class="text-gray-600 dark:text-gray-400">(4.0) 1,234 reviews</span>
         </div>
+
+        <!-- Pricing Details -->
         <div class="mb-4">
-          <span class="text-3xl font-bold text-gray-800 dark:text-gray-200"><%= product.regularPrice %></span>
-          <span class="text-lg text-gray-500 dark:text-gray-400 line-through ml-2">$129.99</span>
-          <span class="text-green-500 ml-2"><%= product.discount %>% off</span>
+          <span class="text-3xl font-bold text-gray-800 dark:text-gray-200">₹ <%= product.salePrice %></span>
+          <span class="text-lg text-gray-500 dark:text-gray-400 line-through ml-2">₹ <%= product.regularPrice %></span>
+          <span class="text-green-500 ml-2"><%= product.productOffer %>% off</span>
         </div>
+
+        <!-- Product Description -->
         <p class="text-gray-700 dark:text-gray-300 mb-4">
           <%= product.description %>
         </p>
+
+        <!-- Stock and Category Information -->
+        <div class="mb-6">
+          <h3 class="text-lg font-semibold mb-2">Stock: <%= product.quantity %></h3>
+          <h3 class="text-lg font-semibold mb-2">Category:</h3>
+          <span class="inline-block bg-gray-200 rounded-full px-3 py-1 text-sm font-semibold text-gray-700 mr-2">
+            <%= categories.name %>
+          </span>
+        </div>
+
+        <!-- Product Status -->
+        <div class="mb-6">
+          <h3 class="text-lg font-semibold mb-2">Status:</h3>
+          <span class="inline-flex items-center px-3 py-1 rounded-full text-sm font-semibold transition duration-300 ease-in-out
+        <% if (product.status === 'Active') { %>
+          bg-green-100 text-green-800
+        <% } else if (product.status === 'Inactive') { %>
+          bg-red-100 text-red-800
+        <% } else if (product.status === 'Out of Stock') { %>
+          bg-yellow-100 text-yellow-800
+        <% } else { %>
+          bg-gray-100 text-gray-800
+        <% } %>
+        shadow-md hover:shadow-lg">
+            <!-- Status Icon -->
+            <% if (product.status === 'Active') { %>
+            <i class="fas fa-check-circle mr-2"></i>
+            <% } else if (product.status === 'Inactive') { %>
+            <i class="fas fa-times-circle mr-2"></i>
+            <% } else if (product.status === 'Out of Stock') { %>
+            <i class="fas fa-exclamation-triangle mr-2"></i>
+            <% } else { %>
+            <i class="fas fa-info-circle mr-2"></i>
+            <% } %>
+
+            <!-- Status Text -->
+            <%= product.status %>
+          </span>
+        </div>
+
+
+        <!-- Available Colors -->
         <div class="mb-4">
           <h3 class="section-header mb-2 dark:text-gray-200">Available Colors</h3>
           <div class="flex space-x-2">
-            <button class="w-8 h-8 rounded-full bg-red-500"></button>
-            <button class="w-8 h-8 rounded-full bg-blue-500"></button>
-            <button class="w-8 h-8 rounded-full bg-green-500"></button>
-            <button class="w-8 h-8 rounded-full bg-yellow-500"></button>
+            <button class="w-8 h-8 rounded-full" style="background-color: <%= product.color %>;"></button>
           </div>
         </div>
+
+        <!-- Detailed Information -->
         <div class="mb-6">
-          <h3 class="section-header mb-2 dark:text-gray-200">Quantity: <%= product.quantity %></h3>
+          <h3 class="text-lg font-semibold mb-2">Product Specifications</h3>
+          <ul class="list-disc pl-6 text-gray-700 dark:text-gray-300">
+            <li>Weight: <%= product.weight %> kg</li>
+            <li>Dimensions: <%= product.dimensions %></li>
+            <li>Material: <%= product.material %></li>
+            <li>Warranty: <%= product.warranty %> years</li>
+          </ul>
         </div>
+
       </div>
+
     </div>
   </div>
 

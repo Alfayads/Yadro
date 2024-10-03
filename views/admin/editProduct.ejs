@@ -59,7 +59,7 @@
 
           <div class="input-box">
             <label for="discount" class="block text-sm font-medium text-gray-700 dark:text-gray-300">Discount Percentage</label>
-            <input type="number" name="discount" value="<%= product.discount %>" id="discount" class="mt-1 p-2 w-full border border-gray-300 rounded-md focus:ring-primary-light focus:border-primary-light dark:bg-gray-700 dark:border-gray-600 dark:text-white" placeholder="Enter discount percentage">
+            <input type="number" name="discount" value="<%= product.productOffer %>" id="discount" class="mt-1 p-2 w-full border border-gray-300 rounded-md focus:ring-primary-light focus:border-primary-light dark:bg-gray-700 dark:border-gray-600 dark:text-white" placeholder="Enter discount percentage">
           </div>
         </div>
       </div>
@@ -71,11 +71,10 @@
           <div class="input-box">
             <label for="category" class="block text-sm font-medium text-gray-700 dark:text-gray-300">Product Category</label>
             <select id="category" name="category" class="mt-1 p-2 w-full border border-gray-300 rounded-md focus:ring-primary-light focus:border-primary-light dark:bg-gray-700 dark:border-gray-600 dark:text-white">
-              <option value="<%= product.category %>"><%= product.category %></option>
-              <option value="Wired Headphone">Wired Headphone</option>
-              <option value="Wireless Headphone">Wireless Headphone</option>
-              <option value="Airpod">Aipod</option>
-              <option value="speaker">Speaker</option>
+              <option value="<%= category.name %>"><%= category.name %> ( Old Value )</option>
+              <% categories.forEach( category => { %>
+              <option value="<%= category.name %>"><%= category.name %></option>
+              <% }) %>
             </select>
           </div>
         </div>
@@ -85,57 +84,16 @@
       <div class="bg-white dark:bg-gray-800 p-6 rounded-lg shadow-md mb-6 fade-in-up" style="animation-delay: 0.6s;">
         <h2 class="section-header mb-4 dark:text-gray-200">Upload Images</h2>
         <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-          <!-- Primary Image Upload -->
           <div class="image-upload h-32 flex justify-center items-center rounded-md dark:border-gray-600">
             <label class="cursor-pointer">
-              <input type="file" class="hidden" required />
+              <input type="file" name="productImage" accept="image/png, image/jpeg, image/jpg" class="hidden" multiple />
               <div class="text-gray-500 dark:text-gray-400 flex flex-col items-center">
                 <i class="fas fa-cloud-upload-alt text-3xl mb-2"></i>
-                <span>Upload Primary Image</span>
+                <span>Upload Images (Max 4)</span>
               </div>
             </label>
           </div>
-
-          <!-- Other Image Uploads -->
-          <div class="image-upload h-32 flex justify-center items-center rounded-md dark:border-gray-600">
-            <label class="cursor-pointer">
-              <input type="file" class="hidden" />
-              <div class="text-gray-500 dark:text-gray-400 flex flex-col items-center">
-                <i class="fas fa-cloud-upload-alt text-2xl mb-2"></i>
-                <span>Upload Image</span>
-              </div>
-            </label>
-          </div>
-
-          <div class="image-upload h-32 flex justify-center items-center rounded-md dark:border-gray-600">
-            <label class="cursor-pointer">
-              <input type="file" class="hidden" />
-              <div class="text-gray-500 dark:text-gray-400 flex flex-col items-center">
-                <i class="fas fa-cloud-upload-alt text-2xl mb-2"></i>
-                <span>Upload Image</span>
-              </div>
-            </label>
-          </div>
-
-          <div class="image-upload h-32 flex justify-center items-center rounded-md dark:border-gray-600">
-            <label class="cursor-pointer">
-              <input type="file" class="hidden" />
-              <div class="text-gray-500 dark:text-gray-400 flex flex-col items-center">
-                <i class="fas fa-cloud-upload-alt text-2xl mb-2"></i>
-                <span>Upload Image</span>
-              </div>
-            </label>
-          </div>
-
-          <div class="image-upload h-32 flex justify-center items-center rounded-md dark:border-gray-600">
-            <label class="cursor-pointer">
-              <input type="file" class="hidden" />
-              <div class="text-gray-500 dark:text-gray-400 flex flex-col items-center">
-                <i class="fas fa-cloud-upload-alt text-2xl mb-2"></i>
-                <span>Upload Image</span>
-              </div>
-            </label>
-          </div>
+          <div id="imagePreviewContainer" class="col-span-2"></div>
         </div>
       </div>
 

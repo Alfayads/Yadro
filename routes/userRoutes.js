@@ -12,6 +12,9 @@ user_router.get('/', auth.isLogin, authController.getHomeWithoutUser)
 //home
 user_router.get('/home', auth.isLogout, authController.getHomeWithUser);
 
+// Product Details
+user_router.get('/product-detail/:id', authController.productDetails);
+
 
 // signup
 user_router.get('/signup', auth.isLogin, authController.getSignup);
@@ -44,7 +47,6 @@ user_router.get(
     '/google/callback',
     passport.authenticate('google', { failureRedirect: '/signup', failureFlash: true }),
     (req, res) => {
-
         res.redirect('/home');
     }
 );

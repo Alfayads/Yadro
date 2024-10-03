@@ -147,3 +147,15 @@ input:checked+.toggle-slider {
 input:checked+.toggle-slider:before {
     transform: translateX(26px);
 }
+
+
+#statusConfirmModal .modal-content {
+    transform: scale(0.95);
+    opacity: 0;
+    transition: transform 0.3s ease-in-out, opacity 0.3s ease-in-out;
+}
+
+#statusConfirmModal .scale-100 {
+    transform: scale(1);
+    opacity: 1;
+}

@@ -135,36 +135,41 @@
 
 
 
-        <div class="product-card bg-white p-4 rounded shadow relative animate-on-scroll hover:scale-105 transition-transform duration-300">
-          <div class="absolute top-4 left-4 bg-red-500 text-white text-xs font-bold px-2 py-1 rounded-full z-20 transform -rotate-12 shadow-lg">
-            <span class="off-percentage">25% OFF</span>
-          </div>
-          <!-- Like button -->
-          <button class=" z-20 absolute top-2 right-2 bg-white rounded-full p-2 shadow-md hover:bg-gray-100 transition-colors duration-200 like-button" data-liked="false">
-            <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6 transition-colors duration-200" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
-              <path stroke-linecap="round" stroke-linejoin="round" d="M4.318 6.318a4.5 4.5 0 000 6.364L12 20.364l7.682-7.682a4.5 4.5 0 00-6.364-6.364L12 7.636l-1.318-1.318a4.5 4.5 0 00-6.364 0z" />
-            </svg>
-          </button>
 
-          <div class="relative overflow-hidden mb-4">
-            <img src="/images/headphone.png" alt="Product" class="w-full p-6 h-38 object-cover rounded transition-transform duration-300 group-hover:scale-110 group-hover:shadow-lg">
-            <div class="absolute inset-0 bg-black bg-opacity-0 group-hover:bg-opacity-20 transition-opacity duration-300"></div>
-          </div>
-          <h3 class="font-semibold mb-2"><%= product.name %></h3>
-          <div class="flex justify-start gap-3 items-center mb-2">
-            <span class="text-red-500 font-bold">₹<%= product.salePrice %></span>
-            <span class="text-gray-500 line-through">₹<%= product.regularPrice %></span>
-          </div>
-          <div class="rating-stars flex items-center mb-2">
-            <div class="stars-container flex">
-              <button class="star-btn text-2xl text-gray-300 transition-colors duration-200" data-rating="1">★</button>
-              <button class="star-btn text-2xl text-gray-300 transition-colors duration-200" data-rating="2">★</button>
-              <button class="star-btn text-2xl text-gray-300 transition-colors duration-200" data-rating="3">★</button>
-              <button class="star-btn text-2xl text-gray-300 transition-colors duration-200" data-rating="4">★</button>
-              <button class="star-btn text-2xl text-gray-300 transition-colors duration-200" data-rating="5">★</button>
+        <div class="product-card bg-white p-4 rounded shadow relative animate-on-scroll hover:scale-105 transition-transform duration-300">
+          <a href="/product-detail/<%= product.id %>">
+            <div class="absolute top-4 left-4 bg-red-500 text-white text-xs font-bold px-2 py-1 rounded-full z-20 transform -rotate-12 shadow-lg">
+              <span class="off-percentage">25% OFF</span>
             </div>
-            <span class="rating-value ml-2 text-sm font-semibold"></span>
-          </div>
+            <!-- Like button -->
+            <button class=" z-20 absolute top-2 right-2 bg-white rounded-full p-2 shadow-md hover:bg-gray-100 transition-colors duration-200 like-button" data-liked="false">
+              <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6 transition-colors duration-200" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
+                <path stroke-linecap="round" stroke-linejoin="round" d="M4.318 6.318a4.5 4.5 0 000 6.364L12 20.364l7.682-7.682a4.5 4.5 0 00-6.364-6.364L12 7.636l-1.318-1.318a4.5 4.5 0 00-6.364 0z" />
+              </svg>
+            </button>
+
+            <div class="relative overflow-hidden mb-4">
+
+              <img src="<%= product.images[0] %>" alt="Product" class="w-full p-6 h-38 object-cover rounded transition-transform duration-300 group-hover:scale-110 group-hover:shadow-lg">
+
+              <div class="absolute inset-0 bg-black bg-opacity-0 group-hover:bg-opacity-20 transition-opacity duration-300"></div>
+            </div>
+            <h3 class="font-semibold mb-2"><%= product.name %></h3>
+            <div class="flex justify-start gap-3 items-center mb-2">
+              <span class="text-red-500 font-bold">₹<%= product.salePrice %></span>
+              <span class="text-gray-500 line-through">₹<%= product.regularPrice %></span>
+            </div>
+            <div class="rating-stars flex items-center mb-2">
+              <div class="stars-container flex">
+                <button class="star-btn text-2xl text-gray-300 transition-colors duration-200" data-rating="1">★</button>
+                <button class="star-btn text-2xl text-gray-300 transition-colors duration-200" data-rating="2">★</button>
+                <button class="star-btn text-2xl text-gray-300 transition-colors duration-200" data-rating="3">★</button>
+                <button class="star-btn text-2xl text-gray-300 transition-colors duration-200" data-rating="4">★</button>
+                <button class="star-btn text-2xl text-gray-300 transition-colors duration-200" data-rating="5">★</button>
+              </div>
+              <span class="rating-value ml-2 text-sm font-semibold"></span>
+            </div>
+          </a>
           <div class="flex items-center justify-between mb-4">
             <span class="font-semibold">Quantity:</span>
             <div class="quantity-selector flex items-center border border-gray-300 rounded">
@@ -173,6 +178,7 @@
               <button class="quantity-btn plus bg-gray-100 px-3 py-1 rounded-r hover:bg-gray-200 transition-colors duration-200">+</button>
             </div>
           </div>
+
           <button class="w-full bg-red-500 text-white py-2 rounded hover:bg-red-600 transition-colors duration-300 add-to-cart-btn relative overflow-hidden">
             <span class="add-to-cart-text">Add to Cart</span>
             <span class="adding-to-cart-text hidden">
@@ -183,6 +189,7 @@
             </span>
           </button>
         </div>
+
 
 
 
@@ -203,7 +210,7 @@
       <div class="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-6 gap-4">
 
         <% categories.forEach( category => { %>
-
+        <% if (category.isListed) { %>
         <div class="category-item group">
           <div class="category-icon flex flex-col items-center justify-center p-6 border rounded-lg bg-white shadow-md transition-all duration-300 transform hover:scale-105 hover:shadow-lg">
             <div class="icon-wrapper mb-4 p-3 rounded-full bg-gray-100 group-hover:bg-blue-100 transition-colors duration-300">
@@ -212,7 +219,7 @@
             <span class="text-sm font-medium text-gray-700 group-hover:text-blue-600 transition-colors duration-300"><%= category.name %></span>
           </div>
         </div>
-
+        <% } %>
         <% }) %>
 
 
@@ -228,36 +235,43 @@
       </div>
       <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
         <!-- Repeat product card structure from Flash Sales section -->
-        <div class="product-card bg-white p-4 rounded shadow relative animate-on-scroll hover:scale-105 transition-transform duration-300">
-          <div class="absolute top-4 left-4 bg-red-500 text-white text-xs font-bold px-2 py-1 rounded-full z-10 transform -rotate-12 shadow-lg">
-            <span class="off-percentage">25% OFF</span>
-          </div>
-          <!-- Like button -->
-          <button class="absolute top-2 right-2 bg-white rounded-full p-2 shadow-md hover:bg-gray-100 transition-colors duration-200 like-button" data-liked="false">
-            <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6 transition-colors duration-200" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
-              <path stroke-linecap="round" stroke-linejoin="round" d="M4.318 6.318a4.5 4.5 0 000 6.364L12 20.364l7.682-7.682a4.5 4.5 0 00-6.364-6.364L12 7.636l-1.318-1.318a4.5 4.5 0 00-6.364 0z" />
-            </svg>
-          </button>
+        <% products.forEach(product => { %>
 
-          <div class="relative overflow-hidden mb-4">
-            <img src="/images/headphone.png" alt="Product" class="w-full p-6 h-38 object-cover rounded transition-transform duration-300 group-hover:scale-110 group-hover:shadow-lg">
-            <div class="absolute inset-0 bg-black bg-opacity-0 group-hover:bg-opacity-20 transition-opacity duration-300"></div>
-          </div>
-          <h3 class="font-semibold mb-2">HAVIT HV-G92 Gamepad</h3>
-          <div class="flex justify-start gap-3 items-center mb-2">
-            <span class="text-red-500 font-bold">₹120</span>
-            <span class="text-gray-500 line-through">₹160</span>
-          </div>
-          <div class="rating-stars flex items-center mb-2">
-            <div class="stars-container flex">
-              <button class="star-btn text-2xl text-gray-300 transition-colors duration-200" data-rating="1">★</button>
-              <button class="star-btn text-2xl text-gray-300 transition-colors duration-200" data-rating="2">★</button>
-              <button class="star-btn text-2xl text-gray-300 transition-colors duration-200" data-rating="3">★</button>
-              <button class="star-btn text-2xl text-gray-300 transition-colors duration-200" data-rating="4">★</button>
-              <button class="star-btn text-2xl text-gray-300 transition-colors duration-200" data-rating="5">★</button>
+
+
+
+        <div class="product-card bg-white p-4 rounded shadow relative animate-on-scroll hover:scale-105 transition-transform duration-300">
+          <a href="/product-detail/<%= product.id %>">
+            <div class="absolute top-4 left-4 bg-red-500 text-white text-xs font-bold px-2 py-1 rounded-full z-20 transform -rotate-12 shadow-lg">
+              <span class="off-percentage">25% OFF</span>
             </div>
-            <span class="rating-value ml-2 text-sm font-semibold"></span>
-          </div>
+            <!-- Like button -->
+            <button class=" z-20 absolute top-2 right-2 bg-white rounded-full p-2 shadow-md hover:bg-gray-100 transition-colors duration-200 like-button" data-liked="false">
+              <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6 transition-colors duration-200" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
+                <path stroke-linecap="round" stroke-linejoin="round" d="M4.318 6.318a4.5 4.5 0 000 6.364L12 20.364l7.682-7.682a4.5 4.5 0 00-6.364-6.364L12 7.636l-1.318-1.318a4.5 4.5 0 00-6.364 0z" />
+              </svg>
+            </button>
+
+            <div class="relative overflow-hidden mb-4">
+              <img src="/images/headphone.png" alt="Product" class="w-full p-6 h-38 object-cover rounded transition-transform duration-300 group-hover:scale-110 group-hover:shadow-lg">
+              <div class="absolute inset-0 bg-black bg-opacity-0 group-hover:bg-opacity-20 transition-opacity duration-300"></div>
+            </div>
+            <h3 class="font-semibold mb-2"><%= product.name %></h3>
+            <div class="flex justify-start gap-3 items-center mb-2">
+              <span class="text-red-500 font-bold">₹<%= product.salePrice %></span>
+              <span class="text-gray-500 line-through">₹<%= product.regularPrice %></span>
+            </div>
+            <div class="rating-stars flex items-center mb-2">
+              <div class="stars-container flex">
+                <button class="star-btn text-2xl text-gray-300 transition-colors duration-200" data-rating="1">★</button>
+                <button class="star-btn text-2xl text-gray-300 transition-colors duration-200" data-rating="2">★</button>
+                <button class="star-btn text-2xl text-gray-300 transition-colors duration-200" data-rating="3">★</button>
+                <button class="star-btn text-2xl text-gray-300 transition-colors duration-200" data-rating="4">★</button>
+                <button class="star-btn text-2xl text-gray-300 transition-colors duration-200" data-rating="5">★</button>
+              </div>
+              <span class="rating-value ml-2 text-sm font-semibold"></span>
+            </div>
+          </a>
           <div class="flex items-center justify-between mb-4">
             <span class="font-semibold">Quantity:</span>
             <div class="quantity-selector flex items-center border border-gray-300 rounded">
@@ -266,6 +280,7 @@
               <button class="quantity-btn plus bg-gray-100 px-3 py-1 rounded-r hover:bg-gray-200 transition-colors duration-200">+</button>
             </div>
           </div>
+
           <button class="w-full bg-red-500 text-white py-2 rounded hover:bg-red-600 transition-colors duration-300 add-to-cart-btn relative overflow-hidden">
             <span class="add-to-cart-text">Add to Cart</span>
             <span class="adding-to-cart-text hidden">
@@ -276,6 +291,11 @@
             </span>
           </button>
         </div>
+
+
+
+
+        <% }) %>
       </div>
     </section>
 
@@ -303,36 +323,43 @@
       </div>
       <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
         <!-- Repeat product card structure -->
-        <div class="product-card bg-white p-4 rounded shadow relative animate-on-scroll hover:scale-105 transition-transform duration-300">
-          <div class="absolute top-4 left-4 bg-red-500 text-white text-xs font-bold px-2 py-1 rounded-full z-10 transform -rotate-12 shadow-lg">
-            <span class="off-percentage">25% OFF</span>
-          </div>
-          <!-- Like button -->
-          <button class="absolute top-2 right-2 bg-white rounded-full p-2 shadow-md hover:bg-gray-100 transition-colors duration-200 like-button" data-liked="false">
-            <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6 transition-colors duration-200" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
-              <path stroke-linecap="round" stroke-linejoin="round" d="M4.318 6.318a4.5 4.5 0 000 6.364L12 20.364l7.682-7.682a4.5 4.5 0 00-6.364-6.364L12 7.636l-1.318-1.318a4.5 4.5 0 00-6.364 0z" />
-            </svg>
-          </button>
+        <% products.forEach(product => { %>
 
-          <div class="relative overflow-hidden mb-4">
-            <img src="/images/headphone.png" alt="Product" class="w-full p-6 h-38 object-cover rounded transition-transform duration-300 group-hover:scale-110 group-hover:shadow-lg">
-            <div class="absolute inset-0 bg-black bg-opacity-0 group-hover:bg-opacity-20 transition-opacity duration-300"></div>
-          </div>
-          <h3 class="font-semibold mb-2">HAVIT HV-G92 Gamepad</h3>
-          <div class="flex justify-start gap-3 items-center mb-2">
-            <span class="text-red-500 font-bold">₹10000</span>
-            <span class="text-gray-500 line-through">₹30000</span>
-          </div>
-          <div class="rating-stars flex items-center mb-2">
-            <div class="stars-container flex">
-              <button class="star-btn text-2xl text-gray-300 transition-colors duration-200" data-rating="1">★</button>
-              <button class="star-btn text-2xl text-gray-300 transition-colors duration-200" data-rating="2">★</button>
-              <button class="star-btn text-2xl text-gray-300 transition-colors duration-200" data-rating="3">★</button>
-              <button class="star-btn text-2xl text-gray-300 transition-colors duration-200" data-rating="4">★</button>
-              <button class="star-btn text-2xl text-gray-300 transition-colors duration-200" data-rating="5">★</button>
+
+
+
+        <div class="product-card bg-white p-4 rounded shadow relative animate-on-scroll hover:scale-105 transition-transform duration-300">
+          <a href="/product-detail/<%= product.id %>">
+            <div class="absolute top-4 left-4 bg-red-500 text-white text-xs font-bold px-2 py-1 rounded-full z-20 transform -rotate-12 shadow-lg">
+              <span class="off-percentage">25% OFF</span>
             </div>
-            <span class="rating-value ml-2 text-sm font-semibold"></span>
-          </div>
+            <!-- Like button -->
+            <button class=" z-20 absolute top-2 right-2 bg-white rounded-full p-2 shadow-md hover:bg-gray-100 transition-colors duration-200 like-button" data-liked="false">
+              <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6 transition-colors duration-200" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
+                <path stroke-linecap="round" stroke-linejoin="round" d="M4.318 6.318a4.5 4.5 0 000 6.364L12 20.364l7.682-7.682a4.5 4.5 0 00-6.364-6.364L12 7.636l-1.318-1.318a4.5 4.5 0 00-6.364 0z" />
+              </svg>
+            </button>
+
+            <div class="relative overflow-hidden mb-4">
+              <img src="/images/headphone.png" alt="Product" class="w-full p-6 h-38 object-cover rounded transition-transform duration-300 group-hover:scale-110 group-hover:shadow-lg">
+              <div class="absolute inset-0 bg-black bg-opacity-0 group-hover:bg-opacity-20 transition-opacity duration-300"></div>
+            </div>
+            <h3 class="font-semibold mb-2"><%= product.name %></h3>
+            <div class="flex justify-start gap-3 items-center mb-2">
+              <span class="text-red-500 font-bold">₹<%= product.salePrice %></span>
+              <span class="text-gray-500 line-through">₹<%= product.regularPrice %></span>
+            </div>
+            <div class="rating-stars flex items-center mb-2">
+              <div class="stars-container flex">
+                <button class="star-btn text-2xl text-gray-300 transition-colors duration-200" data-rating="1">★</button>
+                <button class="star-btn text-2xl text-gray-300 transition-colors duration-200" data-rating="2">★</button>
+                <button class="star-btn text-2xl text-gray-300 transition-colors duration-200" data-rating="3">★</button>
+                <button class="star-btn text-2xl text-gray-300 transition-colors duration-200" data-rating="4">★</button>
+                <button class="star-btn text-2xl text-gray-300 transition-colors duration-200" data-rating="5">★</button>
+              </div>
+              <span class="rating-value ml-2 text-sm font-semibold"></span>
+            </div>
+          </a>
           <div class="flex items-center justify-between mb-4">
             <span class="font-semibold">Quantity:</span>
             <div class="quantity-selector flex items-center border border-gray-300 rounded">
@@ -341,6 +368,7 @@
               <button class="quantity-btn plus bg-gray-100 px-3 py-1 rounded-r hover:bg-gray-200 transition-colors duration-200">+</button>
             </div>
           </div>
+
           <button class="w-full bg-red-500 text-white py-2 rounded hover:bg-red-600 transition-colors duration-300 add-to-cart-btn relative overflow-hidden">
             <span class="add-to-cart-text">Add to Cart</span>
             <span class="adding-to-cart-text hidden">
@@ -351,6 +379,11 @@
             </span>
           </button>
         </div>
+
+
+
+
+        <% }) %>
       </div>
     </section>
 

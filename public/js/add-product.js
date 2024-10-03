@@ -25,22 +25,35 @@ document.addEventListener("DOMContentLoaded", function () {
         html.classList.add('dark');
     }
 
-    // File input preview (for demonstration, you can expand this functionality)
+    // File input preview
     const fileInputs = document.querySelectorAll('input[type="file"]');
     fileInputs.forEach(input => {
         input.addEventListener('change', (e) => {
-            const file = e.target.files[0];
-            if (file) {
-                const reader = new FileReader();
-                reader.onload = (e) => {
-                    const img = document.createElement('img');
-                    img.src = e.target.result;
-                    img.classList.add('w-full', 'h-full', 'object-cover', 'rounded-md');
-                    input.parentElement.parentElement.innerHTML = '';
-                    input.parentElement.parentElement.appendChild(img);
+            const files = e.target.files;
+            const previewContainer = input.parentElement.parentElement;
+
+            // Clear existing previews
+            const existingPreviews = previewContainer.querySelectorAll('.image-preview');
+            existingPreviews.forEach(preview => preview.remove());
+
+            // Create previews for each selected file
+            Array.from(files).forEach(file => {
+                if (file) {
+                    const reader = new FileReader();
+                    reader.onload = (e) => {
+                        const previewWrapper = document.createElement('div');
+                        previewWrapper.classList.add('image-preview', 'relative', 'mt-2');
+
+                        const img = document.createElement('img');
+                        img.src = e.target.result;
+                        img.classList.add('w-full', 'h-32', 'object-cover', 'rounded-md');
+
+                        previewWrapper.appendChild(img);
+                        previewContainer.appendChild(previewWrapper);
+                    }
+                    reader.readAsDataURL(file);
                 }
-                reader.readAsDataURL(file);
-            }
+            });
         });
     });
 });

@@ -83,7 +83,12 @@
           <tbody class="text-gray-600 dark:text-gray-200">
             <% data.forEach( product => { %>
             <tr class="table-row border-b border-gray-200 dark:border-gray-700 hover:bg-gray-50 dark:hover:bg-gray-600">
-              <td class="py-3 px-6"><img src="/api/placeholder/80/80" alt="Product Image" class="h-16 w-16 object-cover rounded-lg" /></td>
+              <td class="py-3 px-6"><% if (product.images && product.images.length > 0) { %>
+                <img src="<%= product.images[0]%>" alt="<%= product.name %>" class="h-16 w-16 object-cover rounded-lg" />
+                <% } else { %>
+                <img src="/images/placeholder.jpg" alt="No image available" class="h-16 w-16 object-cover rounded-lg" />
+                <% } %>
+              </td>
               <td class="py-3 px-6"><%= product.name %></td>
               <td class="py-3 px-6"><%= product._id %></td>
               <td class="py-3 px-6"><%= product.category %></td>

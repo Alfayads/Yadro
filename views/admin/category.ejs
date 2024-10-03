@@ -50,41 +50,49 @@
         </div>
       </div>
 
-      <!-- Search -->
-      <div class="flex justify-between mb-4 fade-in-up" style="animation-delay: 0.2s;">
-        <input type="text" placeholder="Search categories..." class="px-4 py-2 border border-gray-300 rounded-lg w-1/2 focus:outline-none focus:ring-2 focus:ring-blue-500 transition-all duration-300 dark:bg-gray-700 dark:border-gray-600 dark:text-white" />
-      </div>
+      <!-- Search and Filter -->
+      <form action="/admin/category" method="GET" class="mb-8 fade-in-up" style="animation-delay: 0.2s;">
+        <div class="search-container flex items-center justify-between">
+          <i class="fas fa-search search-icon ml-4"></i>
+          <input type="text" name="search" placeholder="Search customers..." class="search-input" />
+          <select name="status" class="search-select mr-5">
+            <option value="">All Status</option>
+            <option value="active">Active</option>
+            <option value="notListed">Not Listed</option>
+          </select>
+          <button type="submit" class="search-button">
+            Search
+          </button>
+        </div>
+      </form>
 
       <!-- Categories Table -->
       <div class="overflow-x-auto fade-in-up" style="animation-delay: 0.4s;">
         <table class="min-w-full bg-white dark:bg-gray-700 border border-gray-200 dark:border-gray-600 shadow-md rounded-lg overflow-hidden">
           <thead>
             <tr class="bg-gray-50 dark:bg-gray-600 text-gray-600 dark:text-gray-200 uppercase text-sm leading-normal">
+              <th class="py-3 px-6 text-left">Sl : </th>
               <th class="py-3 px-6 text-left">Name</th>
               <th class="py-3 px-6 text-left">Description</th>
               <th class="py-3 px-6 text-left">Offer Price</th>
-              <th class="py-3 px-6 text-left">Offer</th>
               <th class="py-3 px-6 text-left">Status</th>
               <th class="py-3 px-6 text-left">Action</th>
             </tr>
           </thead>
           <tbody class="text-gray-600 dark:text-gray-200">
 
-            <% categories.forEach( category => { %>
+            <% categories.forEach( (category , index) => { %>
 
-            <tr class="table-row border-b border-gray-200 dark:border-gray-700 hover:bg-gray-50 dark:hover:bg-gray-600">
+            <tr class="table-row border-b border-gray-200 dark:border-gray-700 hover:bg-gray-50 dark:hover:bg-gray-600" data-category-id="<%= category._id %>">
+              <th class="py-3 px-6 text-left"><%= index+1 %></th>
               <td class="py-3 px-6"><%= category.name %></td>
               <td class="py-3 px-6"><%= category.description %></td>
-              <td class="py-3 px-6">$99.99</td>
-              <td class="py-3 px-6">
-                <button class="px-3 py-1 bg-blue-500 text-white rounded-md hover:bg-blue-600 transition-colors duration-300">Add Offer</button>
-              </td>
-              <td class="py-3 px-6">
-                <label class="toggle-switch">
-                  <input type="checkbox" checked>
-                  <span class="toggle-slider"></span>
-                </label>
-              </td>
+              <td class="py-3 px-6 offer-price"><%= category.categoryOffer %>%</td>
+              <% if (category.isListed) { %>
+              <td class="py-3 px-6"><span class="bg-green-200 text-green-600 py-1 px-3 rounded-full text-xs">Active</span></td>
+              <% } else { %>
+              <td class="py-3 px-6"><span class="bg-red-200 text-red-600 py-1 px-3 rounded-full text-xs">Not Listed</span></td>
+              <% } %>
               <td>
                 <div class="flex space-x-3">
                   <a href="/admin/edit-category/<%= category._id %>" class="relative group action-icon edit-icon" title="Edit">
@@ -118,16 +126,64 @@
             <!-- Add more rows as needed -->
           </tbody>
         </table>
+
       </div>
 
       <!-- Pagination -->
       <div class="flex justify-between items-center mt-4 fade-in-up" style="animation-delay: 0.6s;">
-        <span class="text-gray-600 dark:text-gray-300">Showing 1-10 of 50 categories</span>
         <div class="flex space-x-2">
-          <button class="pagination-button px-3 py-1 bg-gray-200 dark:bg-gray-600 text-gray-600 dark:text-gray-200 rounded-md hover:bg-gray-300 dark:hover:bg-gray-500 transition-colors duration-300">Previous</button>
-          <button class="pagination-button px-3 py-1 bg-blue-500 text-white rounded-md hover:bg-blue-600 transition-colors duration-300">1</button>
-          <button class="pagination-button px-3 py-1 bg-gray-200 dark:bg-gray-600 text-gray-600 dark:text-gray-200 rounded-md hover:bg-gray-300 dark:hover:bg-gray-500 transition-colors duration-300">2</button>
-          <button class="pagination-button px-3 py-1 bg-gray-200 dark:bg-gray-600 text-gray-600 dark:text-gray-200 rounded-md hover:bg-gray-300 dark:hover:bg-gray-500 transition-colors duration-300">Next</button>
+          <% if (totalPages > 1) { %>
+          <a href="?page=<%= currentPage-1 %>&search=<%= searchTerm %>" class="pagination-button px-3 py-1 bg-gray-200 dark:bg-gray-600 text-gray-600 dark:text-gray-200 rounded-md hover:bg-gray-300 dark:hover:bg-gray-500 transition-colors duration-300">Previous</a>
+
+
+          <% for( let i = 0; i < totalPages; i++ ) { %>
+          <a href="?page=<%= i+1 %>&search=<%= searchTerm %>" class="pagination-button px-3 py-1 
+                 <%= currentPage == i+1 ? 'bg-blue-500 text-white' : 'bg-gray-100 text-black hover:text-white' %> 
+                  rounded-md hover:bg-blue-600 transition-colors duration-300">
+            <%= i+1 %>
+          </a>
+          <% } %>
+
+
+          <a href="?page=<%= currentPage+1 %>&search=<%= searchTerm %>" class="pagination-button px-3 py-1 bg-gray-200 dark:bg-gray-600 text-gray-600 dark:text-gray-200 rounded-md hover:bg-gray-300 dark:hover:bg-gray-500 transition-colors duration-300">Next</a>
+          <% } %>
+
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Model for adding offer -->
+  >
+  <div id="addOfferModal" class="fixed inset-0 bg-gray-600 bg-opacity-50 overflow-y-auto h-full w-full hidden flex items-center justify-center">
+    <div class="modal-content transform transition-all ease-in-out duration-300 scale-95 opacity-0">
+      <div class="relative bg-white rounded-lg shadow-xl mx-auto max-w-md w-full">
+        <div class="absolute top-0 right-0 pt-4 pr-4">
+          <button id="closeModal" class="text-gray-400 hover:text-gray-500 focus:outline-none focus:text-gray-500 transition ease-in-out duration-150">
+            <svg class="h-6 w-6" stroke="currentColor" fill="none" viewBox="0 0 24 24">
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12" />
+            </svg>
+          </button>
+        </div>
+        <div class="p-6">
+          <h3 class="text-lg leading-6 font-medium text-gray-900 mb-4">Add Special Offer</h3>
+          <div class="mt-2">
+            <input type="hidden" id="categoryId">
+            <div class="mb-4">
+              <label for="offerPrice" class="block text-sm font-medium text-gray-700 mb-2">Offer Price</label>
+              <div class="mt-1 relative rounded-md shadow-sm">
+                <div class="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
+                  <span class="text-gray-500 sm:text-sm">%</span>
+                </div>
+                <input type="text" id="offerPrice" class="focus:ring-indigo-500 focus:border-indigo-500 block w-full pl-7 pr-12 sm:text-sm border-gray-300 rounded-md" placeholder="0.00">
+              </div>
+            </div>
+          </div>
+          <div class="mt-6">
+            <button id="submitOffer" class="w-full inline-flex justify-center rounded-md border border-transparent shadow-sm px-4 py-2 bg-indigo-600 text-base font-medium text-white hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500 sm:text-sm transition-all duration-300 ease-in-out transform hover:scale-105">
+              Submit Offer
+            </button>
+          </div>
         </div>
       </div>
     </div>

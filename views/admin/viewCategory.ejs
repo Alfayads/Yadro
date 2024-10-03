@@ -1,0 +1,90 @@
+<!DOCTYPE html>
+<html lang="en" class="light">
+
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>View Category</title>
+  <script src="https://cdn.tailwindcss.com"></script>
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
+  <script src="/js/toggle.js"></script>
+  <link rel="stylesheet" href="/css/view-category.css">
+</head>
+
+<body class="bg-gray-100 font-sans transition-colors duration-300 dark:bg-gray-900">
+  <%- include('../layouts/admin-sidebar.ejs') %>
+
+  <div class="container mx-auto p-6 ml-64">
+    <!-- Page Header -->
+    <div class="flex justify-between items-center mb-6">
+      <h1 class="text-3xl font-bold text-gray-800 dark:text-gray-200">View Category</h1>
+      <div class="theme-toggle" id="themeToggle"></div>
+    </div>
+
+    <!-- Category Details Section -->
+    <div class="bg-white dark:bg-gray-800 p-6 rounded-lg shadow-md fade-in-up">
+      <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+
+        <!-- Category Image -->
+        <div class="flex justify-center items-center bg-gray-100 dark:bg-gray-700 p-4 rounded-md">
+          <% if (category.thumbnail) { %>
+          <img src="<%= category.thumbnail %>" alt="Category Thumbnail" class="object-contain max-w-full max-h-64">
+          <% } else { %>
+          <p class="text-gray-500 dark:text-gray-400">No image available</p>
+          <% } %>
+        </div>
+
+        <!-- Category Information -->
+        <div>
+          <!-- Category Name -->
+          <h2 class="text-2xl font-semibold text-gray-800 dark:text-gray-200 mb-2">
+            <%= category.name %>
+          </h2>
+
+          <!-- Category Offer -->
+          <p class="text-lg text-green-600 dark:text-gray-300 mb-4">
+            <span class="font-bold text-gray-500">Offer :</span> <%= category.categoryOffer %> %
+          </p>
+
+          <!-- Category Description -->
+          <p class="text-base text-gray-600 dark:text-gray-300 mb-4">
+            <span class="font-bold">Description:</span>
+            <%= category.description %>
+          </p>
+
+          <!-- Category Status -->
+          <p class="text-base font-bold mb-2 dark:text-gray-300">Status:</p>
+          <span class="inline-flex items-center px-3 py-1 rounded-full text-sm font-semibold transition duration-300 ease-in-out
+            <% if (category.status === 'Active') { %>
+              bg-green-100 text-green-800
+            <% } else if (category.status === 'Inactive') { %>
+              bg-red-100 text-red-800
+            <% } else { %>
+              bg-gray-100 text-gray-800
+            <% } %>
+            shadow-md hover:shadow-lg">
+            <!-- Status Icon -->
+            <% if (category.isListed) { %>
+            <i class="fas fa-check-circle mr-2"></i>
+            <% } else if (category.isListed) { %>
+            <i class="fas fa-times-circle mr-2"></i>
+            <% } else { %>
+            <i class="fas fa-info-circle mr-2"></i>
+            <% } %>
+            <%= category.isListed ? "Active" : "Not Active" %>
+          </span>
+        </div>
+      </div>
+    </div>
+
+    <!-- Back Button -->
+    <div class="flex justify-center mt-6">
+      <a href="/admin/category" class="px-6 py-2 bg-primary-light dark:bg-primary-dark text-white font-bold rounded-lg hover:bg-blue-700 dark:hover:bg-blue-600 focus:outline-none transition-all duration-300 transform hover:scale-105 hover:shadow-lg">Back to Categories</a>
+    </div>
+  </div>
+
+  <!-- JavaScript for animations and theme toggle -->
+  <script src="/js/view-category.js"></script>
+</body>
+
+</html>
