@@ -7,6 +7,22 @@
   <title>Login - Yadro</title>
   <link rel="stylesheet" href="/css/signup.css">
   <script src="https://cdn.tailwindcss.com"></script>
+  <style>
+    .forgot-password-link {
+      display: block;
+      text-align: right;
+      color: #4A5568;
+      font-size: 0.875rem;
+      margin-top: -0.5rem;
+      margin-bottom: 1rem;
+      transition: color 0.3s ease;
+    }
+
+    .forgot-password-link:hover {
+      color: #E53E3E;
+      text-decoration: underline;
+    }
+  </style>
 </head>
 
 <body>
@@ -48,10 +64,10 @@
       </div>
       <% } %>
 
-
       <form action="/login" method="post" autocomplete="off">
         <input name="email" type="text" placeholder="Email or Phone Number" class="custom-input">
         <input name="password" type="password" placeholder="Password" class="custom-input">
+        <a href="/forgot-password" class="forgot-password-link">Forgot Password?</a>
         <button type="submit" class="create-account-btn w-full mb-4">Log In</button>
       </form>
 
@@ -60,8 +76,6 @@
       </p>
     </div>
   </main>
-
-
 
   <!-- footer including -->
   <%- include('../layouts/footer.ejs') %>

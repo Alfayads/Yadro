@@ -9,6 +9,7 @@
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
   <script src="/js/toggle.js"></script>
   <link rel="stylesheet" href="/css/coupons.css">
+  <link rel="stylesheet" href="/css/products.css">
 </head>
 
 <body class="bg-gray-100 font-sans transition-all duration-300 dark:bg-gray-800">
@@ -30,14 +31,20 @@
       </div>
 
       <!-- Search and Filter -->
-      <div class="flex justify-between mb-4 fade-in-up" style="animation-delay: 0.2s;">
-        <input type="text" placeholder="Search coupons..." class="px-4 py-2 border border-gray-300 rounded-lg w-1/2 focus:outline-none focus:ring-2 focus:ring-blue-500 transition-all duration-300 dark:bg-gray-700 dark:border-gray-600 dark:text-white" />
-        <select class="px-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 transition-all duration-300 dark:bg-gray-700 dark:border-gray-600 dark:text-white">
-          <option>All Status</option>
-          <option>Active</option>
-          <option>Inactive</option>
-        </select>
-      </div>
+      <form action="/admin/customers" method="GET" class="mb-8 fade-in-up" style="animation-delay: 0.2s;">
+        <div class="search-container flex items-center justify-between">
+          <i class="fas fa-search search-icon ml-4"></i>
+          <input type="text" name="search" placeholder="Search Coupons..." class="search-input" />
+          <select name="status" class="search-select mr-5">
+            <option value="">All Status</option>
+            <option value="active">Active</option>
+            <option value="blocked">Blocked</option>
+          </select>
+          <button type="submit" class="search-button">
+            Search
+          </button>
+        </div>
+      </form>
 
       <!-- Coupons Table -->
       <div class="overflow-x-auto fade-in-up" style="animation-delay: 0.4s;">
@@ -65,7 +72,32 @@
               <td class="py-3 px-6">24 Jun 2023</td>
               <td class="py-3 px-6">20 Jan 2023</td>
               <td class="py-3 px-6"><span class="bg-green-200 text-green-600 py-1 px-3 rounded-full text-xs">Active</span></td>
-              <td class="py-3 px-6"><button class="bg-blue-500 text-white px-2 py-1 rounded text-xs">Edit</button></td>
+              <td class="py-3 px-6">
+                <div class="flex space-x-3">
+                  <a href="/admin/editProduct/" class="relative group action-icon edit-icon" title="Edit">
+                    <i class="fas fa-edit"></i>
+                    <div class="tooltip hidden absolute bottom-full mb-2 w-max text-sm bg-gray-800 text-white p-2 rounded-lg opacity-0 transition-opacity duration-300 group-hover:opacity-100 group-hover:block">
+                      Edit
+                      <div class="tooltip-arrow"></div>
+                    </div>
+                  </a>
+                  <a href="/admin/viewProduct/" class="relative group action-icon view-icon" title="View">
+                    <i class="fas fa-eye"></i>
+                    <div class="tooltip hidden absolute bottom-full mb-2 w-max text-sm bg-gray-800 text-white p-2 rounded-lg opacity-0 transition-opacity duration-300 group-hover:opacity-100 group-hover:block">
+                      View
+                      <div class="tooltip-arrow"></div>
+                    </div>
+                  </a>
+                  <a href="/admin/deleteProduct/" class="relative group action-icon delete-icon" title="Delete">
+                    <i class="fas fa-trash"></i>
+                    <!-- Tooltip -->
+                    <div class="tooltip hidden absolute bottom-full mb-2 w-max text-sm bg-gray-800 text-white p-2 rounded-lg opacity-0 transition-opacity duration-300 group-hover:opacity-100 group-hover:block">
+                      Delete
+                      <div class="tooltip-arrow"></div>
+                    </div>
+                  </a>
+                </div>
+              </td>
             </tr>
             <!-- Add more rows as needed -->
           </tbody>

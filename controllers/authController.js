@@ -60,9 +60,11 @@ const sendVerificationEmail = async (email, otp) => {
 
 const getHomeWithUser = async (req, res) => {
     try {
+        const userId = req.session.user_id;
         const products = await Product.find({}).limit(4);
         const categories = await Category.find({});
-        return res.render('user/home-with-user', { products, categories });
+        const user = await Users.findById({ _id: userId });
+        return res.render('user/home-with-user', { products, categories, user });
     } catch (error) {
         console.error(error.message);
         let errorMessage = { message: "An error occurred. Please try again later." };
@@ -76,11 +78,13 @@ const productDetails = async (req, res) => {
         const product = await Product.findById({ _id: id });
         const category = await Category.findById({ _id: product.category })
         const products = await Product.find({}).limit(3);
+        const userId = req.session.user_id;
+        const user = await Users.findById({ _id: userId });
         if (!product) {
             req.flash('error_msg', 'Something went wrong!!');
             return res.redirect('/');
         }
-        return res.render('user/single-product', { product, products, category });
+        return res.render('user/single-product', { product, products, category, user });
     } catch (error) {
         console.error(error.message);
         let errorMessage = { message: "An error occurred. Please try again later." };
@@ -88,18 +92,23 @@ const productDetails = async (req, res) => {
     }
 }
 
-const getAllProducts = (req, res) => {
+const getAllProducts = async (req, res) => {
     try {
-        return res.render('user/all-products');
+        const products = await Product.find({});
+        const userId = req.session.user_id;
+        const user = await Users.findById({ _id: userId });
+        return res.render('user/all-products', { products, user });
     } catch (error) {
         console.log(error.message);
     }
 }
 
 
-const getHomeWithoutUser = (req, res) => {
+const getHomeWithoutUser = async (req, res) => {
     try {
-        return res.render('user/home-without-user')
+        const products = await Product.find({}).limit(4);
+        const categories = await Category.find({});
+        return res.render('user/home-without-user', { products, categories })
     } catch (error) {
         console.error(error.message);
         let errorMessage = { message: "An error occurred. Please try again later." };
@@ -191,6 +200,16 @@ const checkUser = async (req, res) => {
 
         req.session.user_id = ifUser._id;
         return res.redirect('/home');
+    } catch (error) {
+        console.error(error.message);
+        let errorMessage = { message: "An error occurred. Please try again later." };
+        return res.render('user/error', { error: errorMessage });
+    }
+}
+
+const forgotPassword = (req, res) => {
+    try {
+        return res.render('user/email-reset-password');
     } catch (error) {
         console.error(error.message);
         let errorMessage = { message: "An error occurred. Please try again later." };
@@ -300,6 +319,7 @@ const resendOtp = async (req, res) => {
 module.exports = {
     getSignup,
     getLogin,
+    forgotPassword,
     getHomeWithoutUser,
     getHomeWithUser,
     productDetails,

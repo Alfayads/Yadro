@@ -13,7 +13,7 @@ user_router.get('/', auth.isLogin, authController.getHomeWithoutUser)
 user_router.get('/home', auth.isLogout, authController.getHomeWithUser);
 
 // Product Details
-user_router.get('/product-detail/:id', authController.productDetails);
+user_router.get('/product-detail/:id', auth.isLogout, authController.productDetails);
 
 
 // signup
@@ -32,13 +32,16 @@ user_router.post('/resend-otp', authController.resendOtp);
 user_router.get('/login', auth.isLogin, authController.getLogin);
 user_router.post('/login', authController.checkUser);
 
+// Forgot Password
+user_router.get('/forgot-password', authController.forgotPassword);
+
 
 //logout
 user_router.get('/logout', authController.getLogout);
 
 
 //All products
-user_router.get('/products', authController.getAllProducts);
+user_router.get('/products', auth.isLogout, authController.getAllProducts);
 
 
 // Google Authentication

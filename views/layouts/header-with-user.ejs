@@ -1,3 +1,23 @@
+<style>
+  .dropdown {
+    transition: opacity 0.3s ease-in-out, transform 0.3s ease-in-out;
+  }
+
+  .dropdown.hidden {
+    opacity: 0;
+    transform: translateY(-10px);
+    pointer-events: none;
+  }
+
+  .arrow {
+    transition: transform 0.3s ease-in-out;
+  }
+
+  .arrow.open {
+    transform: rotate(180deg);
+  }
+</style>
+
 <header class="container mx-auto px-4 py-4 flex justify-around items-center border-b">
   <a href="/" class="text-2xl font-bold">Yadro</a>
   <nav>
@@ -10,32 +30,52 @@
   </nav>
   <div class="flex relative">
     <input type="email" placeholder="Search Your Products ...." class="footer-input" style="color: black; border-radius: 50px; width: 380px; padding-left: 10px; outline: none; border: 1px grey solid;">
-
     <i class="fa-solid fa-magnifying-glass absolute right-3 top-3"></i>
-
   </div>
-
   <div class="flex items-center space-x-4">
     <div class="relative">
-      <button class="text-transparent hover:text-red-500 text-xl p-2  focus:outline-none focus:ring-2 focus:ring-red-300">
+      <button class="text-transparent hover:text-red-500 text-xl p-2 focus:outline-none focus:ring-2 focus:ring-red-300">
         <i class="fas fa-heart text-black"></i>
       </button>
       <span class="absolute top-3 right-2 transform translate-x-1/2 -translate-y-1/2 h-4 w-4 bg-red-500 text-white text-xs font-bold rounded-full flex items-center justify-center">0</span>
     </div>
-
     <div class="relative">
-      <button class="text-black hover:text-green-500 text-xl p-3  focus:outline-none focus:ring-2 focus:ring-green-300">
+      <button class="text-black hover:text-green-500 text-xl p-3 focus:outline-none focus:ring-2 focus:ring-green-300">
         <i class="fas fa-shopping-cart"></i>
       </button>
       <span class="absolute top-4 right-2 transform translate-x-1/2 -translate-y-1/2 h-4 w-4 bg-green-500 text-white text-xs font-bold rounded-full flex items-center justify-center">0</span>
     </div>
-
     <div class="relative">
-      <button class="text-black hover:text-blue-500 text-xl p-2 focus:outline-none focus:ring-2 focus:ring-blue-300">
-        <i class="fas fa-user"></i>
+      <button id="userDropdownButton" class="flex items-center space-x-2 focus:outline-none">
+        <span class="text-sm font-medium text-gray-700"><%= user.fname %> <%= user.lname %></span>
+        <div class="flex items-center space-x-1">
+          <i class="fas fa-user text-black hover:text-blue-500 text-xl"></i>
+          <i class="fas fa-chevron-down text-black text-xs arrow"></i>
+        </div>
       </button>
+      <div id="userDropdown" class="dropdown hidden absolute right-0 mt-2 w-48 bg-white rounded-md overflow-hidden shadow-xl z-10">
+        <a href="#" class="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-100">Profile</a>
+        <a href="#" class="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-100">Settings</a>
+        <a href="/logout" class="block px-4 py-2 text-sm text-white bg-red-500 hover:bg-red-600">Log out</a>
+      </div>
     </div>
-
-    <a href="/logout" class="bg-red-500 text-white px-4 py-2 rounded hover:bg-red-600">Log out</a>
   </div>
 </header>
+
+<script>
+  const userDropdownButton = document.getElementById('userDropdownButton');
+  const userDropdown = document.getElementById('userDropdown');
+  const arrow = userDropdownButton.querySelector('.arrow');
+
+  userDropdownButton.addEventListener('click', () => {
+    userDropdown.classList.toggle('hidden');
+    arrow.classList.toggle('open');
+  });
+
+  document.addEventListener('click', (event) => {
+    if (!userDropdownButton.contains(event.target) && !userDropdown.contains(event.target)) {
+      userDropdown.classList.add('hidden');
+      arrow.classList.remove('open');
+    }
+  });
+</script>

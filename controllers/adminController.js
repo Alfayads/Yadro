@@ -5,10 +5,6 @@ const Users = require('../models/User');
 const Product = require('../models/Product');
 const Category = require('../models/Category');
 
-
-
-
-
 const getHome = (req, res) => {
     try {
         res.render('admin/home');
@@ -132,7 +128,7 @@ const addProduct = async (req, res) => {
         const { name, description, brand, price, category, quantity, color, discount } = req.body;
 
         if (!name || !description || !brand || !color || !category || !quantity || !discount || !price) {
-            req.flash('error_msg', 'Please provide all required fields');
+            req.flash('error_msg', 'Please provide all fields');
             return res.redirect('/admin/add-product');
         }
 
@@ -203,46 +199,39 @@ const edittedProduct = async (req, res) => {
         const id = req.params.id;
         const { name, description, stock: quantity, price, color, brand, discount, category } = req.body;
 
-        // Check if quantity is valid
         const parsedQuantity = parseInt(quantity);
         if (isNaN(parsedQuantity)) {
             req.flash('error_msg', 'Quantity must be a valid number');
             return res.redirect(`/admin/product`);
         }
 
-        // Validate price
         const parsedPrice = parseFloat(price);
         if (isNaN(parsedPrice)) {
             req.flash('error_msg', 'Price must be a valid number');
             return res.redirect(`/admin/edit-product/${id}`);
         }
 
-        // Validate category
         const categoryDoc = await Category.findOne({ name: category });
         if (!categoryDoc) {
             req.flash('error_msg', 'Invalid category');
             return res.redirect('/admin/add-product');
         }
 
-        // Fetch the existing product
         const existingProduct = await Product.findById(id);
         if (!existingProduct) {
             req.flash('error_msg', 'Product not found');
             return res.redirect('/admin/product');
         }
 
-        // Handle image uploads
-        let imagePaths = existingProduct.images; // Start with existing images
+
+        let imagePaths = existingProduct.images;
         if (req.files && req.files.length > 0) {
-            // Delete old images
             existingProduct.images.forEach(imagePath => {
                 const fullPath = path.join(__dirname, '../public/', imagePath);
                 if (fs.existsSync(fullPath)) {
                     fs.unlinkSync(fullPath);
                 }
             });
-
-            // Add new image paths
             imagePaths = req.files.map(file => `/products/${file.filename}`);
         }
 
@@ -347,35 +336,32 @@ const getAddCategory = (req, res) => {
 }
 const addCategory = async (req, res) => {
     try {
-        const { name, description, offer, isActive } = req.body;
+        console.log(req.body)
+        const { CategoryName, CatogoryDescription, offer, isActive } = req.body;
 
-        // Check if category already exists
-        let existingCategory = await Category.findOne({ name });
+        if (!CategoryName && !CatogoryDescription) {
+            req.flash('error_msg', 'All Fieds are Required !! Check again');
+            return res.redirect('/admin/add-category');
+        }
+
+
+        let existingCategory = await Category.findOne({ name: CategoryName });
         if (existingCategory) {
             req.flash('error_msg', 'This category already exists. Try a different name.');
             return res.redirect('/admin/category');
         }
 
-        const newCategory = {
-            name,
-            description,
-            categoryOffer: offer,
+        const createdCategory = new Category({
+            name: CategoryName,
+            description: CatogoryDescription,
+            categoryOffer: offer ? offer : 0,
             isListed: isActive ? true : false,
-        };
-
-        // Handle image upload
-        if (req.file) {
-            newCategory.thumbnail = req.file.filename;
-        }
-
-        console.log('New category object:', newCategory);
-
-        const createdCategory = new Category(newCategory);
+        });
         await createdCategory.save();
 
         console.log('Saved category:', createdCategory);
 
-        req.flash('success_msg', `${name} Category is Added Successfully...`);
+        req.flash('success_msg', `${CategoryName} Category is Added Successfully...`);
         return res.redirect('/admin/category');
     } catch (error) {
         console.error('Error adding category:', error);
@@ -409,22 +395,22 @@ const editCategory = async (req, res) => {
         const editCategory = {
             name,
             description,
-            categoryOffer: offer,
+            categoryOffer: offer ? offer : 0,
             isListed: isActive ? true : false,
         };
 
-        // Handle image upload for edit
-        if (req.file) {
-            // Delete old image if exists
-            const oldCategory = await Category.findById(id);
-            if (oldCategory.thumbnail) {
-                const oldImagePath = path.join(__dirname, '../uploads/categories', oldCategory.thumbnail);
-                if (fs.existsSync(oldImagePath)) {
-                    fs.unlinkSync(oldImagePath);
-                }
-            }
-            editCategory.thumbnail = req.file.filename;
-        }
+        // // Handle image upload for edit
+        // if (req.file) {
+        //     // Delete old image if exists
+        //     const oldCategory = await Category.findById(id);
+        //     if (oldCategory.thumbnail) {
+        //         const oldImagePath = path.join(__dirname, '../uploads/categories', oldCategory.thumbnail);
+        //         if (fs.existsSync(oldImagePath)) {
+        //             fs.unlinkSync(oldImagePath);
+        //         }
+        //     }
+        //     editCategory.thumbnail = req.file.filename;
+        // }
 
         await Category.updateOne({ _id: id }, { $set: editCategory });
         req.flash('success_msg', `${name} Category is Updated Successfully..`);
@@ -487,7 +473,6 @@ const getCustomers = async (req, res) => {
             isAdmin: false
         };
 
-        // Add status filter to the query
         if (currentStatus === 'blocked') {
             query.isBlocked = true;
         } else if (currentStatus === 'active') {
@@ -594,6 +579,14 @@ const getAddCoupon = (req, res) => {
         return res.render('admin/add-coupon');
     } catch (error) {
         console.log(error.message);
+    }
+}
+
+const addCoupon = async (req, res) => {
+    try {
+
+    } catch (error) {
+
     }
 }
 

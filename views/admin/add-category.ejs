@@ -21,7 +21,16 @@
         <div class="theme-toggle" id="themeToggle"></div>
       </div>
 
-      <div class="bg-white dark:bg-gray-800 p-6 rounded-lg shadow-md mb-6 fade-in-up">
+      <% if (error_msg.length > 0) { %>
+      <div id="errorMessage" class="message bg-red-100 border border-red-400 text-red-700 px-4 py-3 rounded relative mb-6" role="alert">
+        <strong class="font-bold">Error!</strong>
+        <span class="block sm:inline"><%= error_msg %></span>
+      </div>
+      <% } %>
+
+      <!-- For The Category Image  -->
+
+      <!-- <div class="bg-white dark:bg-gray-800 p-6 rounded-lg shadow-md mb-6 fade-in-up">
         <h2 class="section-header mb-4 dark:text-gray-200">Thumbnail</h2>
         <div id="dropArea" class="image-upload h-48 flex justify-center items-center rounded-md dark:border-gray-600">
           <label class="cursor-pointer">
@@ -35,7 +44,7 @@
           </label>
           <img id="previewImage" class="hidden max-h-full max-w-full object-contain" />
         </div>
-      </div>
+      </div> -->
 
       <!-- Category Information Section -->
       <div class="bg-white dark:bg-gray-800 p-6 rounded-lg shadow-md mb-6 fade-in-up" style="animation-delay: 0.2s;">
@@ -43,7 +52,7 @@
         <div class="grid grid-cols-2 gap-6">
           <div class="input-box">
             <label for="categoryName" class="block text-sm font-medium text-gray-700 dark:text-gray-300">Category Name</label>
-            <input type="text" name="name" id="categoryName" class="mt-1 p-2 w-full border border-gray-300 rounded-md focus:ring-primary-light focus:border-primary-light dark:bg-gray-700 dark:border-gray-600 dark:text-white" placeholder="Type category name here...">
+            <input type="text" required name="CategoryName" id="categoryName" class="mt-1 p-2 w-full border border-gray-300 rounded-md focus:ring-primary-light focus:border-primary-light dark:bg-gray-700 dark:border-gray-600 dark:text-white" placeholder="Type category name here...">
           </div>
           <div class="input-box">
             <label for="categoryOffer" class="block text-sm font-medium text-gray-700 dark:text-gray-300">Category Offer</label>
@@ -51,7 +60,7 @@
           </div>
           <div class="input-box">
             <label for="description" class="block text-sm font-medium text-gray-700 dark:text-gray-300">Description</label>
-            <textarea id="description" rows="4" name="description" class="mt-1 p-2 w-full border border-gray-300 rounded-md focus:ring-primary-light focus:border-primary-light dark:bg-gray-700 dark:border-gray-600 dark:text-white" placeholder="Type category description here..."></textarea>
+            <textarea required id="description" rows="4" name="CatogoryDescription" class="mt-1 p-2 w-full border border-gray-300 rounded-md focus:ring-primary-light focus:border-primary-light dark:bg-gray-700 dark:border-gray-600 dark:text-white" placeholder="Type category description here..."></textarea>
           </div>
           <!-- New Active/Inactive Toggle Section -->
           <div class="input-box">

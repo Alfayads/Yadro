@@ -108,3 +108,49 @@
 #wishlistBtn i.liked {
     color: #EF4444;
 }
+
+
+#mainImage {
+    transition: opacity 0.3s ease-in-out;
+}
+
+.product-thumbnail {
+    transition: all 0.3s ease-in-out;
+}
+
+.product-thumbnail.active {
+    border: 2px solid #f9285c;
+    /* Tailwind blue-500 */
+    transform: scale(1.05);
+}
+
+
+@keyframes fadeIn {
+    from {
+        opacity: 0;
+    }
+
+    to {
+        opacity: 1;
+    }
+}
+
+@keyframes slideIn {
+    from {
+        transform: translateX(-10px);
+        opacity: 0;
+    }
+
+    to {
+        transform: translateX(0);
+        opacity: 1;
+    }
+}
+
+.animate-fade-in {
+    animation: fadeIn 0.5s ease-out forwards;
+}
+
+.animate-slide-in {
+    animation: slideIn 0.5s ease-out forwards;
+}

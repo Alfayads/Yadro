@@ -8,17 +8,47 @@
   <script src="https://cdn.tailwindcss.com"></script>
   <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.3/css/all.min.css" rel="stylesheet">
   <link rel="stylesheet" href="/css/single-product.css">
+  <style>
+    .zoom-container {
+      position: relative;
+      overflow: hidden;
+      cursor: zoom-in;
+    }
+
+    .zoom-image {
+      width: 100%;
+      height: auto;
+      transition: transform 0.3s ease-out;
+    }
+  </style>
 </head>
 
 <body class="bg-gray-100 font-sans">
   <%- include('../layouts/header-with-user.ejs') %>
 
+  <!-- Breadcrumbs -->
+  <nav aria-label="Breadcrumb" class="py-4 px-6 bg-white shadow-sm">
+    <ol id="breadcrumbs" class="flex items-center space-x-2 text-sm">
+      <li class="flex items-center">
+        <a href="/home" class="text-gray-500 hover:text-gray-700 transition-colors duration-300 flex items-center">
+          <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4 mr-1" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 12l2-2m0 0l7-7 7 7M5 10v10a1 1 0 001 1h3m10-11l2 2m-2-2v10a1 1 0 01-1 1h-3m-6 0a1 1 0 001-1v-4a1 1 0 011-1h2a1 1 0 011 1v4a1 1 0 001 1m-6 0h6" />
+          </svg>
+          Home
+        </a>
+      </li>
+      <!-- Breadcrumb items will be dynamically inserted here -->
+    </ol>
+  </nav>
+
   <main class="container mx-auto px-6 py-8">
     <div class="flex flex-wrap -mx-4">
       <div class="w-full md:w-1/2 px-4 mb-8 md:mb-0">
         <div class="sticky top-0">
-          <div class="mb-6 relative">
-            <img id="mainImage" src="<%= product.images[0] %>" alt="<%= product.name %>" class="w-full rounded-lg shadow-md animate-fadeIn">
+          <div class="mb-6 relative zoom-container rounded-lg shadow-md">
+            <img id="mainImage" src="<%= product.images[0] %>" alt="<%= product.name %>" class="zoom-image rounded-lg">
+            <div class="zoom-lens"></div>
+            <div class="zoom-result"></div>
             <% if (product.productOffer > 0) { %>
             <div class="absolute top-4 left-4 bg-red-500 text-white text-xs font-bold px-2 py-1 rounded-full z-20 transform -rotate-12 shadow-lg animate-pulse">
               <%= product.productOffer %>% OFF
@@ -28,7 +58,7 @@
           <div class="flex -mx-2">
             <% product.images.forEach((img, index) => { %>
             <div class="w-1/4 px-2">
-              <img src="<%= img %>" alt="Thumbnail <%= index + 1 %>" class="w-full rounded-lg shadow-sm cursor-pointer hover:opacity-75 transition duration-300">
+              <img src="<%= img %>" alt="Thumbnail <%= index + 1 %>" class="product-thumbnail w-full rounded-lg shadow-sm cursor-pointer hover:opacity-75 transition duration-300">
             </div>
             <% }) %>
           </div>
@@ -127,9 +157,6 @@
       <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
         <% products.forEach(product => { %>
 
-
-
-
         <div class="product-card bg-white p-4 rounded shadow relative animate-on-scroll hover:scale-105 transition-transform duration-300">
           <a href="/product-detail/<%= product.id %>">
             <div class="absolute top-4 left-4 bg-red-500 text-white text-xs font-bold px-2 py-1 rounded-full z-20 transform -rotate-12 shadow-lg">
@@ -196,19 +223,6 @@
   <%- include('../layouts/footer.ejs') %>
 
   <script>
-    // Image gallery
-    const thumbnails = document.querySelectorAll('.w-1/4 img');
-    const mainImage = document.getElementById('mainImage');
-
-    thumbnails.forEach(thumb => {
-      thumb.addEventListener('click', function() {
-        mainImage.src = this.src;
-        mainImage.classList.remove('animate-fadeIn');
-        void mainImage.offsetWidth; // Trigger reflow
-        mainImage.classList.add('animate-fadeIn');
-      });
-    });
-
     // Quantity update
     function updateQuantity(change) {
       const quantityInput = document.getElementById('quantity');
@@ -258,6 +272,113 @@
         document.querySelector(this.getAttribute('href')).scrollIntoView({
           behavior: 'smooth'
         });
+      });
+    });
+
+    // Select all thumbnail images
+    const thumbnails = document.querySelectorAll('.product-thumbnail');
+    const mainImage = document.getElementById('mainImage');
+
+    // Function to update main image
+    function updateMainImage(newSrc) {
+      // Start fade out
+      mainImage.style.opacity = '0';
+
+      // After fade out, update src and fade in
+      setTimeout(() => {
+        mainImage.src = newSrc;
+        mainImage.style.opacity = '1';
+      }, 300); // This should match the CSS transition duration
+    }
+
+    // Add click event listener to each thumbnail
+    thumbnails.forEach(thumbnail => {
+      thumbnail.addEventListener('click', function() {
+        updateMainImage(this.src);
+
+        // Remove 'active' class from all thumbnails
+        thumbnails.forEach(thumb => thumb.classList.remove('active'));
+
+        // Add 'active' class to clicked thumbnail
+        this.classList.add('active');
+      });
+    });
+
+    // Initialize the first thumbnail as active
+    if (thumbnails.length > 0) {
+      thumbnails[0].classList.add('active');
+    }
+
+    const zoomContainer = document.querySelector('.zoom-container');
+    const zoomImage = document.querySelector('.zoom-image');
+
+    const ZOOM_LEVEL = 2.5;
+
+    zoomContainer.addEventListener('mousemove', (e) => {
+      const {
+        left,
+        top,
+        width,
+        height
+      } = zoomContainer.getBoundingClientRect();
+      const x = (e.clientX - left) / width;
+      const y = (e.clientY - top) / height;
+
+      zoomImage.style.transformOrigin = `${x * 100}% ${y * 100}%`;
+      zoomImage.style.transform = `scale(${ZOOM_LEVEL})`;
+    });
+
+    zoomContainer.addEventListener('mouseleave', () => {
+      zoomImage.style.transformOrigin = 'center center';
+      zoomImage.style.transform = 'scale(1)';
+    });
+
+    // Update zoom image when changing thumbnails
+    function updateMainImage(newSrc) {
+      zoomImage.style.opacity = '0';
+      setTimeout(() => {
+        zoomImage.src = newSrc;
+        zoomImage.style.opacity = '1';
+      }, 300);
+    }
+
+    // Breadcrumbs animation
+    document.addEventListener('DOMContentLoaded', () => {
+      const breadcrumbs = [{
+          name: 'Products',
+          href: '/products'
+        },
+        {
+          name: '<%= product.name %>',
+          href: '#'
+        }
+      ];
+
+      const breadcrumbsContainer = document.getElementById('breadcrumbs');
+
+      breadcrumbs.forEach((item, index) => {
+        const li = document.createElement('li');
+        li.className = 'flex items-center';
+
+        const chevron = document.createElement('svg');
+        chevron.innerHTML = '<svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4 text-gray-400 mx-1" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7" /></svg>';
+        li.appendChild(chevron);
+
+        if (index === breadcrumbs.length - 1) {
+          const span = document.createElement('span');
+          span.className = 'text-gray-700 font-semibold animate-fade-in';
+          span.textContent = item.name;
+          li.appendChild(span);
+        } else {
+          const a = document.createElement('a');
+          a.href = item.href;
+          a.className = 'text-gray-500 hover:text-gray-700 transition-colors duration-300 animate-slide-in';
+          a.style.animationDelay = `${index * 100}ms`;
+          a.textContent = item.name;
+          li.appendChild(a);
+        }
+
+        breadcrumbsContainer.appendChild(li);
       });
     });
   </script>

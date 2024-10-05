@@ -23,9 +23,9 @@
         <h1 class="text-3xl font-bold text-gray-800 dark:text-white fade-in-up">Add Coupons</h1>
         <div class="flex items-center space-x-4">
           <div class="theme-toggle" id="themeToggle"></div>
-          <button class="px-4 py-2 bg-blue-500 text-white rounded-lg button">
+          <a href="/admin/coupons" class="px-4 py-2 bg-blue-500 text-white rounded-lg button">
             Show All Coupons
-          </button>
+          </a>
         </div>
       </div>
 
@@ -34,12 +34,12 @@
         <form>
           <div class="mb-4">
             <label for="couponName" class="block text-gray-700 dark:text-gray-200 font-bold mb-2">Coupon Name</label>
-            <input type="text" id="couponName" name="couponName" placeholder="Type product name here..." class="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 dark:bg-gray-600 dark:border-gray-500 dark:text-white">
+            <input type="text" id="couponName" name="name" placeholder="Type product name here..." class="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 dark:bg-gray-600 dark:border-gray-500 dark:text-white">
           </div>
           <div class="grid grid-cols-2 gap-4 mb-4">
             <div>
               <label for="couponCode" class="block text-gray-700 dark:text-gray-200 font-bold mb-2">Coupon Code</label>
-              <input type="text" id="couponCode" name="couponCode" placeholder="Type here..." class="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 dark:bg-gray-600 dark:border-gray-500 dark:text-white">
+              <input type="text" id="couponCode" name="code" placeholder="Type here..." class="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 dark:bg-gray-600 dark:border-gray-500 dark:text-white">
             </div>
             <div>
               <label for="discount" class="block text-gray-700 dark:text-gray-200 font-bold mb-2">Discount</label>
