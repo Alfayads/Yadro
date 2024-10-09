@@ -1,0 +1,115 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Yadro - All Orders</title>
+  <link rel="icon" href="/images/logo.png" type="image/x-icon">
+  <script src="https://cdn.tailwindcss.com"></script>
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
+  <style>
+    @keyframes fadeIn {
+      from {
+        opacity: 0;
+      }
+
+      to {
+        opacity: 1;
+      }
+    }
+
+    .animate-fade-in {
+      animation: fadeIn 0.5s ease-out forwards;
+    }
+  </style>
+</head>
+
+<body class="bg-gray-100">
+  <%- include('../layouts/header-with-user.ejs') %>
+
+  <main class="container mx-auto px-4 py-8">
+    <div class="flex justify-between items-center mb-4">
+      <nav class="text-sm breadcrumbs">
+        <ul class="flex">
+          <li><a href="#" class="text-gray-500 hover:text-gray-700">Home</a></li>
+          <li class="mx-2">/</li>
+          <li class="text-gray-900 font-semibold">My Orders</li>
+        </ul>
+      </nav>
+      <div class="text-sm text-gray-600">Welcome! <span class="text-red-500 font-semibold">Md ismail</span></div>
+    </div>
+
+    <div class="bg-white rounded-lg shadow-md overflow-hidden animate-fade-in">
+      <table class="w-full">
+        <thead class="bg-gray-50">
+          <tr>
+            <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">No</th>
+            <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Name</th>
+            <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Category</th>
+            <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Price</th>
+            <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Quantity</th>
+            <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Status</th>
+            <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Action</th>
+          </tr>
+        </thead>
+        <tbody class="bg-white divide-y divide-gray-200">
+          <tr>
+            <td class="px-6 py-4 whitespace-nowrap">1</td>
+            <td class="px-6 py-4 whitespace-nowrap">Sony Pulse 3D</td>
+            <td class="px-6 py-4 whitespace-nowrap">Wireless</td>
+            <td class="px-6 py-4 whitespace-nowrap">₹2400</td>
+            <td class="px-6 py-4 whitespace-nowrap">1</td>
+            <td class="px-6 py-4 whitespace-nowrap">Placed</td>
+            <td class="px-6 py-4 whitespace-nowrap">
+              <button class="bg-red-500 text-white px-3 py-1 rounded hover:bg-red-600 transition-colors duration-300">Cancel</button>
+            </td>
+          </tr>
+          <tr>
+            <td class="px-6 py-4 whitespace-nowrap">2</td>
+            <td class="px-6 py-4 whitespace-nowrap">Airpod Max</td>
+            <td class="px-6 py-4 whitespace-nowrap">Wireless</td>
+            <td class="px-6 py-4 whitespace-nowrap">₹3465</td>
+            <td class="px-6 py-4 whitespace-nowrap">1</td>
+            <td class="px-6 py-4 whitespace-nowrap">Delivered</td>
+            <td class="px-6 py-4 whitespace-nowrap text-gray-500">Already Delivered</td>
+          </tr>
+          <tr>
+            <td class="px-6 py-4 whitespace-nowrap">3</td>
+            <td class="px-6 py-4 whitespace-nowrap">Beats Studio Pro</td>
+            <td class="px-6 py-4 whitespace-nowrap">Wired</td>
+            <td class="px-6 py-4 whitespace-nowrap">₹4325</td>
+            <td class="px-6 py-4 whitespace-nowrap">1</td>
+            <td class="px-6 py-4 whitespace-nowrap">Cancelled</td>
+            <td class="px-6 py-4 whitespace-nowrap text-gray-500">Already Delivered</td>
+          </tr>
+          <tr>
+            <td class="px-6 py-4 whitespace-nowrap">4</td>
+            <td class="px-6 py-4 whitespace-nowrap">Skull Candy Hesh</td>
+            <td class="px-6 py-4 whitespace-nowrap">Wired</td>
+            <td class="px-6 py-4 whitespace-nowrap">₹5430</td>
+            <td class="px-6 py-4 whitespace-nowrap">1</td>
+            <td class="px-6 py-4 whitespace-nowrap">Shipped</td>
+            <td class="px-6 py-4 whitespace-nowrap">
+              <button class="bg-red-500 text-white px-3 py-1 rounded hover:bg-red-600 transition-colors duration-300">Cancel</button>
+            </td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+  </main>
+
+  <%- include('../layouts/footer.ejs') %>
+
+  <script>
+    document.addEventListener('DOMContentLoaded', () => {
+      const tableRows = document.querySelectorAll('tbody tr');
+      tableRows.forEach((row, index) => {
+        row.style.animationDelay = `${index * 100}ms`;
+        row.classList.add('animate-fade-in');
+      });
+    });
+  </script>
+</body>
+
+</html>

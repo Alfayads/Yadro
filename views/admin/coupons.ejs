@@ -6,6 +6,7 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Yadro - Coupons</title>
   <script src="https://cdn.tailwindcss.com"></script>
+  <link rel="icon" href="/images/logo.png" type="image/x-icon">
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
   <script src="/js/toggle.js"></script>
   <link rel="stylesheet" href="/css/coupons.css">
@@ -56,22 +57,25 @@
               <th class="py-3 px-6 text-left">Discount</th>
               <th class="py-3 px-6 text-left">Min Amount</th>
               <th class="py-3 px-6 text-left">Validity</th>
-              <th class="py-3 px-6 text-left">Order Date</th>
               <th class="py-3 px-6 text-left">Created</th>
               <th class="py-3 px-6 text-left">Status</th>
               <th class="py-3 px-6 text-left">Action</th>
             </tr>
           </thead>
           <tbody class="text-gray-600 dark:text-gray-200">
+            <% coupons.forEach( (coupon , index) => { %>
             <tr class="table-row border-b border-gray-200 dark:border-gray-700 hover:bg-gray-50 dark:hover:bg-gray-600">
-              <td class="py-3 px-6">1</td>
-              <td class="py-3 px-6">SOMERANDOMCODEHERE</td>
-              <td class="py-3 px-6">500</td>
-              <td class="py-3 px-6">₹2000</td>
-              <td class="py-3 px-6">24 Jun 2025</td>
-              <td class="py-3 px-6">24 Jun 2023</td>
-              <td class="py-3 px-6">20 Jan 2023</td>
+              <td class="py-3 px-6"><%= index + 1 %></td>
+              <td class="py-3 px-6"><%= coupon.code %></td>
+              <td class="py-3 px-6"><%= coupon.offer %> %</td>
+              <td class="py-3 px-6">₹ <%= coupon.minimumPrice %></td>
+              <td class="py-3 px-6"><%= coupon.expiredOn %></td>
+              <td class="py-3 px-6"><%= coupon.createdOn %></td>
+              <% if (coupon.isList) { %>
               <td class="py-3 px-6"><span class="bg-green-200 text-green-600 py-1 px-3 rounded-full text-xs">Active</span></td>
+              <% } else { %>
+              <td class="py-3 px-6"><span class="bg-red-200 text-red-600 py-1 px-3 rounded-full text-xs">InActive</span></td>
+              <% } %>
               <td class="py-3 px-6">
                 <div class="flex space-x-3">
                   <a href="/admin/editProduct/" class="relative group action-icon edit-icon" title="Edit">
@@ -99,6 +103,7 @@
                 </div>
               </td>
             </tr>
+            <% }) %>
             <!-- Add more rows as needed -->
           </tbody>
         </table>

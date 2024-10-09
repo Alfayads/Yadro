@@ -40,7 +40,7 @@ admin_router.get('/deleteCustomer', adminAuth, Controller.deleteCustomer); // De
 //Coupon Route
 admin_router.get('/coupons', adminAuth, Controller.getCoupons); // for get Coupons page
 admin_router.get('/add-coupon', adminAuth, Controller.getAddCoupon); // for add Coupon page
-// admin_router.post('/add-coupon', adminAuth, Controller.addCoupon);
+admin_router.post('/add-coupon', adminAuth, Controller.addCoupon);
 
 // All orders route
 admin_router.get('/orders', adminAuth, Controller.getOrders);// for get all orders page

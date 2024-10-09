@@ -20,6 +20,7 @@ const userAuth = (req, res, next) => {
 
 
 const adminAuth = (req, res, next) => {
+
     try {
         if (req.session.admin) {
             next();

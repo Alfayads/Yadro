@@ -1,0 +1,65 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Yadro - Address Book</title>
+  <link rel="icon" href="/images/logo.png" type="image/x-icon">
+  <script src="https://cdn.tailwindcss.com"></script>
+</head>
+
+<body class="bg-gray-100 min-h-screen">
+  <%- include('../layouts/header-with-user.ejs') %>
+
+  <main class="max-w-7xl mx-auto py-12 sm:px-6 lg:px-8">
+    <div class="px-4 py-6 sm:px-0">
+      <div class="border-4 border-dashed border-gray-200 rounded-lg h-120">
+        <div class="max-w-3xl mx-auto">
+          <h2 class="text-2xl font-bold mb-4">Manage My Account</h2>
+          <div class="flex justify-between">
+            <div class="md:col-span-1">
+              <nav class="space-y-2">
+                <a href="#" class="block px-4 py-2 rounded-md text-red-500 bg-red-100 font-medium">My Profile</a>
+                <a href="/address" class="block px-4 py-2 rounded-md text-gray-500 hover:bg-gray-100">Address Book</a>
+                <a href="/orders" class="block px-4 py-2 rounded-md text-gray-500 hover:bg-gray-100">My Orders</a>
+                <a href="#" class="block px-4 py-2 rounded-md text-gray-500 hover:bg-gray-100">My Payment Options</a>
+              </nav>
+            </div>
+            <div class="w-3/4">
+              <h3 class="text-xl font-semibold mb-4">Address Book</h3>
+              <div class="space-y-4">
+                <div class="border rounded-md p-4 bg-white">
+                  <h4 class="font-semibold">Home Address</h4>
+                  <p>123 Main St, Apt 4B</p>
+                  <p>New York, NY 10001</p>
+                  <p>United States</p>
+                  <div class="mt-2">
+                    <button class="text-red-500 hover:text-red-600 mr-2">Edit</button>
+                    <button class="text-gray-500 hover:text-gray-600">Delete</button>
+                  </div>
+                </div>
+                <div class="border rounded-md p-4 bg-white">
+                  <h4 class="font-semibold">Work Address</h4>
+                  <p>456 Business Ave, Floor 8</p>
+                  <p>San Francisco, CA 94105</p>
+                  <p>United States</p>
+                  <div class="mt-2">
+                    <button class="text-red-500 hover:text-red-600 mr-2">Edit</button>
+                    <button class="text-gray-500 hover:text-gray-600">Delete</button>
+                  </div>
+                </div>
+                <button class="w-full bg-red-500 text-white py-2 rounded hover:bg-red-600 transition-colors duration-300">
+                  Add New Address
+                </button>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </main>
+  <%- include('../layouts/footer.ejs') %>
+</body>
+
+</html>

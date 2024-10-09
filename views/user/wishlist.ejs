@@ -1,0 +1,103 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Yadro - Wishlist</title>
+  <link rel="icon" href="/images/logo.png" type="image/x-icon">
+  <script src="https://cdn.tailwindcss.com"></script>
+  <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css" rel="stylesheet">
+</head>
+
+<body class="bg-gray-100">
+  <%- include('../layouts/header-with-user.ejs') %>
+
+  <main class="container mx-auto px-4 py-8">
+    <div class="flex justify-between items-center mb-8">
+      <h1 class="text-2xl font-bold">Wishlist (4)</h1>
+      <button class="bg-white text-gray-800 font-semibold py-2 px-4 border border-gray-400 rounded shadow hover:bg-gray-100">
+        Move All To Bag
+      </button>
+    </div>
+
+    <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6 mb-12">
+      <div class="bg-white rounded-lg shadow-md overflow-hidden">
+        <div class="relative">
+          <img src="https://via.placeholder.com/300x300" alt="RGB liquid CPU Cooler" class="w-full h-48 object-cover">
+          <button class="absolute top-2 right-2 text-gray-600 hover:text-gray-900">
+            <i class="fas fa-trash"></i>
+          </button>
+        </div>
+        <div class="p-4">
+          <h3 class="font-semibold mb-2">RGB liquid CPU Cooler</h3>
+          <p class="text-red-500 font-bold">$1960</p>
+          <button class="w-full bg-black text-white font-semibold py-2 px-4 rounded mt-4 hover:bg-gray-800">
+            Add To Cart
+          </button>
+        </div>
+      </div>
+      <div class="bg-white rounded-lg shadow-md overflow-hidden">
+        <div class="relative">
+          <img src="https://via.placeholder.com/300x300" alt="GP11 Shooter USB Gamepad" class="w-full h-48 object-cover">
+          <button class="absolute top-2 right-2 text-gray-600 hover:text-gray-900">
+            <i class="fas fa-trash"></i>
+          </button>
+        </div>
+        <div class="p-4">
+          <h3 class="font-semibold mb-2">GP11 Shooter USB Gamepad</h3>
+          <p class="text-red-500 font-bold">$550</p>
+          <button class="w-full bg-black text-white font-semibold py-2 px-4 rounded mt-4 hover:bg-gray-800">
+            Add To Cart
+          </button>
+        </div>
+      </div>
+    </div>
+
+    <div class="flex justify-between items-center mb-8">
+      <h2 class="text-xl font-bold flex items-center">
+        <span class="bg-red-500 w-4 h-8 mr-2"></span>
+        Just For You
+      </h2>
+      <button class="text-red-500 font-semibold hover:text-red-600">
+        See All
+      </button>
+    </div>
+
+    <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
+      <div class="bg-white rounded-lg shadow-md overflow-hidden">
+        <div class="relative">
+          <img src="https://via.placeholder.com/300x300" alt="ASUS FHD Gaming Laptop" class="w-full h-48 object-cover">
+          <span class="absolute top-2 left-2 bg-red-500 text-white text-xs font-bold px-2 py-1 rounded">-39%</span>
+          <button class="absolute top-2 right-2 text-gray-600 hover:text-gray-900">
+            <i class="far fa-eye"></i>
+          </button>
+        </div>
+        <div class="p-4">
+          <h3 class="font-semibold mb-2">ASUS FHD Gaming Laptop</h3>
+          <p class="text-red-500 font-bold">$960 <span class="text-gray-500 line-through text-sm">$1160</span></p>
+          <div class="flex items-center mb-2">
+            <i class="fas fa-star text-yellow-400"></i>
+            <i class="fas fa-star text-yellow-400"></i>
+            <i class="fas fa-star text-yellow-400"></i>
+            <i class="fas fa-star text-yellow-400"></i>
+            <i class="fas fa-star text-yellow-400"></i>
+            <span class="text-gray-500 text-sm ml-1">(65)</span>
+          </div>
+          <button class="w-full bg-black text-white font-semibold py-2 px-4 rounded mt-4 hover:bg-gray-800">
+            Add To Cart
+          </button>
+        </div>
+      </div>
+      <!-- Repeat similar structure for other "Just For You" items -->
+    </div>
+  </main>
+
+  <%- include('../layouts/footer.ejs') %>
+
+  <script>
+    // Add any necessary JavaScript for interactivity here
+  </script>
+</body>
+
+</html>

@@ -12,14 +12,18 @@ const storage = multer.diskStorage({
 });
 
 const upload = multer({
+
     storage: storage,
     fileFilter: function (req, file, cb) {
+        console.log(file);
+        console.log("storage", storage);
         if (file.mimetype.startsWith('image/')) {
             cb(null, true);
         } else {
             cb(new Error('Not an image! Please upload an image.'), false);
         }
     }
+
 });
 
 module.exports = upload;

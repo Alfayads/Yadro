@@ -6,6 +6,7 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Add Product</title>
   <script src="https://cdn.tailwindcss.com"></script>
+  <link rel="icon" href="/images/logo.png" type="image/x-icon">
   <link rel="stylesheet" href="/css/admin-editproduct.css">
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
   <script src="/js/toggle.js"></script>
@@ -21,7 +22,7 @@
     </div>
 
     <!-- General Information Section -->
-    <form action="/admin/edittedProduct/<%= product._id %>" method="post">
+    <form action="/admin/edittedProduct/<%= product._id %>" method="post" enctype="multipart/form-data">
       <div class="bg-white dark:bg-gray-800 p-6 rounded-lg shadow-md mb-6 fade-in-up">
         <h2 class="section-header mb-4 dark:text-gray-200">General Information</h2>
         <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
@@ -82,7 +83,25 @@
 
       <!-- Image Upload Section -->
       <div class="bg-white dark:bg-gray-800 p-6 rounded-lg shadow-md mb-6 fade-in-up" style="animation-delay: 0.6s;">
-        <h2 class="section-header mb-4 dark:text-gray-200">Upload Images</h2>
+        <h2 class="section-header mb-4 dark:text-gray-200">Product Images</h2>
+
+        <!-- Existing Images -->
+        <div class="mb-4">
+          <h3 class="text-lg font-semibold mb-2 dark:text-gray-300">Current Images</h3>
+          <div class="grid grid-cols-2 md:grid-cols-4 gap-4">
+            <% product.images.forEach((image, index) => { %>
+            <div class="relative">
+              <img src="<%= image %>" alt="Product Image <%= index + 1 %>" class="w-full h-32 object-cover rounded-md">
+              <button type="button" class="absolute top-0 right-0 bg-red-500 text-white rounded-full p-1 m-1" onclick="removeImage(<%= index %>)">
+                <i class="fas fa-times"></i>
+              </button>
+            </div>
+            <% }) %>
+          </div>
+        </div>
+
+        <!-- Upload New Images -->
+        <h3 class="text-lg font-semibold mb-2 dark:text-gray-300">Upload New Images</h3>
         <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
           <div class="image-upload h-32 flex justify-center items-center rounded-md dark:border-gray-600">
             <label class="cursor-pointer">

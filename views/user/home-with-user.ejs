@@ -7,6 +7,7 @@
   <title>Yadro - HeadPhones</title>
   <link rel="stylesheet" href="/css/home-without-user.css">
   <script src="https://cdn.tailwindcss.com"></script>
+  <link rel="icon" href="/images/logo.png" type="image/x-icon">
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
   <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:opsz,wght,FILL,GRAD@20..48,100..700,0..1,-50..200" />
   <script src="/js/product-card.js"></script>
@@ -216,7 +217,7 @@
 
         <% categories.forEach( category => { %>
         <% if (category.isListed) { %>
-        <a href="/products/<%= category._id %>">
+        <a href="/products/category/<%= category._id %>">
           <div class="category-item group">
             <div class="category-icon flex flex-col items-center justify-center p-6 border rounded-lg bg-white shadow-md transition-all duration-300 transform hover:scale-105 hover:shadow-lg">
               <div class="icon-wrapper mb-4 p-3 rounded-full bg-gray-100 group-hover:bg-blue-100 transition-colors duration-300">

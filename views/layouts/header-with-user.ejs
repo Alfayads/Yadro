@@ -34,16 +34,16 @@
   </div>
   <div class="flex items-center space-x-4">
     <div class="relative">
-      <button class="text-transparent hover:text-red-500 text-xl p-2 focus:outline-none focus:ring-2 focus:ring-red-300">
+      <a href="/wishlist" class="text-transparent hover:text-red-500 text-xl p-2 focus:outline-none focus:ring-2 focus:ring-red-300">
         <i class="fas fa-heart text-black"></i>
-      </button>
-      <span class="absolute top-3 right-2 transform translate-x-1/2 -translate-y-1/2 h-4 w-4 bg-red-500 text-white text-xs font-bold rounded-full flex items-center justify-center">0</span>
+      </a>
+      <span class="absolute top-2 right-2 transform translate-x-1/2 -translate-y-1/2 h-4 w-4 bg-red-500 text-white text-xs font-bold rounded-full flex items-center justify-center">0</span>
     </div>
     <div class="relative">
-      <button class="text-black hover:text-green-500 text-xl p-3 focus:outline-none focus:ring-2 focus:ring-green-300">
+      <a href="/cart" class="text-black hover:text-green-500 text-xl p-3 focus:outline-none focus:ring-2 focus:ring-green-300">
         <i class="fas fa-shopping-cart"></i>
-      </button>
-      <span class="absolute top-4 right-2 transform translate-x-1/2 -translate-y-1/2 h-4 w-4 bg-green-500 text-white text-xs font-bold rounded-full flex items-center justify-center">0</span>
+      </a>
+      <span class="absolute top-2 right-2 transform translate-x-1/2 -translate-y-1/2 h-4 w-4 bg-green-500 text-white text-xs font-bold rounded-full flex items-center justify-center">0</span>
     </div>
     <div class="relative">
       <button id="userDropdownButton" class="flex items-center space-x-2 focus:outline-none">
@@ -54,8 +54,8 @@
         </div>
       </button>
       <div id="userDropdown" class="dropdown hidden absolute right-0 mt-2 w-48 bg-white rounded-md overflow-hidden shadow-xl z-10">
-        <a href="#" class="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-100">Profile</a>
-        <a href="#" class="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-100">Settings</a>
+        <a href="/account" class="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-100">Profile</a>
+        <a href="/orders" class="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-100">My Orders</a>
         <a href="/logout" class="block px-4 py-2 text-sm text-white bg-red-500 hover:bg-red-600">Log out</a>
       </div>
     </div>

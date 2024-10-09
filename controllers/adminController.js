@@ -1,9 +1,10 @@
 const bcrypt = require('bcrypt');
 const path = require('path');
-
+const fs = require('fs');
 const Users = require('../models/User');
 const Product = require('../models/Product');
 const Category = require('../models/Category');
+const Coupon = require('../models/Coupon')
 
 const getHome = (req, res) => {
     try {
@@ -91,6 +92,8 @@ const getProduct = async (req, res) => {
             ]
         }).limit(limit).skip((page - 1) * limit).exec();
 
+        const categories = await Category.find({});
+
         const count = await Product.countDocuments({
             $or: [
                 { name: { $regex: search, $options: "i", } },
@@ -104,6 +107,7 @@ const getProduct = async (req, res) => {
             totalPages: Math.ceil(count / limit),
             currentPage: page,
             searchTerm: search,
+            categories
         });
     } catch (error) {
         console.log(error.message)
@@ -146,6 +150,7 @@ const addProduct = async (req, res) => {
 
         let imagePaths = [];
         if (req.files && req.files.length > 0) {
+            console.log("add products", req.files);
             imagePaths = req.files.map(file => `/products/${file.filename}`);
         }
 
@@ -198,7 +203,8 @@ const edittedProduct = async (req, res) => {
     try {
         const id = req.params.id;
         const { name, description, stock: quantity, price, color, brand, discount, category } = req.body;
-
+        console.log("sdagvrtdfhjn", req.files)
+        console.log("ergete5ryhr6uh", req);
         const parsedQuantity = parseInt(quantity);
         if (isNaN(parsedQuantity)) {
             req.flash('error_msg', 'Quantity must be a valid number');
@@ -227,7 +233,7 @@ const edittedProduct = async (req, res) => {
         let imagePaths = existingProduct.images;
         if (req.files && req.files.length > 0) {
             existingProduct.images.forEach(imagePath => {
-                const fullPath = path.join(__dirname, '../public/', imagePath);
+                const fullPath = path.join(__dirname, 'uploads', imagePath);
                 if (fs.existsSync(fullPath)) {
                     fs.unlinkSync(fullPath);
                 }
@@ -566,9 +572,10 @@ const deleteCustomer = async (req, res) => {
 }
 
 
-const getCoupons = (req, res) => {
+const getCoupons = async (req, res) => {
     try {
-        return res.render('admin/coupons');
+        const coupons = await Coupon.find({});
+        return res.render('admin/coupons', { coupons });
     } catch (error) {
         console.log(error.message);
     }
@@ -576,6 +583,8 @@ const getCoupons = (req, res) => {
 
 const getAddCoupon = (req, res) => {
     try {
+        const date = new Date();
+        console.log(date.toISOString().split('T')[0])
         return res.render('admin/add-coupon');
     } catch (error) {
         console.log(error.message);
@@ -584,9 +593,25 @@ const getAddCoupon = (req, res) => {
 
 const addCoupon = async (req, res) => {
     try {
+        const { name, code, discount, minAmount, validityTill, isActive } = req.body;
+
+        const formattedValidityTill = new Date(validityTill).toISOString().split('T')[0];
+
+        const newCoupon = new Coupon({
+            name,
+            code: code,
+            expiredOn: formattedValidityTill,
+            offer: discount,
+            minimumPrice: minAmount,
+            isList: isActive ? true : false,
+        })
+
+        await newCoupon.save();
+        req.flash('success_msg', `Coupon ${name} is Added Successfully..`);
+        res.redirect('/admin/coupons');
 
     } catch (error) {
-
+        console.log(error.message);
     }
 }
 
@@ -659,6 +684,7 @@ module.exports = {
 
     getCoupons,
     getAddCoupon,
+    addCoupon,
 
     getOrders,
 

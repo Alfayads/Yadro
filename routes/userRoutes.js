@@ -15,6 +15,28 @@ user_router.get('/home', auth.isLogout, authController.getHomeWithUser);
 // Product Details
 user_router.get('/product-detail/:id', auth.isLogout, authController.productDetails);
 
+// product Sort by Category
+user_router.get('/products/category/:id', auth.isLogout, authController.getProductByCategory)
+
+
+// Cart
+user_router.get('/cart', auth.isLogout, authController.getCart);
+
+// Wishlist
+user_router.get('/wishlist', auth.isLogout, authController.getWishList);
+
+// Check Out
+user_router.get('/cart/check-out', auth.isLogout, authController.getCheckOut);
+
+// All Orders page
+user_router.get('/orders', auth.isLogout, authController.getOrders);
+
+// Account
+user_router.get('/account', auth.isLogout, authController.getAccount);
+
+// address Book
+user_router.get('/address', auth.isLogout, authController.getAddress);
+
 
 // signup
 user_router.get('/signup', auth.isLogin, authController.getSignup);

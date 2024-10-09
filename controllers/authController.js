@@ -80,6 +80,7 @@ const productDetails = async (req, res) => {
         const products = await Product.find({}).limit(3);
         const userId = req.session.user_id;
         const user = await Users.findById({ _id: userId });
+
         if (!product) {
             req.flash('error_msg', 'Something went wrong!!');
             return res.redirect('/');
@@ -91,6 +92,98 @@ const productDetails = async (req, res) => {
         return res.render('user/error', { error: errorMessage });
     }
 }
+
+
+const getProductByCategory = async (req, res) => {
+    try {
+        const id = req.params.id;
+        const userId = req.session.user_id;
+        const user = await Users.findById({ _id: userId });
+        const category = await Category.findById({ _id: id });
+        const products = await Product.find({ category: id })
+        return res.render('user/productByCategory', { products, category, user })
+    } catch (error) {
+        console.error(error.message);
+        let errorMessage = { message: "An error occurred. Please try again later." };
+        return res.render('user/error', { error: errorMessage });
+    }
+}
+
+
+const getCart = async (req, res) => {
+    try {
+        const userId = req.session.user_id;
+        const user = await Users.findById({ _id: userId });
+        return res.render('user/cart', { user });
+    } catch (error) {
+        console.error(error.message);
+        let errorMessage = { message: "An error occurred. Please try again later." };
+        return res.render('user/error', { error: errorMessage });
+    }
+}
+
+const getWishList = async (req, res) => {
+    try {
+        const userId = req.session.user_id;
+        const user = await Users.findById({ _id: userId });
+        return res.render('user/wishlist', { user });
+    } catch (error) {
+        console.error(error.message);
+        let errorMessage = { message: "An error occurred. Please try again later." };
+        return res.render('user/error', { error: errorMessage });
+    }
+}
+
+
+const getCheckOut = async (req, res) => {
+    try {
+        const userId = req.session.user_id;
+        const user = await Users.findById({ _id: userId });
+        return res.render('user/checkout', { user });
+    } catch (error) {
+        console.error(error.message);
+        let errorMessage = { message: "An error occurred. Please try again later." };
+        return res.render('user/error', { error: errorMessage });
+    }
+}
+
+const getOrders = async (req, res) => {
+    try {
+        const userId = req.session.user_id;
+        const user = await Users.findById({ _id: userId });
+        return res.render('user/orders', { user });
+    } catch (error) {
+        console.error(error.message);
+        let errorMessage = { message: "An error occurred. Please try again later." };
+        return res.render('user/error', { error: errorMessage });
+    }
+}
+
+
+const getAccount = async (req, res) => {
+    try {
+        const userId = req.session.user_id;
+        const user = await Users.findById({ _id: userId });
+        return res.render('user/Account', { user });
+    } catch (error) {
+        console.error(error.message);
+        let errorMessage = { message: "An error occurred. Please try again later." };
+        return res.render('user/error', { error: errorMessage });
+    }
+}
+
+const getAddress = async (req, res) => {
+    try {
+        const userId = req.session.user_id;
+        const user = await Users.findById({ _id: userId });
+        return res.render('user/address-book', { user });
+    } catch (error) {
+        console.error(error.message);
+        let errorMessage = { message: "An error occurred. Please try again later." };
+        return res.render('user/error', { error: errorMessage });
+    }
+}
+
 
 const getAllProducts = async (req, res) => {
     try {
@@ -116,6 +209,7 @@ const getHomeWithoutUser = async (req, res) => {
     }
 
 }
+
 
 const getSignup = (req, res) => {
     try {
@@ -324,6 +418,13 @@ module.exports = {
     getHomeWithUser,
     productDetails,
     getAllProducts,
+    getProductByCategory,
+    getCart,
+    getWishList,
+    getCheckOut,
+    getOrders,
+    getAccount,
+    getAddress,
     newUser,
     getLogout,
     checkUser,

@@ -5,6 +5,11 @@ const couponSchema = mongoose.Schema({
         required: true,
         unique: true
     },
+    code: {
+        type: String,
+        required: true,
+        unique: true
+    },
     createdOn: {
         type: Date,
         required: true,
@@ -14,7 +19,7 @@ const couponSchema = mongoose.Schema({
         type: Date,
         required: true
     },
-    offerPrice: {
+    offer: {
         type: Number,
         required: true
     },
