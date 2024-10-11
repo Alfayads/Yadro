@@ -135,11 +135,11 @@
     document.addEventListener('DOMContentLoaded', () => {
       const breadcrumbs = [{
           name: 'Products',
-          href: '#'
+          href: '/products'
         },
         {
           name: '<%= category.name %>',
-          href: '#'
+          href: `/products/<%= category.name %>`
         }
       ];
 

@@ -8,95 +8,241 @@
   <link rel="icon" href="/images/logo.png" type="image/x-icon">
   <script src="https://cdn.tailwindcss.com"></script>
   <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css" rel="stylesheet">
+  <style>
+    @keyframes fadeIn {
+      from {
+        opacity: 0;
+      }
+
+      to {
+        opacity: 1;
+      }
+    }
+
+    @keyframes slideIn {
+      from {
+        transform: translateY(20px);
+        opacity: 0;
+      }
+
+      to {
+        transform: translateY(0);
+        opacity: 1;
+      }
+    }
+
+    .animate-fade-in {
+      animation: fadeIn 0.5s ease-out forwards;
+    }
+
+    .animate-slide-in {
+      animation: slideIn 0.5s ease-out forwards;
+    }
+
+    .product-card {
+      transition: transform 0.3s ease, box-shadow 0.3s ease;
+    }
+
+    .product-card:hover {
+      transform: translateY(-5px);
+      box-shadow: 0 10px 20px rgba(0, 0, 0, 0.1);
+    }
+
+    .like-button {
+      transition: transform 0.2s ease;
+    }
+
+    .like-button:hover {
+      transform: scale(1.1);
+    }
+  </style>
 </head>
 
 <body class="bg-gray-100">
   <%- include('../layouts/header-with-user.ejs') %>
 
+  <!-- Breadcrumbs -->
+  <nav aria-label="Breadcrumb" class="py-4 px-6 bg-white shadow-sm">
+    <ol id="breadcrumbs" class="flex items-center space-x-2 text-sm">
+      <li class="flex items-center">
+        <a href="/home" class="text-gray-500 hover:text-gray-700 transition-colors duration-300 flex items-center">
+          <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4 mr-1" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 12l2-2m0 0l7-7 7 7M5 10v10a1 1 0 001 1h3m10-11l2 2m-2-2v10a1 1 0 01-1 1h-3m-6 0a1 1 0 001-1v-4a1 1 0 011-1h2a1 1 0 011 1v4a1 1 0 001 1m-6 0h6" />
+          </svg>
+          Home
+        </a>
+      </li>
+      <li class="flex items-center">
+        <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4 text-gray-400 mx-1" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7" />
+        </svg>
+        <span class="text-gray-700 font-semibold">Wishlist</span>
+      </li>
+    </ol>
+  </nav>
+
   <main class="container mx-auto px-4 py-8">
-    <div class="flex justify-between items-center mb-8">
-      <h1 class="text-2xl font-bold">Wishlist (4)</h1>
-      <button class="bg-white text-gray-800 font-semibold py-2 px-4 border border-gray-400 rounded shadow hover:bg-gray-100">
+    <div class="flex justify-between items-center mb-8 animate-fade-in">
+      <h1 class="text-3xl font-bold text-gray-800">Your Wishlist</h1>
+      <button class="bg-red-500 text-white font-semibold py-2 px-4 rounded shadow hover:bg-red-600 transition-colors duration-300">
         Move All To Bag
       </button>
     </div>
 
     <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6 mb-12">
-      <div class="bg-white rounded-lg shadow-md overflow-hidden">
+      <!-- Wishlist Item 1 -->
+      <div class="product-card bg-white rounded-lg shadow-md overflow-hidden animate-slide-in" style="animation-delay: 100ms;">
         <div class="relative">
           <img src="https://via.placeholder.com/300x300" alt="RGB liquid CPU Cooler" class="w-full h-48 object-cover">
-          <button class="absolute top-2 right-2 text-gray-600 hover:text-gray-900">
+          <button class="absolute top-2 right-2 text-gray-600 hover:text-red-500 transition-colors duration-300">
             <i class="fas fa-trash"></i>
           </button>
+          <div class="absolute bottom-2 left-2 bg-red-500 text-white text-xs font-bold px-2 py-1 rounded-full">-20%</div>
         </div>
         <div class="p-4">
-          <h3 class="font-semibold mb-2">RGB liquid CPU Cooler</h3>
-          <p class="text-red-500 font-bold">$1960</p>
-          <button class="w-full bg-black text-white font-semibold py-2 px-4 rounded mt-4 hover:bg-gray-800">
+          <h3 class="font-semibold text-lg mb-2">RGB liquid CPU Cooler</h3>
+          <div class="flex items-center justify-between mb-2">
+            <p class="text-red-500 font-bold text-xl">$1960</p>
+            <p class="text-gray-500 line-through">$2450</p>
+          </div>
+          <div class="flex items-center mb-4">
+            <div class="flex text-yellow-400">
+              <i class="fas fa-star"></i>
+              <i class="fas fa-star"></i>
+              <i class="fas fa-star"></i>
+              <i class="fas fa-star"></i>
+              <i class="fas fa-star-half-alt"></i>
+            </div>
+            <span class="text-gray-500 text-sm ml-2">(42)</span>
+          </div>
+          <button class="w-full bg-black text-white font-semibold py-2 px-4 rounded hover:bg-gray-800 transition-colors duration-300">
             Add To Cart
           </button>
         </div>
       </div>
-      <div class="bg-white rounded-lg shadow-md overflow-hidden">
+
+      <!-- Wishlist Item 2 -->
+      <div class="product-card bg-white rounded-lg shadow-md overflow-hidden animate-slide-in" style="animation-delay: 200ms;">
         <div class="relative">
           <img src="https://via.placeholder.com/300x300" alt="GP11 Shooter USB Gamepad" class="w-full h-48 object-cover">
-          <button class="absolute top-2 right-2 text-gray-600 hover:text-gray-900">
+          <button class="absolute top-2 right-2 text-gray-600 hover:text-red-500 transition-colors duration-300">
             <i class="fas fa-trash"></i>
           </button>
+          <div class="absolute bottom-2 left-2 bg-green-500 text-white text-xs font-bold px-2 py-1 rounded-full">New</div>
         </div>
         <div class="p-4">
-          <h3 class="font-semibold mb-2">GP11 Shooter USB Gamepad</h3>
-          <p class="text-red-500 font-bold">$550</p>
-          <button class="w-full bg-black text-white font-semibold py-2 px-4 rounded mt-4 hover:bg-gray-800">
+          <h3 class="font-semibold text-lg mb-2">GP11 Shooter USB Gamepad</h3>
+          <div class="flex items-center justify-between mb-2">
+            <p class="text-red-500 font-bold text-xl">$550</p>
+          </div>
+          <div class="flex items-center mb-4">
+            <div class="flex text-yellow-400">
+              <i class="fas fa-star"></i>
+              <i class="fas fa-star"></i>
+              <i class="fas fa-star"></i>
+              <i class="fas fa-star"></i>
+              <i class="far fa-star"></i>
+            </div>
+            <span class="text-gray-500 text-sm ml-2">(28)</span>
+          </div>
+          <button class="w-full bg-black text-white font-semibold py-2 px-4 rounded hover:bg-gray-800 transition-colors duration-300">
             Add To Cart
           </button>
         </div>
       </div>
     </div>
 
-    <div class="flex justify-between items-center mb-8">
-      <h2 class="text-xl font-bold flex items-center">
-        <span class="bg-red-500 w-4 h-8 mr-2"></span>
-        Just For You
+    <div class="flex justify-between items-center mb-8 animate-fade-in" style="animation-delay: 300ms;">
+      <h2 class="text-2xl font-bold text-gray-800 flex items-center">
+        <span class="bg-red-500 w-2 h-8 mr-3"></span>
+        Recommended For You
       </h2>
-      <button class="text-red-500 font-semibold hover:text-red-600">
+      <button class="text-red-500 font-semibold hover:text-red-600 transition-colors duration-300">
         See All
       </button>
     </div>
 
     <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
-      <div class="bg-white rounded-lg shadow-md overflow-hidden">
+      <!-- Recommended Item 1 -->
+      <div class="product-card bg-white rounded-lg shadow-md overflow-hidden animate-slide-in" style="animation-delay: 400ms;">
         <div class="relative">
           <img src="https://via.placeholder.com/300x300" alt="ASUS FHD Gaming Laptop" class="w-full h-48 object-cover">
-          <span class="absolute top-2 left-2 bg-red-500 text-white text-xs font-bold px-2 py-1 rounded">-39%</span>
-          <button class="absolute top-2 right-2 text-gray-600 hover:text-gray-900">
-            <i class="far fa-eye"></i>
+          <span class="absolute top-2 left-2 bg-red-500 text-white text-xs font-bold px-2 py-1 rounded-full">-39%</span>
+          <button class="like-button absolute top-2 right-2 bg-white rounded-full p-2 shadow-md hover:bg-gray-100 transition-colors duration-200">
+            <i class="far fa-heart text-gray-600 hover:text-red-500 transition-colors duration-200"></i>
           </button>
         </div>
         <div class="p-4">
-          <h3 class="font-semibold mb-2">ASUS FHD Gaming Laptop</h3>
-          <p class="text-red-500 font-bold">$960 <span class="text-gray-500 line-through text-sm">$1160</span></p>
-          <div class="flex items-center mb-2">
-            <i class="fas fa-star text-yellow-400"></i>
-            <i class="fas fa-star text-yellow-400"></i>
-            <i class="fas fa-star text-yellow-400"></i>
-            <i class="fas fa-star text-yellow-400"></i>
-            <i class="fas fa-star text-yellow-400"></i>
-            <span class="text-gray-500 text-sm ml-1">(65)</span>
+          <h3 class="font-semibold text-lg mb-2">ASUS FHD Gaming Laptop</h3>
+          <div class="flex items-center justify-between mb-2">
+            <p class="text-red-500 font-bold text-xl">$960</p>
+            <p class="text-gray-500 line-through">$1160</p>
           </div>
-          <button class="w-full bg-black text-white font-semibold py-2 px-4 rounded mt-4 hover:bg-gray-800">
+          <div class="flex items-center mb-4">
+            <div class="flex text-yellow-400">
+              <i class="fas fa-star"></i>
+              <i class="fas fa-star"></i>
+              <i class="fas fa-star"></i>
+              <i class="fas fa-star"></i>
+              <i class="fas fa-star"></i>
+            </div>
+            <span class="text-gray-500 text-sm ml-2">(65)</span>
+          </div>
+          <button class="w-full bg-black text-white font-semibold py-2 px-4 rounded hover:bg-gray-800 transition-colors duration-300">
             Add To Cart
           </button>
         </div>
       </div>
-      <!-- Repeat similar structure for other "Just For You" items -->
+
+      <!-- Add more recommended items here -->
     </div>
   </main>
 
   <%- include('../layouts/footer.ejs') %>
 
   <script>
-    // Add any necessary JavaScript for interactivity here
+    document.addEventListener('DOMContentLoaded', () => {
+      // Animate product cards on scroll
+      const productCards = document.querySelectorAll('.product-card');
+      const observer = new IntersectionObserver((entries) => {
+        entries.forEach(entry => {
+          if (entry.isIntersecting) {
+            entry.target.classList.add('animate-slide-in');
+          }
+        });
+      }, {
+        threshold: 0.1
+      });
+
+      productCards.forEach(card => {
+        observer.observe(card);
+      });
+
+      // Like button functionality
+      const likeButtons = document.querySelectorAll('.like-button');
+      likeButtons.forEach(button => {
+        button.addEventListener('click', () => {
+          const icon = button.querySelector('i');
+          icon.classList.toggle('far');
+          icon.classList.toggle('fas');
+          icon.classList.toggle('text-red-500');
+        });
+      });
+
+      // Add to Cart button animation
+      const addToCartButtons = document.querySelectorAll('.product-card button');
+      addToCartButtons.forEach(button => {
+        button.addEventListener('click', (e) => {
+          e.preventDefault();
+          button.classList.add('bg-green-500');
+          button.innerHTML = '<i class="fas fa-check mr-2"></i>Added to Cart';
+          setTimeout(() => {
+            button.classList.remove('bg-green-500');
+            button.innerHTML = 'Add To Cart';
+          }, 2000);
+        });
+      });
+    });
   </script>
 </body>
 

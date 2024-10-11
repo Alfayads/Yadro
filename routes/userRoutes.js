@@ -34,6 +34,12 @@ user_router.get('/orders', auth.isLogout, authController.getOrders);
 // Account
 user_router.get('/account', auth.isLogout, authController.getAccount);
 
+// Wallet 
+user_router.get('/wallet', auth.isLogout, authController.getWallet);
+
+// Transaction History
+user_router.get('/wallet/history', auth.isLogout, authController.getTransactionHistory);
+
 // address Book
 user_router.get('/address', auth.isLogout, authController.getAddress);
 
@@ -65,6 +71,9 @@ user_router.get('/logout', authController.getLogout);
 //All products
 user_router.get('/products', auth.isLogout, authController.getAllProducts);
 
+
+// Contact Page
+user_router.get('/contact', auth.isLogout, authController.getContact)
 
 // Google Authentication
 user_router.get('/auth/google', passport.authenticate('google', { scope: ['profile', 'email'] }))

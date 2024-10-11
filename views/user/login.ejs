@@ -66,8 +66,8 @@
       <% } %>
 
       <form action="/login" method="post" autocomplete="off">
-        <input name="email" type="text" placeholder="Email or Phone Number" class="custom-input">
-        <input name="password" type="password" placeholder="Password" class="custom-input">
+        <input name="email" type="text" placeholder="Email or Phone Number" class="custom-input" required>
+        <input name="password" type="password" placeholder="Password" class="custom-input" required>
         <a href="/forgot-password" class="forgot-password-link">Forgot Password?</a>
         <button type="submit" class="create-account-btn w-full mb-4">Log In</button>
       </form>

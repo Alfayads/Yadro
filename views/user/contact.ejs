@@ -1,0 +1,166 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Contact - Yadro</title>
+  <script src="https://cdn.tailwindcss.com"></script>
+  <link rel="icon" href="/images/logo.png" type="image/x-icon">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
+  <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:opsz,wght,FILL,GRAD@20..48,100..700,0..1,-50..200" />
+  <script src="/js/user-design-animation.js"></script>
+  <script>
+    tailwind.config = {
+      theme: {
+        extend: {
+          colors: {
+            'yadro-red': '#e74c3c',
+          }
+        }
+      }
+    }
+  </script>
+  <style>
+    @keyframes fadeIn {
+      from {
+        opacity: 0;
+      }
+
+      to {
+        opacity: 1;
+      }
+    }
+
+    @keyframes slideIn {
+      from {
+        transform: translateX(-10px);
+        opacity: 0;
+      }
+
+      to {
+        transform: translateX(0);
+        opacity: 1;
+      }
+    }
+
+    .animate-fade-in {
+      animation: fadeIn 0.5s ease-out forwards;
+    }
+
+    .animate-slide-in {
+      animation: slideIn 0.5s ease-out forwards;
+    }
+  </style>
+</head>
+
+<body class="flex flex-col min-h-screen bg-gray-100">
+  <%- include('../layouts/header-with-user.ejs') %>
+
+  <!-- Breadcrumbs -->
+  <nav aria-label="Breadcrumb" class="py-4 px-6 bg-white shadow-sm">
+    <ol id="breadcrumbs" class="flex items-center space-x-2 text-sm">
+      <li class="flex items-center">
+        <a href="/home" class="text-gray-500 hover:text-gray-700 transition-colors duration-300 flex items-center">
+          <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4 mr-1" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 12l2-2m0 0l7-7 7 7M5 10v10a1 1 0 001 1h3m10-11l2 2m-2-2v10a1 1 0 01-1 1h-3m-6 0a1 1 0 001-1v-4a1 1 0 011-1h2a1 1 0 011 1v4a1 1 0 001 1m-6 0h6" />
+          </svg>
+          Home
+        </a>
+      </li>
+    </ol>
+  </nav>
+
+  <main class="flex-grow container mx-auto px-6 py-8">
+    <div class="mb-8 animate-fade-in">
+      <h1 class="text-3xl font-bold text-gray-800">Contact Us</h1>
+      <p class="text-gray-600">We're here to help and answer any question you might have</p>
+    </div>
+
+    <div class="flex flex-wrap -mx-4">
+      <div class="w-full md:w-1/3 px-4 mb-8 md:mb-0">
+        <div class="mb-8 bg-white p-6 rounded-lg shadow-md animate-slide-in">
+          <h2 class="text-xl font-bold mb-4 flex items-center text-yadro-red">
+            <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6 mr-2" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 5a2 2 0 012-2h3.28a1 1 0 01.948.684l1.498 4.493a1 1 0 01-.502 1.21l-2.257 1.13a11.042 11.042 0 005.516 5.516l1.13-2.257a1 1 0 011.21-.502l4.493 1.498a1 1 0 01.684.949V19a2 2 0 01-2 2h-1C9.716 21 3 14.284 3 6V5z" />
+            </svg>
+            Call To Us
+          </h2>
+          <p class="text-gray-600 mb-2">We are available 24/7, 7 days a week.</p>
+          <p class="font-bold">Phone: +91 9074575374</p>
+        </div>
+        <div class="bg-white p-6 rounded-lg shadow-md animate-slide-in" style="animation-delay: 0.2s;">
+          <h2 class="text-xl font-bold mb-4 flex items-center text-yadro-red">
+            <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6 mr-2" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 8l7.89 5.26a2 2 0 002.22 0L21 8M5 19h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z" />
+            </svg>
+            Write To US
+          </h2>
+          <p class="text-gray-600 mb-2">Fill out our form and we will contact you within 24 hours.</p>
+          <p class="mb-1">Email: yadr00.co@gmail.com</p>
+        </div>
+      </div>
+      <div class="w-full md:w-2/3 px-4">
+        <form class="bg-white p-6 rounded-lg shadow-md animate-fade-in">
+          <div class="flex flex-wrap -mx-2 mb-4">
+            <div class="w-full md:w-1/3 px-2 mb-4 md:mb-0">
+              <input type="text" placeholder="Your Name *" class="w-full px-4 py-2 border rounded-md bg-gray-100 focus:outline-none focus:ring-2 focus:ring-yadro-red">
+            </div>
+            <div class="w-full md:w-1/3 px-2 mb-4 md:mb-0">
+              <input type="email" placeholder="Your Email *" class="w-full px-4 py-2 border rounded-md bg-gray-100 focus:outline-none focus:ring-2 focus:ring-yadro-red">
+            </div>
+            <div class="w-full md:w-1/3 px-2">
+              <input type="tel" placeholder="Your Phone *" class="w-full px-4 py-2 border rounded-md bg-gray-100 focus:outline-none focus:ring-2 focus:ring-yadro-red">
+            </div>
+          </div>
+          <div class="mb-4">
+            <textarea placeholder="Your Message" rows="6" class="w-full px-4 py-2 border rounded-md bg-gray-100 focus:outline-none focus:ring-2 focus:ring-yadro-red"></textarea>
+          </div>
+          <button type="submit" class="bg-yadro-red text-white px-6 py-2 rounded-md hover:bg-red-600 transition duration-300">Send Message</button>
+        </form>
+      </div>
+    </div>
+  </main>
+
+  <%- include('../layouts/footer.ejs') %>
+
+  <script>
+    // Breadcrumbs animation
+    document.addEventListener('DOMContentLoaded', () => {
+      const breadcrumbs = [{
+        name: 'Contact',
+        href: '#'
+      }];
+      const breadcrumbsContainer = document.getElementById('breadcrumbs');
+
+      breadcrumbs.forEach((item, index) => {
+        const li = document.createElement('li');
+        li.className = 'flex items-center';
+
+        const chevron = document.createElement('svg');
+        chevron.innerHTML = '<svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4 text-gray-400 mx-1" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7" /></svg>';
+        li.appendChild(chevron);
+
+        const span = document.createElement('span');
+        span.className = 'text-gray-700 font-semibold animate-fade-in';
+        span.textContent = item.name;
+        li.appendChild(span);
+
+        breadcrumbsContainer.appendChild(li);
+      });
+    });
+
+    // Add any custom JavaScript for animations here
+    document.querySelectorAll('a, button').forEach(elem => {
+      elem.addEventListener('mouseenter', () => {
+        elem.style.transition = 'all 0.3s ease';
+        elem.style.transform = 'translateY(-2px)';
+      });
+      elem.addEventListener('mouseleave', () => {
+        elem.style.transform = 'translateY(0)';
+      });
+    });
+  </script>
+</body>
+
+</html>

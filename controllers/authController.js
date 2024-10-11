@@ -77,15 +77,19 @@ const productDetails = async (req, res) => {
         const id = req.params.id;
         const product = await Product.findById({ _id: id });
         const category = await Category.findById({ _id: product.category })
-        const products = await Product.find({}).limit(3);
         const userId = req.session.user_id;
         const user = await Users.findById({ _id: userId });
+
+        const relatedProducts = await Product.find({
+            category: product.category,
+            _id: { $ne: product._id }
+        }).limit(4);
 
         if (!product) {
             req.flash('error_msg', 'Something went wrong!!');
             return res.redirect('/');
         }
-        return res.render('user/single-product', { product, products, category, user });
+        return res.render('user/single-product', { product, category, user, relatedProducts });
     } catch (error) {
         console.error(error.message);
         let errorMessage = { message: "An error occurred. Please try again later." };
@@ -172,6 +176,30 @@ const getAccount = async (req, res) => {
     }
 }
 
+const getWallet = async (req, res) => {
+    try {
+        const userId = req.session.user_id;
+        const user = await Users.findById({ _id: userId });
+        return res.render('user/wallet', { user });
+    } catch (error) {
+        console.error(error.message);
+        let errorMessage = { message: "An error occurred. Please try again later." };
+        return res.render('user/error', { error: errorMessage });
+    }
+}
+
+const getTransactionHistory = async (req, res) => {
+    try {
+        const userId = req.session.user_id;
+        const user = await Users.findById({ _id: userId });
+        return res.render('user/transaction-history', { user });
+    } catch (error) {
+        console.error(error.message);
+        let errorMessage = { message: "An error occurred. Please try again later." };
+        return res.render('user/error', { error: errorMessage });
+    }
+}
+
 const getAddress = async (req, res) => {
     try {
         const userId = req.session.user_id;
@@ -192,7 +220,21 @@ const getAllProducts = async (req, res) => {
         const user = await Users.findById({ _id: userId });
         return res.render('user/all-products', { products, user });
     } catch (error) {
-        console.log(error.message);
+        console.error(error.message);
+        let errorMessage = { message: "An error occurred. Please try again later." };
+        return res.render('user/error', { error: errorMessage });
+    }
+}
+
+const getContact = async (req, res) => {
+    try {
+        const userId = req.session.user_id;
+        const user = await Users.findById({ _id: userId });
+        return res.render('user/contact', { user });
+    } catch (error) {
+        console.error(error.message);
+        let errorMessage = { message: "An error occurred. Please try again later." };
+        return res.render('user/error', { error: errorMessage });
     }
 }
 
@@ -424,7 +466,10 @@ module.exports = {
     getCheckOut,
     getOrders,
     getAccount,
+    getWallet,
+    getTransactionHistory,
     getAddress,
+    getContact,
     newUser,
     getLogout,
     checkUser,

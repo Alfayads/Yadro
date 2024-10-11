@@ -4,10 +4,10 @@ const upload = require('../config/multer');
 
 const Controller = require('../controllers/adminController');
 // const auth = require('../middlewares/adminMiddleware');
-const { adminAuth } = require('../middlewares/auth');
+const { adminAuth, adminAuthLogin } = require('../middlewares/auth');
 
 // Login routes
-admin_router.get('/login', Controller.getLogin);
+admin_router.get('/login', adminAuthLogin, Controller.getLogin);
 admin_router.post('/login', Controller.checkLogin);
 
 //Home route

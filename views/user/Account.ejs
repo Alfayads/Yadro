@@ -4,74 +4,87 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Yadro - My Account</title>
-  <link rel="icon" href="/images/logo.png" type="image/x-icon">
+  <title>Yadro - My Profile</title>
   <script src="https://cdn.tailwindcss.com"></script>
+  <link rel="icon" href="/images/logo.png" type="image/x-icon">
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
+  <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:opsz,wght,FILL,GRAD@20..48,100..700,0..1,-50..200" />
 </head>
 
-<body class="bg-gray-100">
+<body class="bg-gray-50 min-h-screen flex flex-col">
+  <!-- Header -->
   <%- include('../layouts/header-with-user.ejs') %>
 
-  <main class="max-w-7xl mx-auto px-4 py-8 sm:px-6 lg:px-8">
-    <div class="flex items-center text-sm text-gray-500 mb-6">
-      <a href="/home" class="hover:text-gray-700">Home</a>
-      <span class="mx-2">/</span>
-      <span class="font-medium text-gray-700">My Account</span>
+  <!-- Main Content -->
+  <main class="flex-grow container mx-auto py-12 px-4 sm:px-6 lg:px-8">
+    <div class="border-b border-gray-200 pb-4 mb-8">
+      <nav class="flex" aria-label="Breadcrumb">
+        <ol class="flex items-center space-x-4">
+          <li>
+            <div>
+              <a href="#" class="text-gray-400 hover:text-gray-500">Home</a>
+            </div>
+          </li>
+          <li>
+            <div class="flex items-center">
+              <svg class="flex-shrink-0 h-5 w-5 text-gray-300" fill="currentColor" viewBox="0 0 20 20" aria-hidden="true">
+                <path d="M5.555 17.776l8-16 .894.448-8 16-.894-.448z" />
+              </svg>
+              <a href="#" class="ml-4 text-sm font-medium text-gray-500 hover:text-gray-700">My Account</a>
+            </div>
+          </li>
+        </ol>
+      </nav>
     </div>
-
-    <div class="flex justify-between items-center mb-8">
-      <h2 class="text-2xl font-bold text-gray-900">Manage My Account</h2>
-      <div class="flex items-center">
-        <span class="mr-2">Welcome!</span>
-        <span class="font-medium text-red-500"><%= user.fname %> <%= user.lname %></span>
-        <button class="bg-red-500 text-white rounded-full w-8 h-8 flex items-center justify-center ml-2">
-          <span class="text-sm">A</span>
-        </button>
+    <div class="flex flex-col md:flex-row">
+      <!-- Sidebar -->
+      <div class="w-full md:w-1/4 mb-8 md:mb-0 md:pr-8">
+        <h2 class="text-2xl font-bold text-gray-900 mb-6">Manage My Account</h2>
+        <nav class="space-y-2">
+          <a href="#" class="block px-4 py-3 rounded-lg text-sm font-medium text-red-600 bg-white shadow-md">My Profile</a>
+          <a href="/address" class="block px-4 py-3 rounded-lg text-sm font-medium text-gray-700 hover:bg-white hover:shadow transition duration-150 ease-in-out">Address Book</a>
+          <a href="#" class="block px-4 py-3 rounded-lg text-sm font-medium text-gray-700 hover:bg-white hover:shadow transition duration-150 ease-in-out">My Orders</a>
+          <a href="#" class="block px-4 py-3 rounded-lg text-sm font-medium text-gray-700 hover:bg-white hover:shadow transition duration-150 ease-in-out">My Payment Options</a>
+        </nav>
       </div>
-    </div>
 
-    <div class="bg-white shadow rounded-lg p-6">
-      <div class="grid grid-cols-1 md:grid-cols-4 gap-6">
-        <div class="md:col-span-1">
-          <nav class="space-y-2">
-            <a href="#" class="block px-4 py-2 rounded-md text-red-500 bg-red-100 font-medium">My Profile</a>
-            <a href="/address" class="block px-4 py-2 rounded-md text-gray-500 hover:bg-gray-100">Address Book</a>
-            <a href="/orders" class="block px-4 py-2 rounded-md text-gray-500 hover:bg-gray-100">My Orders</a>
-            <a href="#" class="block px-4 py-2 rounded-md text-gray-500 hover:bg-gray-100">My Payment Options</a>
-          </nav>
-        </div>
-        <div class="md:col-span-3">
-          <h3 class="text-xl font-semibold mb-4">Edit Your Profile</h3>
-          <form>
-            <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
-              <div>
-                <label for="firstName" class="block text-sm font-medium text-gray-700 mb-1">First Name</label>
-                <input type="text" id="firstName" name="firstName" value="<%= user.fname %>" class="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-red-500">
-              </div>
-              <div>
-                <label for="lastName" class="block text-sm font-medium text-gray-700 mb-1">Last Name</label>
-                <input type="text" id="lastName" name="lastName" value="<%= user.lname %>" class="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-red-500">
-              </div>
-              <div>
-                <label for="email" class="block text-sm font-medium text-gray-700 mb-1">Email</label>
-                <input type="email" id="email" name="email" value="<%= user.email %>" class="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-red-500">
-              </div>
-              <div>
-                <label for="address" class="block text-sm font-medium text-gray-700 mb-1">Address</label>
-                <input type="text" id="address" name="address" value="Kingston, 5236, United State" class="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-red-500">
-              </div>
+      <!-- Form -->
+      <div class="w-full md:w-3/4">
+        <form class="bg-white shadow-md rounded-lg p-8">
+          <h3 class="text-xl font-semibold text-gray-900 mb-6">Edit Your Profile</h3>
+          <div class="grid grid-cols-1 gap-y-6 gap-x-4 sm:grid-cols-2">
+            <div class="sm:col-span-1">
+              <label for="first-name" class="block text-sm font-medium text-gray-700 mb-1">First Name*</label>
+              <input type="text" name="first-name" id="first-name" value="<%= user.fname %>" class="block w-full px-4 py-3 rounded-md border-gray-300 shadow-sm focus:ring-red-500 focus:border-red-500 text-sm">
             </div>
-            <div class="mt-6 flex justify-end space-x-4">
-              <button type="button" class="px-4 py-2 border border-gray-300 rounded-md text-gray-700 hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-red-500">Cancel</button>
-              <button type="submit" class="px-4 py-2 bg-red-500 text-white rounded-md hover:bg-red-600 focus:outline-none focus:ring-2 focus:ring-red-500">Save Changes</button>
+            <div class="sm:col-span-1">
+              <label for="last-name" class="block text-sm font-medium text-gray-700 mb-1">Last Name*</label>
+              <input type="text" name="last-name" id="last-name" value="<%= user.lname %>" class="block w-full px-4 py-3 rounded-md border-gray-300 shadow-sm focus:ring-red-500 focus:border-red-500 text-sm">
             </div>
-          </form>
-        </div>
+            <div class="sm:col-span-2">
+              <label for="email-address" class="block text-sm font-medium text-gray-700 mb-1">Email Address*</label>
+              <input type="email" name="email-address" id="email-address" value="<%= user.email %>" class="block w-full px-4 py-3 rounded-md border-gray-300 shadow-sm focus:ring-red-500 focus:border-red-500 text-sm">
+            </div>
+            <div class="sm:col-span-2">
+              <label for="phone-number" class="block text-sm font-medium text-gray-700 mb-1">Phone Number</label>
+              <input type="tel" name="phone-number" id="phone-number" class="block w-full px-4 py-3 rounded-md border-gray-300 shadow-sm focus:ring-red-500 focus:border-red-500 text-sm">
+            </div>
+            <div class="sm:col-span-2">
+              <label for="password" class="block text-sm font-medium text-gray-700 mb-1">Password</label>
+              <input type="password" name="password" id="password" placeholder="••••••••" class="block w-full px-4 py-3 rounded-md border-gray-300 shadow-sm focus:ring-red-500 focus:border-red-500 text-sm">
+            </div>
+          </div>
+          <div class="mt-8">
+            <button type="submit" class="w-full bg-red-600 text-white px-6 py-3 rounded-md font-medium hover:bg-red-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-red-500 transition duration-150 ease-in-out">
+              Save Changes
+            </button>
+          </div>
+        </form>
       </div>
     </div>
   </main>
 
+  <!-- Footer -->
   <%- include('../layouts/footer.ejs') %>
 </body>
 
