@@ -25,6 +25,7 @@ user_router.get('/cart', auth.isLogout, authController.getCart);
 // Wishlist
 user_router.get('/wishlist', auth.isLogout, authController.getWishList);
 user_router.post('/wishlist/add', auth.isLogout, authController.addWishlist);
+user_router.delete('/wishlist/remove', auth.isLogout, authController.removeWishlist);
 user_router.get('/wishlist/count', auth.isLogout, authController.getWishlistCount);
 
 

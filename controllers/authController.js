@@ -218,6 +218,53 @@ const addWishlist = async (req, res) => {
 
 
 
+const removeWishlist = async (req, res) => {
+    try {
+        const { productId } = req.body;
+        const userId = req.session.user_id;
+        const productObjectId = new mongoose.Types.ObjectId(productId);
+
+        // Find the user's wishlist
+        let wishlist = await Wishlist.findOne({ userId });
+
+        if (!wishlist) {
+            return res.status(404).json({
+                success: false,
+                message: "Wishlist not found.",
+            });
+        }
+
+        // Check if the product is in the wishlist
+        const productIndex = wishlist.products.findIndex(
+            (item) => item.productId.equals(productObjectId)
+        );
+
+        if (productIndex === -1) {
+            return res.status(404).json({
+                success: false,
+                message: "Product not found in wishlist.",
+            });
+        }
+
+        // Remove the product from the wishlist
+        wishlist.products.splice(productIndex, 1);
+
+        // Save the updated wishlist
+        await wishlist.save();
+
+        // Send a success response
+        return res.status(200).json({
+            success: true,
+            message: "Product removed from wishlist successfully.",
+        });
+    } catch (error) {
+        console.error(error.message);
+        let errorMessage = { message: "An error occurred. Please try again later." };
+        return res.status(500).json({ success: false, error: errorMessage });
+    }
+};
+
+
 const getCheckOut = async (req, res) => {
     try {
         const userId = req.session.user_id;
@@ -585,6 +632,7 @@ module.exports = {
     getWishList,
     getWishlistCount,
     addWishlist,
+    removeWishlist,
     getCheckOut,
     orderTracking,
     getOrders,

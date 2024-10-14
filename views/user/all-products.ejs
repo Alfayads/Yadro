@@ -137,36 +137,6 @@
       transform: scale(1.1);
     }
 
-    .add-to-cart-btn {
-      transition: all 0.3s ease;
-      overflow: hidden;
-    }
-
-    .add-to-cart-btn:hover {
-      transform: translateY(-2px);
-      box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
-    }
-
-    .add-to-cart-btn::before {
-      content: '';
-      position: absolute;
-      top: -50%;
-      left: -50%;
-      width: 200%;
-      height: 200%;
-      background: linear-gradient(to right, transparent, rgba(255, 255, 255, 0.3), transparent);
-      transform: rotate(45deg);
-      transition: all 0.5s ease;
-    }
-
-    .add-to-cart-btn:hover::before {
-      animation: shimmer 1.5s infinite;
-    }
-
-    .adding-to-cart-text i {
-      animation: spin 1s linear infinite;
-    }
-
     @keyframes spin {
       0% {
         transform: rotate(0deg);
@@ -206,59 +176,83 @@
 
     <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-8">
       <% products.forEach(product => { %>
-      <div class="product-card bg-white rounded-lg overflow-hidden shadow-lg">
-        <div class="relative">
-          <div class="image-container">
-            <img src="<%= product.images[0] %>" alt="<%= product.name %>" class="product-image w-full h-64 object-cover">
+      <!-- Product Card -->
+      <div class="product-card bg-white rounded-lg shadow-lg overflow-hidden transform hover:scale-105 transition-all duration-300 animate-fade-in">
+        <!-- Image Slider -->
+        <div class="relative overflow-hidden group h-64">
+          <div class="image-slider flex transition-transform duration-500 ease-in-out h-full">
+            <% product.images.forEach(image => { %>
+            <img src="<%= image %>" alt="Product" class="w-full h-full object-cover flex-shrink-0">
+            <% }) %>
           </div>
-          <div class="absolute top-4 left-4 discount-badge bg-red-500 text-white text-xs font-bold px-2 py-1 rounded-full z-20 transform -rotate-12">
-            <span class="off-percentage"><%= Math.round((product.regularPrice - product.salePrice) / product.regularPrice * 100) %>% OFF</span>
+          <!-- Slider Navigation -->
+          <div class="absolute inset-0 flex items-center justify-between p-4 opacity-0 group-hover:opacity-100 transition-opacity duration-300">
+            <button class="slider-arrow bg-white bg-opacity-75 hover:bg-opacity-100 rounded-full p-2 focus:outline-none transform -translate-x-10 group-hover:translate-x-0 transition-all duration-300" data-direction="prev">
+              <svg class="w-6 h-6 text-gray-800" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 19l-7-7 7-7"></path>
+              </svg>
+            </button>
+            <button class="slider-arrow bg-white bg-opacity-75 hover:bg-opacity-100 rounded-full p-2 focus:outline-none transform translate-x-10 group-hover:translate-x-0 transition-all duration-300" data-direction="next">
+              <svg class="w-6 h-6 text-gray-800" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7"></path>
+              </svg>
+            </button>
           </div>
-          <button class="like-button absolute top-4 right-4 bg-white rounded-full p-2 shadow-md hover:bg-red-50 transition-colors duration-300" data-liked="false" data-product-id="<%= product._id %>">
-            <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
-              <path stroke-linecap="round" stroke-linejoin="round" d="M4.318 6.318a4.5 4.5 0 000 6.364L12 20.364l7.682-7.682a4.5 4.5 0 00-6.364-6.364L12 7.636l-1.318-1.318a4.5 4.5 0 00-6.364 0z" />
-            </svg>
-          </button>
         </div>
-
-        <div class="p-6">
-          <a href="/product-detail/<%= product._id %>" class="block">
-            <h3 class="text-xl font-semibold text-gray-800 mb-2 hover:text-red-500 transition-colors duration-300"><%= product.name %></h3>
-            <div class="flex justify-between items-center mb-4">
-              <span class="text-2xl font-bold text-red-500">₹<%= product.salePrice %></span>
-              <span class="text-sm text-gray-500 line-through">₹<%= product.regularPrice %></span>
+        <a href="/product-detail/<%= product._id %>">
+          <!-- Product Info -->
+          <div class="p-6">
+            <h3 class="text-xl font-bold text-gray-900 mb-2"><%= product.name %></h3>
+            <div class="flex items-center justify-between mb-4">
+              <div class="flex items-center">
+                <span class="text-2xl font-bold text-red-600">₹<%= product.salePrice %></span>
+                <span class="text-sm text-gray-500 line-through ml-2">₹<%= product.regularPrice %></span>
+              </div>
+              <span class="bg-red-100 text-red-800 text-xs font-semibold px-2.5 py-0.5 rounded"> <%= product.productOffer %> % OFF</span>
             </div>
-          </a>
 
-          <div class="rating-stars flex items-center mb-4" data-product-id="<%= product._id %>">
-            <div class="stars-container flex">
-              <% for (let i = 1; i <= 5; i++) { %>
-              <button class="star-btn text-2xl text-gray-300 hover:text-yellow-400 transition-colors duration-200" data-rating="<%= i %>">★</button>
-              <% } %>
+            <!-- Rating Stars -->
+            <div class="flex items-center mb-4">
+              <div class="flex text-yellow-400">
+                <% for (let i = 1; i <= 5; i++) { %>
+                <svg class="w-5 h-5 fill-current" viewBox="0 0 24 24">
+                  <path d="M12 17.27L18.18 21l-1.64-7.03L22 9.24l-7.19-.61L12 2 9.19 8.63 2 9.24l5.46 4.73L5.82 21z" />
+                </svg>
+                <% } %>
+              </div>
+              <span class="text-gray-600 ml-2">(4.5)</span>
             </div>
-            <span class="rating-value ml-2 text-sm font-semibold text-gray-600"></span>
+
+            <!-- Quantity Selector -->
+            <div class="flex items-center justify-between mb-4">
+              <span class="text-gray-700 font-medium">Quantity:</span>
+              <div class="flex items-center border border-gray-300 rounded-full">
+                <button class="quantity-btn minus w-8 h-8 flex items-center justify-center text-gray-600 hover:bg-gray-100 rounded-full focus:outline-none">-</button>
+                <input type="number" class="quantity-input w-12 text-center border-none focus:outline-none" value="1" min="1" max="99">
+                <button class="quantity-btn plus w-8 h-8 flex items-center justify-center text-gray-600 hover:bg-gray-100 rounded-full focus:outline-none">+</button>
+              </div>
+            </div>
+
+            <!-- Add to Cart Button -->
+            <button class="w-full bg-red-600 hover:bg-red-700 text-white font-bold py-3 px-4 rounded-full transition duration-300 ease-in-out transform hover:scale-105 add-to-cart-btn">
+              <span class="add-to-cart-text flex items-center justify-center">
+                <svg class="w-5 h-5 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+                  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 3h2l.4 2M7 13h10l4-8H5.4M7 13L5.4 5M7 13l-2.293 2.293c-.63.63-.184 1.707.707 1.707H17m0 0a2 2 0 100 4 2 2 0 000-4zm-8 2a2 2 0 11-4 0 2 2 0 014 0z"></path>
+                </svg>
+                Add to Cart
+              </span>
+            </button>
           </div>
+        </a>
 
-          <div class="flex items-center justify-between mb-4">
-            <span class="text-gray-700 font-medium">Quantity:</span>
-            <div class="quantity-selector flex items-center border border-gray-300 rounded-full overflow-hidden">
-              <button class="quantity-btn minus bg-gray-100 px-3 py-1 hover:bg-gray-200 transition-colors duration-200">-</button>
-              <input type="number" class="quantity-input w-12 text-center border-none focus:outline-none" value="1" min="1" max="99">
-              <button class="quantity-btn plus bg-gray-100 px-3 py-1 hover:bg-gray-200 transition-colors duration-200">+</button>
-            </div>
-          </div>
-
-          <button class="add-to-cart-btn w-full bg-red-500 text-white py-3 rounded-full hover:bg-red-600 transition-colors duration-300 relative overflow-hidden" data-product-id="<%= product._id %>">
-            <span class="add-to-cart-text">Add to Cart</span>
-            <span class="adding-to-cart-text hidden">
-              <i class="fas fa-circle-notch fa-spin mr-2"></i>Adding...
-            </span>
-            <span class="added-to-cart-text hidden">
-              <i class="fas fa-check mr-2"></i>Added to Cart
-            </span>
-          </button>
-        </div>
+        <!-- Like Button -->
+        <button class="like-button absolute top-4 right-4 bg-white rounded-full p-2 shadow-md hover:bg-red-50 transition-colors duration-300" data-liked="false" data-product-id="<%= product._id %>">
+          <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
+            <path stroke-linecap="round" stroke-linejoin="round" d="M4.318 6.318a4.5 4.5 0 000 6.364L12 20.364l7.682-7.682a4.5 4.5 0 00-6.364-6.364L12 7.636l-1.318-1.318a4.5 4.5 0 00-6.364 0z" />
+          </svg>
+        </button>
       </div>
+
       <% }) %>
     </div>
 
@@ -268,61 +262,9 @@
 
   <%- include('../layouts/footer.ejs') %>
   <script src="/js/product-card.js"></script>
-
+  <script src="/js/like-button.js"></script>
   <script>
     document.addEventListener('DOMContentLoaded', function() {
-      // Like Button Functionality
-      document.querySelectorAll('.like-button').forEach(button => {
-        button.addEventListener('click', async function(e) {
-          e.preventDefault();
-          const productId = this.dataset.productId;
-          const liked = this.dataset.liked === 'true';
-          const url = liked ? '/wishlist/remove' : '/wishlist/add';
-          const method = liked ? 'DELETE' : 'POST';
-
-          try {
-            const response = await fetch(url, {
-              method: method,
-              headers: {
-                'Content-Type': 'application/json',
-                'Authorization': 'Bearer ' + localStorage.getItem('token')
-              },
-              body: JSON.stringify({
-                productId
-              })
-            });
-
-            if (response.ok) {
-              this.dataset.liked = (!liked).toString();
-              const svg = this.querySelector('svg');
-              svg.style.fill = liked ? 'none' : 'red';
-              svg.style.stroke = liked ? 'currentColor' : 'red';
-
-              // Add animation
-              svg.animate([{
-                  transform: 'scale(1)',
-                  opacity: 0.5
-                },
-                {
-                  transform: 'scale(1.5)',
-                  opacity: 1
-                },
-                {
-                  transform: 'scale(1)',
-                  opacity: 1
-                }
-              ], {
-                duration: 300,
-                easing: 'ease-in-out'
-              });
-            } else {
-              console.error('Failed to update wishlist');
-            }
-          } catch (error) {
-            console.error('Error:', error);
-          }
-        });
-      });
 
       // Rating Stars Functionality
       document.querySelectorAll('.rating-stars').forEach(container => {
@@ -414,64 +356,7 @@
         }
       });
 
-      // Add to Cart Functionality
-      document.querySelectorAll('.add-to-cart-btn').forEach(button => {
-        button.addEventListener('click', async function() {
-          const productId = this.dataset.productId;
-          const quantity = this.closest('.product-card').querySelector('.quantity-input').value;
-
-          this.querySelector('.add-to-cart-text').classList.add('hidden');
-          this.querySelector('.adding-to-cart-text').classList.remove('hidden');
-
-          try {
-            const response = await fetch('/cart/add', {
-              method: 'POST',
-              headers: {
-                'Content-Type': 'application/json',
-                'Authorization': 'Bearer ' + localStorage.getItem('token')
-              },
-              body: JSON.stringify({
-                productId,
-                quantity
-              })
-            });
-
-            if (response.ok) {
-              this.querySelector('.adding-to-cart-text').classList.add('hidden');
-              this.querySelector('.added-to-cart-text').classList.remove('hidden');
-
-              // Add animation
-              this.animate([{
-                  transform: 'translateY(0)'
-                },
-                {
-                  transform: 'translateY(-5px)'
-                },
-                {
-                  transform: 'translateY(0)'
-                }
-              ], {
-                duration: 300,
-                easing: 'ease-in-out'
-              });
-
-              setTimeout(() => {
-                this.querySelector('.added-to-cart-text').classList.add('hidden');
-                this.querySelector('.add-to-cart-text').classList.remove('hidden');
-              }, 2000);
-            } else {
-              console.error('Failed to add to cart');
-              this.querySelector('.adding-to-cart-text').classList.add('hidden');
-              this.querySelector('.add-to-cart-text').classList.remove('hidden');
-            }
-          } catch (error) {
-            console.error('Error:', error);
-            this.querySelector('.adding-to-cart-text').classList.add('hidden');
-            this.querySelector('.add-to-cart-text').classList.remove('hidden');
-          }
-        });
-      });
-    });
+    })
   </script>
 </body>
 

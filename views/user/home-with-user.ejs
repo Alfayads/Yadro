@@ -81,6 +81,23 @@
     .animate-fade-in {
       animation: fadeIn 0.5s ease-out;
     }
+
+
+    .like-button {
+      transition: all 0.3s ease;
+    }
+
+    .like-button:hover {
+      transform: scale(1.2);
+    }
+
+    .like-button svg {
+      transition: fill 0.3s ease, transform 0.3s ease;
+    }
+
+    .like-button:hover svg {
+      transform: scale(1.2);
+    }
   </style>
 </head>
 
@@ -268,9 +285,9 @@
           </a>
 
           <!-- Like Button -->
-          <button class="absolute top-4 right-4 bg-white rounded-full p-2 shadow-md hover:bg-gray-100 transition-colors duration-200 like-button z-10" data-liked="false" data-product-id="<%= product._id %>">
-            <svg class="w-6 h-6 text-gray-600 hover:text-red-600 transition-colors duration-200" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
-              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4.318 6.318a4.5 4.5 0 000 6.364L12 20.364l7.682-7.682a4.5 4.5 0 00-6.364-6.364L12 7.636l-1.318-1.318a4.5 4.5 0 00-6.364 0z"></path>
+          <button class="like-button absolute top-4 right-4 bg-white rounded-full p-2 shadow-md hover:bg-red-50 transition-colors duration-300" data-liked="false" data-product-id="<%= product._id %>">
+            <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
+              <path stroke-linecap="round" stroke-linejoin="round" d="M4.318 6.318a4.5 4.5 0 000 6.364L12 20.364l7.682-7.682a4.5 4.5 0 00-6.364-6.364L12 7.636l-1.318-1.318a4.5 4.5 0 00-6.364 0z" />
             </svg>
           </button>
         </div>
@@ -548,6 +565,7 @@
   <!-- JS -->
   <script src="/js/user-design-animation.js"></script>
   <script src="/js/product-cart.js"></script>
+  <script src="/js/like-button.js"></script>
 </body>
 
 </html>

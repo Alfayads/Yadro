@@ -1,0 +1,15 @@
+.like-button {
+    transition: all 0.3s ease;
+}
+
+.like-button:hover {
+    transform: scale(1.2);
+}
+
+.like-button svg {
+    transition: fill 0.3s ease, transform 0.3s ease;
+}
+
+.like-button:hover svg {
+    transform: scale(1.2);
+}
