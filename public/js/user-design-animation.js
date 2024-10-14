@@ -100,23 +100,6 @@ document.querySelectorAll('a[href^="#"]').forEach(anchor => {
 });
 
 
-// Category item 
-document.addEventListener('DOMContentLoaded', () => {
-    const categoryItems = document.querySelectorAll('.category-item');
-    const colors = ['blue', 'green', 'purple', 'red', 'yellow', 'indigo', 'pink'];
-
-    categoryItems.forEach(item => {
-        const randomColor = colors[Math.floor(Math.random() * colors.length)];
-        const iconWrapper = item.querySelector('.icon-wrapper');
-        const textSpan = item.querySelector('span');
-
-        iconWrapper.classList.remove('group-hover:bg-blue-100', 'group-hover:bg-green-100', 'group-hover:bg-purple-100');
-        iconWrapper.classList.add(`group-hover:bg-${randomColor}-200`);
-
-        textSpan.classList.remove('group-hover:text-blue-600', 'group-hover:text-green-600', 'group-hover:text-purple-600');
-        textSpan.classList.add(`group-hover:text-${randomColor}-700`);
-    });
-});
 
 // Countdown timer
 function startCountdown(targetDate) {

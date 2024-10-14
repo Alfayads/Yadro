@@ -9,51 +9,74 @@
   <script src="https://cdn.tailwindcss.com"></script>
   <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css" rel="stylesheet">
   <style>
-    @keyframes fadeIn {
-      from {
-        opacity: 0;
+    @keyframes float {
+
+      0%,
+      100% {
+        transform: translateY(0) rotate(0);
       }
 
-      to {
-        opacity: 1;
+      50% {
+        transform: translateY(-10px) rotate(5deg);
       }
     }
 
-    @keyframes slideIn {
+    @keyframes pulse {
+
+      0%,
+      100% {
+        transform: scale(1);
+      }
+
+      50% {
+        transform: scale(1.05);
+      }
+    }
+
+    @keyframes fadeInUp {
       from {
-        transform: translateY(20px);
         opacity: 0;
+        transform: translate3d(0, 50px, 0);
       }
 
       to {
-        transform: translateY(0);
         opacity: 1;
+        transform: translate3d(0, 0, 0);
+      }
+    }
+
+    .category-item {
+      opacity: 0;
+      animation: fadeInUp 0.6s ease-out forwards;
+    }
+
+    .category-item:hover .icon-wrapper {
+      animation: float 3s ease-in-out infinite;
+    }
+
+    .perspective-1000 {
+      perspective: 1000px;
+    }
+
+    .category-item:hover>div {
+      transform: scale(1.05) rotateY(10deg);
+      box-shadow: 0 20px 30px rgba(0, 0, 0, 0.1);
+    }
+
+    @keyframes fadeIn {
+      from {
+        opacity: 0;
+        transform: translateY(20px);
+      }
+
+      to {
+        opacity: 1;
+        transform: translateY(0);
       }
     }
 
     .animate-fade-in {
-      animation: fadeIn 0.5s ease-out forwards;
-    }
-
-    .animate-slide-in {
-      animation: slideIn 0.5s ease-out forwards;
-    }
-
-    .product-card {
-      transition: transform 0.3s ease, box-shadow 0.3s ease;
-    }
-
-    .product-card:hover {
-      transform: translateY(-5px);
-      box-shadow: 0 10px 20px rgba(0, 0, 0, 0.1);
-    }
-
-    .like-button {
-      transition: transform 0.2s ease;
-    }
-
-    .like-button:hover {
-      transform: scale(1.1);
+      animation: fadeIn 0.5s ease-out;
     }
   </style>
 </head>
@@ -89,68 +112,103 @@
       </button>
     </div>
 
+    <% if (wishlistProducts.length > 0) { %>
     <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6 mb-12">
       <!-- Wishlist Item 1 -->
-      <div class="product-card bg-white rounded-lg shadow-md overflow-hidden animate-slide-in" style="animation-delay: 100ms;">
-        <div class="relative">
-          <img src="https://via.placeholder.com/300x300" alt="RGB liquid CPU Cooler" class="w-full h-48 object-cover">
-          <button class="absolute top-2 right-2 text-gray-600 hover:text-red-500 transition-colors duration-300">
-            <i class="fas fa-trash"></i>
-          </button>
-          <div class="absolute bottom-2 left-2 bg-red-500 text-white text-xs font-bold px-2 py-1 rounded-full">-20%</div>
-        </div>
-        <div class="p-4">
-          <h3 class="font-semibold text-lg mb-2">RGB liquid CPU Cooler</h3>
-          <div class="flex items-center justify-between mb-2">
-            <p class="text-red-500 font-bold text-xl">$1960</p>
-            <p class="text-gray-500 line-through">$2450</p>
+      <% wishlistProducts.forEach( product => { %>
+      <!-- Product Card -->
+      <div class="product-card bg-white rounded-lg shadow-lg overflow-hidden transform hover:scale-105 transition-all duration-300 animate-fade-in">
+        <!-- Image Slider -->
+        <div class="relative overflow-hidden group h-64">
+          <div class="image-slider flex transition-transform duration-500 ease-in-out h-full">
+            <% product.images.forEach(image => { %>
+            <img src="<%= image %>" alt="Product" class="w-full h-full object-cover flex-shrink-0">
+            <% }) %>
           </div>
-          <div class="flex items-center mb-4">
-            <div class="flex text-yellow-400">
-              <i class="fas fa-star"></i>
-              <i class="fas fa-star"></i>
-              <i class="fas fa-star"></i>
-              <i class="fas fa-star"></i>
-              <i class="fas fa-star-half-alt"></i>
+          <!-- Slider Navigation -->
+          <div class="absolute inset-0 flex items-center justify-between p-4 opacity-0 group-hover:opacity-100 transition-opacity duration-300">
+            <button class="slider-arrow bg-white bg-opacity-75 hover:bg-opacity-100 rounded-full p-2 focus:outline-none transform -translate-x-10 group-hover:translate-x-0 transition-all duration-300" data-direction="prev">
+              <svg class="w-6 h-6 text-gray-800" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 19l-7-7 7-7"></path>
+              </svg>
+            </button>
+            <button class="slider-arrow bg-white bg-opacity-75 hover:bg-opacity-100 rounded-full p-2 focus:outline-none transform translate-x-10 group-hover:translate-x-0 transition-all duration-300" data-direction="next">
+              <svg class="w-6 h-6 text-gray-800" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7"></path>
+              </svg>
+            </button>
+          </div>
+        </div>
+        <a href="/product-detail/<%= product._id %>">
+          <!-- Product Info -->
+          <div class="p-6">
+            <h3 class="text-xl font-bold text-gray-900 mb-2"><%= product.name %></h3>
+            <div class="flex items-center justify-between mb-4">
+              <div class="flex items-center">
+                <span class="text-2xl font-bold text-red-600">₹<%= product.salePrice %></span>
+                <span class="text-sm text-gray-500 line-through ml-2">₹<%= product.regularPrice %></span>
+              </div>
+              <span class="bg-red-100 text-red-800 text-xs font-semibold px-2.5 py-0.5 rounded"> <%= product.productOffer %> % OFF</span>
             </div>
-            <span class="text-gray-500 text-sm ml-2">(42)</span>
-          </div>
-          <button class="w-full bg-black text-white font-semibold py-2 px-4 rounded hover:bg-gray-800 transition-colors duration-300">
-            Add To Cart
-          </button>
-        </div>
+
+            <!-- Rating Stars -->
+            <div class="flex items-center mb-4">
+              <div class="flex text-yellow-400">
+                <% for (let i = 1; i <= 5; i++) { %>
+                <svg class="w-5 h-5 fill-current" viewBox="0 0 24 24">
+                  <path d="M12 17.27L18.18 21l-1.64-7.03L22 9.24l-7.19-.61L12 2 9.19 8.63 2 9.24l5.46 4.73L5.82 21z" />
+                </svg>
+                <% } %>
+              </div>
+              <span class="text-gray-600 ml-2">(4.5)</span>
+            </div>
+
+            <!-- Quantity Selector -->
+            <div class="flex items-center justify-between mb-4">
+              <span class="text-gray-700 font-medium">Quantity:</span>
+              <div class="flex items-center border border-gray-300 rounded-full">
+                <button class="quantity-btn minus w-8 h-8 flex items-center justify-center text-gray-600 hover:bg-gray-100 rounded-full focus:outline-none">-</button>
+                <input type="number" class="quantity-input w-12 text-center border-none focus:outline-none" value="1" min="1" max="99">
+                <button class="quantity-btn plus w-8 h-8 flex items-center justify-center text-gray-600 hover:bg-gray-100 rounded-full focus:outline-none">+</button>
+              </div>
+            </div>
+        </a>
+        <!-- Add to Cart Button -->
+        <button class="w-full bg-red-600 hover:bg-red-700 text-white font-bold py-3 px-4 rounded-full transition duration-300 ease-in-out transform hover:scale-105 add-to-cart-btn">
+          <span class="add-to-cart-text flex items-center justify-center">
+            <svg class="w-5 h-5 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 3h2l.4 2M7 13h10l4-8H5.4M7 13L5.4 5M7 13l-2.293 2.293c-.63.63-.184 1.707.707 1.707H17m0 0a2 2 0 100 4 2 2 0 000-4zm-8 2a2 2 0 11-4 0 2 2 0 014 0z"></path>
+            </svg>
+            Add to Cart
+          </span>
+        </button>
       </div>
 
-      <!-- Wishlist Item 2 -->
-      <div class="product-card bg-white rounded-lg shadow-md overflow-hidden animate-slide-in" style="animation-delay: 200ms;">
-        <div class="relative">
-          <img src="https://via.placeholder.com/300x300" alt="GP11 Shooter USB Gamepad" class="w-full h-48 object-cover">
-          <button class="absolute top-2 right-2 text-gray-600 hover:text-red-500 transition-colors duration-300">
-            <i class="fas fa-trash"></i>
-          </button>
-          <div class="absolute bottom-2 left-2 bg-green-500 text-white text-xs font-bold px-2 py-1 rounded-full">New</div>
-        </div>
-        <div class="p-4">
-          <h3 class="font-semibold text-lg mb-2">GP11 Shooter USB Gamepad</h3>
-          <div class="flex items-center justify-between mb-2">
-            <p class="text-red-500 font-bold text-xl">$550</p>
-          </div>
-          <div class="flex items-center mb-4">
-            <div class="flex text-yellow-400">
-              <i class="fas fa-star"></i>
-              <i class="fas fa-star"></i>
-              <i class="fas fa-star"></i>
-              <i class="fas fa-star"></i>
-              <i class="far fa-star"></i>
-            </div>
-            <span class="text-gray-500 text-sm ml-2">(28)</span>
-          </div>
-          <button class="w-full bg-black text-white font-semibold py-2 px-4 rounded hover:bg-gray-800 transition-colors duration-300">
-            Add To Cart
-          </button>
-        </div>
-      </div>
+
+      <!-- Like Button -->
+      <button class="absolute top-4 right-4 bg-white rounded-full p-2 shadow-md hover:bg-gray-100 transition-colors duration-200 like-button z-10" data-liked="false" data-product-id="<%= product._id %>">
+        <svg class="w-6 h-6 text-gray-600 hover:text-red-600 transition-colors duration-200" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4.318 6.318a4.5 4.5 0 000 6.364L12 20.364l7.682-7.682a4.5 4.5 0 00-6.364-6.364L12 7.636l-1.318-1.318a4.5 4.5 0 00-6.364 0z"></path>
+        </svg>
+      </button>
     </div>
+
+    <% }) %>
+    </div>
+    <% } else { %>
+    <div class="flex flex-col items-center justify-center py-12 px-4 mb-5 sm:px-6 lg:px-8 bg-white rounded-lg shadow-md">
+      <img src="/images/forgotman.png" alt="Empty Wishlist" class="w-48 h-48 mb-8" />
+      <h2 class="text-3xl font-extrabold text-gray-900 mb-4">Your Wishlist is Empty</h2>
+      <p class="text-xl text-gray-600 mb-8 text-center max-w-md">Discover and save items you love to your wishlist. Start exploring our products now!</p>
+      <a href="/products" class="inline-flex items-center px-6 py-3 border border-transparent text-base font-medium rounded-md text-white bg-red-600 hover:bg-red-700 transition duration-150 ease-in-out">
+        <svg class="mr-2 -ml-1 w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"></path>
+        </svg>
+        Explore Products
+      </a>
+    </div>
+    <% } %>
+
 
     <div class="flex justify-between items-center mb-8 animate-fade-in" style="animation-delay: 300ms;">
       <h2 class="text-2xl font-bold text-gray-800 flex items-center">
@@ -188,7 +246,7 @@
             </div>
             <span class="text-gray-500 text-sm ml-2">(65)</span>
           </div>
-          <button class="w-full bg-black text-white font-semibold py-2 px-4 rounded hover:bg-gray-800 transition-colors duration-300">
+          <button class="w-full bg-black text-white font-semibold py-2 px-4 rounded hover:bg-gray-800 transition-colors duration-300 add-to-cart-btn">
             Add To Cart
           </button>
         </div>
@@ -200,50 +258,12 @@
 
   <%- include('../layouts/footer.ejs') %>
 
+
   <script>
-    document.addEventListener('DOMContentLoaded', () => {
-      // Animate product cards on scroll
-      const productCards = document.querySelectorAll('.product-card');
-      const observer = new IntersectionObserver((entries) => {
-        entries.forEach(entry => {
-          if (entry.isIntersecting) {
-            entry.target.classList.add('animate-slide-in');
-          }
-        });
-      }, {
-        threshold: 0.1
-      });
 
-      productCards.forEach(card => {
-        observer.observe(card);
-      });
-
-      // Like button functionality
-      const likeButtons = document.querySelectorAll('.like-button');
-      likeButtons.forEach(button => {
-        button.addEventListener('click', () => {
-          const icon = button.querySelector('i');
-          icon.classList.toggle('far');
-          icon.classList.toggle('fas');
-          icon.classList.toggle('text-red-500');
-        });
-      });
-
-      // Add to Cart button animation
-      const addToCartButtons = document.querySelectorAll('.product-card button');
-      addToCartButtons.forEach(button => {
-        button.addEventListener('click', (e) => {
-          e.preventDefault();
-          button.classList.add('bg-green-500');
-          button.innerHTML = '<i class="fas fa-check mr-2"></i>Added to Cart';
-          setTimeout(() => {
-            button.classList.remove('bg-green-500');
-            button.innerHTML = 'Add To Cart';
-          }, 2000);
-        });
-      });
-    });
   </script>
+  <script src="/js/product-card.js"></script>
+  <script src="/js/user-design-animation.js"></script>
 </body>
 
 </html>

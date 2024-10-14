@@ -47,9 +47,47 @@ const productSchema = mongoose.Schema({
         enum: ["Available", "Out Of Stock", "Discontinued"],
         required: true,
         default: "Available"
-    }
+    },
+    salesCount: {
+        type: Number,
+        default: 0
+    },
+    isFeatured: {
+        type: Boolean,
+        default: false
+    },
+    featuredStart: { type: Date },
+    featuredEnd: { type: Date }
 
 }, { timestamps: true });
+
+
+productSchema.statics.findBestSelling = function (limit = 10) {
+    return this.find()
+        .sort({ salesCount: -1 })
+        .limit(limit);
+};
+
+productSchema.statics.findFeatured = function () {
+    const now = new Date();
+    return this.find({
+        isFeatured: true,
+        featuredStart: { $lte: now },
+        featuredEnd: { $gte: now }
+    });
+};
+
+productSchema.statics.findNewProducts = function (days = 30, limit = 10) {
+    const dateThreshold = new Date();
+    dateThreshold.setDate(dateThreshold.getDate() - days);
+
+    return this.find({
+        createdAt: { $gte: dateThreshold }
+    })
+        .sort({ createdAt: -1 })
+        .limit(limit);
+};
+
 
 const product = mongoose.model('Product', productSchema);
 module.exports = product;

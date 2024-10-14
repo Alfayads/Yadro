@@ -1,10 +1,12 @@
 const bcrypt = require('bcrypt');
 const path = require('path');
 const fs = require('fs');
+
 const Users = require('../models/User');
 const Product = require('../models/Product');
 const Category = require('../models/Category');
-const Coupon = require('../models/Coupon')
+const Coupon = require('../models/Coupon');
+const Brand = require('../models/Brand');
 
 const getHome = (req, res) => {
     try {
@@ -23,9 +25,15 @@ const getLogin = (req, res) => {
 }
 
 const checkLogin = async (req, res) => {
+    const Emailregex = /^[a-zA-Z0-9._%+-]+@gmail\.com$/;
     try {
 
         const { email, password } = req.body;
+
+        if (!Emailregex.test(email)) {
+            req.flash('error_msg', 'Enter Valid Email Address !!');
+            return res.redirect('/admin/login');
+        }
 
         if (!email || !password) {
             req.flash('error_msg', 'All Fields are Required !!!');
@@ -107,8 +115,7 @@ const getProduct = async (req, res) => {
             totalPages: Math.ceil(count / limit),
             currentPage: page,
             searchTerm: search,
-            categories,
-            count
+            categories
         });
     } catch (error) {
         console.log(error.message)
@@ -134,6 +141,21 @@ const addProduct = async (req, res) => {
 
         if (!name || !description || !brand || !color || !category || !quantity || !discount || !price) {
             req.flash('error_msg', 'Please provide all fields');
+            return res.redirect('/admin/add-product');
+        }
+
+        if (price < 100) {
+            req.flash('error_msg', 'Price must be greater than 100');
+            return res.redirect('/admin/add-product');
+        }
+
+        if (quantity <= 0) {
+            req.flash('error_msg', 'quantity must be greater than 1');
+            return res.redirect('/admin/add-product');
+        }
+
+        if (discount > 90) {
+            req.flash('error_msg', 'Discount must be less than 90%');
             return res.redirect('/admin/add-product');
         }
 
@@ -207,6 +229,27 @@ const edittedProduct = async (req, res) => {
         console.log("sdagvrtdfhjn", req.files)
         console.log("ergete5ryhr6uh", req);
         const parsedQuantity = parseInt(quantity);
+
+        if (price < 100) {
+            req.flash('error_msg', 'Discount Must be less than 90');
+            return res.redirect(`/admin/product`);
+        }
+
+        if (parsedQuantity <= 0) {
+            req.flash('error_msg', 'Quantity Must be greter than 1');
+            return res.redirect(`/admin/product`);
+        }
+
+        if (discount > 90) {
+            req.flash('error_msg', 'Discount Must be less than 90');
+            return res.redirect(`/admin/product`);
+        }
+
+        if (quantity <= 0) {
+            req.flash('error_msg', 'Stock Must be greater that 1');
+            return res.redirect(`/admin/product`);
+        }
+
         if (isNaN(parsedQuantity)) {
             req.flash('error_msg', 'Quantity must be a valid number');
             return res.redirect(`/admin/product`);
@@ -293,6 +336,30 @@ const deleteProduct = async (req, res) => {
     }
 }
 
+const blockProduct = async (req, res) => {
+    try {
+        const id = req.params.id;
+        const findProduct = await Product.findById({ _id: id });
+        await Product.updateOne({ _id: id }, { $set: { isBlocked: true } });
+        req.flash('success_msg', `${findProduct.name} Product Blocked Successfully...`);
+        return res.redirect('/admin/product')
+    } catch (error) {
+        console.log(error.message);
+    }
+}
+
+const unblockProduct = async (req, res) => {
+    try {
+        const id = req.params.id;
+        const findProduct = await Product.findById({ _id: id });
+        await Product.updateOne({ _id: id }, { $set: { isBlocked: false } });
+        req.flash('success_msg', `${findProduct.name} Product UnBlocked Successfully...`);
+        return res.redirect('/admin/product')
+    } catch (error) {
+        console.log(error.message);
+    }
+}
+
 
 const getCategory = async (req, res) => {
     try {
@@ -351,11 +418,15 @@ const addCategory = async (req, res) => {
             return res.redirect('/admin/add-category');
         }
 
+        if (offer > 90) {
+            req.flash('error_msg', 'Offer Must be less than 90%');
+            return res.redirect('/admin/add-category');
+        }
 
         let existingCategory = await Category.findOne({ name: CategoryName });
         if (existingCategory) {
-            req.flash('error_msg', 'This category already exists. Try a different name.');
-            return res.redirect('/admin/category');
+            req.flash('error_msg', 'This category already exists. Try a different Category.');
+            return res.redirect('/admin/add-category');
         }
 
         const createdCategory = new Category({
@@ -624,9 +695,10 @@ const getOrders = (req, res) => {
     }
 }
 
-const getBrands = (req, res) => {
+const getBrands = async (req, res) => {
     try {
-        return res.render('admin/brand');
+        const brands = await Brand.find({});
+        return res.render('admin/brand', { brands });
     } catch (error) {
         console.log(error.message);
     }
@@ -635,6 +707,32 @@ const getBrands = (req, res) => {
 const getAddBrand = (req, res) => {
     try {
         return res.render('admin/add-brand');
+    } catch (error) {
+        console.log(error.message);
+    }
+}
+
+const addBrand = async (req, res) => {
+    try {
+        const { name, description, status } = req.body;
+        console.log(name, description, status);
+
+
+        if (!name || !description) {
+            req.flash('error_msg', 'Name or Description is Not Added Check Again !!');
+            return res.redirect('/admin/add-brand');
+        }
+
+        const newBrand = new Brand({
+            name,
+            description,
+            isActive: status === 'active' ? true : false
+        })
+
+        await newBrand.save();
+        req.flash('success_msg', `${name} Brand is Addedd Successfully..`);
+        return res.redirect('/admin/brands')
+
     } catch (error) {
         console.log(error.message);
     }
@@ -669,6 +767,8 @@ module.exports = {
     edittedProduct,
     viewProduct,
     deleteProduct,
+    blockProduct,
+    unblockProduct,
 
     getCategory,
     getAddCategory,
@@ -691,6 +791,7 @@ module.exports = {
 
     getBrands,
     getAddBrand,
+    addBrand,
 
     getBanners,
     getAddBanner

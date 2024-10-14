@@ -1,0 +1,282 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Yadro - Order Tracking</title>
+  <script src="https://cdn.tailwindcss.com"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.11.4/gsap.min.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.11.4/ScrollTrigger.min.js"></script>
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
+  <script>
+    tailwind.config = {
+      theme: {
+        extend: {
+          colors: {
+            'yadro-red': '#FF3366',
+            'yadro-dark-red': '#CC1A4A',
+          }
+        }
+      }
+    }
+  </script>
+  <style>
+    @import url('https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap');
+
+    body {
+      font-family: 'Poppins', sans-serif;
+    }
+
+    .gradient-bg {
+      background: linear-gradient(135deg, #FF3366 0%, #FF6B6B 100%);
+    }
+
+    .card-hover {
+      transition: all 0.3s ease;
+    }
+
+    .card-hover:hover {
+      transform: translateY(-5px);
+      box-shadow: 0 10px 20px rgba(255, 51, 102, 0.1);
+    }
+
+    .progress-bar {
+      position: relative;
+      overflow: hidden;
+    }
+
+    .progress-bar::after {
+      content: '';
+      position: absolute;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      background: linear-gradient(90deg, #FF3366 0%, #FF6B6B 100%);
+      animation: shimmer 2s infinite linear;
+    }
+
+    @keyframes shimmer {
+      0% {
+        transform: translateX(-100%);
+      }
+
+      100% {
+        transform: translateX(100%);
+      }
+    }
+
+    .animate-float {
+      animation: float 3s ease-in-out infinite;
+    }
+
+    @keyframes float {
+
+      0%,
+      100% {
+        transform: translateY(0);
+      }
+
+      50% {
+        transform: translateY(-10px);
+      }
+    }
+
+    /* New styles for breadcrumbs */
+    .breadcrumb-item {
+      position: relative;
+      padding-right: 24px;
+    }
+
+    .breadcrumb-item:not(:last-child)::after {
+      content: '';
+      position: absolute;
+      right: 10px;
+      top: 50%;
+      transform: translateY(-50%);
+      width: 6px;
+      height: 6px;
+      border-top: 2px solid #CBD5E0;
+      border-right: 2px solid #CBD5E0;
+      transform: translateY(-50%) rotate(45deg);
+    }
+  </style>
+</head>
+
+<body class="bg-gray-50 font-sans">
+  <%- include('../layouts/header-with-user.ejs') %>
+
+  <nav aria-label="Breadcrumb" class="container mx-auto px-4 py-4">
+    <ol class="flex items-center space-x-1 text-sm">
+      <li class="breadcrumb-item">
+        <a href="/home" class="text-gray-500 hover:text-red-500 transition duration-300">
+          <i class="fas fa-home mr-1"></i>Home
+        </a>
+      </li>
+      <li class="breadcrumb-item">
+        <a href="/products" class="text-gray-500 hover:text-red-500 transition duration-300">Products</a>
+      </li>
+      <li class="breadcrumb-item">
+        <a href="/cart" class="text-gray-500 hover:text-red-500 transition duration-300">Cart</a>
+      </li>
+      <li class="breadcrumb-item">
+        <span class="text-gray-900 font-medium">Checkout</span>
+      </li>
+    </ol>
+  </nav>
+
+
+  <main class="container mx-auto px-4 py-12">
+    <h1 class="text-4xl font-bold mb-8 text-yadro-red text-center">Your Order Journey</h1>
+
+    <div class="bg-white rounded-xl shadow-2xl p-8 mb-12 gradient-bg text-white">
+      <h2 class="text-3xl font-semibold mb-6">Status: <span class="text-white animate-pulse">Delivered</span></h2>
+
+      <div class="relative">
+        <div class="flex justify-between mb-4">
+          <div class="w-1/4 text-center">
+            <div class="w-16 h-16 mx-auto bg-white rounded-full text-lg text-yadro-red flex items-center justify-center shadow-lg animate-float">
+              <svg class="w-8 h-8" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2m-3 7h3m-3 4h3m-6-4h.01M9 16h.01"></path>
+              </svg>
+            </div>
+            <div class="mt-2 font-medium">Ordered</div>
+          </div>
+          <div class="w-1/4 text-center">
+            <div class="w-16 h-16 mx-auto bg-white rounded-full text-lg text-yadro-red flex items-center justify-center shadow-lg animate-float" style="animation-delay: 0.5s;">
+              <svg class="w-8 h-8" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 8h14M5 8a2 2 0 110-4h14a2 2 0 110 4M5 8v10a2 2 0 002 2h10a2 2 0 002-2V8m-9 4h4"></path>
+              </svg>
+            </div>
+            <div class="mt-2 font-medium">Shipped</div>
+          </div>
+          <div class="w-1/4 text-center">
+            <div class="w-16 h-16 mx-auto bg-white rounded-full text-lg text-yadro-red flex items-center justify-center shadow-lg animate-float" style="animation-delay: 1s;">
+              <svg class="w-8 h-8" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+                <path d="M9 17a2 2 0 11-4 0 2 2 0 014 0zM19 17a2 2 0 11-4 0 2 2 0 014 0z"></path>
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 16V6a1 1 0 00-1-1H4a1 1 0 00-1 1v10a1 1 0 001 1h1m8-1a1 1 0 01-1 1H9m4-1V8a1 1 0 011-1h2.586a1 1 0 01.707.293l3.414 3.414a1 1 0 01.293.707V16a1 1 0 01-1 1h-1m-6-1a1 1 0 001 1h1M5 17a2 2 0 104 0m-4 0a2 2 0 114 0m6 0a2 2 0 104 0m-4 0a2 2 0 114 0"></path>
+              </svg>
+            </div>
+            <div class="mt-2 font-medium">Out for delivery</div>
+          </div>
+          <div class="w-1/4 text-center">
+            <div class="w-16 h-16 mx-auto bg-white rounded-full text-lg text-yadro-red flex items-center justify-center shadow-lg animate-float" style="animation-delay: 1.5s;">
+              <svg class="w-8 h-8" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"></path>
+              </svg>
+            </div>
+            <div class="mt-2 font-medium">Delivered</div>
+          </div>
+        </div>
+        <div class="h-2 bg-white bg-opacity-30 rounded-full mt-4 overflow-hidden progress-bar">
+          <div class="w-full h-full bg-white rounded-full" style="width: 90%;"></div>
+        </div>
+      </div>
+    </div>
+
+    <div class="bg-white rounded-xl shadow-xl p-8">
+      <h3 class="text-2xl font-semibold mb-6 text-yadro-red">Order Details</h3>
+      <div class="space-y-6">
+        <div class="flex items-center justify-between p-6 bg-red-50 rounded-xl transition-all duration-300 card-hover">
+          <div class="flex items-center space-x-6">
+            <img src="/api/placeholder/100/100" alt="H1 Gamepad" class="w-24 h-24 object-cover rounded-lg shadow-md">
+            <div>
+              <h4 class="font-semibold text-xl text-yadro-red">H1 Gamepad</h4>
+              <p class="text-gray-600">Quantity: 1</p>
+              <p class="text-sm text-gray-500 mt-1">High-performance gaming controller</p>
+            </div>
+          </div>
+          <div class="text-2xl font-bold text-yadro-red">$1100</div>
+        </div>
+        <div class="flex items-center justify-between p-6 bg-red-50 rounded-xl transition-all duration-300 card-hover">
+          <div class="flex items-center space-x-6">
+            <img src="/api/placeholder/100/100" alt="H1 Gamepad" class="w-24 h-24 object-cover rounded-lg shadow-md">
+            <div>
+              <h4 class="font-semibold text-xl text-yadro-red">H1 Gamepad</h4>
+              <p class="text-gray-600">Quantity: 1</p>
+              <p class="text-sm text-gray-500 mt-1">High-performance gaming controller</p>
+            </div>
+          </div>
+          <div class="text-2xl font-bold text-yadro-red">$1100</div>
+        </div>
+      </div>
+      <div class="mt-8 border-t border-red-100 pt-6">
+        <div class="flex justify-between items-center mb-4">
+          <span class="text-gray-600 text-lg">Subtotal:</span>
+          <span class="font-semibold text-xl text-yadro-red">$1750</span>
+        </div>
+        <div class="flex justify-between items-center mb-4">
+          <span class="text-gray-600 text-lg">Shipping:</span>
+          <span class="font-semibold text-xl text-green-500">Free</span>
+        </div>
+        <div class="flex justify-between items-center text-2xl font-bold">
+          <span class="text-gray-800">Total:</span>
+          <span class="text-yadro-red">$1750</span>
+        </div>
+      </div>
+    </div>
+  </main>
+
+  <%- include('../layouts/footer.ejs') %>
+
+  <script>
+    // Animate breadcrumbs
+    const breadcrumbItems = document.querySelectorAll('.breadcrumb-item');
+    gsap.from(breadcrumbItems, {
+      opacity: 0,
+      x: -20,
+      stagger: 0.1,
+      duration: 0.5,
+      ease: 'power2.out'
+    });
+
+
+    gsap.registerPlugin(ScrollTrigger);
+
+    // Animate the progress bar
+    gsap.from(".progress-bar .bg-white", {
+      width: 0,
+      duration: 2,
+      ease: "power2.out",
+      scrollTrigger: {
+        trigger: ".progress-bar",
+        start: "top 80%",
+        end: "bottom 20%",
+        toggleActions: "restart pause resume pause"
+      }
+    });
+
+    // Animate the status icons
+    gsap.from(".w-16", {
+      scale: 0,
+      opacity: 0,
+      duration: 0.8,
+      stagger: 0.2,
+      ease: "back.out(1.7)",
+      scrollTrigger: {
+        trigger: ".gradient-bg",
+        start: "top 80%",
+        end: "bottom 20%",
+        toggleActions: "restart pause resume pause"
+      }
+    });
+
+    // Animate the order details
+    gsap.from(".card-hover", {
+      y: 50,
+      opacity: 0,
+      duration: 1,
+      stagger: 0.3,
+      ease: "power3.out",
+      scrollTrigger: {
+        trigger: ".space-y-6",
+        start: "top 80%",
+        end: "bottom 20%",
+        toggleActions: "restart pause resume pause"
+      }
+    });
+  </script>
+</body>
+
+</html>

@@ -107,6 +107,7 @@
               <th class="py-3 px-6 text-left">Sl</th>
               <th class="py-3 px-6 text-left">Product Image</th>
               <th class="py-3 px-6 text-left">Product Name</th>
+              <th class="py-3 px-6 text-left">Status</th>
               <th class="py-3 px-6 text-left">Product ID</th>
               <th class="py-3 px-6 text-left">Category</th>
               <th class="py-3 px-6 text-left">Stock</th>
@@ -127,6 +128,11 @@
                 <% } %>
               </td>
               <td class="py-3 px-6"><%= product.name %></td>
+              <% if (product.isBlocked === false) { %>
+              <td class="py-3 px-6"><span class="bg-green-200 text-green-600 py-1 px-3 rounded-full text-xs">Active</span></td>
+              <% } else { %>
+              <td class="py-3 px-6"><span class="bg-red-200 text-red-600 py-1 px-3 rounded-full text-xs">Blocked</span></td>
+              <% } %>
               <td class="py-3 px-6"><%= product._id %></td>
               <td class="py-3 px-6"><%= product.category %></td>
               <td class="py-3 px-6"><%= product.quantity %></td>
@@ -135,6 +141,26 @@
               <td class="py-3 px-6">₹<%= product.salePrice %></td>
               <td class="py-3 px-6">
                 <div class="flex space-x-3">
+                  <!-- Block Button with Tooltip -->
+                  <% if (product.isBlocked === false) { %>
+                  <a href="/admin/blockProduct/<%= product._id %>" class="relative group action-icon block-icon" title="Block">
+                    <i class="fa-solid fa-lock-open"></i>
+                    <!-- Tooltip -->
+                    <div class="tooltip hidden absolute bottom-full mb-2 w-max text-sm bg-gray-800 text-white p-2 rounded-lg opacity-0 transition-opacity duration-300 group-hover:opacity-100 group-hover:block">
+                      Block
+                      <div class="tooltip-arrow"></div>
+                    </div>
+                  </a>
+                  <% } else { %>
+                  <a href="/admin/unblockProduct/<%= product._id %>" class="relative group action-icon block-icon" title="Block">
+                    <i class="fa-solid fa-lock"></i>
+                    <!-- Tooltip -->
+                    <div class="tooltip hidden absolute bottom-full mb-2 w-max text-sm bg-gray-800 text-white p-2 rounded-lg opacity-0 transition-opacity duration-300 group-hover:opacity-100 group-hover:block">
+                      Unblock
+                      <div class="tooltip-arrow"></div>
+                    </div>
+                  </a>
+                  <% } %>
                   <a href="/admin/editProduct/<%= product._id %>" class="relative group action-icon edit-icon" title="Edit">
                     <i class="fas fa-edit"></i>
                     <div class="tooltip hidden absolute bottom-full mb-2 w-max text-sm bg-gray-800 text-white p-2 rounded-lg opacity-0 transition-opacity duration-300 group-hover:opacity-100 group-hover:block">

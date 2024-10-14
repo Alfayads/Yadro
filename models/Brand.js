@@ -3,21 +3,28 @@ const mongoose = require('mongoose');
 const brandSchema = mongoose.Schema({
     name: {
         type: String,
-        required: true
+        required: true,
+        unique: true
     },
-    image: {
-        type: [String],
-        required: true
+    logo: {
+        type: String
     },
-    isBlocked: {
+    description: {
+        type: String,
+    },
+    website: {
+        type: String
+    },
+    isActive: {
         type: Boolean,
-        default: false,
+        default: true
     },
     createdAt: {
         type: Date,
-        default: Date.now
+        required: true,
+        default: Date.now()
     }
-})
+}, { timestamps: true })
 
 
 const Brand = mongoose.model("Brand", brandSchema);

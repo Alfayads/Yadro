@@ -3,7 +3,6 @@ const admin_router = express.Router();
 const upload = require('../config/multer');
 
 const Controller = require('../controllers/adminController');
-// const auth = require('../middlewares/adminMiddleware');
 const { adminAuth, adminAuthLogin } = require('../middlewares/auth');
 
 // Login routes
@@ -21,6 +20,8 @@ admin_router.get('/editProduct/:id', adminAuth, Controller.editProduct); //  for
 admin_router.post('/edittedProduct/:id', upload.array('productImage', 4), Controller.edittedProduct) // for editted product route
 admin_router.get('/viewProduct/:id', adminAuth, Controller.viewProduct); // for view the product
 admin_router.get('/deleteProduct/:id', adminAuth, Controller.deleteProduct); // for delete the product
+admin_router.get('/blockProduct/:id', adminAuth, Controller.blockProduct);
+admin_router.get('/unblockProduct/:id', adminAuth, Controller.unblockProduct);
 
 // Category Route
 admin_router.get('/category', adminAuth, Controller.getCategory) // for get Category page
@@ -48,6 +49,7 @@ admin_router.get('/orders', adminAuth, Controller.getOrders);// for get all orde
 // Brand Route
 admin_router.get('/brands', adminAuth, Controller.getBrands);
 admin_router.get('/add-brand', adminAuth, Controller.getAddBrand);
+admin_router.post('/add-brand', adminAuth, Controller.addBrand);
 
 // Banner Route
 admin_router.get('/banners', adminAuth, Controller.getBanners);

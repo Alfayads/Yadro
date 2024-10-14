@@ -41,6 +41,141 @@
     .animate-slide-in {
       animation: slideIn 0.5s ease-out forwards;
     }
+
+    @keyframes fadeIn {
+      from {
+        opacity: 0;
+        transform: translateY(20px);
+      }
+
+      to {
+        opacity: 1;
+        transform: translateY(0);
+      }
+    }
+
+    @keyframes pulse {
+      0% {
+        transform: scale(1);
+      }
+
+      50% {
+        transform: scale(1.05);
+      }
+
+      100% {
+        transform: scale(1);
+      }
+    }
+
+    @keyframes shimmer {
+      0% {
+        background-position: -1000px 0;
+      }
+
+      100% {
+        background-position: 1000px 0;
+      }
+    }
+
+    .product-card {
+      animation: fadeIn 0.6s ease-out;
+      transition: all 0.3s ease;
+    }
+
+    .product-card:hover {
+      transform: translateY(-5px);
+      box-shadow: 0 10px 20px rgba(0, 0, 0, 0.1);
+    }
+
+    .image-container {
+      overflow: hidden;
+      border-radius: 8px;
+    }
+
+    .product-image {
+      transition: transform 0.5s ease;
+    }
+
+    .product-card:hover .product-image {
+      transform: scale(1.1);
+    }
+
+    .discount-badge {
+      animation: pulse 2s infinite;
+    }
+
+    .like-button {
+      transition: all 0.3s ease;
+    }
+
+    .like-button:hover {
+      transform: scale(1.2);
+    }
+
+    .like-button svg {
+      transition: fill 0.3s ease, transform 0.3s ease;
+    }
+
+    .like-button:hover svg {
+      transform: scale(1.2);
+    }
+
+    .rating-stars button {
+      transition: color 0.3s ease, transform 0.3s ease;
+    }
+
+    .rating-stars button:hover {
+      transform: scale(1.2);
+    }
+
+    .quantity-btn {
+      transition: all 0.3s ease;
+    }
+
+    .quantity-btn:hover {
+      transform: scale(1.1);
+    }
+
+    .add-to-cart-btn {
+      transition: all 0.3s ease;
+      overflow: hidden;
+    }
+
+    .add-to-cart-btn:hover {
+      transform: translateY(-2px);
+      box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+    }
+
+    .add-to-cart-btn::before {
+      content: '';
+      position: absolute;
+      top: -50%;
+      left: -50%;
+      width: 200%;
+      height: 200%;
+      background: linear-gradient(to right, transparent, rgba(255, 255, 255, 0.3), transparent);
+      transform: rotate(45deg);
+      transition: all 0.5s ease;
+    }
+
+    .add-to-cart-btn:hover::before {
+      animation: shimmer 1.5s infinite;
+    }
+
+    .adding-to-cart-text i {
+      animation: spin 1s linear infinite;
+    }
+
+    @keyframes spin {
+      0% {
+        transform: rotate(0deg);
+      }
+
+      100% {
+        transform: rotate(360deg);
+      }
+    }
   </style>
 </head>
 
@@ -68,61 +203,63 @@
       <p class="text-gray-600">Discover our wide range of high-quality products</p>
     </div>
 
-    <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-8">
-      <% products.forEach( product => { %>
-      <div class="product-card bg-white p-4 rounded shadow relative animate-on-scroll hover:scale-105 transition-transform duration-300">
-        <a href="/product-detail/<%= product.id %>">
-          <div class="absolute top-4 left-4 bg-red-500 text-white text-xs font-bold px-2 py-1 rounded-full z-20 transform -rotate-12 shadow-lg">
-            <span class="off-percentage">0% OFF</span>
+
+    <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-8">
+      <% products.forEach(product => { %>
+      <div class="product-card bg-white rounded-lg overflow-hidden shadow-lg">
+        <div class="relative">
+          <div class="image-container">
+            <img src="<%= product.images[0] %>" alt="<%= product.name %>" class="product-image w-full h-64 object-cover">
           </div>
-          <!-- Like button -->
-          <button class=" z-20 absolute top-2 right-2 bg-white rounded-full p-2 shadow-md hover:bg-gray-100 transition-colors duration-200 like-button" data-liked="false">
-            <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6 transition-colors duration-200" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
+          <div class="absolute top-4 left-4 discount-badge bg-red-500 text-white text-xs font-bold px-2 py-1 rounded-full z-20 transform -rotate-12">
+            <span class="off-percentage"><%= Math.round((product.regularPrice - product.salePrice) / product.regularPrice * 100) %>% OFF</span>
+          </div>
+          <button class="like-button absolute top-4 right-4 bg-white rounded-full p-2 shadow-md hover:bg-red-50 transition-colors duration-300" data-liked="false" data-product-id="<%= product._id %>">
+            <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
               <path stroke-linecap="round" stroke-linejoin="round" d="M4.318 6.318a4.5 4.5 0 000 6.364L12 20.364l7.682-7.682a4.5 4.5 0 00-6.364-6.364L12 7.636l-1.318-1.318a4.5 4.5 0 00-6.364 0z" />
             </svg>
           </button>
-
-          <div class="relative overflow-hidden mb-4">
-            <img src="<%= product.images[0] %>" alt="<%= product.name %>" class="w-full p-6 h-38 object-cover rounded transition-transform duration-300 group-hover:scale-110 group-hover:shadow-lg">
-            <div class="absolute inset-0 bg-black bg-opacity-0 group-hover:bg-opacity-20 transition-opacity duration-300"></div>
-          </div>
-          <h3 class="font-semibold mb-2"><%= product.name %></h3>
-          <div class="flex justify-start gap-3 items-center mb-2">
-            <span class="text-red-500 font-bold">₹ <%= product.salePrice %></span>
-            <span class="text-gray-500 line-through">₹ <%= product.regularPrice %></span>
-          </div>
-          <div class="rating-stars flex items-center mb-2">
-            <div class="stars-container flex">
-              <button class="star-btn text-2xl text-gray-300 transition-colors duration-200" data-rating="1">★</button>
-              <button class="star-btn text-2xl text-gray-300 transition-colors duration-200" data-rating="2">★</button>
-              <button class="star-btn text-2xl text-gray-300 transition-colors duration-200" data-rating="3">★</button>
-              <button class="star-btn text-2xl text-gray-300 transition-colors duration-200" data-rating="4">★</button>
-              <button class="star-btn text-2xl text-gray-300 transition-colors duration-200" data-rating="5">★</button>
-            </div>
-            <span class="rating-value ml-2 text-sm font-semibold"></span>
-          </div>
-        </a>
-        <div class="flex items-center justify-between mb-4">
-          <span class="font-semibold">Quantity:</span>
-          <div class="quantity-selector flex items-center border border-gray-300 rounded">
-            <button class="quantity-btn minus bg-gray-100 px-3 py-1 rounded-l hover:bg-gray-200 transition-colors duration-200">-</button>
-            <input type="number" class="quantity-input w-12 text-center border-none focus:outline-none" value="1" min="1" max="99">
-            <button class="quantity-btn plus bg-gray-100 px-3 py-1 rounded-r hover:bg-gray-200 transition-colors duration-200">+</button>
-          </div>
         </div>
-        <button class="w-full bg-red-500 text-white py-2 rounded hover:bg-red-600 transition-colors duration-300 add-to-cart-btn relative overflow-hidden">
-          <span class="add-to-cart-text">Add to Cart</span>
-          <span class="adding-to-cart-text hidden">
-            <i class="fas fa-truck animate-bounce"></i>
-          </span>
-          <span class="added-to-cart-text hidden">
-            <i class="fas fa-check mr-2"></i>Go to Cart
-          </span>
-        </button>
+
+        <div class="p-6">
+          <a href="/product-detail/<%= product._id %>" class="block">
+            <h3 class="text-xl font-semibold text-gray-800 mb-2 hover:text-red-500 transition-colors duration-300"><%= product.name %></h3>
+            <div class="flex justify-between items-center mb-4">
+              <span class="text-2xl font-bold text-red-500">₹<%= product.salePrice %></span>
+              <span class="text-sm text-gray-500 line-through">₹<%= product.regularPrice %></span>
+            </div>
+          </a>
+
+          <div class="rating-stars flex items-center mb-4" data-product-id="<%= product._id %>">
+            <div class="stars-container flex">
+              <% for (let i = 1; i <= 5; i++) { %>
+              <button class="star-btn text-2xl text-gray-300 hover:text-yellow-400 transition-colors duration-200" data-rating="<%= i %>">★</button>
+              <% } %>
+            </div>
+            <span class="rating-value ml-2 text-sm font-semibold text-gray-600"></span>
+          </div>
+
+          <div class="flex items-center justify-between mb-4">
+            <span class="text-gray-700 font-medium">Quantity:</span>
+            <div class="quantity-selector flex items-center border border-gray-300 rounded-full overflow-hidden">
+              <button class="quantity-btn minus bg-gray-100 px-3 py-1 hover:bg-gray-200 transition-colors duration-200">-</button>
+              <input type="number" class="quantity-input w-12 text-center border-none focus:outline-none" value="1" min="1" max="99">
+              <button class="quantity-btn plus bg-gray-100 px-3 py-1 hover:bg-gray-200 transition-colors duration-200">+</button>
+            </div>
+          </div>
+
+          <button class="add-to-cart-btn w-full bg-red-500 text-white py-3 rounded-full hover:bg-red-600 transition-colors duration-300 relative overflow-hidden" data-product-id="<%= product._id %>">
+            <span class="add-to-cart-text">Add to Cart</span>
+            <span class="adding-to-cart-text hidden">
+              <i class="fas fa-circle-notch fa-spin mr-2"></i>Adding...
+            </span>
+            <span class="added-to-cart-text hidden">
+              <i class="fas fa-check mr-2"></i>Added to Cart
+            </span>
+          </button>
+        </div>
       </div>
       <% }) %>
-
-
     </div>
 
   </main>
@@ -133,38 +270,206 @@
   <script src="/js/product-card.js"></script>
 
   <script>
-    // Breadcrumbs animation
-    document.addEventListener('DOMContentLoaded', () => {
-      const breadcrumbs = [{
-        name: 'Products',
-        href: '#'
-      }];
+    document.addEventListener('DOMContentLoaded', function() {
+      // Like Button Functionality
+      document.querySelectorAll('.like-button').forEach(button => {
+        button.addEventListener('click', async function(e) {
+          e.preventDefault();
+          const productId = this.dataset.productId;
+          const liked = this.dataset.liked === 'true';
+          const url = liked ? '/wishlist/remove' : '/wishlist/add';
+          const method = liked ? 'DELETE' : 'POST';
 
-      const breadcrumbsContainer = document.getElementById('breadcrumbs');
+          try {
+            const response = await fetch(url, {
+              method: method,
+              headers: {
+                'Content-Type': 'application/json',
+                'Authorization': 'Bearer ' + localStorage.getItem('token')
+              },
+              body: JSON.stringify({
+                productId
+              })
+            });
 
-      breadcrumbs.forEach((item, index) => {
-        const li = document.createElement('li');
-        li.className = 'flex items-center';
+            if (response.ok) {
+              this.dataset.liked = (!liked).toString();
+              const svg = this.querySelector('svg');
+              svg.style.fill = liked ? 'none' : 'red';
+              svg.style.stroke = liked ? 'currentColor' : 'red';
 
-        const chevron = document.createElement('svg');
-        chevron.innerHTML = '<svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4 text-gray-400 mx-1" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7" /></svg>';
-        li.appendChild(chevron);
+              // Add animation
+              svg.animate([{
+                  transform: 'scale(1)',
+                  opacity: 0.5
+                },
+                {
+                  transform: 'scale(1.5)',
+                  opacity: 1
+                },
+                {
+                  transform: 'scale(1)',
+                  opacity: 1
+                }
+              ], {
+                duration: 300,
+                easing: 'ease-in-out'
+              });
+            } else {
+              console.error('Failed to update wishlist');
+            }
+          } catch (error) {
+            console.error('Error:', error);
+          }
+        });
+      });
 
-        if (index === breadcrumbs.length - 1) {
-          const span = document.createElement('span');
-          span.className = 'text-gray-700 font-semibold animate-fade-in';
-          span.textContent = item.name;
-          li.appendChild(span);
-        } else {
-          const a = document.createElement('a');
-          a.href = item.href;
-          a.className = 'text-gray-500 hover:text-gray-700 transition-colors duration-300 animate-slide-in';
-          a.style.animationDelay = `${index * 100}ms`;
-          a.textContent = item.name;
-          li.appendChild(a);
+      // Rating Stars Functionality
+      document.querySelectorAll('.rating-stars').forEach(container => {
+        const stars = container.querySelectorAll('.star-btn');
+        const ratingValue = container.querySelector('.rating-value');
+        const productId = container.dataset.productId;
+
+        stars.forEach(star => {
+          star.addEventListener('click', async function() {
+            const rating = this.dataset.rating;
+            try {
+              const response = await fetch('/product/rate', {
+                method: 'POST',
+                headers: {
+                  'Content-Type': 'application/json',
+                  'Authorization': 'Bearer ' + localStorage.getItem('token')
+                },
+                body: JSON.stringify({
+                  productId,
+                  rating
+                })
+              });
+
+              if (response.ok) {
+                updateStars(rating);
+                ratingValue.textContent = rating;
+
+                // Add animation
+                stars.forEach((s, index) => {
+                  s.animate([{
+                      transform: 'scale(1)'
+                    },
+                    {
+                      transform: 'scale(1.2)'
+                    },
+                    {
+                      transform: 'scale(1)'
+                    }
+                  ], {
+                    duration: 300,
+                    delay: index * 50,
+                    easing: 'ease-in-out'
+                  });
+                });
+              } else {
+                console.error('Failed to submit rating');
+              }
+            } catch (error) {
+              console.error('Error:', error);
+            }
+          });
+        });
+
+        function updateStars(rating) {
+          stars.forEach((star, index) => {
+            star.style.color = index < rating ? '#FFA500' : '#D1D5DB';
+          });
         }
+      });
 
-        breadcrumbsContainer.appendChild(li);
+      // Quantity Selector Functionality
+      document.querySelectorAll('.quantity-selector').forEach(selector => {
+        const minusBtn = selector.querySelector('.minus');
+        const plusBtn = selector.querySelector('.plus');
+        const input = selector.querySelector('.quantity-input');
+
+        minusBtn.addEventListener('click', () => updateQuantity(-1));
+        plusBtn.addEventListener('click', () => updateQuantity(1));
+
+        function updateQuantity(change) {
+          let value = parseInt(input.value) + change;
+          value = Math.max(1, Math.min(99, value));
+          input.value = value;
+
+          // Add animation
+          input.animate([{
+              transform: 'scale(1)'
+            },
+            {
+              transform: 'scale(1.1)'
+            },
+            {
+              transform: 'scale(1)'
+            }
+          ], {
+            duration: 300,
+            easing: 'ease-in-out'
+          });
+        }
+      });
+
+      // Add to Cart Functionality
+      document.querySelectorAll('.add-to-cart-btn').forEach(button => {
+        button.addEventListener('click', async function() {
+          const productId = this.dataset.productId;
+          const quantity = this.closest('.product-card').querySelector('.quantity-input').value;
+
+          this.querySelector('.add-to-cart-text').classList.add('hidden');
+          this.querySelector('.adding-to-cart-text').classList.remove('hidden');
+
+          try {
+            const response = await fetch('/cart/add', {
+              method: 'POST',
+              headers: {
+                'Content-Type': 'application/json',
+                'Authorization': 'Bearer ' + localStorage.getItem('token')
+              },
+              body: JSON.stringify({
+                productId,
+                quantity
+              })
+            });
+
+            if (response.ok) {
+              this.querySelector('.adding-to-cart-text').classList.add('hidden');
+              this.querySelector('.added-to-cart-text').classList.remove('hidden');
+
+              // Add animation
+              this.animate([{
+                  transform: 'translateY(0)'
+                },
+                {
+                  transform: 'translateY(-5px)'
+                },
+                {
+                  transform: 'translateY(0)'
+                }
+              ], {
+                duration: 300,
+                easing: 'ease-in-out'
+              });
+
+              setTimeout(() => {
+                this.querySelector('.added-to-cart-text').classList.add('hidden');
+                this.querySelector('.add-to-cart-text').classList.remove('hidden');
+              }, 2000);
+            } else {
+              console.error('Failed to add to cart');
+              this.querySelector('.adding-to-cart-text').classList.add('hidden');
+              this.querySelector('.add-to-cart-text').classList.remove('hidden');
+            }
+          } catch (error) {
+            console.error('Error:', error);
+            this.querySelector('.adding-to-cart-text').classList.add('hidden');
+            this.querySelector('.add-to-cart-text').classList.remove('hidden');
+          }
+        });
       });
     });
   </script>

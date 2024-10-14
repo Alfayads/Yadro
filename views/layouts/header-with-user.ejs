@@ -16,6 +16,27 @@
   .arrow.open {
     transform: rotate(180deg);
   }
+
+  #wishlist-button {
+    position: relative;
+  }
+
+  #wishlist-count-badge {
+    position: absolute;
+    top: -5px;
+    right: -8px;
+    background-color: #f56565;
+    /* Tailwind red-500 */
+    color: white;
+    font-size: 0.75rem;
+    /* Text size */
+    font-weight: bold;
+    padding: 0.1rem 0.1rem;
+    border-radius: 9999px;
+    min-width: 20px;
+    /* Ensures consistent size */
+    text-align: center;
+  }
 </style>
 
 <header class="container mx-auto px-4 py-4 flex justify-around items-center border-b">
@@ -33,11 +54,16 @@
     <i class="fa-solid fa-magnifying-glass absolute right-3 top-3"></i>
   </div>
   <div class="flex items-center space-x-4">
+    <!-- Like button in the header -->
     <div class="relative">
-      <a href="/wishlist" class="text-transparent hover:text-red-500 text-xl p-2 focus:outline-none focus:ring-2 focus:ring-red-300">
-        <i class="fas fa-heart text-black"></i>
+
+      <a href="/wishlist" id="wishlist-button" class="relative">
+        <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6 text-gray-500 hover:text-red-600 transition duration-200" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+          <path d="M20.84 4.61a5.5 5.5 0 0 0-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 0 0-7.78 7.78L12 21.23l8.84-8.84a5.5 5.5 0 0 0 0-7.78z"></path>
+        </svg>
+        <!-- Count badge -->
+        <span id="wishlist-count-badge" class="absolute top-0 right-0 bg-red-500 text-white text-xs font-bold px-1.5 py-0.5 rounded-full">0</span>
       </a>
-      <span class="absolute top-2 right-2 transform translate-x-1/2 -translate-y-1/2 h-4 w-4 bg-red-500 text-white text-xs font-bold rounded-full flex items-center justify-center">0</span>
     </div>
     <div class="relative">
       <a href="/cart" class="text-black hover:text-green-500 text-xl p-3 focus:outline-none focus:ring-2 focus:ring-green-300">
@@ -78,5 +104,27 @@
       userDropdown.classList.add('hidden');
       arrow.classList.remove('open');
     }
+  });
+
+
+  // Wishlist
+  document.addEventListener("DOMContentLoaded", function() {
+    // Fetch the wishlist count from the backend when the DOM is ready
+    fetch('/wishlist/count', {
+        method: 'GET',
+        headers: {
+          'Content-Type': 'application/json'
+        }
+      })
+      .then(response => response.json())
+      .then(data => {
+        if (data.success) {
+          // Update the wishlist count badge in the header
+          document.getElementById('wishlist-count-badge').textContent = data.wishlistCount;
+        } else {
+          console.error('Error fetching wishlist count:', data.message);
+        }
+      })
+      .catch(error => console.error('Error fetching wishlist count:', error));
   });
 </script>

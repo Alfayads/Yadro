@@ -1,11 +1,13 @@
 const bcrypt = require('bcrypt');
 const OTP = require('otp-generator');
+const mongoose = require('mongoose');
 const nodemailer = require('nodemailer')
 
 // Models 
 const Users = require('../models/User');
 const Product = require('../models/Product');
 const Category = require('../models/Category');
+const Wishlist = require('../models/Wishlist');
 
 
 //Secure Password
@@ -130,7 +132,20 @@ const getWishList = async (req, res) => {
     try {
         const userId = req.session.user_id;
         const user = await Users.findById({ _id: userId });
-        return res.render('user/wishlist', { user });
+        const wishlist = await Wishlist.findOne({ userId }).populate('products');
+
+        const wishlistProducts = wishlist ? wishlist.products : [];
+
+        if (wishlist && wishlist.products.length > 0) {
+            // Use the `productId` array to fetch product details
+            const productIds = wishlist.products.map(item => item.productId);
+            const products = await Product.find({ _id: { $in: productIds } });
+
+            // Now render the wishlist EJS page with product details
+            res.render('user/wishlist', { wishlistProducts: products, user });
+        } else {
+            res.render('user/wishlist', { wishlistProducts: [], user }); // empty wishlist
+        }
     } catch (error) {
         console.error(error.message);
         let errorMessage = { message: "An error occurred. Please try again later." };
@@ -138,12 +153,88 @@ const getWishList = async (req, res) => {
     }
 }
 
+const getWishlistCount = async (req, res) => {
+    try {
+        // Ensure the user is logged in with a valid session
+        const userId = req.session.user_id;
+
+        if (!userId) {
+            return res.status(401).json({ success: false, message: 'Unauthorized' });
+        }
+
+        // Find the user's wishlist
+        const wishlist = await Wishlist.findOne({ userId });
+        const wishlistCount = wishlist ? wishlist.products.length : 0;
+
+        return res.status(200).json({ success: true, wishlistCount });
+    } catch (error) {
+        console.error(error.message);
+        return res.status(500).json({ success: false, message: 'Error fetching wishlist count' });
+    }
+};
+
+const addWishlist = async (req, res) => {
+    try {
+        const { productId } = req.body;
+        console.log(productId);
+        const userId = req.session.user_id;
+        const productObjectId = new mongoose.Types.ObjectId(productId);
+
+        // Find the user's wishlist
+        let wishlist = await Wishlist.findOne({ userId });
+
+        if (!wishlist) {
+            // Create a new wishlist if one doesn't exist
+            wishlist = new Wishlist({
+                userId,
+                products: [{ productId: productObjectId }],
+            });
+        } else {
+            // Check if the product is already in the wishlist
+            const isProductInWishlist = wishlist.products.some(
+                (item) => item.productId.equals(productObjectId)
+            );
+
+            // Add the product if it's not already in the wishlist
+            if (!isProductInWishlist) {
+                wishlist.products.push({ productId: productObjectId });
+            }
+        }
+
+        // Save the wishlist
+        await wishlist.save();
+
+        // Send a success response
+        return res.status(200).json({
+            success: true,
+            message: "Product added to wishlist successfully.",
+        });
+    } catch (error) {
+        console.error(error.message);
+        let errorMessage = { message: "An error occurred. Please try again later." };
+        return res.status(500).json({ success: false, error: errorMessage });
+    }
+};
+
+
 
 const getCheckOut = async (req, res) => {
     try {
         const userId = req.session.user_id;
         const user = await Users.findById({ _id: userId });
         return res.render('user/checkout', { user });
+    } catch (error) {
+        console.error(error.message);
+        let errorMessage = { message: "An error occurred. Please try again later." };
+        return res.render('user/error', { error: errorMessage });
+    }
+}
+
+const orderTracking = async (req, res) => {
+    try {
+        const userId = req.session.user_id;
+        const user = await Users.findById({ _id: userId });
+        return res.render('user/order-tracking', { user });
     } catch (error) {
         console.error(error.message);
         let errorMessage = { message: "An error occurred. Please try again later." };
@@ -270,10 +361,33 @@ const newUser = async (req, res) => {
 
     const { fname, lname, email, password, phone, cpassword, gender } = req.body;
     console.log(fname, lname, email, password, phone, cpassword, gender);
+
+    const regex = /^(?=.*[A-Za-z])(?=.*\d)(?=.*[@$!%*#?&])[A-Za-z\d@$!%*#?&]{8,}$/;
+    const Emailregex = /^[a-zA-Z0-9._%+-]+@gmail\.com$/;
     try {
 
         if (password !== cpassword) {
             req.flash('error_msg', 'Password does Not Match Enter Correctly!!');
+            return res.redirect('/signup');
+        }
+
+        if (phone.length < 10) {
+            req.flash('error_msg', 'Phone Number Length Must be 10 Number');
+            return res.redirect('/signup');
+        }
+
+        if (!Emailregex.test(email)) {
+            req.flash('error_msg', ' Invalid Gmail address. Please enter a valid Gmail address.');
+            return res.redirect('/signup');
+        }
+
+        if (!regex.test(password)) {
+            req.flash('error_msg', 'Password must be at least 8 characters long, contain at least one letter, one number, and one special character.');
+            return res.redirect('/signup');
+        }
+
+        if (!fname || !email || !gender) {
+            req.flash('error_msg', 'All fields Are required..');
             return res.redirect('/signup');
         }
 
@@ -320,9 +434,15 @@ const getLogin = (req, res) => {
 }
 
 const checkUser = async (req, res) => {
+    const Emailregex = /^[a-zA-Z0-9._%+-]+@gmail\.com$/;
     try {
         const { email, password } = req.body;
         const ifUser = await Users.findOne({ email });
+
+        if (!Emailregex.test(email)) {
+            req.flash('error_msg', 'Enter Valid Email id!!');
+            return res.redirect('/login');
+        }
 
         if (!ifUser) {
             req.flash('error_msg', 'User is Not Found!!');
@@ -463,7 +583,10 @@ module.exports = {
     getProductByCategory,
     getCart,
     getWishList,
+    getWishlistCount,
+    addWishlist,
     getCheckOut,
+    orderTracking,
     getOrders,
     getAccount,
     getWallet,

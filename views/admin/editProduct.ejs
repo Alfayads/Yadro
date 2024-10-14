@@ -92,9 +92,6 @@
             <% product.images.forEach((image, index) => { %>
             <div class="relative">
               <img src="<%= image %>" alt="Product Image <%= index + 1 %>" class="w-full h-32 object-cover rounded-md">
-              <button type="button" class="absolute top-0 right-0 bg-red-500 text-white rounded-full p-1 m-1" onclick="removeImage(<%= index %>)">
-                <i class="fas fa-times"></i>
-              </button>
             </div>
             <% }) %>
           </div>

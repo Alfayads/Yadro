@@ -24,9 +24,15 @@ user_router.get('/cart', auth.isLogout, authController.getCart);
 
 // Wishlist
 user_router.get('/wishlist', auth.isLogout, authController.getWishList);
+user_router.post('/wishlist/add', auth.isLogout, authController.addWishlist);
+user_router.get('/wishlist/count', auth.isLogout, authController.getWishlistCount);
+
 
 // Check Out
 user_router.get('/cart/check-out', auth.isLogout, authController.getCheckOut);
+
+// Order Tracking
+user_router.get('/order-tracking', auth.isLogout, authController.orderTracking);
 
 // All Orders page
 user_router.get('/orders', auth.isLogout, authController.getOrders);
