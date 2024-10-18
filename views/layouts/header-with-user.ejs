@@ -21,6 +21,10 @@
     position: relative;
   }
 
+  #cart-badge {
+    background-color: #f56565;
+  }
+
   #wishlist-count-badge {
     position: absolute;
     top: -5px;
@@ -37,6 +41,24 @@
     /* Ensures consistent size */
     text-align: center;
   }
+
+  .dropdown {
+    transition: opacity 0.3s ease-in-out, transform 0.3s ease-in-out;
+  }
+
+  .dropdown.hidden {
+    opacity: 0;
+    transform: translateY(-10px);
+    pointer-events: none;
+  }
+
+  .arrow {
+    transition: transform 0.3s ease-in-out;
+  }
+
+  .arrow.open {
+    transform: rotate(180deg);
+  }
 </style>
 
 <header class="container mx-auto px-4 py-4 flex justify-around items-center border-b">
@@ -46,7 +68,17 @@
       <li><a href="/home" class="text-gray-600 hover:text-gray-900">Home</a></li>
       <li><a href="/contact" class="text-gray-600 hover:text-gray-900">Contact</a></li>
       <li><a href="/products" class="text-gray-600 hover:text-gray-900">Products</a></li>
-      <li><a href="#category" class="text-gray-600 hover:text-gray-900">Categories</a></li>
+      <li class="relative">
+        <button id="categoryDropdownButton" class="text-gray-600 hover:text-gray-900 flex items-center">
+          Categories
+          <i class="fas fa-chevron-down ml-1 text-xs arrow"></i>
+        </button>
+        <div id="categoryDropdown" class="dropdown hidden absolute left-0 mt-2 w-48 bg-white rounded-md overflow-hidden shadow-xl z-10">
+          <% categories.forEach( category => { %>
+          <a href="/products/category/<%= category._id %>" class="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-100"><%= category.name %></a>
+          <% }) %>
+        </div>
+      </li>
     </ul>
   </nav>
   <div class="flex relative">
@@ -67,9 +99,14 @@
     </div>
     <div class="relative">
       <a href="/cart" class="text-black hover:text-green-500 text-xl p-3 focus:outline-none focus:ring-2 focus:ring-green-300">
-        <i class="fas fa-shopping-cart"></i>
+        <svg xmlns="http://www.w3.org/2000/svg" class="h-7 w-7 text-gray-500 hover:text-red-600 transition duration-200" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+          <circle cx="9" cy="21" r="1"></circle>
+          <circle cx="20" cy="21" r="1"></circle>
+          <path d="M1 1h4l2.68 13.39a2 2 0 0 0 2 1.61h9.72a2 2 0 0 0 2-1.61L23 6H6"></path>
+        </svg>
+
       </a>
-      <span class="absolute top-2 right-2 transform translate-x-1/2 -translate-y-1/2 h-4 w-4 bg-green-500 text-white text-xs font-bold rounded-full flex items-center justify-center">0</span>
+      <span id="cart-badge" class="absolute  top-8 right-0 transform translate-x-1/2 -translate-y-1/2 h-5 w-5 bg-red-500 text-white text-xs font-bold rounded-full flex items-center justify-center">0</span>
     </div>
     <div class="relative">
       <button id="userDropdownButton" class="flex items-center space-x-2 focus:outline-none">
@@ -126,5 +163,59 @@
         }
       })
       .catch(error => console.error('Error fetching wishlist count:', error));
+  });
+
+  document.addEventListener("DOMContentLoaded", function() {
+    // Fetch the wishlist count from the backend when the DOM is ready
+    fetch('/wishlist/count', {
+        method: 'GET',
+        headers: {
+          'Content-Type': 'application/json'
+        }
+      })
+      .then(response => response.json())
+      .then(data => {
+        if (data.success) {
+          // Update the wishlist count badge in the header
+          document.getElementById('wishlist-count-badge').textContent = data.wishlistCount;
+        } else {
+          console.error('Error fetching wishlist count:', data.message);
+        }
+      })
+      .catch(error => console.error('Error fetching wishlist count:', error));
+
+    // Fetch the cart count from the backend
+    fetch('/cart/count', {
+        method: 'GET',
+        headers: {
+          'Content-Type': 'application/json'
+        }
+      })
+      .then(response => response.json())
+      .then(data => {
+        if (data.success) {
+          // Update the cart count badge in the header
+          document.querySelector('#cart-badge').textContent = data.cartCount;
+        } else {
+          console.error('Error fetching cart count:', data.message);
+        }
+      })
+      .catch(error => console.error('Error fetching cart count:', error));
+  });
+
+  const categoryDropdownButton = document.getElementById('categoryDropdownButton');
+  const categoryDropdown = document.getElementById('categoryDropdown');
+  const categoryArrow = categoryDropdownButton.querySelector('.arrow');
+
+  categoryDropdownButton.addEventListener('click', () => {
+    categoryDropdown.classList.toggle('hidden');
+    categoryArrow.classList.toggle('open');
+  });
+
+  document.addEventListener('click', (event) => {
+    if (!categoryDropdownButton.contains(event.target) && !categoryDropdown.contains(event.target)) {
+      categoryDropdown.classList.add('hidden');
+      categoryArrow.classList.remove('open');
+    }
   });
 </script>

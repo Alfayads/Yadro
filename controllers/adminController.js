@@ -7,6 +7,7 @@ const Product = require('../models/Product');
 const Category = require('../models/Category');
 const Coupon = require('../models/Coupon');
 const Brand = require('../models/Brand');
+const Order = require('../models/Order');
 
 const getHome = (req, res) => {
     try {
@@ -508,8 +509,6 @@ const deleteCategory = async (req, res) => {
     try {
         const id = req.params.id;
         const category = await Category.findById(id);
-
-        // Delete associated image if exists
         if (category.thumbnail) {
             const imagePath = path.join(__dirname, '../uploads/categories', category.thumbnail);
             if (fs.existsSync(imagePath)) {
@@ -605,7 +604,7 @@ const blockCustomer = async (req, res) => {
         req.flash('success_msg', `${findUser.fname} ${findUser.lname} is Blocked Successfully ...`)
         return res.redirect('/admin/customers');
     } catch (error) {
-        console.error('Error blocking customer:', error); // Log the error
+        console.error('Error blocking customer:', error);
         req.flash('error_msg', 'An error occurred while blocking the user.');
         res.redirect('/admin/customers');
     }
@@ -621,7 +620,7 @@ const unblockCustomer = async (req, res) => {
         req.flash('success_msg', `${findUser.fname} ${findUser.lname} is Unblocked Successfully ...`)
         return res.redirect('/admin/customers');
     } catch (error) {
-        console.error('Error blocking customer:', error); // Log the error
+        console.error('Error blocking customer:', error);
         req.flash('error_msg', 'An error occurred while blocking the user.');
         res.redirect('/admin/customers');
     }
@@ -687,11 +686,37 @@ const addCoupon = async (req, res) => {
     }
 }
 
-const getOrders = (req, res) => {
+const getOrders = async (req, res) => {
     try {
-        return res.render('admin/orders');
+        const orders = await Order.find()
+            .populate({
+                path: 'userId',
+                select: 'fname lname',
+            })
+            .populate({
+                path: 'deliveryAddress',
+                model: 'Address'
+            })
+            .populate({
+                path: 'items.productId',
+                select: 'name'
+            });
+
+
+        res.render('admin/orders', { orders });
     } catch (error) {
-        console.log(error.message);
+        console.error('Error fetching orders:', error);
+        res.status(500).json({ message: 'Server error. Could not fetch orders.' });
+    }
+}
+
+const updateOrderStatus = async (req, res) => {
+    const { orderId, status } = req.body;
+    try {
+        await Order.findByIdAndUpdate(orderId, { orderStatus: status });
+        res.redirect('/admin/orders');
+    } catch (error) {
+        res.status(500).json({ message: 'Error updating order status' });
     }
 }
 
@@ -788,6 +813,7 @@ module.exports = {
     addCoupon,
 
     getOrders,
+    updateOrderStatus,
 
     getBrands,
     getAddBrand,

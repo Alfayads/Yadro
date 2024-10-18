@@ -1,0 +1,226 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Yadro - Add New Address</title>
+  <script src="https://cdn.tailwindcss.com"></script>
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
+  <script src="https://cdn.jsdelivr.net/npm/alpinejs@3.x.x/dist/cdn.min.js"></script>
+  <style>
+    @keyframes fadeIn {
+      from {
+        opacity: 0;
+        transform: translateY(10px);
+      }
+
+      to {
+        opacity: 1;
+        transform: translateY(0);
+      }
+    }
+
+    .animate-fadeIn {
+      animation: fadeIn 0.5s ease-out forwards;
+    }
+
+    .input-focus-effect:focus {
+      box-shadow: 0 0 0 2px rgba(239, 68, 68, 0.2);
+    }
+  </style>
+</head>
+
+<body class="bg-gray-50 min-h-screen flex flex-col">
+  <!-- Header placeholder -->
+  <%- include('../layouts/header-with-user.ejs') %>
+
+  <main class="flex-grow container mx-auto py-12 px-4 sm:px-6 lg:px-8">
+    <!-- Breadcrumb -->
+    <div class="border-b border-gray-200 pb-4 mb-8">
+      <nav class="flex" aria-label="Breadcrumb">
+        <ol class="flex items-center space-x-4">
+          <li>
+            <a href="#" class="text-gray-400 hover:text-gray-500">Home</a>
+          </li>
+          <li class="flex items-center">
+            <svg class="h-5 w-5 text-gray-300" fill="currentColor" viewBox="0 0 20 20">
+              <path d="M5.555 17.776l8-16 .894.448-8 16-.894-.448z" />
+            </svg>
+            <a href="/address" class="ml-4 text-gray-400 hover:text-gray-500">Address Book</a>
+          </li>
+          <li class="flex items-center">
+            <svg class="h-5 w-5 text-gray-300" fill="currentColor" viewBox="0 0 20 20">
+              <path d="M5.555 17.776l8-16 .894.448-8 16-.894-.448z" />
+            </svg>
+            <span class="ml-4 text-gray-500">Add New Address</span>
+          </li>
+        </ol>
+      </nav>
+    </div>
+
+    <div class="flex flex-col lg:flex-row">
+      <!-- Sidebar -->
+      <div class="w-full lg:w-1/4 mb-8 lg:mb-0 lg:pr-8">
+        <h2 class="text-2xl font-bold text-gray-900 mb-6">Manage My Account</h2>
+        <nav class="space-y-2">
+          <a href="/account" class="block px-4 py-3 rounded-lg text-sm font-medium text-gray-700 hover:bg-white hover:shadow transition duration-150">My Profile</a>
+          <a href="/address" class="block px-4 py-3 rounded-lg text-sm font-medium text-red-600 bg-white shadow-md">Address Book</a>
+          <a href="/orders" class="block px-4 py-3 rounded-lg text-sm font-medium text-gray-700 hover:bg-white hover:shadow transition duration-150">My Orders</a>
+          <a href="#" class="block px-4 py-3 rounded-lg text-sm font-medium text-gray-700 hover:bg-white hover:shadow transition duration-150">My Payment Options</a>
+        </nav>
+      </div>
+
+      <!-- Form Container -->
+      <div class="lg:w-3/4">
+        <div class="bg-white rounded-lg shadow-sm p-6 sm:p-8 animate-fadeIn">
+          <h2 class="text-2xl font-bold text-gray-900 mb-6">Add New Address</h2>
+
+          <% if (error_msg.length > 0 ) { %>
+          <div class="bg-red-100 border border-red-400 text-red-700 px-4 py-3 rounded relative mb-6" role="alert" id="error-message">
+            <strong class="font-bold">Error!</strong>
+            <span class="block sm:inline"><%= error_msg %></span>
+            <span class="absolute top-0 bottom-0 right-0 px-4 py-3">
+              <svg class="fill-current h-6 w-6 text-red-500" role="button" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20" onclick="document.getElementById('error-message').style.display='none'">
+                <title>Close</title>
+                <path d="M14.348 5.652a1 1 0 00-1.414-1.414L10 7.172 7.066 4.238a1 1 0 10-1.414 1.414L8.586 10l-2.934 2.934a1 1 0 101.414 1.414L10 12.828l2.934 2.934a1 1 0 101.414-1.414L11.414 10l2.934-2.934z" />
+              </svg>
+            </span>
+          </div>
+          <% } %>
+
+          <% if (success_msg.length > 0 ) { %>
+          <div class="bg-green-100 border border-green-400 text-green-700 px-4 py-3 rounded relative mb-6" role="alert" id="error-message">
+            <strong class="font-bold">Sent!</strong>
+            <span class="block sm:inline"><%= success_msg %></span>
+            <span class="absolute top-0 bottom-0 right-0 px-4 py-3">
+              <svg class="fill-current h-6 w-6 text-green-500" role="button" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20" onclick="document.getElementById('error-message').style.display='none'">
+                <title>Close</title>
+                <path d="M14.348 5.652a1 1 0 00-1.414-1.414L10 7.172 7.066 4.238a1 1 0 10-1.414 1.414L8.586 10l-2.934 2.934a1 1 0 101.414 1.414L10 12.828l2.934 2.934a1 1 0 101.414-1.414L11.414 10l2.934-2.934z" />
+              </svg>
+            </span>
+          </div>
+          <% } %>
+
+          <form action="/profile/add-address" method="POST" class="space-y-6">
+            <!-- Address Type -->
+            <div class="flex space-x-4">
+              <label class="flex-1">
+                <input type="radio" name="addressType" value="Home" class="sr-only peer" checked>
+                <div class="p-4 text-center rounded-lg border-2 cursor-pointer transition-all peer-checked:border-red-500 peer-checked:bg-red-50 hover:border-red-200">
+                  <i class="fas fa-home mb-2 text-xl"></i>
+                  <p class="font-medium">Home</p>
+                </div>
+              </label>
+              <label class="flex-1">
+                <input type="radio" name="addressType" value="Office" class="sr-only peer">
+                <div class="p-4 text-center rounded-lg border-2 cursor-pointer transition-all peer-checked:border-red-500 peer-checked:bg-red-50 hover:border-red-200">
+                  <i class="fas fa-building mb-2 text-xl"></i>
+                  <p class="font-medium">Office</p>
+                </div>
+              </label>
+            </div>
+
+            <!-- Street Address & Apartment -->
+            <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+              <div class="col-span-2">
+                <label class="block text-sm font-medium text-gray-700 mb-2">Full Name</label>
+                <input type="text" name="name" value="<%= oldValue.name ||  '' %>" class="w-full px-4 py-3 rounded-lg border border-gray-300 focus:outline-none focus:ring-2 focus:ring-red-500 input-focus-effect">
+              </div>
+              <div class="col-span-2">
+                <label class="block text-sm font-medium text-gray-700 mb-2">Street Address</label>
+                <input type="text" name="street" value="<%= oldValue.street || '' %>" class="w-full px-4 py-3 rounded-lg border border-gray-300 focus:outline-none focus:ring-2 focus:ring-red-500 input-focus-effect">
+              </div>
+              <div>
+                <label class="block text-sm font-medium text-gray-700 mb-2">Apartment/Suite</label>
+                <input type="text" name="apartment" value="<%= oldValue.apartment || '' %>" class="w-full px-4 py-3 rounded-lg border border-gray-300 focus:outline-none focus:ring-2 focus:ring-red-500 input-focus-effect">
+              </div>
+              <div>
+                <label class="block text-sm font-medium text-gray-700 mb-2">Landmark</label>
+                <input type="text" name="landMark" value="<%= oldValue.landMark || '' %>" class="w-full px-4 py-3 rounded-lg border border-gray-300 focus:outline-none focus:ring-2 focus:ring-red-500 input-focus-effect">
+              </div>
+            </div>
+
+            <!-- Location Details -->
+            <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+              <div>
+                <label class="block text-sm font-medium text-gray-700 mb-2">Country</label>
+                <select name="country" class="w-full px-4 py-3 rounded-lg border border-gray-300 focus:outline-none focus:ring-2 focus:ring-red-500 input-focus-effect">
+                  <option value="<%= oldValue.country || '' %>">Select Country</option>
+                  <option value="United States">United States</option>
+                  <option value="Canada">Canada</option>
+                </select>
+              </div>
+              <div>
+                <label class="block text-sm font-medium text-gray-700 mb-2">State</label>
+                <select name="state" class="w-full px-4 py-3 rounded-lg border border-gray-300 focus:outline-none focus:ring-2 focus:ring-red-500 input-focus-effect">
+                  <option value="<%= oldValue.state || '' %>">Select State</option>
+                </select>
+              </div>
+              <div>
+                <label class="block text-sm font-medium text-gray-700 mb-2">City</label>
+                <input type="text" value="<%= oldValue.city || '' %>" name="city" class="w-full px-4 py-3 rounded-lg border border-gray-300 focus:outline-none focus:ring-2 focus:ring-red-500 input-focus-effect">
+              </div>
+              <div>
+                <label class="block text-sm font-medium text-gray-700 mb-2">Postal Code</label>
+                <input type="text" value="<%= oldValue.postalCode || '' %>" name="postalCode" class="w-full px-4 py-3 rounded-lg border border-gray-300 focus:outline-none focus:ring-2 focus:ring-red-500 input-focus-effect">
+              </div>
+            </div>
+
+            <!-- Phone -->
+            <div>
+              <label class="block text-sm font-medium text-gray-700 mb-2">Phone Number</label>
+              <input type="tel" value="<%= oldValue.phone || '' %>" name="phone" class="w-full px-4 py-3 rounded-lg border border-gray-300 focus:outline-none focus:ring-2 focus:ring-red-500 input-focus-effect">
+            </div>
+
+            <!-- Buttons -->
+            <div class="flex justify-end space-x-4 pt-6">
+              <a href="/address" class="px-6 py-3 rounded-md text-gray-700 bg-gray-100 hover:bg-gray-200 transition duration-300">Cancel</a>
+              <button type="submit" class="px-6 py-3 rounded-md text-white bg-red-600 hover:bg-red-700 transition duration-300 transform hover:-translate-y-1 hover:shadow-md">Save Address</button>
+            </div>
+          </form>
+        </div>
+      </div>
+    </div>
+  </main>
+
+  <!-- Footer placeholder -->
+  <%- include('../layouts/footer.ejs') %>
+
+  <script>
+    // Add animation class to form fields sequentially
+    document.addEventListener('DOMContentLoaded', () => {
+      const formFields = document.querySelectorAll('input, select');
+      formFields.forEach((field, index) => {
+        setTimeout(() => {
+          field.closest('div').classList.add('animate-fadeIn');
+        }, index * 100);
+      });
+    });
+
+    // Dynamic state loading based on country selection
+    const countrySelect = document.querySelector('select[name="country"]');
+    const stateSelect = document.querySelector('select[name="state"]');
+
+    const states = {
+      US: ['Alabama', 'Alaska', 'Arizona', /* ... */ ],
+      CA: ['Alberta', 'British Columbia', 'Manitoba', /* ... */ ]
+    };
+
+    countrySelect.addEventListener('change', (e) => {
+      const country = e.target.value;
+      stateSelect.innerHTML = '<option value="">Select State</option>';
+
+      if (states[country]) {
+        states[country].forEach(state => {
+          const option = document.createElement('option');
+          option.value = state;
+          option.textContent = state;
+          stateSelect.appendChild(option);
+        });
+      }
+    });
+  </script>
+</body>
+
+</html>

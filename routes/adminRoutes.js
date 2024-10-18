@@ -6,11 +6,11 @@ const Controller = require('../controllers/adminController');
 const { adminAuth, adminAuthLogin } = require('../middlewares/auth');
 
 // Login routes
-admin_router.get('/login', adminAuthLogin, Controller.getLogin);
-admin_router.post('/login', Controller.checkLogin);
+admin_router.get('/login', adminAuthLogin, Controller.getLogin); // for get login page for the admin
+admin_router.post('/login', Controller.checkLogin); //  for check the admin credentials
 
 //Home route
-admin_router.get('/', adminAuth, Controller.getHome);
+admin_router.get('/', adminAuth, Controller.getHome); // for get dashboard of admin
 
 
 admin_router.get('/product', adminAuth, Controller.getProduct);// for get Product page
@@ -45,19 +45,20 @@ admin_router.post('/add-coupon', adminAuth, Controller.addCoupon);
 
 // All orders route
 admin_router.get('/orders', adminAuth, Controller.getOrders);// for get all orders page
+admin_router.post('/orders/update-status', adminAuth, Controller.updateOrderStatus);
 
 // Brand Route
-admin_router.get('/brands', adminAuth, Controller.getBrands);
-admin_router.get('/add-brand', adminAuth, Controller.getAddBrand);
-admin_router.post('/add-brand', adminAuth, Controller.addBrand);
+admin_router.get('/brands', adminAuth, Controller.getBrands); // for get brand listing page
+admin_router.get('/add-brand', adminAuth, Controller.getAddBrand);// for get add Brand page
+admin_router.post('/add-brand', adminAuth, Controller.addBrand);// for create new brand 
 
 // Banner Route
-admin_router.get('/banners', adminAuth, Controller.getBanners);
-admin_router.get('/add-banner', adminAuth, Controller.getAddBanner);
+admin_router.get('/banners', adminAuth, Controller.getBanners);// for get Banner listing page
+admin_router.get('/add-banner', adminAuth, Controller.getAddBanner); // for get add Banner page 
 
 
 //Logout Route
-admin_router.get('/logout', Controller.logout);
+admin_router.get('/logout', Controller.logout); // for admin can logout 
 
 
 module.exports = admin_router;

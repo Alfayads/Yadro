@@ -10,17 +10,20 @@ passport.use(new GoogleStrategy({
     passReqToCallback: true,
 }, async (req, accessToken, refreshToken, profile, done) => {
     try {
+        console.log('Profile:', profile);
         let user = await User.findOne({ googleId: profile.id });
         if (user) {
             return done(null, user);
         } else {
             user = new User({
-                fname: profile.displayName,
+                fname: profile._json.given_name,
+                lname: profile._json.family_name,
                 email: profile.emails[0].value,
-                googleId: profile.id,
+                googleId: profile.id
             });
+            console.log("New user object before save:", user);
             await user.save();
-            console.log("user", user);
+            console.log('Saved User : ', user)
             return done(null, user);
         }
     } catch (error) {
@@ -31,15 +34,20 @@ passport.use(new GoogleStrategy({
 
 
 passport.serializeUser((user, done) => {
-    done(null, user.id);
+    console.log('Serializing user:', user);
+    done(null, user._id);
 })
 
-passport.deserializeUser((id, done) => {
-    User.findById(id).then(user => {
+passport.deserializeUser(async (id, done) => {
+    console.log('Deserializing user with ID:', id);
+    try {
+        const user = await User.findById(id);
+        console.log('Retrieved user:', user);
         done(null, user);
-    }).catch(err => {
-        done(err, null)
-    })
-})
+    } catch (err) {
+        console.error('Error retrieving user:', err);
+        done(err);
+    }
+});
 
 module.exports = passport;

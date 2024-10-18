@@ -11,6 +11,7 @@
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
   <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:opsz,wght,FILL,GRAD@20..48,100..700,0..1,-50..200" />
   <script src="/js/product-card.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
   <style>
     @keyframes float {
 
@@ -97,6 +98,60 @@
 
     .like-button:hover svg {
       transform: scale(1.2);
+    }
+
+    @keyframes float {
+
+      0%,
+      100% {
+        transform: translateY(0) rotate(0);
+      }
+
+      50% {
+        transform: translateY(-10px) rotate(5deg);
+      }
+    }
+
+    @keyframes pulse {
+
+      0%,
+      100% {
+        transform: scale(1);
+      }
+
+      50% {
+        transform: scale(1.05);
+      }
+    }
+
+    @keyframes fadeInUp {
+      from {
+        opacity: 0;
+        transform: translate3d(0, 50px, 0);
+      }
+
+      to {
+        opacity: 1;
+        transform: translate3d(0, 0, 0);
+      }
+    }
+
+    .category-item {
+      opacity: 0;
+      animation: fadeInUp 0.6s ease-out forwards;
+    }
+
+    .category-item:hover .icon-wrapper {
+      animation: float 3s ease-in-out infinite;
+    }
+
+    .perspective-1000 {
+      perspective: 1000px;
+    }
+
+    .category-item:hover>div {
+      transform: scale(1.05) rotateY(10deg);
+      box-shadow: 0 20px 30px rgba(0, 0, 0, 0.1);
     }
   </style>
 </head>
@@ -261,42 +316,43 @@
                 </div>
                 <span class="text-gray-600 ml-2">(4.5)</span>
               </div>
-
-              <!-- Quantity Selector -->
-              <div class="flex items-center justify-between mb-4">
-                <span class="text-gray-700 font-medium">Quantity:</span>
-                <div class="flex items-center border border-gray-300 rounded-full">
-                  <button class="quantity-btn minus w-8 h-8 flex items-center justify-center text-gray-600 hover:bg-gray-100 rounded-full focus:outline-none">-</button>
-                  <input type="number" class="quantity-input w-12 text-center border-none focus:outline-none" value="1" min="1" max="99">
-                  <button class="quantity-btn plus w-8 h-8 flex items-center justify-center text-gray-600 hover:bg-gray-100 rounded-full focus:outline-none">+</button>
-                </div>
-              </div>
-
-              <!-- Add to Cart Button -->
-              <button class="w-full bg-red-600 hover:bg-red-700 text-white font-bold py-3 px-4 rounded-full transition duration-300 ease-in-out transform hover:scale-105 add-to-cart-btn">
-                <span class="add-to-cart-text flex items-center justify-center">
-                  <svg class="w-5 h-5 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
-                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 3h2l.4 2M7 13h10l4-8H5.4M7 13L5.4 5M7 13l-2.293 2.293c-.63.63-.184 1.707.707 1.707H17m0 0a2 2 0 100 4 2 2 0 000-4zm-8 2a2 2 0 11-4 0 2 2 0 014 0z"></path>
-                  </svg>
-                  Add to Cart
-                </span>
-              </button>
-            </div>
           </a>
+          <!-- Quantity Selector -->
+          <div class="flex items-center justify-between mb-4">
+            <span class="text-gray-700 font-medium">Quantity:</span>
+            <div class="flex items-center border border-gray-300 rounded-full">
+              <button class="quantity-btn minus w-8 h-8 flex items-center justify-center text-gray-600 hover:bg-gray-100 rounded-full focus:outline-none">-</button>
+              <input type="number" id="quantity-<%= product._id %>" class="quantity-input w-12 text-center border-none focus:outline-none" value="1" min="1" max="10">
 
-          <!-- Like Button -->
-          <button class="like-button absolute top-4 right-4 bg-white rounded-full p-2 shadow-md hover:bg-red-50 transition-colors duration-300" data-liked="false" data-product-id="<%= product._id %>">
-            <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
-              <path stroke-linecap="round" stroke-linejoin="round" d="M4.318 6.318a4.5 4.5 0 000 6.364L12 20.364l7.682-7.682a4.5 4.5 0 00-6.364-6.364L12 7.636l-1.318-1.318a4.5 4.5 0 00-6.364 0z" />
-            </svg>
+              <button class="quantity-btn plus w-8 h-8 flex items-center justify-center text-gray-600 hover:bg-gray-100 rounded-full focus:outline-none">+</button>
+            </div>
+          </div>
+
+          <!-- Add to Cart Button -->
+          <button data-product-id="<%= product._id %>" class="w-full bg-red-600 hover:bg-red-700 text-white font-bold py-3 px-4 rounded-full transition duration-300 ease-in-out transform hover:scale-105 add-to-cart-btn">
+            <span class="add-to-cart-text flex items-center justify-center">
+              <svg class="w-5 h-5 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 3h2l.4 2M7 13h10l4-8H5.4M7 13L5.4 5M7 13l-2.293 2.293c-.63.63-.184 1.707.707 1.707H17m0 0a2 2 0 100 4 2 2 0 000-4zm-8 2a2 2 0 11-4 0 2 2 0 014 0z"></path>
+              </svg>
+              Add to Cart
+            </span>
           </button>
         </div>
 
-        <% }) %>
+
+        <!-- Like Button -->
+        <button class="like-button absolute top-4 right-4 bg-white rounded-full p-2 shadow-md hover:bg-red-50 transition-colors duration-300" data-liked="false" data-product-id="<%= product._id %>">
+          <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
+            <path stroke-linecap="round" stroke-linejoin="round" d="M4.318 6.318a4.5 4.5 0 000 6.364L12 20.364l7.682-7.682a4.5 4.5 0 00-6.364-6.364L12 7.636l-1.318-1.318a4.5 4.5 0 00-6.364 0z" />
+          </svg>
+        </button>
+      </div>
+
+      <% }) %>
 
 
 
-        <!-- Repeat for other products -->
+      <!-- Repeat for other products -->
 
 
 
@@ -304,8 +360,9 @@
     </section>
 
     <!-- Categories Section -->
+    <!-- Categories Section -->
     <section class="my-24 px-4 sm:px-6 lg:px-8 overflow-hidden">
-      <h2 class="text-4xl font-bold mb-16 text-center relative" id="category">
+      <h2 class="text-4xl font-bold mb-16 text-center relative">
         Browse By Category
         <span class="absolute bottom-0 left-1/2 transform -translate-x-1/2 w-24 h-1 bg-blue-500 mt-4"></span>
       </h2>
@@ -329,7 +386,7 @@
 
 
     <!-- Best Selling Products -->
-    <section class="mb-12">
+    <section class="my-12 top-2">
       <div class="flex justify-between items-center my-4 ">
         <h2 class="text-2xl font-bold">Best Selling Products</h2>
         <a href="/products" class="text-red-500 hover:underline">View All Products</a>
@@ -387,38 +444,39 @@
                 </div>
                 <span class="text-gray-600 ml-2">(4.5)</span>
               </div>
-
-              <!-- Quantity Selector -->
-              <div class="flex items-center justify-between mb-4">
-                <span class="text-gray-700 font-medium">Quantity:</span>
-                <div class="flex items-center border border-gray-300 rounded-full">
-                  <button class="quantity-btn minus w-8 h-8 flex items-center justify-center text-gray-600 hover:bg-gray-100 rounded-full focus:outline-none">-</button>
-                  <input type="number" class="quantity-input w-12 text-center border-none focus:outline-none" value="1" min="1" max="99">
-                  <button class="quantity-btn plus w-8 h-8 flex items-center justify-center text-gray-600 hover:bg-gray-100 rounded-full focus:outline-none">+</button>
-                </div>
-              </div>
-
-              <!-- Add to Cart Button -->
-              <button class="w-full bg-red-600 hover:bg-red-700 text-white font-bold py-3 px-4 rounded-full transition duration-300 ease-in-out transform hover:scale-105 add-to-cart-btn">
-                <span class="add-to-cart-text flex items-center justify-center">
-                  <svg class="w-5 h-5 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
-                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 3h2l.4 2M7 13h10l4-8H5.4M7 13L5.4 5M7 13l-2.293 2.293c-.63.63-.184 1.707.707 1.707H17m0 0a2 2 0 100 4 2 2 0 000-4zm-8 2a2 2 0 11-4 0 2 2 0 014 0z"></path>
-                  </svg>
-                  Add to Cart
-                </span>
-              </button>
-            </div>
           </a>
+          <!-- Quantity Selector -->
+          <div class="flex items-center justify-between mb-4">
+            <span class="text-gray-700 font-medium">Quantity:</span>
+            <div class="flex items-center border border-gray-300 rounded-full">
+              <button class="quantity-btn minus w-8 h-8 flex items-center justify-center text-gray-600 hover:bg-gray-100 rounded-full focus:outline-none">-</button>
+              <input type="number" id="quantity-<%= product._id %>" class="quantity-input w-12 text-center border-none focus:outline-none" value="1" min="1" max="10">
 
-          <!-- Like Button -->
-          <button class="absolute top-4 right-4 bg-white rounded-full p-2 shadow-md hover:bg-gray-100 transition-colors duration-200 like-button z-10" data-liked="false" data-product-id="<%= product._id %>">
-            <svg class="w-6 h-6 text-gray-600 hover:text-red-600 transition-colors duration-200" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
-              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4.318 6.318a4.5 4.5 0 000 6.364L12 20.364l7.682-7.682a4.5 4.5 0 00-6.364-6.364L12 7.636l-1.318-1.318a4.5 4.5 0 00-6.364 0z"></path>
-            </svg>
+              <button class="quantity-btn plus w-8 h-8 flex items-center justify-center text-gray-600 hover:bg-gray-100 rounded-full focus:outline-none">+</button>
+            </div>
+          </div>
+
+          <!-- Add to Cart Button -->
+          <button data-product-id="<%= product._id %>" class="w-full bg-red-600 hover:bg-red-700 text-white font-bold py-3 px-4 rounded-full transition duration-300 ease-in-out transform hover:scale-105 add-to-cart-btn">
+            <span class="add-to-cart-text flex items-center justify-center">
+              <svg class="w-5 h-5 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 3h2l.4 2M7 13h10l4-8H5.4M7 13L5.4 5M7 13l-2.293 2.293c-.63.63-.184 1.707.707 1.707H17m0 0a2 2 0 100 4 2 2 0 000-4zm-8 2a2 2 0 11-4 0 2 2 0 014 0z"></path>
+              </svg>
+              Add to Cart
+            </span>
           </button>
         </div>
 
-        <% }) %>
+
+        <!-- Like Button -->
+        <button class="like-button absolute top-4 right-4 bg-white rounded-full p-2 shadow-md hover:bg-red-50 transition-colors duration-300" data-liked="false" data-product-id="<%= product._id %>">
+          <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
+            <path stroke-linecap="round" stroke-linejoin="round" d="M4.318 6.318a4.5 4.5 0 000 6.364L12 20.364l7.682-7.682a4.5 4.5 0 00-6.364-6.364L12 7.636l-1.318-1.318a4.5 4.5 0 00-6.364 0z" />
+          </svg>
+        </button>
+      </div>
+
+      <% }) %>
       </div>
     </section>
 
@@ -494,38 +552,39 @@
                 </div>
                 <span class="text-gray-600 ml-2">(4.5)</span>
               </div>
-
-              <!-- Quantity Selector -->
-              <div class="flex items-center justify-between mb-4">
-                <span class="text-gray-700 font-medium">Quantity:</span>
-                <div class="flex items-center border border-gray-300 rounded-full">
-                  <button class="quantity-btn minus w-8 h-8 flex items-center justify-center text-gray-600 hover:bg-gray-100 rounded-full focus:outline-none">-</button>
-                  <input type="number" class="quantity-input w-12 text-center border-none focus:outline-none" value="1" min="1" max="99">
-                  <button class="quantity-btn plus w-8 h-8 flex items-center justify-center text-gray-600 hover:bg-gray-100 rounded-full focus:outline-none">+</button>
-                </div>
-              </div>
-
-              <!-- Add to Cart Button -->
-              <button class="w-full bg-red-600 hover:bg-red-700 text-white font-bold py-3 px-4 rounded-full transition duration-300 ease-in-out transform hover:scale-105 add-to-cart-btn">
-                <span class="add-to-cart-text flex items-center justify-center">
-                  <svg class="w-5 h-5 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
-                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 3h2l.4 2M7 13h10l4-8H5.4M7 13L5.4 5M7 13l-2.293 2.293c-.63.63-.184 1.707.707 1.707H17m0 0a2 2 0 100 4 2 2 0 000-4zm-8 2a2 2 0 11-4 0 2 2 0 014 0z"></path>
-                  </svg>
-                  Add to Cart
-                </span>
-              </button>
-            </div>
           </a>
+          <!-- Quantity Selector -->
+          <div class="flex items-center justify-between mb-4">
+            <span class="text-gray-700 font-medium">Quantity:</span>
+            <div class="flex items-center border border-gray-300 rounded-full">
+              <button class="quantity-btn minus w-8 h-8 flex items-center justify-center text-gray-600 hover:bg-gray-100 rounded-full focus:outline-none">-</button>
+              <input type="number" id="quantity-<%= product._id %>" class="quantity-input w-12 text-center border-none focus:outline-none" value="1" min="1" max="10">
 
-          <!-- Like Button -->
-          <button class="absolute top-4 right-4 bg-white rounded-full p-2 shadow-md hover:bg-gray-100 transition-colors duration-200 like-button z-10" data-liked="false" data-product-id="<%= product._id %>">
-            <svg class="w-6 h-6 text-gray-600 hover:text-red-600 transition-colors duration-200" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
-              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4.318 6.318a4.5 4.5 0 000 6.364L12 20.364l7.682-7.682a4.5 4.5 0 00-6.364-6.364L12 7.636l-1.318-1.318a4.5 4.5 0 00-6.364 0z"></path>
-            </svg>
+              <button class="quantity-btn plus w-8 h-8 flex items-center justify-center text-gray-600 hover:bg-gray-100 rounded-full focus:outline-none">+</button>
+            </div>
+          </div>
+
+          <!-- Add to Cart Button -->
+          <button data-product-id="<%= product._id %>" class="w-full bg-red-600 hover:bg-red-700 text-white font-bold py-3 px-4 rounded-full transition duration-300 ease-in-out transform hover:scale-105 add-to-cart-btn">
+            <span class="add-to-cart-text flex items-center justify-center">
+              <svg class="w-5 h-5 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 3h2l.4 2M7 13h10l4-8H5.4M7 13L5.4 5M7 13l-2.293 2.293c-.63.63-.184 1.707.707 1.707H17m0 0a2 2 0 100 4 2 2 0 000-4zm-8 2a2 2 0 11-4 0 2 2 0 014 0z"></path>
+              </svg>
+              Add to Cart
+            </span>
           </button>
         </div>
 
-        <% }) %>
+
+        <!-- Like Button -->
+        <button class="like-button absolute top-4 right-4 bg-white rounded-full p-2 shadow-md hover:bg-red-50 transition-colors duration-300" data-liked="false" data-product-id="<%= product._id %>">
+          <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
+            <path stroke-linecap="round" stroke-linejoin="round" d="M4.318 6.318a4.5 4.5 0 000 6.364L12 20.364l7.682-7.682a4.5 4.5 0 00-6.364-6.364L12 7.636l-1.318-1.318a4.5 4.5 0 00-6.364 0z" />
+          </svg>
+        </button>
+      </div>
+
+      <% }) %>
       </div>
     </section>
 
@@ -566,6 +625,29 @@
   <script src="/js/user-design-animation.js"></script>
   <script src="/js/product-cart.js"></script>
   <script src="/js/like-button.js"></script>
+  <script src="/js/actions/likeFunction.js"></script>
+  <script src="/js/actions/cartFunction.js"></script>
+  <script src="/js/actions/quantity.js"></script>
+
+
+  <script>
+    document.addEventListener('DOMContentLoaded', () => {
+      const observer = new IntersectionObserver((entries) => {
+        entries.forEach(entry => {
+          if (entry.isIntersecting) {
+            entry.target.classList.add('animate-fade-in');
+          }
+        });
+      }, {
+        threshold: 0.1
+      });
+
+      document.querySelectorAll('.category-item').forEach(item => {
+        observer.observe(item);
+      });
+    });
+  </script>
+
 </body>
 
 </html>

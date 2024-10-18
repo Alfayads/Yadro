@@ -1,0 +1,222 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Order Confirmed!</title>
+  <script src="https://cdn.tailwindcss.com"></script>
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+  <style>
+    @keyframes fadeInUp {
+      from {
+        opacity: 0;
+        transform: translateY(20px);
+      }
+
+      to {
+        opacity: 1;
+        transform: translateY(0);
+      }
+    }
+
+    @keyframes float {
+
+      0%,
+      100% {
+        transform: translateY(0);
+      }
+
+      50% {
+        transform: translateY(-20px);
+      }
+    }
+
+    @keyframes pulse {
+
+      0%,
+      100% {
+        transform: scale(1);
+      }
+
+      50% {
+        transform: scale(1.05);
+      }
+    }
+
+    @keyframes truckDrive {
+      0% {
+        transform: translateX(-100vw);
+      }
+
+      100% {
+        transform: translateX(100vw);
+      }
+    }
+
+    @keyframes packageDrop {
+      0% {
+        transform: translateY(-50vh);
+      }
+
+      70% {
+        transform: translateY(10px);
+      }
+
+      85% {
+        transform: translateY(-5px);
+      }
+
+      100% {
+        transform: translateY(0);
+      }
+    }
+
+    @keyframes confettiFall {
+      0% {
+        transform: translateY(-100vh) rotate(0deg);
+      }
+
+      100% {
+        transform: translateY(100vh) rotate(720deg);
+      }
+    }
+
+    .animate-fadeInUp {
+      animation: fadeInUp 0.6s ease-out forwards;
+    }
+
+    .animate-float {
+      animation: float 3s ease-in-out infinite;
+    }
+
+    .animate-pulse {
+      animation: pulse 2s ease-in-out infinite;
+    }
+
+    .animate-truckDrive {
+      animation: truckDrive 5s linear forwards;
+    }
+
+    .animate-packageDrop {
+      animation: packageDrop 1s ease-out forwards;
+    }
+
+    .confetti {
+      position: absolute;
+      width: 10px;
+      height: 10px;
+      opacity: 0.7;
+    }
+
+    .bg-gradient-radial {
+      background: radial-gradient(circle, rgba(59, 130, 246, 0.1) 0%, rgba(255, 255, 255, 1) 100%);
+    }
+  </style>
+</head>
+
+<body class="bg-gradient-radial font-sans min-h-screen flex flex-col justify-between overflow-hidden">
+  <header class="w-full p-6">
+    <div id="progressBar" class="w-full h-2 bg-gray-200 rounded-full overflow-hidden">
+      <div class="h-full bg-blue-500 transition-all duration-1000 ease-out w-0" id="progressBarFill"></div>
+    </div>
+  </header>
+
+  <main class="flex-grow flex flex-col items-center justify-center px-4">
+    <div id="animationContainer" class="relative w-full h-64 mb-8">
+      <div id="truck" class="absolute top-1/2 transform -translate-y-1/2 -left-32 text-8xl">
+        <i class="fas fa-truck text-blue-500"></i>
+      </div>
+      <div id="package" class="absolute left-1/2 top-0 transform -translate-x-1/2 text-7xl opacity-0">
+        <i class="fas fa-box text-yellow-500"></i>
+      </div>
+    </div>
+
+    <div id="confirmationContent" class="text-center space-y-8 opacity-0">
+      <div class="inline-block rounded-full bg-green-100 p-4 animate-pulse">
+        <i class="fas fa-check text-4xl text-green-500"></i>
+      </div>
+      <h1 class="text-4xl font-bold text-gray-800">Order Confirmed!</h1>
+      <p class="text-xl text-gray-600">Your order has been successfully placed and is on its way!</p>
+      <div>
+        <h3 class="text-2xl font-semibold text-gray-800">Order #<span id="orderId"><%= orderId %></span></h3>
+        <p class="text-lg text-gray-600">Estimated delivery: <span class="font-semibold text-blue-500">17/06/2027</span></p>
+      </div>
+      <a href="/order-tracking/<%= orderId %>" class="inline-block bg-blue-500 hover:bg-blue-600 text-white font-semibold py-3 px-8 rounded-full transition duration-300 transform hover:scale-105 text-lg">
+        <i class="fas fa-map-marker-alt mr-2"></i>Track Order
+      </a>
+    </div>
+  </main>
+
+  <footer class="w-full p-6 text-center">
+    <div id="countdown" class="inline-block bg-blue-100 text-blue-600 rounded-full px-4 py-2 text-lg font-semibold opacity-0">
+      Redirecting in <span id="countdownNumber">5</span>s
+    </div>
+  </footer>
+
+  <script>
+    document.addEventListener('DOMContentLoaded', () => {
+      const truck = document.getElementById('truck');
+      const package = document.getElementById('package');
+      const confirmationContent = document.getElementById('confirmationContent');
+      const countdown = document.getElementById('countdown');
+      const countdownNumber = document.getElementById('countdownNumber');
+      const progressBarFill = document.getElementById('progressBarFill');
+
+      // Start animations
+      setTimeout(() => {
+        truck.classList.add('animate-truckDrive');
+
+        setTimeout(() => {
+          package.style.opacity = '1';
+          package.classList.add('animate-packageDrop');
+
+          setTimeout(() => {
+            package.classList.remove('animate-packageDrop');
+            package.classList.add('animate-float');
+            confirmationContent.classList.add('animate-fadeInUp');
+            confirmationContent.style.opacity = '1';
+            countdown.classList.add('animate-fadeInUp');
+            countdown.style.opacity = '1';
+            createConfetti();
+            startCountdown();
+          }, 1000);
+        }, 2500);
+      }, 500);
+
+      function createConfetti() {
+        const colors = ['#ff0000', '#00ff00', '#0000ff', '#ffff00', '#ff00ff', '#00ffff'];
+        const confettiContainer = document.body;
+
+        for (let i = 0; i < 150; i++) {
+          const confetti = document.createElement('div');
+          confetti.className = 'confetti';
+          confetti.style.backgroundColor = colors[Math.floor(Math.random() * colors.length)];
+          confetti.style.left = `${Math.random() * 100}%`;
+          confetti.style.animation = `confettiFall ${2 + Math.random() * 3}s linear forwards`;
+          confetti.style.animationDelay = `${Math.random() * 5}s`;
+          confettiContainer.appendChild(confetti);
+        }
+      }
+
+      function startCountdown() {
+        let timeLeft = 5;
+        let progress = 0;
+
+        const countdownInterval = setInterval(() => {
+          timeLeft--;
+          countdownNumber.textContent = timeLeft;
+          progress += 20;
+          progressBarFill.style.width = `${progress}%`;
+
+          if (timeLeft <= 0) {
+            clearInterval(countdownInterval);
+            window.location.href = '/order-tracking/<%= orderId %>';
+          }
+        }, 1000);
+      }
+    });
+  </script>
+</body>
+
+</html>

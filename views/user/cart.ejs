@@ -8,173 +8,163 @@
   <script src="https://cdn.tailwindcss.com"></script>
   <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.9.1/gsap.min.js"></script>
   <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css" rel="stylesheet">
+  <link rel="stylesheet" href="/css/like-button.css">
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/sweetalert2@11/dist/sweetalert2.min.css">
+
+
   <style>
-    @keyframes pulse {
+    @import url('https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap');
 
-      0%,
-      100% {
-        transform: scale(1);
-      }
-
-      50% {
-        transform: scale(1.05);
-      }
+    body {
+      font-family: 'Poppins', sans-serif;
     }
 
-    .animate-pulse {
-      animation: pulse 2s infinite;
+    .cart-item {
+      @apply transition-all duration-300 ease-in-out;
     }
 
-    @keyframes fadeIn {
-      from {
-        opacity: 0;
-      }
-
-      to {
-        opacity: 1;
-      }
+    .cart-item:hover {
+      @apply transform -translate-y-1;
     }
 
-    @keyframes slideIn {
-      from {
-        transform: translateX(-10px);
-        opacity: 0;
-      }
-
-      to {
-        transform: translateX(0);
-        opacity: 1;
-      }
+    .quantity-control {
+      transition: all 0.3s ease;
     }
 
-    .animate-fade-in {
-      animation: fadeIn 0.5s ease-out forwards;
+    .quantity-control:hover {
+      box-shadow: 0 0 15px rgba(0, 0, 0, 0.1);
     }
 
-    .animate-slide-in {
-      animation: slideIn 0.5s ease-out forwards;
+    .quantity-btn {
+      transition: all 0.2s ease;
+    }
+
+    .quantity-btn:hover {
+      transform: scale(1.1);
+    }
+
+    .quantity-input {
+      -moz-appearance: textfield;
+    }
+
+    .quantity-input::-webkit-outer-spin-button,
+    .quantity-input::-webkit-inner-spin-button {
+      -webkit-appearance: none;
+      margin: 0;
+    }
+
+    .delete-button {
+      @apply transition-all duration-300 ease-in-out;
+    }
+
+    .delete-button:hover {
+      @apply transform scale-110;
     }
   </style>
 </head>
 
 <body class="bg-gray-50 min-h-screen flex flex-col">
+  <!-- Header would go here -->
   <%- include('../layouts/header-with-user.ejs') %>
 
-  <!-- Updated Breadcrumbs -->
-  <nav aria-label="Breadcrumb" class="py-4 px-6 bg-white shadow-sm">
-    <ol id="breadcrumbs" class="flex items-center space-x-2 text-sm">
-      <li class="flex items-center">
-        <a href="/home" class="text-gray-500 hover:text-gray-700 transition-colors duration-300 flex items-center">
-          <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4 mr-1" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 12l2-2m0 0l7-7 7 7M5 10v10a1 1 0 001 1h3m10-11l2 2m-2-2v10a1 1 0 01-1 1h-3m-6 0a1 1 0 001-1v-4a1 1 0 011-1h2a1 1 0 011 1v4a1 1 0 001 1m-6 0h6" />
-          </svg>
-          Home
-        </a>
-      </li>
-      <li class="flex items-center">
-        <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4 text-gray-400 mx-1" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7" />
-        </svg>
-        <a href="/Products" class="text-gray-500 hover:text-gray-700 transition-colors duration-300">Products</a>
-      </li>
-      <li class="flex items-center">
-        <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4 text-gray-400 mx-1" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7" />
-        </svg>
-        <span class="text-gray-700 font-semibold">Cart</span>
-      </li>
-    </ol>
-  </nav>
-
   <main class="flex-grow container mx-auto px-4 py-8">
-    <div class="bg-white rounded-lg shadow-lg overflow-hidden">
-      <div class="p-6">
-        <h2 class="text-2xl font-bold mb-6">Your Cart</h2>
-        <div class="overflow-x-auto">
-          <table class="w-full">
-            <thead>
-              <tr class="border-b">
-                <th class="text-left pb-4">Product</th>
-                <th class="text-left pb-4">Price</th>
-                <th class="text-left pb-4">Quantity</th>
-                <th class="text-right pb-4">Subtotal</th>
-              </tr>
-            </thead>
-            <tbody>
-              <tr class="border-b">
-                <td class="py-4">
-                  <div class="flex items-center">
-                    <img src="/api/placeholder/80/80" alt="LCD Monitor" class="w-20 h-20 object-cover rounded mr-4">
-                    <span class="font-medium">LCD Monitor</span>
-                  </div>
-                </td>
-                <td class="py-4">$650</td>
-                <td class="py-4">
-                  <div class="flex items-center border rounded-full overflow-hidden w-28">
-                    <button class="px-3 py-1 bg-gray-100 hover:bg-gray-200 transition-colors duration-300 focus:outline-none">-</button>
-                    <input type="number" value="1" class="w-10 text-center border-none focus:outline-none">
-                    <button class="px-3 py-1 bg-gray-100 hover:bg-gray-200 transition-colors duration-300 focus:outline-none">+</button>
-                  </div>
-                </td>
-                <td class="py-4 text-right">$650</td>
-              </tr>
-              <tr>
-                <td class="py-4">
-                  <div class="flex items-center">
-                    <img src="/api/placeholder/80/80" alt="H1 Gamepad" class="w-20 h-20 object-cover rounded mr-4">
-                    <span class="font-medium">H1 Gamepad</span>
-                  </div>
-                </td>
-                <td class="py-4">$550</td>
-                <td class="py-4">
-                  <div class="flex items-center border rounded-full overflow-hidden w-28">
-                    <button class="px-3 py-1 bg-gray-100 hover:bg-gray-200 transition-colors duration-300 focus:outline-none">-</button>
-                    <input type="number" value="2" class="w-10 text-center border-none focus:outline-none">
-                    <button class="px-3 py-1 bg-gray-100 hover:bg-gray-200 transition-colors duration-300 focus:outline-none">+</button>
-                  </div>
-                </td>
-                <td class="py-4 text-right">$1100</td>
-              </tr>
-            </tbody>
-          </table>
-        </div>
+    <div class="bg-white rounded-2xl shadow-lg overflow-hidden">
+      <div class="p-6 sm:p-10">
+        <h2 class="text-3xl font-bold mb-6 text-gray-800">My Cart</h2>
 
-        <div class="flex flex-wrap justify-between mt-8">
-          <button class="mb-4 sm:mb-0 bg-white text-gray-800 font-semibold py-2 px-6 border border-gray-400 rounded-full shadow hover:bg-gray-100 transition-colors duration-300 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-gray-500">
-            <i class="fas fa-arrow-left mr-2"></i> Continue Shopping
-          </button>
-          <button class="bg-white text-gray-800 font-semibold py-2 px-6 border border-gray-400 rounded-full shadow hover:bg-gray-100 transition-colors duration-300 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-gray-500">
-            <i class="fas fa-sync-alt mr-2"></i> Update Cart
-          </button>
-        </div>
-
-        <div class="flex flex-wrap justify-between mt-8">
-          <div class="w-full lg:w-1/2 mb-6 lg:mb-0">
-            <div class="flex">
-              <input type="text" placeholder="Coupon Code" class="flex-grow px-4 py-2 border rounded-l-full focus:outline-none focus:ring-2 focus:ring-red-500">
-              <button class="bg-red-500 text-white font-semibold py-2 px-6 rounded-r-full hover:bg-red-600 transition-colors duration-300 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-red-500">
-                Apply Coupon
-              </button>
-            </div>
+        <!-- Progress bar -->
+        <div class="mb-8">
+          <div class="flex justify-between mb-2">
+            <span class="text-sm font-medium text-gray-500">Progress to Free Shipping</span>
+            <span class="text-sm font-medium text-red-600">₹10000 more to go</span>
           </div>
-          <div class="w-full lg:w-5/12">
-            <div class="bg-gray-50 p-6 rounded-lg shadow-inner">
-              <h3 class="text-lg font-semibold mb-4">Cart Total</h3>
-              <div class="flex justify-between mb-2">
-                <span>Subtotal:</span>
-                <span>$1750</span>
+          <div class="w-full bg-gray-200 rounded-full h-2.5">
+            <div class="progress-bar bg-red-600 h-2.5 rounded-full" style="width: 65%"></div>
+          </div>
+        </div>
+
+        <div class="space-y-6">
+          <!-- Cart Items -->
+          <% if (cartItems.length > 0) { %>
+          <% cartItems.forEach(product => { %>
+          <div class="cart-item flex items-center bg-white rounded-xl p-6 shadow-sm hover:shadow-md transition-shadow duration-300">
+            <img src="<%= product.images[0] %>" alt="<%= product.name %>" class="w-24 h-24 object-cover rounded-lg mr-6">
+            <div class="flex-grow">
+              <h3 class="text-lg font-semibold text-gray-800 mb-1"><%= product.name %></h3>
+              <p class="text-sm text-gray-500 line-clamp-2 mb-2"><%= product.description %></p>
+              <div class="flex items-center justify-between">
+                <!-- Quantity Control -->
+                <div class="quantity-control inline-flex items-center bg-gray-100 rounded-full p-1 shadow-sm">
+                  <button class="quantity-btn decrease w-8 h-8 flex items-center justify-center bg-white rounded-full text-red-500 hover:bg-red-100 transition-colors duration-200 focus:outline-none focus:ring-2 focus:ring-red-400" data-product-id="<%= product.productId %>">
+                    <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+                      <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M20 12H4"></path>
+                    </svg>
+                  </button>
+                  <input type="number" class="quantity-input w-12 text-center bg-transparent font-semibold text-gray-700 focus:outline-none" value="<%= product.quantity %>" min="1" max="99" data-product-id="<%= product.productId %>">
+                  <button class="quantity-btn increase w-8 h-8 flex items-center justify-center bg-white rounded-full text-green-500 hover:bg-green-100 transition-colors duration-200 focus:outline-none focus:ring-2 focus:ring-green-400" data-product-id="<%= product.productId %>">
+                    <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+                      <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 6v6m0 0v6m0-6h6m-6 0H6"></path>
+                    </svg>
+                  </button>
+                </div>
+                <span class="font-semibold text-gray-800 text-xl">₹ <span class="product-total-price"><%= Math.round(product.totalPrice) %></span></span>
               </div>
-              <div class="flex justify-between mb-2">
-                <span>Shipping:</span>
-                <span class="text-green-500">Free</span>
+            </div>
+            <button class="delete-button ml-4 text-gray-400 hover:text-red-500 transition-colors duration-200" data-product-id="<%= product.productId %>">
+              <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16"></path>
+              </svg>
+            </button>
+          </div>
+          <% }) %>
+          <% } else { %>
+          <div class="flex flex-col items-center justify-center py-12 px-4 mb-5 sm:px-6 lg:px-8 bg-white rounded-lg shadow-md">
+            <img src="/images/forgotman.png" alt="Empty Cart" class="w-48 h-48 mb-8" />
+            <h2 class="text-3xl font-extrabold text-gray-900 mb-4">Your Cart is Empty</h2>
+            <p class="text-xl text-gray-600 mb-8 text-center max-w-md">Discover and save items you love to your Cart. Start exploring our products now!</p>
+            <a href="/products" class="inline-flex items-center px-6 py-3 border border-transparent text-base font-medium rounded-md text-white bg-red-600 hover:bg-red-700 transition duration-150 ease-in-out">
+              <svg class="mr-2 -ml-1 w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"></path>
+              </svg>
+              Explore Products
+            </a>
+          </div>
+          <% } %>
+
+          <!-- Order Summary -->
+          <div class="mt-10 flex flex-col md:flex-row justify-between items-start">
+            <div class="w-full md:w-1/2 mb-6 md:mb-0">
+              <h3 class="text-lg font-semibold mb-4">Have a coupon?</h3>
+              <div class="flex">
+                <input type="text" placeholder="Enter your code" class="flex-grow px-4 py-2 border rounded-l-lg focus:outline-none focus:ring-2 focus:ring-blue-500">
+                <button class="bg-red-600 text-white font-semibold py-2 px-6 rounded-r-lg hover:bg-red-700 transition-colors duration-300 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500">
+                  Apply
+                </button>
               </div>
-              <div class="flex justify-between font-semibold text-lg mt-4 pt-4 border-t">
-                <span>Total:</span>
-                <span>$1750</span>
+            </div>
+            <div class="w-full md:w-5/12">
+              <div class="bg-gray-50 p-6 rounded-xl">
+                <h3 class="text-lg font-semibold mb-4">Order Summary</h3>
+                <div class="space-y-2">
+                  <div class="flex justify-between">
+                    <span class="text-gray-600">Subtotal</span>
+                    <span class="font-medium">₹ <%= Math.round(totalPrice) %></span>
+                  </div>
+                  <div class="flex justify-between">
+                    <span class="text-gray-600">Shipping</span>
+                    <span class="text-green-600 font-medium">Free</span>
+                  </div>
+                  <div class="border-t pt-2 mt-2">
+                    <div class="flex justify-between">
+                      <span class="font-semibold">Total</span>
+                      <span class="font-bold text-xl">₹ <%= Math.round(totalPrice) %></span>
+                    </div>
+                  </div>
+                </div>
+                <a href="/cart/check-out" class="checkout-button w-full bg-red-600 text-white font-semibold py-3 px-4 rounded-lg mt-6 hover:bg-red-700 transition-colors duration-300 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500">
+                  Proceed to Checkout
+                </a>
               </div>
-              <a href="/cart/check-out" class="block w-full bg-red-500 text-white font-semibold py-3 px-4 rounded-full mt-6 hover:bg-red-600 transition-colors duration-300 text-center focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-red-500 animate-pulse">
-                Proceed to Checkout
-              </a>
             </div>
           </div>
         </div>
@@ -182,24 +172,85 @@
     </div>
   </main>
 
+  <!-- Footer would go here -->
   <%- include('../layouts/footer.ejs') %>
 
+  <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
   <script>
     document.addEventListener('DOMContentLoaded', () => {
-      // Animate breadcrumbs
-      const breadcrumbs = document.querySelectorAll('#breadcrumbs li');
-      breadcrumbs.forEach((item, index) => {
-        gsap.from(item, {
-          opacity: 0,
-          x: -20,
-          delay: index * 0.1,
-          duration: 0.5,
-          ease: 'power2.out'
-        });
-      });
+      const quantityControls = document.querySelectorAll('.quantity-control');
 
+      quantityControls.forEach(control => {
+        const decreaseBtn = control.querySelector('.decrease');
+        const increaseBtn = control.querySelector('.increase');
+        const input = control.querySelector('.quantity-input');
+        const productId = input.getAttribute('data-product-id');
+
+        decreaseBtn.addEventListener('click', () => updateQuantity(productId, -1));
+        increaseBtn.addEventListener('click', () => updateQuantity(productId, 1));
+        input.addEventListener('change', () => updateQuantity(productId, 0, parseInt(input.value)));
+
+        function updateQuantity(productId, change, newValue = null) {
+          const currentValue = parseInt(input.value);
+          let updatedValue = newValue !== null ? newValue : currentValue + change;
+          updatedValue = Math.max(1, Math.min(99, updatedValue));
+
+          if (updatedValue !== currentValue) {
+            input.value = updatedValue;
+
+            // Animate the change
+            gsap.from(input, {
+              scale: 1.2,
+              duration: 0.3,
+              ease: 'power2.out'
+            });
+
+            updateBackend(productId, updatedValue);
+          }
+        }
+
+        function updateBackend(productId, quantity) {
+          fetch('/cart/update-quantity', {
+              method: 'POST',
+              headers: {
+                'Content-Type': 'application/json',
+              },
+              body: JSON.stringify({
+                productId,
+                quantity
+              }),
+            })
+            .then(response => response.json())
+            .then(data => {
+              if (data.success) {
+                const totalPriceElement = control.closest('.cart-item').querySelector('.product-total-price');
+
+                // Animate the price change
+                gsap.to(totalPriceElement, {
+                  textContent: Math.round(data.newTotalPrice),
+                  duration: 0.5,
+                  ease: 'power2.out',
+                  snap: {
+                    textContent: 1
+                  }
+                });
+
+                updateCartSummary();
+              } else {
+                throw new Error('Failed to update quantity');
+              }
+            })
+            .catch(error => {
+              window.location.reload()
+            });
+        }
+      });
+    });
+
+
+    document.addEventListener('DOMContentLoaded', () => {
       // Animate elements on page load
-      gsap.from('table tr', {
+      gsap.from('.cart-item', {
         opacity: 0,
         y: 20,
         stagger: 0.1,
@@ -207,28 +258,79 @@
         ease: 'power2.out'
       });
 
-      gsap.from('.bg-gray-50', {
-        opacity: 0,
-        scale: 0.95,
-        duration: 0.6,
-        delay: 0.3,
+      gsap.from('.progress-bar', {
+        width: 0,
+        duration: 1,
         ease: 'power2.out'
       });
 
-      // Add hover animations to buttons
-      const buttons = document.querySelectorAll('button, a.block');
-      buttons.forEach(button => {
-        button.addEventListener('mouseenter', () => {
-          gsap.to(button, {
-            scale: 1.05,
-            duration: 0.3
+      // Delete button functionality
+      const deleteButtons = document.querySelectorAll('.delete-button');
+      deleteButtons.forEach(button => {
+        button.addEventListener('click', function() {
+          const productId = this.getAttribute('data-product-id');
+
+          Swal.fire({
+            title: 'Are you sure?',
+            text: "You won't be able to revert this!",
+            icon: 'warning',
+            showCancelButton: true,
+            confirmButtonColor: '#3085d6',
+            cancelButtonColor: '#d33',
+            confirmButtonText: 'Yes, remove it!'
+          }).then((result) => {
+            if (result.isConfirmed) {
+              fetch('/cart/delete', {
+                  method: 'POST',
+                  headers: {
+                    'Content-Type': 'application/json',
+                  },
+                  body: JSON.stringify({
+                    productId
+                  }),
+                })
+                .then(response => response.json())
+                .then(data => {
+                  if (data.success) {
+                    Swal.fire({
+                      title: 'Removed!',
+                      text: 'The product has been removed from your cart.',
+                      icon: 'success',
+                      showConfirmButton: false,
+                      timer: 1500
+                    }).then(() => {
+                      // Refresh the page after the alert is closed
+                      window.location.reload();
+                    });
+                  } else {
+                    throw new Error('Failed to remove product');
+                  }
+                })
+                .catch(error => {
+                  console.error('Error:', error);
+                  Swal.fire(
+                    'Error!',
+                    'Failed to remove the product.',
+                    'error'
+                  );
+                });
+            }
           });
         });
-        button.addEventListener('mouseleave', () => {
-          gsap.to(button, {
-            scale: 1,
-            duration: 0.3
-          });
+      });
+
+      // Checkout button animation
+      const checkoutButton = document.querySelector('.checkout-button');
+      checkoutButton.addEventListener('mouseenter', () => {
+        gsap.to(checkoutButton, {
+          scale: 1.05,
+          duration: 0.3
+        });
+      });
+      checkoutButton.addEventListener('mouseleave', () => {
+        gsap.to(checkoutButton, {
+          scale: 1,
+          duration: 0.3
         });
       });
     });

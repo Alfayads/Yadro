@@ -11,16 +11,14 @@
   <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.9.1/gsap.min.js"></script>
   <style>
     @keyframes float {
-      0% {
+
+      0%,
+      100% {
         transform: translateY(0px);
       }
 
       50% {
         transform: translateY(-10px);
-      }
-
-      100% {
-        transform: translateY(0px);
       }
     }
 
@@ -29,10 +27,9 @@
     }
 
     .progress-bar {
-      transition: width 0.5s ease-in-out;
+      transition: width 1s cubic-bezier(0.4, 0, 0.2, 1);
     }
 
-    /* New styles for breadcrumbs */
     .breadcrumb-item {
       position: relative;
       padding-right: 24px;
@@ -43,16 +40,102 @@
       position: absolute;
       right: 10px;
       top: 50%;
-      transform: translateY(-50%);
+      transform: translateY(-50%) rotate(45deg);
       width: 6px;
       height: 6px;
       border-top: 2px solid #CBD5E0;
       border-right: 2px solid #CBD5E0;
-      transform: translateY(-50%) rotate(45deg);
+      transition: border-color 0.3s ease;
     }
 
-    .progress-bar {
-      transition: width 0.5s ease-in-out;
+    .saved-address-card {
+      transform-origin: center;
+      transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+    }
+
+    .saved-address-card:hover {
+      transform: translateY(-4px);
+      box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.1);
+    }
+
+    .saved-address-card.selected {
+      border-color: #EF4444;
+      box-shadow: 0 0 0 2px #EF4444;
+    }
+
+    .form-input:focus {
+      transform: scale(1.01);
+    }
+
+    .shake {
+      animation: shake 0.82s cubic-bezier(.36, .07, .19, .97) both;
+    }
+
+    @keyframes shake {
+
+      10%,
+      90% {
+        transform: translate3d(-1px, 0, 0);
+      }
+
+      20%,
+      80% {
+        transform: translate3d(2px, 0, 0);
+      }
+
+      30%,
+      50%,
+      70% {
+        transform: translate3d(-4px, 0, 0);
+      }
+
+      40%,
+      60% {
+        transform: translate3d(4px, 0, 0);
+      }
+    }
+
+    .success-checkmark {
+      width: 80px;
+      height: 80px;
+      margin: 0 auto;
+      display: none;
+    }
+
+    .check-circle {
+      stroke-dasharray: 166;
+      stroke-dashoffset: 166;
+      stroke-width: 2;
+      stroke-miterlimit: 10;
+      stroke: #7ac142;
+      fill: none;
+      animation: stroke 0.6s cubic-bezier(0.65, 0, 0.45, 1) forwards;
+    }
+
+    @keyframes stroke {
+      100% {
+        stroke-dashoffset: 0;
+      }
+    }
+
+    @keyframes fadeIn {
+      from {
+        opacity: 0;
+        transform: translateY(10px);
+      }
+
+      to {
+        opacity: 1;
+        transform: translateY(0);
+      }
+    }
+
+    .animate-fadeIn {
+      animation: fadeIn 0.5s ease-out forwards;
+    }
+
+    .input-focus-effect:focus {
+      box-shadow: 0 0 0 2px rgba(239, 68, 68, 0.2);
     }
   </style>
 </head>
@@ -61,7 +144,7 @@
   <%- include('../layouts/header-with-user.ejs') %>
 
   <main class="container mx-auto px-4 py-8">
-    <!-- Updated Breadcrumbs -->
+    <!-- Breadcrumbs -->
     <nav aria-label="Breadcrumb" class="container mx-auto px-4 py-4">
       <ol class="flex items-center space-x-1 text-sm">
         <li class="breadcrumb-item">
@@ -89,98 +172,244 @@
 
     <div class="flex flex-wrap -mx-4">
       <div class="w-full lg:w-2/3 px-4 mb-8">
-        <form id="checkoutForm" class="bg-white p-6 rounded-lg shadow-md">
-          <div class="mb-4">
-            <label for="firstName" class="block mb-2 text-sm font-medium text-gray-700">First Name*</label>
-            <input type="text" id="firstName" class="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-red-500 transition duration-300" required>
+        <!-- Saved Addresses Section -->
+        <div class="bg-white p-6 rounded-lg shadow-md mb-8">
+          <h2 class="text-2xl font-semibold mb-4 text-gray-800">Saved Addresses</h2>
+          <div id="savedAddresses" class="grid grid-cols-1 md:grid-cols-2 gap-4">
+            <% addresses.forEach(function(address, index) { %>
+            <div class="saved-address-card rounded-lg cursor-pointer p-5 relative border border-gray-200" data-address='<%= JSON.stringify(address) %>'>
+
+              <h3 class="font-semibold text-lg"><%= address.addressType %></h3>
+              <p class="text-sm text-gray-600 mt-2">
+                <%= address.name %>,
+                <%= address.streetAddress %>,
+                <% if (address.apartment) { %>
+                <%= address.apartment %>,
+                <% } %>
+                <%= address.city %>, <%= address.state %> <%= address.postalCode %>
+              </p>
+              <p class="text-sm text-gray-600 mt-1">
+                <% if (address.landMark) { %>
+                Landmark: <%= address.landMark %><br>
+                <% } %>
+                Phone: <%= address.phone %>
+              </p>
+            </div>
+            <% }); %>
           </div>
-          <div class="mb-4">
-            <label for="companyName" class="block mb-2 text-sm font-medium text-gray-700">Company Name</label>
-            <input type="text" id="companyName" class="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-red-500 transition duration-300">
+        </div>
+
+        <div class="bg-white rounded-lg shadow-sm p-6 sm:p-8 animate-fadeIn">
+          <h2 class="text-2xl font-bold text-gray-900 mb-6">Add New Address</h2>
+
+          <% if (error_msg.length > 0 ) { %>
+          <div class="bg-red-100 border border-red-400 text-red-700 px-4 py-3 rounded relative mb-6" role="alert" id="error-message">
+            <strong class="font-bold">Error!</strong>
+            <span class="block sm:inline"><%= error_msg %></span>
+            <span class="absolute top-0 bottom-0 right-0 px-4 py-3">
+              <svg class="fill-current h-6 w-6 text-red-500" role="button" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20" onclick="document.getElementById('error-message').style.display='none'">
+                <title>Close</title>
+                <path d="M14.348 5.652a1 1 0 00-1.414-1.414L10 7.172 7.066 4.238a1 1 0 10-1.414 1.414L8.586 10l-2.934 2.934a1 1 0 101.414 1.414L10 12.828l2.934 2.934a1 1 0 101.414-1.414L11.414 10l2.934-2.934z" />
+              </svg>
+            </span>
           </div>
-          <div class="mb-4">
-            <label for="streetAddress" class="block mb-2 text-sm font-medium text-gray-700">Street Address*</label>
-            <input type="text" id="streetAddress" class="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-red-500 transition duration-300" required>
+          <% } %>
+
+          <% if (success_msg.length > 0 ) { %>
+          <div class="bg-green-100 border border-green-400 text-green-700 px-4 py-3 rounded relative mb-6" role="alert" id="error-message">
+            <strong class="font-bold">Sent!</strong>
+            <span class="block sm:inline"><%= success_msg %></span>
+            <span class="absolute top-0 bottom-0 right-0 px-4 py-3">
+              <svg class="fill-current h-6 w-6 text-green-500" role="button" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20" onclick="document.getElementById('error-message').style.display='none'">
+                <title>Close</title>
+                <path d="M14.348 5.652a1 1 0 00-1.414-1.414L10 7.172 7.066 4.238a1 1 0 10-1.414 1.414L8.586 10l-2.934 2.934a1 1 0 101.414 1.414L10 12.828l2.934 2.934a1 1 0 101.414-1.414L11.414 10l2.934-2.934z" />
+              </svg>
+            </span>
           </div>
-          <div class="mb-4">
-            <label for="apartment" class="block mb-2 text-sm font-medium text-gray-700">Apartment, floor, etc. (optional)</label>
-            <input type="text" id="apartment" class="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-red-500 transition duration-300">
-          </div>
-          <div class="mb-4">
-            <label for="townCity" class="block mb-2 text-sm font-medium text-gray-700">Town/City*</label>
-            <input type="text" id="townCity" class="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-red-500 transition duration-300" required>
-          </div>
-          <div class="mb-4">
-            <label for="phoneNumber" class="block mb-2 text-sm font-medium text-gray-700">Phone Number*</label>
-            <input type="tel" id="phoneNumber" class="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-red-500 transition duration-300" required>
-          </div>
-          <div class="mb-4">
-            <label for="emailAddress" class="block mb-2 text-sm font-medium text-gray-700">Email Address*</label>
-            <input type="email" id="emailAddress" class="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-red-500 transition duration-300" required>
-          </div>
-          <div class="mb-4">
-            <label class="inline-flex items-center">
-              <input type="checkbox" class="form-checkbox text-red-500 h-5 w-5">
-              <span class="ml-2 text-sm text-gray-700">Save this information for faster check-out next time</span>
-            </label>
-          </div>
-        </form>
+          <% } %>
+
+          <form action="/profile/add-address-checkout" method="POST" class="space-y-6">
+            <!-- Address Type -->
+            <div class="flex space-x-4">
+              <label class="flex-1">
+                <input type="radio" name="addressType" value="Home" class="sr-only peer" checked>
+                <div class="p-4 text-center rounded-lg border-2 cursor-pointer transition-all peer-checked:border-red-500 peer-checked:bg-red-50 hover:border-red-200">
+                  <i class="fas fa-home mb-2 text-xl"></i>
+                  <p class="font-medium">Home</p>
+                </div>
+              </label>
+              <label class="flex-1">
+                <input type="radio" name="addressType" value="Office" class="sr-only peer">
+                <div class="p-4 text-center rounded-lg border-2 cursor-pointer transition-all peer-checked:border-red-500 peer-checked:bg-red-50 hover:border-red-200">
+                  <i class="fas fa-building mb-2 text-xl"></i>
+                  <p class="font-medium">Office</p>
+                </div>
+              </label>
+            </div>
+
+            <!-- Street Address & Apartment -->
+            <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+              <div class="col-span-2">
+                <label class="block text-sm font-medium text-gray-700 mb-2">Full Name</label>
+                <input type="text" value="<%= oldValue.name || '' %>" name="name" class="w-full px-4 py-3 rounded-lg border border-gray-300 focus:outline-none focus:ring-2 focus:ring-red-500 input-focus-effect">
+              </div>
+              <div class="col-span-2">
+                <label class="block text-sm font-medium text-gray-700 mb-2">Street Address</label>
+                <input type="text" value="<%= oldValue.street || '' %>" name="street" class="w-full px-4 py-3 rounded-lg border border-gray-300 focus:outline-none focus:ring-2 focus:ring-red-500 input-focus-effect">
+              </div>
+              <div>
+                <label class="block text-sm font-medium text-gray-700 mb-2">Apartment/Suite</label>
+                <input type="text" value="<%= oldValue.apartment || '' %>" name="apartment" class="w-full px-4 py-3 rounded-lg border border-gray-300 focus:outline-none focus:ring-2 focus:ring-red-500 input-focus-effect">
+              </div>
+              <div>
+                <label class="block text-sm font-medium text-gray-700 mb-2">Landmark</label>
+                <input type="text" value="<%= oldValue.landMark || '' %>" name="landMark" class="w-full px-4 py-3 rounded-lg border border-gray-300 focus:outline-none focus:ring-2 focus:ring-red-500 input-focus-effect">
+              </div>
+            </div>
+
+            <!-- Location Details -->
+            <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+              <div>
+                <label class="block text-sm font-medium text-gray-700 mb-2">Country</label>
+                <select name="country" class="w-full px-4 py-3 rounded-lg border border-gray-300 focus:outline-none focus:ring-2 focus:ring-red-500 input-focus-effect">
+                  <option value="<% oldValue.country || '' %>"> <%= oldValue.country || 'Select Country' %> </option>
+                  <option value="US">United States</option>
+                  <option value="CA">Canada</option>
+                  <!-- Add more countries as needed -->
+                </select>
+              </div>
+              <div>
+                <label class="block text-sm font-medium text-gray-700 mb-2">State</label>
+                <select name="state" class="w-full px-4 py-3 rounded-lg border border-gray-300 focus:outline-none focus:ring-2 focus:ring-red-500 input-focus-effect">
+                  <option value="<%= oldValue.state || '' %>"><%= oldValue.state || 'Select State' %></option>
+                  <!-- States will be populated based on country selection -->
+                </select>
+              </div>
+              <div>
+                <label class="block text-sm font-medium text-gray-700 mb-2">City</label>
+                <input type="text" value="<%= oldValue.city || '' %>" name="city" class="w-full px-4 py-3 rounded-lg border border-gray-300 focus:outline-none focus:ring-2 focus:ring-red-500 input-focus-effect">
+              </div>
+              <div>
+                <label class="block text-sm font-medium text-gray-700 mb-2">Postal Code</label>
+                <input type="text" value="<%= oldValue.postalCode || '' %>" name="postalCode" class="w-full px-4 py-3 rounded-lg border border-gray-300 focus:outline-none focus:ring-2 focus:ring-red-500 input-focus-effect">
+              </div>
+            </div>
+
+            <!-- Phone -->
+            <div>
+              <label class="block text-sm font-medium text-gray-700 mb-2">Phone Number</label>
+              <input type="tel" value="<%= oldValue.phone || '' %>" name="phone" class="w-full px-4 py-3 rounded-lg border border-gray-300 focus:outline-none focus:ring-2 focus:ring-red-500 input-focus-effect">
+            </div>
+
+            <!-- Buttons -->
+            <div class="flex justify-end space-x-4 pt-6">
+              <a href="/address" class="px-6 py-3 rounded-md text-gray-700 bg-gray-100 hover:bg-gray-200 transition duration-300">Cancel</a>
+              <button type="submit" class="px-6 py-3 rounded-md text-white bg-red-600 hover:bg-red-700 transition duration-300 transform hover:-translate-y-1 hover:shadow-md">Save Address</button>
+            </div>
+          </form>
+        </div>
       </div>
       <div class="w-full lg:w-1/3 px-4">
         <div class="bg-white p-6 rounded-lg shadow-md">
           <h2 class="text-2xl font-semibold mb-4 text-gray-800">Order Summary</h2>
           <div id="orderItems">
-            <div class="flex justify-between items-center mb-4 p-2 hover:bg-gray-100 rounded transition duration-300">
-              <div class="flex items-center">
-                <img src="https://via.placeholder.com/50" alt="Sony Pulse Wireless Headphone" class="w-16 h-16 object-cover rounded mr-4 float-animation">
-                <span class="text-sm">Sony Pulse Wireless Headphone</span>
+            <% cartItems.forEach( item => { %>
+            <div class="flex justify-between items-center mb-4 p-3 hover:bg-gray-50 rounded-lg transition-all duration-300 group" data-id="<%= item.productId %>">
+              <div class="flex items-center flex-1">
+                <div class="relative">
+                  <img src="<%= item.images[0] %>" alt="<%= item.name %>" class="w-16 h-16 object-cover rounded-lg mr-4 float-animation">
+                  <span class="absolute -top-2 -right-2 bg-red-500 text-white text-xs font-bold w-6 h-6 rounded-full flex items-center justify-center transform scale-0 group-hover:scale-100 transition-transform duration-300">
+                    <%= item.quantity %>
+                  </span>
+                </div>
+                <div class="flex flex-col">
+                  <span class="text-sm font-medium text-gray-800"><%= item.name %></span>
+                  <div class="flex items-center mt-1">
+                    <span class="text-xs text-gray-500">Qty: </span>
+                    <div class="flex items-center ml-2 bg-gray-100 rounded-lg overflow-hidden">
+                      <button class="quantity-btn minus px-2 py-1 text-gray-500 hover:bg-gray-200 transition-colors duration-200">-</button>
+                      <span class="quantity-value px-3 py-1 text-sm font-medium"><%= item.quantity %></span>
+                      <button class="quantity-btn plus px-2 py-1 text-gray-500 hover:bg-gray-200 transition-colors duration-200">+</button>
+                    </div>
+                  </div>
+                </div>
               </div>
-              <span class="font-semibold">$650</span>
-            </div>
-            <div class="flex justify-between items-center mb-4 p-2 hover:bg-gray-100 rounded transition duration-300">
-              <div class="flex items-center">
-                <img src="https://via.placeholder.com/50" alt="Beats Studio Pro" class="w-16 h-16 object-cover rounded mr-4 float-animation">
-                <span class="text-sm">Beats Studio Pro</span>
+              <div class="flex flex-col items-end ml-4">
+                <span class="font-semibold text-gray-900">₹ <%= Math.round(item.totalPrice) %></span>
+                <span class="text-xs text-gray-500">₹ <%= Math.round(item.price) %> each</span>
               </div>
-              <span class="font-semibold">$1100</span>
             </div>
+            <% }) %>
           </div>
           <div class="border-t pt-4">
             <div class="flex justify-between mb-2">
               <span>Subtotal:</span>
-              <span class="font-semibold">$1750</span>
+              <span class="font-semibold">₹ <%= totalPrice %></span>
             </div>
-            <div class="flex justify-between mb-2">
+            <!-- <div class="flex justify-between mb-2">
               <span>GST:</span>
               <span>18%</span>
-            </div>
+            </div> -->
             <div class="flex justify-between mb-2">
               <span>Shipping:</span>
               <span>Free</span>
             </div>
             <div class="flex justify-between font-semibold text-lg mt-4">
               <span>Total:</span>
-              <span>$1750</span>
+              <span>₹ <%= totalPrice %></span>
+            </div>
+          </div>
+
+          <div class="border-t pt-4 mb-4">
+            <h3 class="font-semibold text-gray-800 mb-3">Delivery Address</h3>
+            <div id="selectedAddressDetails" class="hidden opacity-0 transform -translate-y-4">
+              <div class="bg-gray-50 rounded-lg p-4 border border-gray-200">
+                <div class="flex items-center mb-2">
+                  <span id="addressType" class="inline-block px-2 py-1 text-sm rounded bg-red-100 text-red-600 font-medium"></span>
+                </div>
+                <p id="addressName" class="font-medium text-gray-800 mb-1"></p>
+                <p id="addressStreet" class="text-gray-600 text-sm"></p>
+                <p id="addressCityState" class="text-gray-600 text-sm"></p>
+                <p id="addressPhone" class="text-gray-600 text-sm mt-2"></p>
+              </div>
+            </div>
+            <div id="noAddressSelected" class="text-gray-500 text-sm text-center py-3">
+              Please select a delivery address
             </div>
           </div>
           <div class="mt-6">
-            <div class="mb-4">
+            <!-- <div class="mb-4">
               <label class="inline-flex items-center">
-                <input type="radio" class="form-radio text-red-500 h-5 w-5" name="paymentMethod" value="bank">
+                <input type="radio" class="form-radio text-red-500 h-5 w-5" name="paymentMethod" value="wallet">
                 <span class="ml-2">Wallet</span>
               </label>
-            </div>
-            <div class="mb-4">
+            </div> -->
+            <!-- <div class="mb-4">
               <label class="inline-flex items-center">
-                <input type="radio" class="form-radio text-red-500 h-5 w-5" name="paymentMethod" value="bank">
+                <input type="radio" class="form-radio text-red-500 h-5 w-5" name="paymentMethod" value="razorpay">
                 <span class="ml-2">Razorpay</span>
               </label>
+            </div> -->
+            <div class="mb-6 space-y-4">
+              <div class="relative">
+                <input type="radio" id="cashOnDelivery" name="paymentMethod" value="cash" checked class="peer hidden">
+                <label for="cashOnDelivery" class="flex items-center p-4 border rounded-lg cursor-pointer transition-all duration-300
+                         peer-checked:border-red-500 peer-checked:bg-red-50 hover:bg-gray-50">
+                  <i class="fas fa-money-bill-wave text-xl mr-3 text-gray-600"></i>
+                  <div class="flex flex-col">
+                    <span class="font-medium text-gray-800">Cash on Delivery</span>
+                    <span class="text-sm text-gray-500">Pay when you receive your order</span>
+                  </div>
+                  <div class="ml-auto flex items-center justify-center w-6 h-6 border-2 rounded-full
+                              peer-checked:border-red-500 peer-checked:bg-red-500">
+                    <i class="fas fa-check text-white opacity-0 peer-checked:opacity-100"></i>
+                  </div>
+                </label>
+              </div>
             </div>
-            <div class="mb-4">
-              <label class="inline-flex items-center">
-                <input type="radio" class="form-radio text-red-500 h-5 w-5" name="paymentMethod" value="cash" checked>
-                <span class="ml-2">Cash on delivery</span>
-              </label>
+            <!-- Order status messages -->
+            <div id="orderStatusMessage" class="mb-4 hidden">
+              <div class="p-4 rounded-lg text-sm font-medium"></div>
             </div>
             <div class="flex mb-4">
               <input type="text" placeholder="Coupon Code" class="flex-grow px-3 py-2 border border-gray-300 rounded-l-md focus:outline-none focus:ring-2 focus:ring-red-500 transition duration-300">
@@ -188,9 +417,26 @@
                 Apply Coupon
               </button>
             </div>
-            <button id="placeOrderBtn" class="w-full bg-red-500 text-white py-3 px-4 rounded-md hover:bg-red-600 focus:outline-none focus:ring-2 focus:ring-red-500 focus:ring-opacity-50 transition duration-300 text-lg font-semibold">
-              Place Order
+            <!-- Place order button -->
+            <button id="placeOrderBtn" class="w-full bg-red-500 text-white py-4 px-6 rounded-lg hover:bg-red-600 
+         focus:outline-none focus:ring-2 focus:ring-red-500 focus:ring-opacity-50 
+         transition-all duration-300 text-lg font-semibold disabled:bg-gray-400 
+         disabled:cursor-not-allowed transform hover:-translate-y-1 hover:shadow-lg
+         flex items-center justify-center">
+              <span class="mr-2">Place Order</span>
+              <i class="fas fa-arrow-right"></i>
             </button>
+
+            <!-- Order processing overlay -->
+            <div id="orderProcessingOverlay" class="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center hidden z-50">
+              <div class="bg-white p-8 rounded-lg shadow-xl text-center max-w-md mx-4">
+                <div class="processing-spinner mb-4">
+                  <!-- Spinner animation here -->
+                </div>
+                <h3 class="text-xl font-semibold mb-2">Processing Your Order</h3>
+                <p class="text-gray-600">Please wait while we confirm your order details...</p>
+              </div>
+            </div>
           </div>
         </div>
       </div>
@@ -201,87 +447,259 @@
 
   <script>
     document.addEventListener('DOMContentLoaded', function() {
+      const progressBar = document.getElementById('progressBar');
+      const addressCards = document.querySelectorAll('.saved-address-card');
+
+      // Function to animate progress bar to 100%
+      function animateProgressToFull() {
+        // Remove previous color classes
+        progressBar.classList.remove('bg-red-500', 'bg-yellow-500');
+        progressBar.classList.add('bg-green-500');
+
+        // Create a sequence of animations
+        const tl = gsap.timeline();
+
+        // First, animate to 100%
+        tl.to(progressBar, {
+            width: '100%',
+            duration: 0.8,
+            ease: "power2.out"
+          })
+          // Then add a subtle pulse effect
+          .to(progressBar, {
+            scale: 1.02,
+            duration: 0.2,
+            yoyo: true,
+            repeat: 1
+          })
+          // Add a flash effect to emphasize completion
+          .fromTo(progressBar, {
+            opacity: 0.7
+          }, {
+            opacity: 1,
+            duration: 0.2,
+            ease: "power1.out"
+          });
+      }
+
+      // Enhanced address card selection
+      addressCards.forEach(card => {
+        card.addEventListener('click', () => {
+          // Remove selection from other cards
+          addressCards.forEach(c => {
+            c.classList.remove('selected');
+            gsap.to(c, {
+              scale: 1,
+              duration: 0.3
+            });
+          });
+
+          // Add selection to clicked card
+          card.classList.add('selected');
+
+          // Animate the card selection
+          gsap.to(card, {
+            scale: 1.03,
+            duration: 0.3,
+            ease: "back.out(1.7)"
+          });
+
+          // Animate progress bar to full
+          animateProgressToFull();
+
+          // Add highlight effect to selected card
+          gsap.fromTo(card, {
+            boxShadow: '0 0 0 0px rgba(239, 68, 68, 0.4)'
+          }, {
+            boxShadow: '0 0 0 4px rgba(239, 68, 68, 0.4)',
+            duration: 0.5,
+            ease: "power2.out"
+          });
+        });
+
+        // Hover effects for cards
+        card.addEventListener('mouseenter', () => {
+          if (!card.classList.contains('selected')) {
+            gsap.to(card, {
+              scale: 1.02,
+              duration: 0.3,
+              ease: "power2.out"
+            });
+          }
+        });
+
+        card.addEventListener('mouseleave', () => {
+          if (!card.classList.contains('selected')) {
+            gsap.to(card, {
+              scale: 1,
+              duration: 0.3,
+              ease: "power2.out"
+            });
+          }
+        });
+      });
+    });
+
+
+
+
+    document.addEventListener('DOMContentLoaded', function() {
+      let formProgress = 0;
+      const requiredFields = ['firstName', 'streetAddress', 'townCity', 'phoneNumber', 'emailAddress'];
+      const progressBar = document.getElementById('progressBar');
       const form = document.getElementById('checkoutForm');
       const placeOrderBtn = document.getElementById('placeOrderBtn');
-      const inputs = form.querySelectorAll('input[required]');
-      const orderItems = document.getElementById('orderItems');
-      const progressBar = document.getElementById('progressBar');
 
+      // Initialize progress bar
+      updateProgress();
 
-      // Form validation and progress bar update
-      inputs.forEach(input => {
-        input.addEventListener('input', updateProgress);
-      });
-
+      // Function to update progress bar
       function updateProgress() {
-        let filledInputs = 0;
-        inputs.forEach(input => {
-          if (input.value.trim()) {
-            filledInputs++;
+        const totalFields = requiredFields.length;
+        let filledFields = 0;
+
+        requiredFields.forEach(fieldId => {
+          const field = document.getElementById(fieldId);
+          if (field && field.value.trim() !== '') {
+            filledFields++;
           }
         });
-        const progress = (filledInputs / inputs.length) * 100;
+
+        const progress = (filledFields / totalFields) * 100;
         progressBar.style.width = `${progress}%`;
 
-        // Update button state
-        placeOrderBtn.disabled = filledInputs !== inputs.length;
-        placeOrderBtn.classList.toggle('opacity-50', filledInputs !== inputs.length);
+        // Add color transitions based on progress
+        if (progress < 33) {
+          progressBar.classList.remove('bg-yellow-500', 'bg-green-500');
+          progressBar.classList.add('bg-red-500');
+        } else if (progress < 66) {
+          progressBar.classList.remove('bg-red-500', 'bg-green-500');
+          progressBar.classList.add('bg-yellow-500');
+        } else {
+          progressBar.classList.remove('bg-yellow-500', 'bg-red-500');
+          progressBar.classList.add('bg-green-500');
+        }
+
+        // Animate progress bar
+        gsap.to(progressBar, {
+          width: `${progress}%`,
+          duration: 0.5,
+          ease: "power2.out"
+        });
       }
 
-      // Animate order items on page load
-      gsap.from(orderItems.children, {
-        opacity: 0,
-        y: 20,
-        stagger: 0.2,
-        duration: 0.8,
-        ease: 'power2.out'
+      // Add input listeners to all form fields
+      requiredFields.forEach(fieldId => {
+        const field = document.getElementById(fieldId);
+        if (field) {
+          field.addEventListener('input', updateProgress);
+          field.addEventListener('focus', () => {
+            field.classList.add('scale-105');
+            gsap.to(field, {
+              scale: 1.02,
+              duration: 0.2
+            });
+          });
+          field.addEventListener('blur', () => {
+            gsap.to(field, {
+              scale: 1,
+              duration: 0.2
+            });
+          });
+        }
       });
 
-      // Form validation
-      inputs.forEach(input => {
-        input.addEventListener('input', validateForm);
+      // Enhanced address card selection
+      const addressCards = document.querySelectorAll('.saved-address-card');
+      addressCards.forEach(card => {
+        card.addEventListener('click', () => {
+          addressCards.forEach(c => {
+            c.classList.remove('selected');
+            gsap.to(c, {
+              scale: 1,
+              duration: 0.3
+            });
+          });
+
+          card.classList.add('selected');
+          gsap.to(card, {
+            scale: 1.03,
+            duration: 0.3,
+            ease: "back.out(1.7)"
+          });
+
+          const addressData = JSON.parse(card.dataset.address);
+          fillFormWithAnimation(addressData);
+        });
       });
 
-      function validateForm() {
-        let isValid = true;
-        inputs.forEach(input => {
-          if (!input.value.trim()) {
-            isValid = false;
+      // Animate form filling
+      function fillFormWithAnimation(addressData) {
+        const fields = {
+          'streetAddress': addressData.streetAddress,
+          'apartment': addressData.apartment || '',
+          'townCity': addressData.city,
+          'phoneNumber': addressData.phone
+        };
+
+        Object.entries(fields).forEach(([fieldId, value], index) => {
+          const field = document.getElementById(fieldId);
+          if (field) {
+            gsap.to(field, {
+              scale: 1.05,
+              duration: 0.2,
+              delay: index * 0.1,
+              onComplete: () => {
+                field.value = value;
+                gsap.to(field, {
+                  scale: 1,
+                  duration: 0.2,
+                  onComplete: updateProgress
+                });
+              }
+            });
           }
         });
-        placeOrderBtn.disabled = !isValid;
-        placeOrderBtn.classList.toggle('opacity-50', !isValid);
       }
 
-      // Place order button animation
-      placeOrderBtn.addEventListener('click', function(e) {
+      // Place Order Button Animation
+      placeOrderBtn.addEventListener('click', (e) => {
         e.preventDefault();
-        if (!placeOrderBtn.disabled) {
+
+        if (!form.checkValidity()) {
+          // Shake animation for invalid form
+          form.classList.add('shake');
+          setTimeout(() => form.classList.remove('shake'), 820);
+
+          // Highlight empty required fields
+          requiredFields.forEach(fieldId => {
+            const field = document.getElementById(fieldId);
+            if (field && !field.value) {
+              gsap.to(field, {
+                borderColor: '#EF4444',
+                duration: 0.3,
+                yoyo: true,
+                repeat: 3
+              });
+            }
+          });
+        } else {
+          // Success animation
           gsap.to(placeOrderBtn, {
             scale: 0.95,
             duration: 0.1,
             yoyo: true,
             repeat: 1,
             onComplete: () => {
-              // Here you would typically submit the form or process the order
-              alert('Order placed successfully!');
+              placeOrderBtn.innerHTML = '<i class="fas fa-check mr-2"></i>Order Placed!';
+              placeOrderBtn.classList.remove('bg-red-500');
+              placeOrderBtn.classList.add('bg-green-500');
             }
           });
         }
       });
 
-      // Animate breadcrumbs
-      const breadcrumbItems = document.querySelectorAll('.breadcrumb-item');
-      gsap.from(breadcrumbItems, {
-        opacity: 0,
-        x: -20,
-        stagger: 0.1,
-        duration: 0.5,
-        ease: 'power2.out'
-      });
-
-
-      // Floating animation for product images
+      // Initialize floating animation for product images
       const productImages = document.querySelectorAll('#orderItems img');
       productImages.forEach(img => {
         gsap.to(img, {
@@ -289,11 +707,502 @@
           duration: 2,
           repeat: -1,
           yoyo: true,
-          ease: 'power1.inOut'
+          ease: "power1.inOut"
         });
       });
     });
+
+    document.addEventListener('DOMContentLoaded', () => {
+      const formFields = document.querySelectorAll('input, select');
+      formFields.forEach((field, index) => {
+        setTimeout(() => {
+          field.closest('div').classList.add('animate-fadeIn');
+        }, index * 100);
+      });
+    });
+
+    // Dynamic state loading based on country selection
+    const countrySelect = document.querySelector('select[name="country"]');
+    const stateSelect = document.querySelector('select[name="state"]');
+
+    const states = {
+      US: ['Alabama', 'Alaska', 'Arizona', /* ... */ ],
+      CA: ['Alberta', 'British Columbia', 'Manitoba', /* ... */ ]
+    };
+
+    countrySelect.addEventListener('change', (e) => {
+      const country = e.target.value;
+      stateSelect.innerHTML = '<option value="">Select State</option>';
+
+      if (states[country]) {
+        states[country].forEach(state => {
+          const option = document.createElement('option');
+          option.value = state;
+          option.textContent = state;
+          stateSelect.appendChild(option);
+        });
+      }
+    });
+
+
+
+    document.addEventListener('DOMContentLoaded', function() {
+      const addressCards = document.querySelectorAll('.saved-address-card');
+      const selectedAddressDetails = document.getElementById('selectedAddressDetails');
+      const noAddressSelected = document.getElementById('noAddressSelected');
+
+      // Elements for address details
+      const addressType = document.getElementById('addressType');
+      const addressName = document.getElementById('addressName');
+      const addressStreet = document.getElementById('addressStreet');
+      const addressCityState = document.getElementById('addressCityState');
+      const addressPhone = document.getElementById('addressPhone');
+
+      addressCards.forEach(card => {
+        card.addEventListener('click', () => {
+          // Get address data from the card
+          const addressData = JSON.parse(card.dataset.address);
+
+          // Hide the "no address selected" message
+          gsap.to(noAddressSelected, {
+            opacity: 0,
+            height: 0,
+            duration: 0.3,
+            onComplete: () => {
+              noAddressSelected.style.display = 'none';
+            }
+          });
+
+          // Show and animate the address details container
+          selectedAddressDetails.style.display = 'block';
+          gsap.to(selectedAddressDetails, {
+            opacity: 1,
+            y: 0,
+            duration: 0.5,
+            ease: "back.out(1.7)"
+          });
+
+          // Animate updating the address details
+          const updateSequence = gsap.timeline();
+
+          updateSequence
+            .to([addressType, addressName, addressStreet, addressCityState, addressPhone], {
+              opacity: 0,
+              y: -10,
+              duration: 0.2,
+              stagger: 0.05
+            })
+            .call(() => {
+              // Update content
+              addressType.textContent = addressData.addressType;
+              addressName.textContent = addressData.name;
+              addressStreet.textContent = `${addressData.streetAddress}${addressData.apartment ? ', ' + addressData.apartment : ''}`;
+              addressCityState.textContent = `${addressData.city}, ${addressData.state} ${addressData.postalCode}`;
+              addressPhone.textContent = `📞 ${addressData.phone}`;
+            })
+            .to([addressType, addressName, addressStreet, addressCityState, addressPhone], {
+              opacity: 1,
+              y: 0,
+              duration: 0.3,
+              stagger: 0.05
+            });
+
+          // Add a subtle highlight animation to the address details container
+          gsap.fromTo(selectedAddressDetails.querySelector('.bg-gray-50'), {
+            boxShadow: '0 0 0 0px rgba(239, 68, 68, 0.1)'
+          }, {
+            boxShadow: '0 0 0 4px rgba(239, 68, 68, 0.1)',
+            duration: 1,
+            ease: "elastic.out(1, 0.3)"
+          });
+        });
+      });
+
+      // Add hover effects for address cards
+      addressCards.forEach(card => {
+        card.addEventListener('mouseenter', () => {
+          gsap.to(card, {
+            y: -5,
+            boxShadow: '0 10px 15px -3px rgba(0, 0, 0, 0.1), 0 4px 6px -2px rgba(0, 0, 0, 0.05)',
+            duration: 0.3
+          });
+        });
+
+        card.addEventListener('mouseleave', () => {
+          gsap.to(card, {
+            y: 0,
+            boxShadow: '0 1px 3px 0 rgba(0, 0, 0, 0.1), 0 1px 2px 0 rgba(0, 0, 0, 0.06)',
+            duration: 0.3
+          });
+        });
+      });
+    });
+
+    // Add this to your existing JavaScript
+    document.addEventListener('DOMContentLoaded', function() {
+      const orderItems = document.querySelectorAll('#orderItems > div');
+
+      // Initialize hover animations for order items
+      orderItems.forEach(item => {
+        // Quantity buttons functionality
+        const minusBtn = item.querySelector('.quantity-btn.minus');
+        const plusBtn = item.querySelector('.quantity-btn.plus');
+        const quantityValue = item.querySelector('.quantity-value');
+        const priceElement = item.querySelector('.font-semibold');
+        const unitPrice = parseFloat(item.querySelector('.text-gray-500').textContent.match(/₹\s*([\d.]+)/)[1]);
+
+        if (minusBtn && plusBtn && quantityValue) {
+          let quantity = parseInt(quantityValue.textContent);
+
+          minusBtn.addEventListener('click', () => {
+            if (quantity > 1) {
+              quantity--;
+              updateQuantityWithAnimation(quantity);
+            } else {
+              // Shake animation if trying to go below 1
+              gsap.to(minusBtn, {
+                x: [-4, 4, -4, 4, 0],
+                duration: 0.4,
+                ease: "power2.out"
+              });
+            }
+          });
+
+          plusBtn.addEventListener('click', () => {
+            quantity++;
+            updateQuantityWithAnimation(quantity);
+          });
+
+          function updateQuantityWithAnimation(newQuantity) {
+            // Animate quantity change
+            gsap.to(quantityValue, {
+              scale: 1.2,
+              duration: 0.2,
+              yoyo: true,
+              repeat: 1,
+              onComplete: () => {
+                quantityValue.textContent = newQuantity;
+              }
+            });
+
+            // Update price with animation
+            const newPrice = (unitPrice * newQuantity).toFixed(2);
+            gsap.to(priceElement, {
+              scale: 1.1,
+              duration: 0.2,
+              yoyo: true,
+              repeat: 1,
+              onComplete: () => {
+                priceElement.textContent = `₹ ${newPrice}`;
+              }
+            });
+
+            // Update quantity badge
+            const quantityBadge = item.querySelector('.absolute span');
+            if (quantityBadge) {
+              gsap.to(quantityBadge, {
+                scale: 1.2,
+                duration: 0.2,
+                yoyo: true,
+                repeat: 1,
+                onComplete: () => {
+                  quantityBadge.textContent = newQuantity;
+                }
+              });
+            }
+
+            // Recalculate total
+            updateOrderTotal();
+          }
+        }
+
+        // Add hover animation for the entire item
+        gsap.to(item, {
+          y: 0,
+          duration: 0,
+        });
+
+        item.addEventListener('mouseenter', () => {
+          gsap.to(item, {
+            y: -2,
+            backgroundColor: 'rgb(249, 250, 251)',
+            boxShadow: '0 4px 6px -1px rgba(0, 0, 0, 0.1)',
+            duration: 0.3
+          });
+        });
+
+        item.addEventListener('mouseleave', () => {
+          gsap.to(item, {
+            y: 0,
+            backgroundColor: 'rgb(255, 255, 255)',
+            boxShadow: 'none',
+            duration: 0.3
+          });
+        });
+      });
+
+      function updateOrderTotal() {
+        const subtotalElement = document.querySelector('#orderItems + div .flex.justify-between:first-child span:last-child');
+        const totalElement = document.querySelector('#orderItems + div .flex.justify-between.font-semibold span:last-child');
+
+        if (subtotalElement && totalElement) {
+          let newSubtotal = 0;
+          orderItems.forEach(item => {
+            const price = parseFloat(item.querySelector('.font-semibold').textContent.replace('₹', ''));
+            newSubtotal += price;
+          });
+
+          // Animate subtotal and total updates
+          gsap.to([subtotalElement, totalElement], {
+            scale: 1.1,
+            duration: 0.2,
+            yoyo: true,
+            repeat: 1,
+            onComplete: () => {
+              subtotalElement.textContent = `₹ ${newSubtotal.toFixed(2)}`;
+              totalElement.textContent = `₹ ${newSubtotal.toFixed(2)}`;
+            }
+          });
+        }
+      }
+    });
+
+
+
+    // Place Order Implementation
+    document.addEventListener('DOMContentLoaded', function() {
+      const placeOrderBtn = document.getElementById('placeOrderBtn');
+      const savedAddressCards = document.querySelectorAll('.saved-address-card');
+
+      // Order state management
+      let orderState = {
+        selectedAddress: null,
+        paymentMethod: 'cash', // default to cash on delivery
+        items: [], // will be populated from cart items
+        totalAmount: 0
+      };
+
+      // Initialize order items from the cart
+      function initializeOrderItems() {
+        const orderItems = document.querySelectorAll('#orderItems > div');
+        orderState.items = Array.from(orderItems).map(item => {
+          const id = item.getAttribute('data-id');
+          const name = item.querySelector('.text-sm.font-medium').textContent;
+          const quantity = parseInt(item.querySelector('.quantity-value').textContent);
+          const price = parseFloat(item.querySelector('.font-semibold').textContent.replace('₹', '').trim());
+          return {
+            name,
+            quantity,
+            price,
+            id
+          };
+        });
+
+        orderState.totalAmount = parseFloat(document
+          .querySelector('#orderItems + div .flex.justify-between.font-semibold span:last-child')
+          .textContent.replace('₹', '').trim());
+      }
+
+      // Address selection handler
+      savedAddressCards.forEach(card => {
+        card.addEventListener('click', () => {
+          orderState.selectedAddress = JSON.parse(card.dataset.address);
+          validateOrderState();
+        });
+      });
+
+      // Payment method selection handler
+      const paymentMethods = document.querySelectorAll('input[name="paymentMethod"]');
+      paymentMethods.forEach(method => {
+        method.addEventListener('change', (e) => {
+          orderState.paymentMethod = e.target.value;
+          validateOrderState();
+        });
+      });
+
+      // Validate order state and update UI
+      function validateOrderState() {
+        const isValid = orderState.selectedAddress &&
+          orderState.paymentMethod &&
+          orderState.items.length > 0;
+
+        if (isValid) {
+          enablePlaceOrderButton();
+        } else {
+          disablePlaceOrderButton();
+        }
+        return isValid;
+      }
+
+      // UI feedback functions
+      function enablePlaceOrderButton() {
+        placeOrderBtn.disabled = false;
+        gsap.to(placeOrderBtn, {
+          backgroundColor: '#EF4444',
+          scale: 1.02,
+          duration: 0.3,
+          ease: 'back.out(1.7)'
+        });
+      }
+
+      function disablePlaceOrderButton() {
+        placeOrderBtn.disabled = true;
+        gsap.to(placeOrderBtn, {
+          backgroundColor: '#9CA3AF',
+          scale: 1,
+          duration: 0.3
+        });
+      }
+
+      // Loading animation during order placement
+      function showLoadingAnimation() {
+        placeOrderBtn.innerHTML = `
+      <svg class="animate-spin -ml-1 mr-3 h-5 w-5 text-white" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24">
+        <circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"></circle>
+        <path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path>
+      </svg>
+      Processing Order...
+    `;
+        placeOrderBtn.disabled = true;
+      }
+
+      // Success animation
+      function showSuccessAnimation() {
+        gsap.to(placeOrderBtn, {
+          backgroundColor: '#10B981',
+          duration: 0.3,
+          onComplete: () => {
+            placeOrderBtn.innerHTML = `
+          <i class="fas fa-check mr-2"></i>
+          Order Placed Successfully!
+        `;
+
+            // Confetti effect
+            createConfettiEffect();
+          }
+        });
+      }
+
+      // Error animation
+      function showErrorAnimation(message) {
+        gsap.to(placeOrderBtn, {
+          backgroundColor: '#EF4444',
+          x: [-10, 10, -10, 10, 0],
+          duration: 0.5,
+          onComplete: () => {
+            placeOrderBtn.innerHTML = `
+          <i class="fas fa-exclamation-circle mr-2"></i>
+          ${message}
+        `;
+
+            // Reset after 3 seconds
+            setTimeout(() => {
+              placeOrderBtn.innerHTML = 'Place Order';
+              placeOrderBtn.disabled = false;
+            }, 3000);
+          }
+        });
+      }
+
+      // Confetti effect
+      function createConfettiEffect() {
+        const colors = ['#EF4444', '#10B981', '#3B82F6', '#F59E0B'];
+        for (let i = 0; i < 100; i++) {
+          const confetti = document.createElement('div');
+          confetti.className = 'absolute w-2 h-2 rounded-full pointer-events-none';
+          confetti.style.backgroundColor = colors[Math.floor(Math.random() * colors.length)];
+          document.body.appendChild(confetti);
+
+          gsap.fromTo(confetti, {
+            x: placeOrderBtn.offsetLeft + placeOrderBtn.offsetWidth / 2,
+            y: placeOrderBtn.offsetTop + placeOrderBtn.offsetHeight / 2,
+            scale: 0
+          }, {
+            x: `+=${(Math.random() - 0.5) * 200}`,
+            y: `+=${-Math.random() * 200}`,
+            scale: 1.5,
+            duration: 1 + Math.random(),
+            ease: 'power4.out',
+            opacity: 0,
+            onComplete: () => confetti.remove()
+          });
+        }
+      }
+
+      // Place order handler
+      async function placeOrder() {
+        try {
+          showLoadingAnimation();
+
+          // Prepare order data
+          const orderData = {
+            deliveryAddress: orderState.selectedAddress,
+            paymentMethod: orderState.paymentMethod,
+            items: orderState.items,
+            totalAmount: orderState.totalAmount
+          };
+
+          // Make API call to place order
+          const response = await fetch('/place-order', {
+            method: 'POST',
+            headers: {
+              'Content-Type': 'application/json'
+            },
+            body: JSON.stringify(orderData)
+          });
+
+          if (!response.ok) {
+            throw new Error('Failed to place order');
+          }
+
+          const result = await response.json();
+
+          // Show success animation
+          showSuccessAnimation();
+
+          // Redirect to order confirmation page after 2 seconds
+          setTimeout(() => {
+            window.location.href = `/order-confirmation/${result.orderId}`;
+          }, 2000);
+
+        } catch (error) {
+          console.error('Order placement error:', error);
+          showErrorAnimation('Failed to place order. Please try again.');
+        }
+      }
+
+      // Initialize and add click handler
+      initializeOrderItems();
+      validateOrderState(); // Initial validation
+
+      placeOrderBtn.addEventListener('click', async (e) => {
+        e.preventDefault();
+
+        if (!validateOrderState()) {
+          // Show what's missing
+          if (!orderState.selectedAddress) {
+            showErrorAnimation('Please select a delivery address');
+            // Scroll to address section and highlight it
+            document.querySelector('.saved-address-card').scrollIntoView({
+              behavior: 'smooth'
+            });
+            gsap.to('.saved-address-card', {
+              borderColor: '#EF4444',
+              duration: 0.3,
+              yoyo: true,
+              repeat: 3
+            });
+            return;
+          }
+          return;
+        }
+
+        // Proceed with order placement
+        await placeOrder();
+      });
+    });
   </script>
+
 </body>
 
 </html>

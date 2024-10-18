@@ -1,9 +1,16 @@
 const express = require('express');
 const user_router = express.Router();
+const passport = require('passport');
+
 
 const authController = require('../controllers/authController');
 const auth = require('../middlewares/authMiddleware');
-const passport = require('passport');
+const { getAddress, addAddress, editAddress, getAddAddress, getEditAddress, deleteAddress, addAddressFromCheckout } = require('../controllers/addressController');
+const { productDetails, getProductByCategory, getAllProducts } = require('../controllers/productController');
+const { getCart, addToCart, deleteCart, getCartCount, getCheckOut, orderTracking, placeOrder, orderConfirm, updateQuantity } = require('../controllers/cartController');
+const { getWishList, addWishlist, removeWishlist, getWishlistCount } = require('../controllers/wishlistController');
+const { getAccount, getWallet, getTransactionHistory, getContact, editProfile } = require('../controllers/userController');
+const { getOrders, cancelOrder } = require('../controllers/orderController');
 
 
 // lead Page
@@ -12,43 +19,60 @@ user_router.get('/', auth.isLogin, authController.getHomeWithoutUser)
 //home
 user_router.get('/home', auth.isLogout, authController.getHomeWithUser);
 
+//All products
+user_router.get('/products', auth.isLogout, getAllProducts);
+
 // Product Details
-user_router.get('/product-detail/:id', auth.isLogout, authController.productDetails);
+user_router.get('/product-detail/:id', auth.isLogout, productDetails);
 
 // product Sort by Category
-user_router.get('/products/category/:id', auth.isLogout, authController.getProductByCategory)
+user_router.get('/products/category/:id', auth.isLogout, getProductByCategory)
 
 
 // Cart
-user_router.get('/cart', auth.isLogout, authController.getCart);
+user_router.get('/cart', auth.isLogout, getCart);
+user_router.post('/cart/add', auth.isLogout, addToCart);
+user_router.post('/cart/delete', auth.isLogout, deleteCart);
+user_router.get('/cart/count', auth.isLogout, getCartCount);
 
 // Wishlist
-user_router.get('/wishlist', auth.isLogout, authController.getWishList);
-user_router.post('/wishlist/add', auth.isLogout, authController.addWishlist);
-user_router.delete('/wishlist/remove', auth.isLogout, authController.removeWishlist);
-user_router.get('/wishlist/count', auth.isLogout, authController.getWishlistCount);
+user_router.get('/wishlist', auth.isLogout, getWishList);
+user_router.post('/wishlist/add', auth.isLogout, addWishlist);
+user_router.delete('/wishlist/remove', auth.isLogout, removeWishlist);
+user_router.get('/wishlist/count', auth.isLogout, getWishlistCount);
 
 
 // Check Out
-user_router.get('/cart/check-out', auth.isLogout, authController.getCheckOut);
+user_router.get('/cart/check-out', auth.isLogout, getCheckOut);
+user_router.post('/cart/update-quantity', updateQuantity);
+user_router.post('/place-order', placeOrder)
+user_router.get('/order-confirmation/:id', orderConfirm);
 
 // Order Tracking
-user_router.get('/order-tracking', auth.isLogout, authController.orderTracking);
+user_router.get('/order-tracking/:id', auth.isLogout, orderTracking);
 
 // All Orders page
-user_router.get('/orders', auth.isLogout, authController.getOrders);
+user_router.get('/orders', auth.isLogout, getOrders);
+user_router.post('/orders/cancel/:id', cancelOrder)
 
 // Account
-user_router.get('/account', auth.isLogout, authController.getAccount);
+user_router.get('/account', auth.isLogout, getAccount);
+user_router.post('/account/editProfile/:id', editProfile)
 
 // Wallet 
-user_router.get('/wallet', auth.isLogout, authController.getWallet);
+user_router.get('/wallet', auth.isLogout, getWallet);
 
 // Transaction History
-user_router.get('/wallet/history', auth.isLogout, authController.getTransactionHistory);
+user_router.get('/wallet/history', auth.isLogout, getTransactionHistory);
 
 // address Book
-user_router.get('/address', auth.isLogout, authController.getAddress);
+user_router.get('/address', auth.isLogout, getAddress);
+user_router.get('/profile/add-address', getAddAddress);
+user_router.post('/profile/add-address', addAddress);
+user_router.post('/profile/add-address-checkout', addAddressFromCheckout);
+user_router.get('/profile/edit-address/:id', getEditAddress);
+user_router.post('/profile/edit-address/:id', editAddress);
+user_router.post('/profile/delete-address/:id', deleteAddress);
 
 
 // signup
@@ -75,12 +99,9 @@ user_router.get('/forgot-password', authController.forgotPassword);
 user_router.get('/logout', authController.getLogout);
 
 
-//All products
-user_router.get('/products', auth.isLogout, authController.getAllProducts);
-
 
 // Contact Page
-user_router.get('/contact', auth.isLogout, authController.getContact)
+user_router.get('/contact', auth.isLogout, getContact)
 
 // Google Authentication
 user_router.get('/auth/google', passport.authenticate('google', { scope: ['profile', 'email'] }))

@@ -7,36 +7,55 @@ const addressSchema = mongoose.Schema({
         required: true
     },
     address: [{
-        addressType: {
-            type: String,
-            required: true
-        },
         name: {
             type: String,
             required: true
         },
+        streetAddress: {
+            type: String,
+            required: true,
+            trim: true
+        },
+        addressType: {
+            type: String, required: true,
+            enum: ["Home", "Office"],
+            default: "Home"
+        },
         city: {
             type: String,
-            required: true
+            required: true,
+            trim: true
+        },
+        apartment: {
+            type: String,
+            required: true,
+            trim: true
+        },
+        country: {
+            type: String,
+            required: true,
+            trim: true
         },
         landMark: {
             type: String,
-            required: true
+            trim: true
         },
         state: {
             type: String,
-            required: true
+            required: true,
+            trim: true
         },
-        pincode: {
+        postalCode: {
             type: Number,
-            required: true
+            required: true,
+            trim: true
         },
         phone: {
             type: String,
             required: true
         }
     }]
-})
+}, { timestamps: true })
 
 
 const Address = mongoose.model('Address', addressSchema);

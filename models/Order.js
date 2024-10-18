@@ -1,60 +1,50 @@
 const mongoose = require('mongoose');
-const { v4: uuidv4 } = require('uuid');
 
 const orderSchema = mongoose.Schema({
-    orderId: {
-        type: String,
-        default: () => uuidv4(),
-        unique: true
-    },
-    orderedItems: [{
-        product: {
-            type: mongoose.Schema.Types.ObjectId,
-            ref: "Product",
-            required: true
-        },
-        quantity: {
-            type: Number,
-            required: true
-        },
-        price: {
-            type: Number,
-            default: 0
-        }
-    }],
-    totoalPrice: {
-        type: Number,
-        required: true
-    },
-    discount: {
-        type: Number,
-        default: 0
-    },
-    finalAmount: {
-        type: Number,
-        required: true
-    },
-    address: {
+    userId: {
         type: mongoose.Schema.Types.ObjectId,
-        ref: "User",
+        ref: 'User',
         required: true
     },
-    invoiceDate: {
-        type: Date,
+    deliveryAddress: {
+        type: mongoose.Schema.Types.ObjectId,
+        ref: 'Address',
+        required: true
     },
-    status: {
+    items: [
+        {
+            productId: {
+                type: mongoose.Schema.Types.ObjectId,
+                ref: 'Product',
+                required: true
+            },
+            quantity: {
+                type: Number,
+                required: true
+            },
+            price: {
+                type: Number,
+                required: true
+            }
+        }
+    ],
+    totalAmount: {
+        type: Number,
+        required: true
+    },
+    paymentMethod: {
         type: String,
-        required: true,
-        enum: ["Pending", "Processing", "Shipped", "Delivered", "Cancelled", "Return Request", "Returned"],
-    },
-    createdOn: {
-        type: Date,
-        default: Date.now,
+        enum: ['Credit Card', 'Debit Card', 'PayPal', 'Cash on Delivery'],
         required: true
     },
-    couponApplied: {
-        type: Boolean,
-        default: false,
+    orderStatus: {
+        type: String,
+        enum: ['Ordered', 'Shipped', 'Out For Delivery', 'Delivered', 'Cancelled'],
+        default: 'Ordered'
+    },
+    orderDate: {
+        type: Date,
+        default: Date.now
     }
 })
 

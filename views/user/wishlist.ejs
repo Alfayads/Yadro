@@ -9,6 +9,8 @@
   <script src="https://cdn.tailwindcss.com"></script>
   <link rel="stylesheet" href="/css/like-button.css">
   <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css" rel="stylesheet">
+  <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+
   <style>
     @keyframes float {
 
@@ -163,19 +165,19 @@
               </div>
               <span class="text-gray-600 ml-2">(4.5)</span>
             </div>
-
-            <!-- Quantity Selector -->
-            <div class="flex items-center justify-between mb-4">
-              <span class="text-gray-700 font-medium">Quantity:</span>
-              <div class="flex items-center border border-gray-300 rounded-full">
-                <button class="quantity-btn minus w-8 h-8 flex items-center justify-center text-gray-600 hover:bg-gray-100 rounded-full focus:outline-none">-</button>
-                <input type="number" class="quantity-input w-12 text-center border-none focus:outline-none" value="1" min="1" max="99">
-                <button class="quantity-btn plus w-8 h-8 flex items-center justify-center text-gray-600 hover:bg-gray-100 rounded-full focus:outline-none">+</button>
-              </div>
-            </div>
         </a>
+        <div class="flex items-center justify-between mb-4">
+          <span class="text-gray-700 font-medium">Quantity:</span>
+          <div class="flex items-center border border-gray-300 rounded-full">
+            <button class="quantity-btn minus w-8 h-8 flex items-center justify-center text-gray-600 hover:bg-gray-100 rounded-full focus:outline-none">-</button>
+            <input type="number" id="quantity-<%= product._id %>" class="quantity-input w-12 text-center border-none focus:outline-none" value="1" min="1" max="10">
+
+            <button class="quantity-btn plus w-8 h-8 flex items-center justify-center text-gray-600 hover:bg-gray-100 rounded-full focus:outline-none">+</button>
+          </div>
+        </div>
+
         <!-- Add to Cart Button -->
-        <button class="w-full bg-red-600 hover:bg-red-700 text-white font-bold py-3 px-4 rounded-full transition duration-300 ease-in-out transform hover:scale-105 add-to-cart-btn">
+        <button data-product-id="<%= product._id %>" class="w-full bg-red-600 hover:bg-red-700 text-white font-bold py-3 px-4 rounded-full transition duration-300 ease-in-out transform hover:scale-105 add-to-cart-btn">
           <span class="add-to-cart-text flex items-center justify-center">
             <svg class="w-5 h-5 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
               <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 3h2l.4 2M7 13h10l4-8H5.4M7 13L5.4 5M7 13l-2.293 2.293c-.63.63-.184 1.707.707 1.707H17m0 0a2 2 0 100 4 2 2 0 000-4zm-8 2a2 2 0 11-4 0 2 2 0 014 0z"></path>
@@ -186,7 +188,6 @@
       </div>
 
 
-      <!-- Like Button -->
       <button class="absolute top-4 right-4 bg-white rounded-full p-2 shadow-md hover:bg-gray-100 transition-colors duration-200 like-button delete-from-wishlist z-10" data-product-id="<%= product._id %>">
         <svg class="w-6 h-6 text-gray-600 hover:text-red-600 transition-colors duration-200" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
           <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16" />
@@ -260,13 +261,12 @@
   <%- include('../layouts/footer.ejs') %>
 
 
-  <script>
-
-  </script>
   <script src="/js/product-card.js"></script>
   <script src="/js/user-design-animation.js"></script>
   <script src="/js/like-button.js"></script>
-
+  <script src="/js/actions/cartFunction.js"></script>
+  <script src="/js/actions/quantity.js"></script>
+  <!-- <script src="/js/actions/wishlist.js"></script> -->
 </body>
 
 </html>

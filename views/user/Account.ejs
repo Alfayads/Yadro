@@ -6,76 +6,120 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Yadro - My Profile</title>
   <script src="https://cdn.tailwindcss.com"></script>
-  <link rel="icon" href="/images/logo.png" type="image/x-icon">
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.2/gsap.min.js"></script>
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
-  <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:opsz,wght,FILL,GRAD@20..48,100..700,0..1,-50..200" />
 </head>
 
-<body class="bg-gray-50 min-h-screen flex flex-col">
+<body class="bg-gradient-to-br from-gray-50 to-gray-100 min-h-screen flex flex-col">
   <!-- Header -->
   <%- include('../layouts/header-with-user.ejs') %>
 
+  <!-- Notification Container -->
+  <div id="notification-container" class="fixed top-4 right-4 z-50 space-y-4"></div>
+
   <!-- Main Content -->
   <main class="flex-grow container mx-auto py-12 px-4 sm:px-6 lg:px-8">
+    <!-- Breadcrumb with hover effect -->
     <div class="border-b border-gray-200 pb-4 mb-8">
       <nav class="flex" aria-label="Breadcrumb">
         <ol class="flex items-center space-x-4">
           <li>
-            <div>
-              <a href="#" class="text-gray-400 hover:text-gray-500">Home</a>
-            </div>
+            <a href="#" class="text-gray-500 hover:text-red-600 transition-colors duration-300">Home</a>
           </li>
           <li>
             <div class="flex items-center">
-              <svg class="flex-shrink-0 h-5 w-5 text-gray-300" fill="currentColor" viewBox="0 0 20 20" aria-hidden="true">
-                <path d="M5.555 17.776l8-16 .894.448-8 16-.894-.448z" />
+              <svg class="flex-shrink-0 h-5 w-5 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7" />
               </svg>
-              <a href="#" class="ml-4 text-sm font-medium text-gray-500 hover:text-gray-700">My Account</a>
+              <a href="#" class="ml-4 text-gray-500 hover:text-red-600 transition-colors duration-300">My Account</a>
             </div>
           </li>
         </ol>
       </nav>
     </div>
-    <div class="flex flex-col md:flex-row">
-      <!-- Sidebar -->
-      <div class="w-full md:w-1/4 mb-8 md:mb-0 md:pr-8">
-        <h2 class="text-2xl font-bold text-gray-900 mb-6">Manage My Account</h2>
-        <nav class="space-y-2">
-          <a href="#" class="block px-4 py-3 rounded-lg text-sm font-medium text-red-600 bg-white shadow-md">My Profile</a>
-          <a href="/address" class="block px-4 py-3 rounded-lg text-sm font-medium text-gray-700 hover:bg-white hover:shadow transition duration-150 ease-in-out">Address Book</a>
-          <a href="#" class="block px-4 py-3 rounded-lg text-sm font-medium text-gray-700 hover:bg-white hover:shadow transition duration-150 ease-in-out">My Orders</a>
-          <a href="#" class="block px-4 py-3 rounded-lg text-sm font-medium text-gray-700 hover:bg-white hover:shadow transition duration-150 ease-in-out">My Payment Options</a>
-        </nav>
+
+    <div class="flex flex-col md:flex-row gap-8">
+      <!-- Sidebar with hover animations -->
+      <div class="w-full md:w-1/4">
+        <div class="bg-white rounded-xl shadow-lg p-6">
+          <h2 class="text-2xl font-bold text-gray-900 mb-6 border-b pb-4">Manage Account</h2>
+          <nav class="space-y-3">
+            <a href="#" class="flex items-center px-4 py-3 rounded-lg text-sm font-medium text-white bg-red-600 transform hover:scale-105 transition-all duration-300">
+              <i class="fas fa-user mr-3"></i>
+              My Profile
+            </a>
+            <a href="/address" class="flex items-center px-4 py-3 rounded-lg text-sm font-medium text-gray-700 hover:bg-red-50 hover:text-red-600 transform hover:scale-105 transition-all duration-300">
+              <i class="fas fa-map-marker-alt mr-3"></i>
+              Address Book
+            </a>
+            <a href="#" class="flex items-center px-4 py-3 rounded-lg text-sm font-medium text-gray-700 hover:bg-red-50 hover:text-red-600 transform hover:scale-105 transition-all duration-300">
+              <i class="fas fa-shopping-bag mr-3"></i>
+              My Orders
+            </a>
+            <a href="#" class="flex items-center px-4 py-3 rounded-lg text-sm font-medium text-gray-700 hover:bg-red-50 hover:text-red-600 transform hover:scale-105 transition-all duration-300">
+              <i class="fas fa-credit-card mr-3"></i>
+              Payment Options
+            </a>
+          </nav>
+        </div>
       </div>
 
-      <!-- Form -->
+      <!-- Form with enhanced styling -->
       <div class="w-full md:w-3/4">
-        <form class="bg-white shadow-md rounded-lg p-8">
-          <h3 class="text-xl font-semibold text-gray-900 mb-6">Edit Your Profile</h3>
-          <div class="grid grid-cols-1 gap-y-6 gap-x-4 sm:grid-cols-2">
-            <div class="sm:col-span-1">
-              <label for="first-name" class="block text-sm font-medium text-gray-700 mb-1">First Name*</label>
-              <input type="text" name="first-name" id="first-name" value="<%= user.fname %>" class="block w-full px-4 py-3 rounded-md border-gray-300 shadow-sm focus:ring-red-500 focus:border-red-500 text-sm">
+        <form class="bg-white shadow-lg rounded-xl p-8" method="post" action="/account/editProfile/<%= user._id %>">
+          <div class="flex items-center mb-8">
+            <div class="w-12 h-12 bg-red-100 rounded-full flex items-center justify-center mr-4">
+              <i class="fas fa-user-edit text-red-600 text-xl"></i>
             </div>
-            <div class="sm:col-span-1">
-              <label for="last-name" class="block text-sm font-medium text-gray-700 mb-1">Last Name*</label>
-              <input type="text" name="last-name" id="last-name" value="<%= user.lname %>" class="block w-full px-4 py-3 rounded-md border-gray-300 shadow-sm focus:ring-red-500 focus:border-red-500 text-sm">
+            <h3 class="text-2xl font-bold text-gray-900">Edit Your Profile</h3>
+          </div>
+
+          <div class="grid grid-cols-1 gap-y-6 gap-x-6 sm:grid-cols-2">
+            <div class="group">
+              <label class="block text-sm font-medium text-gray-700 mb-2 transition-colors group-hover:text-red-600">
+                First Name*
+              </label>
+              <input type="text" name="fname" value="<%= user.fname %>" class="block w-full px-4 py-3 rounded-lg border border-gray-300 shadow-sm focus:ring-2 focus:ring-red-500 focus:border-red-500 text-sm transition-all duration-300 hover:border-red-300">
             </div>
-            <div class="sm:col-span-2">
-              <label for="email-address" class="block text-sm font-medium text-gray-700 mb-1">Email Address*</label>
-              <input type="email" name="email-address" id="email-address" value="<%= user.email %>" class="block w-full px-4 py-3 rounded-md border-gray-300 shadow-sm focus:ring-red-500 focus:border-red-500 text-sm">
+
+            <div class="group">
+              <label class="block text-sm font-medium text-gray-700 mb-2 transition-colors group-hover:text-red-600">
+                Last Name*
+              </label>
+              <input type="text" name="lname" value="<%= user.lname %>" class="block w-full px-4 py-3 rounded-lg border border-gray-300 shadow-sm focus:ring-2 focus:ring-red-500 focus:border-red-500 text-sm transition-all duration-300 hover:border-red-300">
             </div>
-            <div class="sm:col-span-2">
-              <label for="phone-number" class="block text-sm font-medium text-gray-700 mb-1">Phone Number</label>
-              <input type="tel" name="phone-number" id="phone-number" class="block w-full px-4 py-3 rounded-md border-gray-300 shadow-sm focus:ring-red-500 focus:border-red-500 text-sm">
+
+            <div class="sm:col-span-2 group">
+              <label class="block text-sm font-medium text-gray-700 mb-2 transition-colors group-hover:text-red-600">
+                Email Address*
+              </label>
+              <input type="email" name="email" value="<%= user.email %>" class="block w-full px-4 py-3 rounded-lg border border-gray-300 shadow-sm focus:ring-2 focus:ring-red-500 focus:border-red-500 text-sm transition-all duration-300 hover:border-red-300">
             </div>
-            <div class="sm:col-span-2">
-              <label for="password" class="block text-sm font-medium text-gray-700 mb-1">Password</label>
-              <input type="password" name="password" id="password" placeholder="••••••••" class="block w-full px-4 py-3 rounded-md border-gray-300 shadow-sm focus:ring-red-500 focus:border-red-500 text-sm">
+
+            <div class="sm:col-span-2 group">
+              <label class="block text-sm font-medium text-gray-700 mb-2 transition-colors group-hover:text-red-600">
+                Phone Number
+              </label>
+              <input type="tel" name="phone" value="<%= user.phone %>" class="block w-full px-4 py-3 rounded-lg border border-gray-300 shadow-sm focus:ring-2 focus:ring-red-500 focus:border-red-500 text-sm transition-all duration-300 hover:border-red-300">
+            </div>
+
+            <div class="sm:col-span-2 group">
+              <label class="block text-sm font-medium text-gray-700 mb-2 transition-colors group-hover:text-red-600">
+                Gender
+              </label>
+              <select name="gender" class="block w-full px-4 py-3 rounded-lg border border-gray-300 shadow-sm focus:ring-2 focus:ring-red-500 focus:border-red-500 text-sm transition-all duration-300 hover:border-red-300">
+                <option value="">Select Gender</option>
+                <option value="male" <%= user.gender === 'male' ? 'selected' : '' %>>Male</option>
+                <option value="female" <%= user.gender === 'female' ? 'selected' : '' %>>Female</option>
+                <option value="other" <%= user.gender === 'other' ? 'selected' : '' %>>Other</option>
+                <option value="prefer-not-to-say" <%= user.gender === 'prefer-not-to-say' ? 'selected' : '' %>>Prefer not to say</option>
+              </select>
             </div>
           </div>
+
           <div class="mt-8">
-            <button type="submit" class="w-full bg-red-600 text-white px-6 py-3 rounded-md font-medium hover:bg-red-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-red-500 transition duration-150 ease-in-out">
+            <button type="submit" class="w-full bg-red-600 text-white px-6 py-4 rounded-lg font-medium hover:bg-red-700 focus:outline-none focus:ring-4 focus:ring-red-500 focus:ring-opacity-50 transform hover:scale-105 transition-all duration-300 shadow-lg hover:shadow-xl">
+              <i class="fas fa-save mr-2"></i>
               Save Changes
             </button>
           </div>
@@ -86,6 +130,89 @@
 
   <!-- Footer -->
   <%- include('../layouts/footer.ejs') %>
+
+  <script>
+    // Notification system
+    class NotificationSystem {
+      static show(message, type = 'success') {
+        const container = document.getElementById('notification-container');
+        const notification = document.createElement('div');
+
+        // Configure notification styles based on type
+        const baseClasses = 'max-w-md w-full p-4 rounded-lg shadow-lg flex items-center justify-between transform transition-all duration-500 ease-out';
+        const typeClasses = type === 'success' ?
+          'bg-gradient-to-r from-green-500 to-green-600 text-white' :
+          'bg-gradient-to-r from-red-500 to-red-600 text-white';
+
+        notification.className = `${baseClasses} ${typeClasses} translate-x-full opacity-0`;
+
+        // Create notification content
+        notification.innerHTML = `
+          <div class="flex items-center">
+            <i class="fas ${type === 'success' ? 'fa-check-circle' : 'fa-exclamation-circle'} text-2xl mr-3"></i>
+            <div>
+              <h4 class="font-bold">${type === 'success' ? 'Success!' : 'Error!'}</h4>
+              <p class="text-sm opacity-90">${message}</p>
+            </div>
+          </div>
+          <button onclick="this.parentElement.remove()" class="ml-4 hover:opacity-75 transition-opacity">
+            <i class="fas fa-times"></i>
+          </button>
+        `;
+
+        container.appendChild(notification);
+
+        // Animate in
+        requestAnimationFrame(() => {
+          notification.classList.remove('translate-x-full', 'opacity-0');
+        });
+
+        // Animate out after delay
+        setTimeout(() => {
+          notification.classList.add('translate-x-full', 'opacity-0');
+          setTimeout(() => notification.remove(), 500);
+        }, 5000);
+      }
+    }
+
+    // Show notifications if messages exist
+    document.addEventListener('DOMContentLoaded', () => {
+      <% if (error_msg.length > 0) { %>
+      NotificationSystem.show('<%= error_msg %>', 'error');
+      <% } %>
+
+      <% if (success_msg.length > 0) { %>
+      NotificationSystem.show('<%= success_msg %>', 'success');
+      <% } %>
+
+      // Add entrance animations for form elements
+      gsap.from('.form-container', {
+        duration: 1,
+        y: 30,
+        opacity: 0,
+        ease: 'power3.out'
+      });
+
+      // Add hover animations for input fields
+      document.querySelectorAll('input, select').forEach(element => {
+        element.addEventListener('focus', function() {
+          gsap.to(this, {
+            duration: 0.3,
+            scale: 1.02,
+            ease: 'power2.out'
+          });
+        });
+
+        element.addEventListener('blur', function() {
+          gsap.to(this, {
+            duration: 0.3,
+            scale: 1,
+            ease: 'power2.out'
+          });
+        });
+      });
+    });
+  </script>
 </body>
 
 </html>
