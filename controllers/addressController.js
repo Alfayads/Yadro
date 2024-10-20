@@ -37,26 +37,26 @@ const getAddAddress = async (req, res) => {
 
 const addAddress = async (req, res) => {
     try {
-        const { addressType, city, state, street, apartment, country, postalCode, phone, landMark, name } = req.body;
+        const { addressType, city, street, apartment, postalCode, phone, landMark, name } = req.body;
         const userId = req.session.user_id;
-        console.log(addressType, city, state, street, apartment, country, postalCode, phone, landMark)
+        console.log(addressType, city, street, apartment, postalCode, phone, landMark)
 
-        if (!name || !street || !apartment || !country || !state || !city || !postalCode || !phone) {
-            const oldValues = { name, street, apartment, country, state, city, postalCode, phone, landMark }
+        if (!name || !street || !apartment || !city || !postalCode || !phone) {
+            const oldValues = { name, street, apartment, city, postalCode, phone, landMark }
             req.session.oldValue = oldValues;
             req.flash('error_msg', 'All Fields are required Check Again !!!');
             return res.redirect('/profile/add-address');
         }
 
         if (postalCode.length < 6) {
-            const oldValues = { name, street, apartment, country, state, city, postalCode, phone, landMark }
+            const oldValues = { name, street, apartment, city, postalCode, phone, landMark }
             req.session.oldValue = oldValues;
             req.flash('error_msg', 'Enter Valid PostalCode !!!');
             return res.redirect('/profile/add-address');
         }
 
         if (phone.length < 10 || phone.length > 10) {
-            const oldValues = { name, street, apartment, country, state, city, postalCode, phone, landMark }
+            const oldValues = { name, street, apartment, city, postalCode, phone, landMark }
             req.session.oldValue = oldValues;
             req.flash('error_msg', 'Enter Valid Phone Number !!!');
             return res.redirect('/profile/add-address');
@@ -69,10 +69,8 @@ const addAddress = async (req, res) => {
             addressType,
             name,
             city,
-            state,
             landMark,
             apartment,
-            country,
             postalCode,
             phone
         }
@@ -96,26 +94,26 @@ const addAddress = async (req, res) => {
 
 const addAddressFromCheckout = async (req, res) => {
     try {
-        const { addressType, city, state, street, apartment, country, postalCode, phone, landMark, name } = req.body;
+        const { addressType, city, street, apartment, postalCode, phone, landMark, name } = req.body;
         const userId = req.session.user_id;
-        console.log(addressType, city, state, street, apartment, country, postalCode, phone, landMark)
+        console.log(addressType, city, street, apartment, postalCode, phone, landMark)
 
-        if (!name || !street || !apartment || !country || !state || !city || !postalCode || !phone) {
-            const oldValues = { name, street, apartment, country, state, city, postalCode, phone, landMark }
+        if (!name || !street || !apartment || !city || !postalCode || !phone) {
+            const oldValues = { name, street, apartment, city, postalCode, phone, landMark }
             req.session.oldValue = oldValues;
             req.flash('error_msg', 'All Fields are required Check Again !!!');
             return res.redirect('/cart/check-out');
         }
 
         if (postalCode.length < 6) {
-            const oldValues = { name, street, apartment, country, state, city, postalCode, phone, landMark }
+            const oldValues = { name, street, apartment, city, postalCode, phone, landMark }
             req.session.oldValue = oldValues;
             req.flash('error_msg', 'Enter Valid PostalCode !!!');
             return res.redirect('/cart/check-out');
         }
 
         if (phone.length < 10 || phone.length > 10) {
-            const oldValues = { name, street, apartment, country, state, city, postalCode, phone, landMark }
+            const oldValues = { name, street, apartment, city, postalCode, phone, landMark }
             req.session.oldValue = oldValues;
             req.flash('error_msg', 'Enter Valid Phone Number !!!');
             return res.redirect('/cart/check-out');
@@ -129,10 +127,8 @@ const addAddressFromCheckout = async (req, res) => {
             addressType,
             name,
             city,
-            state,
             landMark,
             apartment,
-            country,
             postalCode,
             phone
         }
@@ -182,25 +178,25 @@ const editAddress = async (req, res) => {
     try {
         const userId = req.session.user_id;
         const addressId = req.params.id;
-        const { addressType, city, state, street, apartment, country, postalCode, phone, landMark, name } = req.body;
+        const { addressType, city, street, apartment, postalCode, phone, landMark, name } = req.body;
 
 
-        if (!name || !street || !apartment || !country || !state || !city || !postalCode || !phone) {
-            const oldValues = { name, street, apartment, country, state, city, postalCode, phone, landMark }
+        if (!name || !street || !apartment || !city || !postalCode || !phone) {
+            const oldValues = { name, street, apartment, city, postalCode, phone, landMark }
             req.session.oldValue = oldValues;
             req.flash('error_msg', 'All Fields are required Check Again !!!');
             return res.redirect('/profile/add-address');
         }
 
         if (postalCode.length < 6) {
-            const oldValues = { name, street, apartment, country, state, city, postalCode, phone, landMark }
+            const oldValues = { name, street, apartment, city, postalCode, phone, landMark }
             req.session.oldValue = oldValues;
             req.flash('error_msg', 'Enter Valid PostalCode !!!');
             return res.redirect('/profile/add-address');
         }
 
         if (phone.length < 10 || phone.length > 10) {
-            const oldValues = { name, street, apartment, country, state, city, postalCode, phone, landMark }
+            const oldValues = { name, street, apartment, city, postalCode, phone, landMark }
             req.session.oldValue = oldValues;
             req.flash('error_msg', 'Enter Valid Phone Number !!!');
             return res.redirect('/profile/add-address');
@@ -221,10 +217,8 @@ const editAddress = async (req, res) => {
         address.addressType = addressType;
         address.city = city;
         address.name = name;
-        address.state = state;
         address.landMark = landMark;
         address.apartment = apartment;
-        address.country = country;
         address.postalCode = postalCode;
         address.phone = phone;
 

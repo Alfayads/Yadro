@@ -2,6 +2,8 @@ const bcrypt = require('bcrypt');
 const path = require('path');
 const fs = require('fs');
 
+const mongoose = require('mongoose')
+
 const Users = require('../models/User');
 const Product = require('../models/Product');
 const Category = require('../models/Category');
@@ -702,7 +704,7 @@ const getOrders = async (req, res) => {
                 select: 'name'
             });
 
-
+        console.log(orders)
         res.render('admin/orders', { orders });
     } catch (error) {
         console.error('Error fetching orders:', error);
@@ -717,6 +719,36 @@ const updateOrderStatus = async (req, res) => {
         res.redirect('/admin/orders');
     } catch (error) {
         res.status(500).json({ message: 'Error updating order status' });
+    }
+}
+
+const viewOrderDetail = async (req, res) => {
+    try {
+        console.log("Request Params: ", req.params); // Log all request params
+
+        const orderId = req.params.id;
+
+        // Check if orderId is valid
+        if (!mongoose.Types.ObjectId.isValid(orderId)) {
+            return res.status(400).send('Invalid Order ID');
+        }
+
+        const order = await Order.findById(orderId)
+            .populate('userId', 'fname lname email') // Adjust for 'fname' and 'lname'
+            .populate({
+                path: 'deliveryAddress',  // Populate deliveryAddress
+                populate: { path: 'address' }  // Ensure we populate the embedded 'address' array
+            }) // Ensure this path is correct in your schema
+            .populate('items.productId', 'name image') // Fetch necessary product details
+            .exec();
+
+        if (!order) {
+            return res.status(404).send('Order not found');
+        }
+
+        res.render('admin/order-detail', { order });
+    } catch (error) {
+        console.log(error.message)
     }
 }
 
@@ -814,6 +846,7 @@ module.exports = {
 
     getOrders,
     updateOrderStatus,
+    viewOrderDetail,
 
     getBrands,
     getAddBrand,

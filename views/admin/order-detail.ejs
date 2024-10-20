@@ -1,0 +1,247 @@
+<!DOCTYPE html>
+<html lang="en" class="light">
+
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Order Details - Yadro</title>
+  <script src="https://cdn.tailwindcss.com"></script>
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.9.1/gsap.min.js"></script>
+  <link rel="icon" href="/images/logo.png" type="image/x-icon">
+
+  <script>
+    tailwind.config = {
+      darkMode: 'class',
+      theme: {
+        extend: {
+          colors: {
+            primary: {
+              light: '#3B82F6',
+              dark: '#60A5FA',
+            }
+          }
+        }
+      }
+    }
+  </script>
+  <style>
+    @keyframes fadeInUp {
+      from {
+        opacity: 0;
+        transform: translateY(20px);
+      }
+
+      to {
+        opacity: 1;
+        transform: translateY(0);
+      }
+    }
+
+    .fade-in-up {
+      animation: fadeInUp 0.5s ease-out forwards;
+    }
+
+    .timeline-item::before {
+      content: '';
+      position: absolute;
+      left: -41px;
+      top: 0;
+      width: 2px;
+      height: 100%;
+      background-color: #e2e8f0;
+    }
+
+    .timeline-item:last-child::before {
+      height: 50%;
+    }
+
+    .timeline-dot {
+      position: absolute;
+      left: -46px;
+      top: 0;
+      width: 12px;
+      height: 12px;
+      border-radius: 50%;
+      background-color: #3b82f6;
+      border: 2px solid #fff;
+    }
+
+    .theme-toggle {
+      width: 50px;
+      height: 25px;
+      background-color: #e2e8f0;
+      border-radius: 25px;
+      padding: 2px;
+      cursor: pointer;
+      transition: background-color 0.3s ease;
+    }
+
+    .theme-toggle.dark {
+      background-color: #4b5563;
+    }
+
+    .toggle-circle {
+      width: 21px;
+      height: 21px;
+      background-color: white;
+      border-radius: 50%;
+      transition: transform 0.3s ease;
+    }
+
+    .theme-toggle.dark .toggle-circle {
+      transform: translateX(25px);
+    }
+  </style>
+</head>
+
+<body class="bg-gray-100 font-sans transition-colors duration-300 dark:bg-gray-900">
+  <!-- Assume sidebar is included here -->
+  <%- include('../layouts/admin-sidebar.ejs') %>
+  <div class="container mx-auto p-6 ml-64">
+
+    <div class="flex justify-between items-center mb-8">
+      <h2 class="text-3xl font-bold text-gray-800 dark:text-white">Orders</h2>
+      <div class="theme-toggle" id="themeToggle">
+        <div class="toggle-circle"></div>
+      </div>
+    </div>
+
+
+    <div class="grid grid-cols-1 lg:grid-cols-3 gap-8">
+      <!-- Left side - Order Summary -->
+      <div class="lg:col-span-2 fade-in-up" style="animation-delay: 0.2s;">
+        <div class="bg-white dark:bg-gray-800 rounded-lg shadow-md p-6 mb-6">
+          <h2 class="text-2xl font-semibold text-gray-800 dark:text-gray-200 mb-4">Order #<%= order._id %></h2>
+          <div class="flex justify-between items-center mb-4">
+            <span class="text-gray-600 dark:text-gray-400">Order Date:</span>
+            <span class="text-gray-800 dark:text-gray-200 font-medium"><%= new Date(order.orderDate).toLocaleDateString() %></span>
+          </div>
+          <div class="flex justify-between items-center mb-4">
+            <span class="text-gray-600 dark:text-gray-400">Order Status:</span>
+            <span class="px-3 py-1 rounded-full text-sm font-semibold bg-green-100 text-green-800"><%= order.orderStatus %></span>
+          </div>
+          <div class="flex justify-between items-center">
+            <span class="text-gray-600 dark:text-gray-400">Total Amount:</span>
+            <span class="text-2xl font-bold text-gray-800 dark:text-gray-200">₹ <%= order.totalAmount %></span>
+          </div>
+        </div>
+
+        <!-- Order Items -->
+        <div class="bg-white dark:bg-gray-800 rounded-lg shadow-md p-6 mb-6">
+          <h3 class="text-xl font-semibold text-gray-800 dark:text-gray-200 mb-4">Order Items</h3>
+          <div class="space-y-4">
+            <% order.items.forEach(item => { %>
+            <div class="flex items-center space-x-4 py-4 border-b border-gray-200 dark:border-gray-700">
+              <img src="<%= item.productId.images %>" alt="<%= item.productId.name %>" class="w-20 h-20 object-cover rounded-md">
+              <div class="flex-1">
+                <h4 class="text-lg font-semibold text-gray-800 dark:text-gray-200"><%= item.productId.name %></h4>
+                <p class="text-gray-600 dark:text-gray-400">Quantity: <%= item.quantity %></p>
+              </div>
+              <span class="text-lg font-semibold text-gray-800 dark:text-gray-200">₹ <%= item.price %></span>
+            </div>
+            <% }) %>
+          </div>
+        </div>
+      </div>
+
+      <!-- Right side - Customer Details and Order Timeline -->
+      <div class="lg:col-span-1 fade-in-up" style="animation-delay: 0.4s;">
+        <!-- Customer Details -->
+        <div class="bg-white dark:bg-gray-800 rounded-lg shadow-md p-6 mb-6">
+          <h3 class="text-xl font-semibold text-gray-800 dark:text-gray-200 mb-4">Customer Details</h3>
+          <div class="space-y-2">
+            <p class="text-gray-600 dark:text-gray-400">Name: <span class="text-gray-800 dark:text-gray-200 font-medium"><%= order.userId.fname %> <%= order.userId.lname %></span></p>
+            <p class="text-gray-600 dark:text-gray-400">Email: <span class="text-gray-800 dark:text-gray-200 font-medium"><%= order.userId.email %></span></p>
+            <p class="text-gray-600 dark:text-gray-400">Phone: <span class="text-gray-800 dark:text-gray-200 font-medium"><%= order.userId.phone %></span></p>
+          </div>
+        </div>
+
+        <!-- Shipping Address -->
+        <div class="bg-white dark:bg-gray-800 rounded-lg shadow-md p-6 mb-6">
+          <h3 class="text-xl font-semibold text-gray-800 dark:text-gray-200 mb-4">Shipping Address</h3>
+          <% if (order.deliveryAddress && order.deliveryAddress.address.length > 0) { %>
+          <p class="text-gray-600 dark:text-gray-400">
+            <%= order.deliveryAddress.address[0].streetAddress %>, <br>
+            <%= order.deliveryAddress.address[0].city %>, <br>
+            <%= order.deliveryAddress.address[0].postalCode %>, <br>
+          </p>
+          <% } else { %>
+          <p class="text-red-600">No delivery address found</p>
+          <% } %>
+        </div>
+
+        <!-- Order Timeline -->
+        <!-- <div class="bg-white dark:bg-gray-800 rounded-lg shadow-md p-6">
+          <h3 class="text-xl font-semibold text-gray-800 dark:text-gray-200 mb-4">Order Timeline</h3>
+          <div class="relative pl-8">
+            <div class="timeline-item pb-4 relative">
+              <div class="timeline-dot"></div>
+              <h4 class="text-lg font-semibold text-gray-800 dark:text-gray-200">Order Delivered</h4>
+              <p class="text-gray-600 dark:text-gray-400">October 19, 2024 - 10:30 AM</p>
+            </div>
+            <div class="timeline-item pb-4 relative">
+              <div class="timeline-dot"></div>
+              <h4 class="text-lg font-semibold text-gray-800 dark:text-gray-200">Order Shipped</h4>
+              <p class="text-gray-600 dark:text-gray-400">October 17, 2024 - 2:15 PM</p>
+            </div>
+            <div class="timeline-item relative">
+              <div class="timeline-dot"></div>
+              <h4 class="text-lg font-semibold text-gray-800 dark:text-gray-200">Order Placed</h4>
+              <p class="text-gray-600 dark:text-gray-400">October 15, 2024 - 9:45 AM</p>
+            </div>
+          </div>
+        </div> -->
+      </div>
+    </div>
+  </div>
+
+  <script>
+    const themeToggle = document.getElementById('themeToggle');
+    const html = document.querySelector('html');
+
+    function updateTheme(isDark) {
+      if (isDark) {
+        html.classList.add('dark');
+        themeToggle.classList.add('dark');
+      } else {
+        html.classList.remove('dark');
+        themeToggle.classList.remove('dark');
+      }
+    }
+
+    // Check for saved theme preference or use default (light)
+    const savedTheme = localStorage.getItem('theme');
+    updateTheme(savedTheme === 'dark');
+
+    themeToggle.addEventListener('click', () => {
+      const isDark = html.classList.toggle('dark');
+      localStorage.setItem('theme', isDark ? 'dark' : 'light');
+      updateTheme(isDark);
+    });
+    // Animations
+    document.addEventListener('DOMContentLoaded', () => {
+      gsap.from('.fade-in-up', {
+        duration: 0.6,
+        y: 20,
+        opacity: 0,
+        stagger: 0.2,
+        ease: 'power2.out'
+      });
+
+      gsap.from('.timeline-item', {
+        duration: 0.8,
+        opacity: 0,
+        y: 20,
+        stagger: 0.2,
+        ease: 'power2.out',
+        scrollTrigger: {
+          trigger: '.timeline-item',
+          start: 'top 80%',
+        }
+      });
+    });
+  </script>
+</body>
+
+</html>

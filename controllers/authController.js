@@ -91,6 +91,37 @@ const getHomeWithoutUser = async (req, res) => {
 }
 
 
+
+const userSearch = async (req, res) => {
+    try {
+        const query = req.query.q;
+        if (!query) {
+            return res.status(400).json({ success: false, message: 'Search query is missing' });
+        }
+
+        const products = await Product.find({
+            $or: [
+                { name: new RegExp(query, 'i') },
+                { description: new RegExp(query, 'i') }
+            ]
+        });
+
+        const categories = await Category.find({
+            name: new RegExp(query, 'i')
+        });
+
+        res.status(200).json({
+            success: true,
+            products,
+            categories
+        });
+    } catch (error) {
+        res.status(500).json({ success: false, message: 'Error fetching search results', error });
+    }
+}
+
+
+
 const getSignup = (req, res) => {
     try {
         return res.render('user/signup');
@@ -112,7 +143,6 @@ const newUser = async (req, res) => {
     const regex = /^(?=.*[A-Za-z])(?=.*\d)(?=.*[@$!%*#?&])[A-Za-z\d@$!%*#?&]{8,}$/;
     const Emailregex = /^[a-zA-Z0-9._%+-]+@gmail\.com$/;
     try {
-
         if (password !== cpassword) {
             req.flash('error_msg', 'Password does Not Match Enter Correctly!!');
             return res.redirect('/signup');
@@ -161,7 +191,6 @@ const newUser = async (req, res) => {
         req.flash('success_msg', 'OTP Sent Successfully Check Your Email !!! ');
         res.redirect('/otp-verify');
         console.log('OTP => ', otp)
-
     } catch (error) {
         console.error(error.message);
         let errorMessage = { message: "An error occurred. Please try again later." };
@@ -325,6 +354,7 @@ module.exports = {
     forgotPassword,
     getHomeWithoutUser,
     getHomeWithUser,
+    userSearch,
     newUser,
     getLogout,
     checkUser,

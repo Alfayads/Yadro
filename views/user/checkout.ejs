@@ -9,6 +9,7 @@
   <link rel="icon" href="/images/logo.png" type="image/x-icon">
   <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css" rel="stylesheet">
   <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.9.1/gsap.min.js"></script>
+  <script src="https://checkout.razorpay.com/v1/checkout.js"></script>
   <style>
     @keyframes float {
 
@@ -270,8 +271,8 @@
             <!-- Location Details -->
             <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
               <div>
-                <label class="block text-sm font-medium text-gray-700 mb-2">Country</label>
-                <select name="country" class="w-full px-4 py-3 rounded-lg border border-gray-300 focus:outline-none focus:ring-2 focus:ring-red-500 input-focus-effect">
+                <label hidden class="block text-sm font-medium text-gray-700 mb-2">Country</label>
+                <select hidden name="country" class="w-full px-4 py-3 rounded-lg border border-gray-300 focus:outline-none focus:ring-2 focus:ring-red-500 input-focus-effect">
                   <option value="<% oldValue.country || '' %>"> <%= oldValue.country || 'Select Country' %> </option>
                   <option value="US">United States</option>
                   <option value="CA">Canada</option>
@@ -279,8 +280,8 @@
                 </select>
               </div>
               <div>
-                <label class="block text-sm font-medium text-gray-700 mb-2">State</label>
-                <select name="state" class="w-full px-4 py-3 rounded-lg border border-gray-300 focus:outline-none focus:ring-2 focus:ring-red-500 input-focus-effect">
+                <label hidden class="block text-sm font-medium text-gray-700 mb-2">State</label>
+                <select hidden name="state" class="w-full px-4 py-3 rounded-lg border border-gray-300 focus:outline-none focus:ring-2 focus:ring-red-500 input-focus-effect">
                   <option value="<%= oldValue.state || '' %>"><%= oldValue.state || 'Select State' %></option>
                   <!-- States will be populated based on country selection -->
                 </select>
@@ -390,28 +391,49 @@
                 <span class="ml-2">Razorpay</span>
               </label>
             </div> -->
-            <div class="mb-6 space-y-4">
-              <div class="relative">
-                <input type="radio" id="cashOnDelivery" name="paymentMethod" value="cash" checked class="peer hidden">
-                <label for="cashOnDelivery" class="flex items-center p-4 border rounded-lg cursor-pointer transition-all duration-300
-                         peer-checked:border-red-500 peer-checked:bg-red-50 hover:bg-gray-50">
-                  <i class="fas fa-money-bill-wave text-xl mr-3 text-gray-600"></i>
-                  <div class="flex flex-col">
-                    <span class="font-medium text-gray-800">Cash on Delivery</span>
-                    <span class="text-sm text-gray-500">Pay when you receive your order</span>
-                  </div>
-                  <div class="ml-auto flex items-center justify-center w-6 h-6 border-2 rounded-full
-                              peer-checked:border-red-500 peer-checked:bg-red-500">
-                    <i class="fas fa-check text-white opacity-0 peer-checked:opacity-100"></i>
-                  </div>
-                </label>
+            <div class="mt-6">
+              <h3 class="font-semibold text-gray-800 mb-3">Payment Method</h3>
+              <div class="space-y-4">
+                <!-- Cash on Delivery Option -->
+                <div class="relative">
+                  <input type="radio" id="cashOnDelivery" name="paymentMethod" value="cash" checked class="peer hidden">
+                  <label for="cashOnDelivery" class="flex items-center p-4 border rounded-lg cursor-pointer transition-all duration-300
+                           peer-checked:border-red-500 peer-checked:bg-red-50 hover:bg-gray-50">
+                    <i class="fas fa-money-bill-wave text-xl mr-3 text-gray-600"></i>
+                    <div class="flex flex-col">
+                      <span class="font-medium text-gray-800">Cash on Delivery</span>
+                      <span class="text-sm text-gray-500">Pay when you receive your order</span>
+                    </div>
+                    <div class="ml-auto flex items-center justify-center w-6 h-6 border-2 rounded-full
+                                peer-checked:border-red-500 peer-checked:bg-red-500">
+                      <i class="fas fa-check text-white opacity-0 peer-checked:opacity-100"></i>
+                    </div>
+                  </label>
+                </div>
+
+                <!-- Razorpay Option -->
+                <div class="relative">
+                  <input type="radio" id="razorpay" name="paymentMethod" value="razorpay" class="peer hidden">
+                  <label for="razorpay" class="flex items-center p-4 border rounded-lg cursor-pointer transition-all duration-300
+                           peer-checked:border-red-500 peer-checked:bg-red-50 hover:bg-gray-50">
+                    <i class="fas fa-credit-card text-xl mr-3 text-gray-600"></i>
+                    <div class="flex flex-col">
+                      <span class="font-medium text-gray-800">Razorpay</span>
+                      <span class="text-sm text-gray-500">Pay securely with Razorpay</span>
+                    </div>
+                    <div class="ml-auto flex items-center justify-center w-6 h-6 border-2 rounded-full
+                                peer-checked:border-red-500 peer-checked:bg-red-500">
+                      <i class="fas fa-check text-white opacity-0 peer-checked:opacity-100"></i>
+                    </div>
+                  </label>
+                </div>
               </div>
             </div>
             <!-- Order status messages -->
             <div id="orderStatusMessage" class="mb-4 hidden">
               <div class="p-4 rounded-lg text-sm font-medium"></div>
             </div>
-            <div class="flex mb-4">
+            <div class="flex my-4">
               <input type="text" placeholder="Coupon Code" class="flex-grow px-3 py-2 border border-gray-300 rounded-l-md focus:outline-none focus:ring-2 focus:ring-red-500 transition duration-300">
               <button class="bg-red-500 text-white px-4 py-2 rounded-r-md hover:bg-red-600 focus:outline-none focus:ring-2 focus:ring-red-500 focus:ring-opacity-50 transition duration-300">
                 Apply Coupon
@@ -419,10 +441,10 @@
             </div>
             <!-- Place order button -->
             <button id="placeOrderBtn" class="w-full bg-red-500 text-white py-4 px-6 rounded-lg hover:bg-red-600 
-         focus:outline-none focus:ring-2 focus:ring-red-500 focus:ring-opacity-50 
-         transition-all duration-300 text-lg font-semibold disabled:bg-gray-400 
-         disabled:cursor-not-allowed transform hover:-translate-y-1 hover:shadow-lg
-         flex items-center justify-center">
+            focus:outline-none focus:ring-2 focus:ring-red-500 focus:ring-opacity-50 
+            transition-all duration-300 text-lg font-semibold disabled:bg-gray-400 
+            disabled:cursor-not-allowed transform hover:-translate-y-1 hover:shadow-lg
+            flex items-center justify-center mt-6">
               <span class="mr-2">Place Order</span>
               <i class="fas fa-arrow-right"></i>
             </button>
@@ -444,7 +466,7 @@
   </main>
 
   <%- include('../layouts/footer.ejs') %>
-
+  <script src="/js/razorpay.js"></script>
   <script>
     document.addEventListener('DOMContentLoaded', function() {
       const progressBar = document.getElementById('progressBar');

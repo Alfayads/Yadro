@@ -10,6 +10,8 @@
   <script src="/js/toggle.js"></script>
   <link rel="icon" href="/images/logo.png" type="image/x-icon">
   <link rel="stylesheet" href="/css/orders.css">
+  <link rel="stylesheet" href="/css/products.css">
+
   <style>
     @keyframes fadeInUp {
       from {
@@ -117,7 +119,7 @@
               <th class="py-3 px-6 text-left">Order ID</th>
               <th class="py-3 px-6 text-left">Customer</th>
               <th class="py-3 px-6 text-left">Order Date</th>
-              <th class="py-3 px-6 text-left">Address</th> <!-- Update this section -->
+              <th class="py-3 px-6 text-left">Address</th>
               <th class="py-3 px-6 text-left">Payment</th>
               <th class="py-3 px-6 text-left">Total</th>
               <th class="py-3 px-6 text-left">Status</th>
@@ -140,6 +142,7 @@
               </td>
               <td class="py-3 px-6"><%= order.paymentMethod %></td>
               <td class="py-3 px-6">₹ <%= order.totalAmount %></td>
+              <% if (order.orderStatus !== "Cancelled" && order.orderStatus !== "Delivered") { %>
               <td class="py-3 px-6">
                 <form action="/admin/orders/update-status" method="POST">
                   <input type="hidden" name="orderId" value="<%= order._id %>">
@@ -153,9 +156,17 @@
                   <button type="submit" class="ml-2 text-blue-500">Update</button>
                 </form>
               </td>
+              <% } else { %>
+              <td class="py-3 px-6"><%= order.orderStatus %></td>
+              <% } %>
+
               <td class="py-3 px-6">
-                <a href="/admin/orders/edit/<%= order._id %>" class="text-blue-500 hover:text-blue-700">
-                  <i class="fas fa-edit mr-1"></i>Edit
+                <a href="/admin/viewOrderDetails/<%= order._id %>" class="relative group action-icon view-icon" title="View">
+                  <i class="fas fa-eye"></i>
+                  <div class="tooltip hidden absolute bottom-full mb-2 w-max text-sm bg-gray-800 text-white p-2 rounded-lg opacity-0 transition-opacity duration-300 group-hover:opacity-100 group-hover:block">
+                    View
+                    <div class="tooltip-arrow"></div>
+                  </div>
                 </a>
               </td>
             </tr>
@@ -165,7 +176,7 @@
       </div>
 
       <!-- Pagination -->
-      <div class="flex justify-center mt-6 fade-in-up" style="animation-delay: 0.6s;">
+      <!-- <div class="flex justify-center mt-6 fade-in-up" style="animation-delay: 0.6s;">
         <nav class="inline-flex rounded-md shadow-sm">
           <button class="px-3 py-2 rounded-l-md border border-gray-300 bg-white text-sm font-medium text-gray-500 hover:bg-gray-50">
             <i class="fas fa-chevron-left"></i>
@@ -177,7 +188,7 @@
             <i class="fas fa-chevron-right"></i>
           </button>
         </nav>
-      </div>
+      </div> -->
     </div>
   </div>
 

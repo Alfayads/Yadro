@@ -1,6 +1,7 @@
 const Users = require('../models/User');
 const Category = require('../models/Category');
 const Order = require('../models/Order');
+const Product = require('../models/Product');
 
 const getOrders = async (req, res) => {
     try {
@@ -27,6 +28,24 @@ const getOrders = async (req, res) => {
 const cancelOrder = async (req, res) => {
     try {
         const orderId = req.params.id;
+
+        const order = await Order.findById(orderId);
+        if (!order) {
+            return res.status(404).send('Order not found');
+        }
+        if (order.orderStatus === 'Cancelled') {
+            return res.status(400).send('Order is already cancelled');
+        }
+
+        for (const item of order.items) {
+            const product = await Product.findById(item.productId);
+            if (product) {
+                product.quantity += item.quantity;
+                await product.save();
+            } else {
+                return res.status(404).send(`Product with ID ${item.productId} not found`);
+            }
+        }
 
         const updatedOrder = await Order.findByIdAndUpdate(orderId, { orderStatus: 'Cancelled' }, { new: true });
         if (!updatedOrder) {

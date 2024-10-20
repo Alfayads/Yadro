@@ -248,8 +248,20 @@ const placeOrder = async (req, res) => {
             deliveryAddress: deliveryAddress._id,
             items: orderItems,
             totalAmount,
-            paymentMethod: paymentMethod === 'cash' ? 'Cash on Delivery' : ''
+            paymentMethod: paymentMethod
         })
+
+        for (const item of orderItems) {
+            const product = await Product.findById(item.productId);
+            if (!product) {
+                return res.status(404).json({ message: `Product with ID ${item.productId} not found` });
+            }
+            if (product.stock < item.quantity) {
+                return res.status(400).json({ message: `Not enough stock for product ${product.name}` });
+            }
+            product.quantity -= item.quantity;
+            await product.save();
+        }
 
         await newOrder.save();
         return res.status(201).json({ message: 'Order placed successfully', orderId: newOrder._id })

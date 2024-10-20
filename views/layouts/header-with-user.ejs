@@ -82,9 +82,11 @@
     </ul>
   </nav>
   <div class="flex relative">
-    <input type="email" placeholder="Search Your Products ...." class="footer-input" style="color: black; border-radius: 50px; width: 380px; padding-left: 10px; outline: none; border: 1px grey solid;">
-    <i class="fa-solid fa-magnifying-glass absolute right-3 top-3"></i>
+    <input type="text" id="search-input" placeholder="Search Your Products ...." class="footer-input" style="color: black; border-radius: 50px; width: 380px; padding-left: 10px; outline: none; border: 1px grey solid;">
+    <i class="fa-solid fa-magnifying-glass absolute right-3 top-3 cursor-pointer" id="search-icon"></i>
   </div>
+  <div id="search-results" class="hidden absolute bg-white rounded-md shadow-xl z-20 w-96 max-h-80 overflow-auto"></div>
+
   <div class="flex items-center space-x-4">
     <!-- Like button in the header -->
     <div class="relative">
@@ -216,6 +218,75 @@
     if (!categoryDropdownButton.contains(event.target) && !categoryDropdown.contains(event.target)) {
       categoryDropdown.classList.add('hidden');
       categoryArrow.classList.remove('open');
+    }
+  });
+
+
+
+
+  const searchInput = document.getElementById('search-input');
+  const searchIcon = document.getElementById('search-icon');
+  const searchResults = document.getElementById('search-results');
+
+  // Event listener for "Enter" key or clicking search icon
+  searchInput.addEventListener('keypress', (e) => {
+    if (e.key === 'Enter') {
+      performSearch();
+    }
+  });
+
+  searchIcon.addEventListener('click', performSearch);
+
+  function performSearch() {
+    const query = searchInput.value.trim();
+    if (!query) return;
+
+    fetch(`/search?q=${encodeURIComponent(query)}`)
+      .then(response => response.json())
+      .then(data => {
+        if (data.success) {
+          displaySearchResults(data.products, data.categories);
+        } else {
+          console.error('Error fetching search results:', data.message);
+        }
+      })
+      .catch(error => console.error('Error fetching search results:', error));
+  }
+
+  function displaySearchResults(products, categories) {
+    // Clear previous results
+    searchResults.innerHTML = '';
+
+    if (products.length === 0 && categories.length === 0) {
+      searchResults.innerHTML = '<p class="px-4 py-2 text-sm text-gray-700">No results found</p>';
+    } else {
+      // Display products
+      products.forEach(product => {
+        searchResults.innerHTML += `
+          <a href="/product-detail/${product._id}" class="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-100">
+            Product: ${product.name}
+          </a>
+        `;
+      });
+
+      // Display categories
+      categories.forEach(category => {
+        searchResults.innerHTML += `
+          <a href="/products/category/${category._id}" class="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-100">
+            Category: ${category.name}
+          </a>
+        `;
+      });
+    }
+
+    // Show the results dropdown
+    searchResults.classList.remove('hidden');
+  }
+
+  // Hide search results if clicking outside of the input or results
+  document.addEventListener('click', (event) => {
+    if (!searchInput.contains(event.target) && !searchResults.contains(event.target)) {
+      searchResults.classList.add('hidden');
     }
   });
 </script>

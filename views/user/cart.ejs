@@ -100,7 +100,7 @@
                       <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M20 12H4"></path>
                     </svg>
                   </button>
-                  <input type="number" class="quantity-input w-12 text-center bg-transparent font-semibold text-gray-700 focus:outline-none" value="<%= product.quantity %>" min="1" max="99" data-product-id="<%= product.productId %>">
+                  <input type="number" maxlength="10" minlength="1" class="quantity-input w-12 text-center bg-transparent font-semibold text-gray-700 focus:outline-none" value="<%= product.quantity %>" min="1" max="99" data-product-id="<%= product.productId %>">
                   <button class="quantity-btn increase w-8 h-8 flex items-center justify-center bg-white rounded-full text-green-500 hover:bg-green-100 transition-colors duration-200 focus:outline-none focus:ring-2 focus:ring-green-400" data-product-id="<%= product.productId %>">
                     <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
                       <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 6v6m0 0v6m0-6h6m-6 0H6"></path>
@@ -145,7 +145,7 @@
             <div class="w-full md:w-5/12">
               <div class="bg-gray-50 p-6 rounded-xl">
                 <h3 class="text-lg font-semibold mb-4">Order Summary</h3>
-                <div class="space-y-2">
+                <div class="space-y-2 my-10">
                   <div class="flex justify-between">
                     <span class="text-gray-600">Subtotal</span>
                     <span class="font-medium">₹ <%= Math.round(totalPrice) %></span>
@@ -193,7 +193,18 @@
         function updateQuantity(productId, change, newValue = null) {
           const currentValue = parseInt(input.value);
           let updatedValue = newValue !== null ? newValue : currentValue + change;
-          updatedValue = Math.max(1, Math.min(99, updatedValue));
+
+          if (updatedValue < 1 || updatedValue > 10) {
+            Swal.fire({
+              icon: 'warning',
+              title: 'Limit Reached',
+              text: 'Quantity must be between 1 and 10.',
+              confirmButtonText: 'OK',
+            });
+            return;
+          }
+
+          updatedValue = Math.max(1, Math.min(10, updatedValue));
 
           if (updatedValue !== currentValue) {
             input.value = updatedValue;

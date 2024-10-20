@@ -18,6 +18,7 @@ const getAccount = async (req, res) => {
 
 const editProfile = async (req, res) => {
     try {
+        const emailRegex = /^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$/;
         const userId = req.params.id;
         const { fname, lname, email, phone, gender } = req.body;
         console.log(fname, lname, email, phone, gender);
@@ -26,6 +27,21 @@ const editProfile = async (req, res) => {
 
         if (fname === user.fname && lname === user.lname && email === user.email && phone === user.phone && gender === user.gender) {
             req.flash('error_msg', 'There is no Change !! Please update the value to Continue');
+            return res.redirect('/account')
+        }
+
+        if (!fname) {
+            req.flash('error_msg', 'First Name is Required !!');
+            return res.redirect('/account')
+        }
+
+        if (!emailRegex.test(email)) {
+            req.flash('error_msg', 'Enter Valid Email Address');
+            return res.redirect('/account')
+        }
+
+        if (phone.length < 10 || phone.length > 10) {
+            req.flash('error_msg', 'Enter Valid Phone Number');
             return res.redirect('/account')
         }
 

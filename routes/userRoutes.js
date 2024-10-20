@@ -16,6 +16,9 @@ const { getOrders, cancelOrder } = require('../controllers/orderController');
 // lead Page
 user_router.get('/', auth.isLogin, authController.getHomeWithoutUser)
 
+// Search
+user_router.get('/search', authController.userSearch);
+
 //home
 user_router.get('/home', auth.isLogout, authController.getHomeWithUser);
 
@@ -104,14 +107,26 @@ user_router.get('/logout', authController.getLogout);
 user_router.get('/contact', auth.isLogout, getContact)
 
 // Google Authentication
-user_router.get('/auth/google', passport.authenticate('google', { scope: ['profile', 'email'] }))
+user_router.get('/auth/google',
+    passport.authenticate('google', { scope: ['profile', 'email'] })
+)
 user_router.get(
     '/google/callback',
     passport.authenticate('google', { failureRedirect: '/signup', failureFlash: true }),
     (req, res) => {
-        res.redirect('/home');
+        if (req.user) {
+            req.session.user_id = req.user._id;
+            res.redirect('/home');
+        } else {
+            console.log('Google auth successful, but user object is missing');
+            res.redirect('/login');
+        }
     }
 );
+
+
+
+
 
 
 module.exports = user_router;

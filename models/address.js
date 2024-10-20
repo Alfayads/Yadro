@@ -31,18 +31,8 @@ const addressSchema = mongoose.Schema({
             required: true,
             trim: true
         },
-        country: {
-            type: String,
-            required: true,
-            trim: true
-        },
         landMark: {
             type: String,
-            trim: true
-        },
-        state: {
-            type: String,
-            required: true,
             trim: true
         },
         postalCode: {

@@ -19,7 +19,7 @@ const userSchema = mongoose.Schema({
         sparse: true,
         default: null
     },
-    googleId: { type: String, required: true, unique: true },
+    googleId: { type: String, required: false },
     password: {
         type: String,
         required: false

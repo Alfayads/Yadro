@@ -144,20 +144,6 @@
             <!-- Location Details -->
             <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
               <div>
-                <label class="block text-sm font-medium text-gray-700 mb-2">Country</label>
-                <select name="country" class="w-full px-4 py-3 rounded-lg border border-gray-300 focus:outline-none focus:ring-2 focus:ring-red-500 input-focus-effect">
-                  <option value="<%= oldValue.country || '' %>">Select Country</option>
-                  <option value="United States">United States</option>
-                  <option value="Canada">Canada</option>
-                </select>
-              </div>
-              <div>
-                <label class="block text-sm font-medium text-gray-700 mb-2">State</label>
-                <select name="state" class="w-full px-4 py-3 rounded-lg border border-gray-300 focus:outline-none focus:ring-2 focus:ring-red-500 input-focus-effect">
-                  <option value="<%= oldValue.state || '' %>">Select State</option>
-                </select>
-              </div>
-              <div>
                 <label class="block text-sm font-medium text-gray-700 mb-2">City</label>
                 <input type="text" value="<%= oldValue.city || '' %>" name="city" class="w-full px-4 py-3 rounded-lg border border-gray-300 focus:outline-none focus:ring-2 focus:ring-red-500 input-focus-effect">
               </div>
@@ -203,8 +189,8 @@
     const stateSelect = document.querySelector('select[name="state"]');
 
     const states = {
-      US: ['Alabama', 'Alaska', 'Arizona', /* ... */ ],
-      CA: ['Alberta', 'British Columbia', 'Manitoba', /* ... */ ]
+      US: ['Alabama', 'Alaska', 'Arizona'],
+      CA: ['Alberta', 'British Columbia', 'Manitoba']
     };
 
     countrySelect.addEventListener('change', (e) => {

@@ -60,6 +60,7 @@
 
     <div class="bg-white shadow-xl rounded-lg overflow-hidden">
       <div class="overflow-x-auto">
+        <% if (orders.length > 0) { %>
         <table class="w-full">
           <thead class="bg-gray-100">
             <tr>
@@ -104,9 +105,9 @@
               </td>
               <td class="px-6 py-4 whitespace-nowrap">
                 <span class="px-2 inline-flex text-xs leading-5 font-semibold rounded-full 
-                        <%= order.orderStatus === 'Placed' ? 'bg-yellow-100 text-yellow-800' : 
-                          order.orderStatus === 'Delivered' ? 'bg-green-100 text-green-800' : 
-                          'bg-red-100 text-red-800' %>">
+                          <%= order.orderStatus === 'Placed' ? 'bg-yellow-100 text-yellow-800' : 
+                            order.orderStatus === 'Delivered' ? 'bg-green-100 text-green-800' : 
+                            'bg-red-100 text-red-800' %>">
                   <%= order.orderStatus %>
                 </span>
               </td>
@@ -114,9 +115,14 @@
                 <a href="/order-tracking/<%= order._id %>" class="text-blue-600 hover:text-blue-900 mr-4">
                   <i class="fas fa-truck mr-1"></i> Track
                 </a>
-                <% if (order.orderStatus !== "Cancelled") { %>
+                <% if (order.orderStatus !== "Cancelled" && order.orderStatus !== "Delivered") { %>
                 <button class="text-red-600 hover:text-red-900" onclick="confirmCancelOrder('<%= order._id %>')">
                   <i class="fas fa-times-circle mr-1"></i> Cancel
+                </button>
+                <% } %>
+                <% if (order.orderStatus === "Delivered") { %>
+                <button class="text-red-600 hover:text-red-900">
+                  <i class="fas fa-times-circle mr-1"></i> Return
                 </button>
                 <% } %>
               </td>
@@ -125,6 +131,20 @@
             <% }); %>
           </tbody>
         </table>
+        <% } else { %>
+        <div class="flex flex-col items-center justify-center py-12 px-4 mb-5 sm:px-6 lg:px-8 bg-white rounded-lg shadow-md">
+          <img src="/images/forgotman.png" alt="Empty Cart" class="w-48 h-48 mb-8" />
+          <h2 class="text-3xl font-extrabold text-gray-900 mb-4">Your Orders is Empty</h2>
+          <p class="text-xl text-gray-600 mb-8 text-center max-w-md">Order the Products</p>
+          <a href="/products" class="inline-flex items-center px-6 py-3 border border-transparent text-base font-medium rounded-md text-white bg-red-600 hover:bg-red-700 transition duration-150 ease-in-out">
+            <svg class="mr-2 -ml-1 w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"></path>
+            </svg>
+            Explore Products
+          </a>
+        </div>
+        <% } %>
+
       </div>
     </div>
   </main>

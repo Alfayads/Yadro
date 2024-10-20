@@ -46,6 +46,7 @@ admin_router.post('/add-coupon', adminAuth, Controller.addCoupon);
 // All orders route
 admin_router.get('/orders', adminAuth, Controller.getOrders);// for get all orders page
 admin_router.post('/orders/update-status', adminAuth, Controller.updateOrderStatus);
+admin_router.get('/viewOrderDetails/:id', Controller.viewOrderDetail);
 
 // Brand Route
 admin_router.get('/brands', adminAuth, Controller.getBrands); // for get brand listing page
