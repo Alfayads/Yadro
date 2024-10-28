@@ -1,0 +1,196 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Return Request - <%= order._id %></title>
+  <script src="https://cdn.tailwindcss.com"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.11.4/gsap.min.js"></script>
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
+
+  <style>
+    @keyframes shimmer {
+      0% {
+        background-position: -1000px 0;
+      }
+
+      100% {
+        background-position: 1000px 0;
+      }
+    }
+
+    .animate-shimmer {
+      animation: shimmer 2s infinite linear;
+      background: linear-gradient(to right, #f6f7f8 8%, #edeef1 18%, #f6f7f8 33%);
+      background-size: 1000px 100%;
+    }
+
+    @keyframes slide-in {
+      0% {
+        transform: translateX(-100%);
+        opacity: 0;
+      }
+
+      100% {
+        transform: translateX(0);
+        opacity: 1;
+      }
+    }
+
+    .slide-in {
+      animation: slide-in 0.5s ease-out forwards;
+    }
+
+    @keyframes pulse-border {
+      0% {
+        border-color: #e5e7eb;
+      }
+
+      50% {
+        border-color: #6366f1;
+      }
+
+      100% {
+        border-color: #e5e7eb;
+      }
+    }
+
+    .pulse-border {
+      animation: pulse-border 2s infinite;
+    }
+
+    .step-transition {
+      transition: transform 0.5s ease-out, opacity 0.5s ease-out;
+    }
+  </style>
+</head>
+
+<body>
+
+  <%- include('../layouts/header-with-user.ejs') %>
+
+  <div class="container mx-auto px-4 py-8">
+    <div class="max-w-4xl mx-auto">
+      <!-- Header Section -->
+      <div class="mb-8">
+        <h1 class="text-2xl font-bold mb-2">Return Request for Order #<%= order._id %></h1>
+        <p class="text-gray-600">
+          Ordered on: <%= new Date(order.createdAt).toLocaleDateString() %>
+        </p>
+      </div>
+
+      <!-- Return Form -->
+      <form action="/returns" method="POST" class="bg-white shadow-md rounded-lg p-6">
+        <input type="hidden" name="orderId" value="<%= order._id %>">
+
+        <!-- Items Selection -->
+        <div class="mb-6">
+          <h2 class="text-xl font-semibold mb-4">Select Items to Return</h2>
+          <div class="space-y-4">
+            <% order.items.forEach((item, index) => { %>
+            <div class="flex items-start p-4 border rounded-lg">
+              <div class="flex-shrink-0">
+                <input type="checkbox" name="items[<%= index %>][selected]" id="item-<%= index %>" class="mt-1">
+                <input type="hidden" name="items[<%= index %>][productId]" value="<%= item.productId._id %>">
+              </div>
+
+              <div class="ml-4 flex-grow">
+                <label for="item-<%= index %>" class="block font-medium">
+                  <%= item.productId.name %>
+                </label>
+                <div class="text-sm text-gray-500">
+                  Quantity: <%= item.quantity %> |
+                  Price: $<%= item.price.toFixed(2) %>
+                </div>
+
+                <div class="mt-3">
+                  <label class="block text-sm font-medium mb-1">
+                    Return Quantity:
+                  </label>
+                  <select name="items[<%= index %>][quantity]" class="border rounded p-2 w-24">
+                    <% for(let i = 1; i <= item.quantity; i++) { %>
+                    <option value="<%= i %>"><%= i %></option>
+                    <% } %>
+                  </select>
+                </div>
+
+                <div class="mt-3">
+                  <label class="block text-sm font-medium mb-1">
+                    Reason for Return:
+                  </label>
+                  <select name="items[<%= index %>][reason]" class="border rounded p-2 w-full">
+                    <option value="">Select a reason...</option>
+                    <option value="wrong_size">Wrong Size</option>
+                    <option value="defective">Defective/Damaged</option>
+                    <option value="not_as_described">Not as Described</option>
+                    <option value="wrong_item">Wrong Item Received</option>
+                    <option value="changed_mind">Changed Mind</option>
+                  </select>
+                </div>
+
+                <div class="mt-3">
+                  <label class="block text-sm font-medium mb-1">
+                    Additional Comments:
+                  </label>
+                  <textarea name="items[<%= index %>][comments]" rows="2" class="border rounded p-2 w-full" placeholder="Please provide any additional details about the return..."></textarea>
+                </div>
+              </div>
+            </div>
+            <% }); %>
+          </div>
+        </div>
+
+        <!-- Return Method -->
+        <div class="mb-6">
+          <h2 class="text-xl font-semibold mb-4">Return Method</h2>
+          <div class="space-y-3">
+            <div>
+              <input type="radio" name="returnMethod" id="dropoff" value="dropoff" checked>
+              <label for="dropoff" class="ml-2">
+                Drop off at nearest location
+              </label>
+            </div>
+            <div>
+              <input type="radio" name="returnMethod" id="pickup" value="pickup">
+              <label for="pickup" class="ml-2">
+                Schedule a pickup
+              </label>
+            </div>
+          </div>
+        </div>
+
+        <!-- Return Policy Acknowledgment -->
+        <div class="mb-6">
+          <div class="bg-gray-50 p-4 rounded-lg">
+            <h3 class="font-medium mb-2">Return Policy</h3>
+            <ul class="text-sm text-gray-600 list-disc pl-5 space-y-1">
+              <li>Items must be returned within 30 days of delivery</li>
+              <li>Items must be unused and in original packaging</li>
+              <li>Shipping labels will be provided for approved returns</li>
+              <li>Refund will be processed within 5-7 business days after receiving the return</li>
+            </ul>
+            <div class="mt-4">
+              <input type="checkbox" id="policyAgreement" name="policyAgreement" required>
+              <label for="policyAgreement" class="ml-2 text-sm">
+                I have read and agree to the return policy
+              </label>
+            </div>
+          </div>
+        </div>
+
+        <!-- Submit Button -->
+        <div class="flex justify-end">
+          <button type="submit" class="bg-blue-600 text-white px-6 py-2 rounded-lg hover:bg-blue-700">
+            Submit Return Request
+          </button>
+        </div>
+      </form>
+    </div>
+  </div>
+
+  <%- include('../layouts/footer.ejs') %>
+
+</body>
+
+</html>

@@ -61,17 +61,11 @@ const userSchema = mongoose.Schema({
         type: Date,
         default: Date.now,
     },
-    referalCode: {
-        type: String,
-    },
-    redeemed: {
-        type: Boolean
-    },
-    redeemedUser: [{
+    couponUsed: [{
         type: mongoose.Schema.Types.ObjectId,
-        ref: "User"
-    }],
-
+        ref: 'Coupon',
+        default: null,
+    }]
 
 }, { timestamps: true })
 

@@ -1,209 +1,525 @@
 <style>
-  .dropdown {
-    transition: opacity 0.3s ease-in-out, transform 0.3s ease-in-out;
+  /* Base styles */
+  .nav-link {
+    @apply text-gray-600 hover: text-gray-900 font-medium transition-colors duration-200;
   }
 
-  .dropdown.hidden {
-    opacity: 0;
-    transform: translateY(-10px);
-    pointer-events: none;
+  .mobile-nav-link {
+    @apply block py-2 text-gray-600 hover: text-gray-900 transition-colors duration-200;
   }
 
-  .arrow {
-    transition: transform 0.3s ease-in-out;
+  .dropdown-item {
+    @apply block px-4 py-2 text-sm text-gray-700 hover: bg-gray-50 transition-colors duration-200;
   }
 
-  .arrow.open {
-    transform: rotate(180deg);
+
+
+
+  /* Animations */
+  @keyframes slideDown {
+    from {
+      opacity: 0;
+      transform: translateY(-10px);
+    }
+
+    to {
+      opacity: 1;
+      transform: translateY(0);
+    }
   }
 
-  #wishlist-button {
-    position: relative;
+  .animate-slide-down {
+    animation: slideDown 0.2s ease-out forwards;
   }
 
-  #cart-badge {
-    background-color: #f56565;
+  /* Badge animations */
+  .badge-pop {
+    animation: badgePop 0.3s cubic-bezier(0.34, 1.56, 0.64, 1) forwards;
   }
 
-  #wishlist-count-badge {
-    position: absolute;
-    top: -5px;
-    right: -8px;
-    background-color: #f56565;
-    /* Tailwind red-500 */
-    color: white;
-    font-size: 0.75rem;
-    /* Text size */
-    font-weight: bold;
-    padding: 0.1rem 0.1rem;
-    border-radius: 9999px;
-    min-width: 20px;
-    /* Ensures consistent size */
-    text-align: center;
+  @keyframes badgePop {
+    0% {
+      transform: scale(0);
+    }
+
+    80% {
+      transform: scale(1.2);
+    }
+
+    100% {
+      transform: scale(1);
+    }
   }
 
-  .dropdown {
-    transition: opacity 0.3s ease-in-out, transform 0.3s ease-in-out;
+  /* Responsive padding for fixed header */
+  body {
+    padding-top: 4rem;
   }
 
-  .dropdown.hidden {
-    opacity: 0;
-    transform: translateY(-10px);
-    pointer-events: none;
-  }
-
-  .arrow {
-    transition: transform 0.3s ease-in-out;
-  }
-
-  .arrow.open {
-    transform: rotate(180deg);
+  @media (min-width: 1024px) {
+    body {
+      padding-top: 5rem;
+    }
   }
 </style>
 
-<header class="container mx-auto px-4 py-4 flex justify-around items-center border-b">
-  <a href="/" class="text-2xl font-bold">Yadro</a>
-  <nav>
-    <ul class="flex space-x-6">
-      <li><a href="/home" class="text-gray-600 hover:text-gray-900">Home</a></li>
-      <li><a href="/contact" class="text-gray-600 hover:text-gray-900">Contact</a></li>
-      <li><a href="/products" class="text-gray-600 hover:text-gray-900">Products</a></li>
-      <li class="relative">
-        <button id="categoryDropdownButton" class="text-gray-600 hover:text-gray-900 flex items-center">
-          Categories
-          <i class="fas fa-chevron-down ml-1 text-xs arrow"></i>
-        </button>
-        <div id="categoryDropdown" class="dropdown hidden absolute left-0 mt-2 w-48 bg-white rounded-md overflow-hidden shadow-xl z-10">
-          <% categories.forEach( category => { %>
-          <a href="/products/category/<%= category._id %>" class="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-100"><%= category.name %></a>
-          <% }) %>
-        </div>
-      </li>
-    </ul>
-  </nav>
-  <div class="flex relative">
-    <input type="text" id="search-input" placeholder="Search Your Products ...." class="footer-input" style="color: black; border-radius: 50px; width: 380px; padding-left: 10px; outline: none; border: 1px grey solid;">
-    <i class="fa-solid fa-magnifying-glass absolute right-3 top-3 cursor-pointer" id="search-icon"></i>
-  </div>
-  <div id="search-results" class="hidden absolute bg-white rounded-md shadow-xl z-20 w-96 max-h-80 overflow-auto"></div>
+<header class="bg-white shadow-md fixed w-full top-0 z-50">
+  <div class="container mx-auto px-4">
+    <!-- Top bar with announcement -->
+    <!-- <div class="hidden lg:flex justify-center py-2 bg-gray-50 text-sm text-gray-600">
+      <p>🎉 Free shipping on orders over $50! Shop now</p>
+    </div> -->
 
-  <div class="flex items-center space-x-4">
-    <!-- Like button in the header -->
-    <div class="relative">
-
-      <a href="/wishlist" id="wishlist-button" class="relative">
-        <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6 text-gray-500 hover:text-red-600 transition duration-200" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-          <path d="M20.84 4.61a5.5 5.5 0 0 0-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 0 0-7.78 7.78L12 21.23l8.84-8.84a5.5 5.5 0 0 0 0-7.78z"></path>
+    <!-- Main header content -->
+    <div class="flex items-center justify-between py-6">
+      <!-- Mobile menu button -->
+      <button id="mobile-menu-button" class="lg:hidden p-2 rounded-md hover:bg-gray-100">
+        <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6h16M4 12h16M4 18h16"></path>
         </svg>
-        <!-- Count badge -->
-        <span id="wishlist-count-badge" class="absolute top-0 right-0 bg-red-500 text-white text-xs font-bold px-1.5 py-0.5 rounded-full">0</span>
-      </a>
-    </div>
-    <div class="relative">
-      <a href="/cart" class="text-black hover:text-green-500 text-xl p-3 focus:outline-none focus:ring-2 focus:ring-green-300">
-        <svg xmlns="http://www.w3.org/2000/svg" class="h-7 w-7 text-gray-500 hover:text-red-600 transition duration-200" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-          <circle cx="9" cy="21" r="1"></circle>
-          <circle cx="20" cy="21" r="1"></circle>
-          <path d="M1 1h4l2.68 13.39a2 2 0 0 0 2 1.61h9.72a2 2 0 0 0 2-1.61L23 6H6"></path>
-        </svg>
-
-      </a>
-      <span id="cart-badge" class="absolute  top-8 right-0 transform translate-x-1/2 -translate-y-1/2 h-5 w-5 bg-red-500 text-white text-xs font-bold rounded-full flex items-center justify-center">0</span>
-    </div>
-    <div class="relative">
-      <button id="userDropdownButton" class="flex items-center space-x-2 focus:outline-none">
-        <span class="text-sm font-medium text-gray-700"><%= user.fname %> <%= user.lname %></span>
-        <div class="flex items-center space-x-1">
-          <i class="fas fa-user text-black hover:text-blue-500 text-xl"></i>
-          <i class="fas fa-chevron-down text-black text-xs arrow"></i>
-        </div>
       </button>
-      <div id="userDropdown" class="dropdown hidden absolute right-0 mt-2 w-48 bg-white rounded-md overflow-hidden shadow-xl z-10">
-        <a href="/account" class="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-100">Profile</a>
-        <a href="/wallet" class="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-100">Wallet</a>
-        <a href="/orders" class="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-100">My Orders</a>
-        <a href="/logout" class="block px-4 py-2 text-sm text-white bg-red-500 hover:bg-red-600">Log out</a>
+
+      <a href="/" class="text-4xl mr-8 font-bold">Yadro</a>
+      <nav>
+        <ul class="flex space-x-6">
+          <li><a href="/home" class="text-gray-600 hover:text-gray-900">Home</a></li>
+          <li><a href="/contact" class="text-gray-600 hover:text-gray-900">Contact</a></li>
+          <li><a href="/products" class="text-gray-600 hover:text-gray-900">Products</a></li>
+          <li class="relative">
+            <button id="categoryDropdownButton" class="text-gray-600 hover:text-gray-900 flex items-center">
+              Categories
+              <i class="fas fa-chevron-down ml-1 text-xs arrow"></i>
+            </button>
+            <div id="categoryDropdown" class="dropdown hidden absolute left-0 mt-2 w-48 bg-white rounded-md overflow-hidden shadow-xl z-10">
+              <% categories.forEach( category => { %>
+              <a href="/products/category/<%=  category._id %>" class="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-100"><%= category.name %></a>
+              <%  }) %>
+            </div>
+          </li>
+        </ul>
+      </nav>
+
+      <!-- Search Bar -->
+      <div class="hidden lg:flex relative flex-1 mx-8">
+        <input type="text" id="search-input" placeholder="Search products..." class="w-full px-4 py-2 rounded-full border border-gray-300 focus:border-blue-500 focus:ring-2 focus:ring-blue-200 transition-all duration-200">
+        <button class="absolute right-3 top-1/2 -translate-y-1/2">
+          <svg class="w-5 h-5 text-gray-500" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"></path>
+          </svg>
+        </button>
+        <!-- Search Results Dropdown -->
+        <div id="search-results" class="hidden absolute top-full left-0 right-0 bg-white mt-2 rounded-md shadow-lg max-h-96 overflow-y-auto z-50"></div>
+      </div>
+
+      <!-- Right Actions -->
+      <div class="flex items-center space-x-4">
+        <!-- Wishlist -->
+        <a href="/wishlist" class="relative p-2 hover:bg-gray-100 rounded-full transition-colors duration-200">
+          <svg class="w-6 h-6 text-gray-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4.318 6.318a4.5 4.5 0 000 6.364L12 20.364l7.682-7.682a4.5 4.5 0 00-6.364-6.364L12 7.636l-1.318-1.318a4.5 4.5 0 00-6.364 0z"></path>
+          </svg>
+          <span id="wishlist-count-badge" class="absolute -top-1 -right-1 bg-red-500 text-white text-xs font-bold w-5 h-5 rounded-full flex items-center justify-center transform scale-0 transition-transform duration-200">0</span>
+        </a>
+
+        <!-- Cart -->
+        <a href="/cart" class="relative p-2 hover:bg-gray-100 rounded-full transition-colors duration-200">
+          <svg class="w-6 h-6 text-gray-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M16 11V7a4 4 0 00-8 0v4M5 9h14l1 12H4L5 9z"></path>
+          </svg>
+          <span id="cart-badge" class="absolute -top-1 -right-1 bg-red-500 text-white text-xs font-bold w-5 h-5 rounded-full flex items-center justify-center transform scale-0 transition-transform duration-200">0</span>
+        </a>
+
+        <!-- User Menu -->
+        <div class="relative">
+          <button id="userDropdownButton" class="flex items-center space-x-2 p-2 hover:bg-gray-100 rounded-full transition-colors duration-200">
+            <div class="w-8 h-8 rounded-full bg-gray-200 flex items-center justify-center">
+              <span class="text-sm font-medium text-gray-600"><%= user.fname[0] %></span>
+            </div>
+            <span class="hidden lg:block text-sm font-medium text-gray-700"><%= user.fname %> <%= user.lname %></span>
+          </button>
+          <div id="userDropdown" class="hidden flex flex-col absolute p-4 right-0 mt-2 w-48 bg-white rounded-md shadow-lg py-1 z-50">
+            <a href="/account" class="dropdown-item px-4 py-2 hover:bg-gray-100 rounded-full">Profile</a>
+            <a href="/wallet" class="dropdown-item px-4 py-2 hover:bg-gray-100 rounded-full">Wallet</a>
+            <a href="/orders" class="dropdown-item px-4 py-2 hover:bg-gray-100 rounded-full">My Orders</a>
+            <div class="border-t border-gray-100 my-1"></div>
+            <a href="/logout" class="dropdown-item px-4 py-2 text-red-600 hover:bg-red-50 rounded-full">Log out</a>
+          </div>
+        </div>
       </div>
     </div>
+  </div>
+
+  <!-- Mobile Menu -->
+  <div id="mobile-menu" class="lg:hidden hidden bg-white border-t">
+    <div class="px-4 py-2">
+      <input type="text" placeholder="Search products..." class="w-full px-4 py-2 rounded-full border border-gray-300">
+    </div>
+    <nav class="px-4 py-2">
+      <a href="/home" class="mobile-nav-link">Home</a>
+      <button id="mobile-categories-button" class="mobile-nav-link w-full text-left flex justify-between items-center">
+        Categories
+        <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"></path>
+        </svg>
+      </button>
+      <div id="mobile-categories" class="hidden pl-4">
+        <% categories.forEach(category => { %>
+        <a href="/products/category/<%= category._id %>" class="mobile-nav-link"><%= category.name %></a>
+        <% }) %>
+      </div>
+      <a href="/products" class="mobile-nav-link">Products</a>
+      <a href="/contact" class="mobile-nav-link">Contact</a>
+    </nav>
   </div>
 </header>
 
 <script>
-  const userDropdownButton = document.getElementById('userDropdownButton');
-  const userDropdown = document.getElementById('userDropdown');
-  const arrow = userDropdownButton.querySelector('.arrow');
+  document.addEventListener('DOMContentLoaded', function() {
+    // Mobile menu functionality
+    const mobileMenuButton = document.getElementById('mobile-menu-button');
+    const mobileMenu = document.getElementById('mobile-menu');
+    const mobileCategoriesButton = document.getElementById('mobile-categories-button');
+    const mobileCategories = document.getElementById('mobile-categories');
 
-  userDropdownButton.addEventListener('click', () => {
-    userDropdown.classList.toggle('hidden');
-    arrow.classList.toggle('open');
-  });
+    mobileMenuButton.addEventListener('click', () => {
+      mobileMenu.classList.toggle('hidden');
+    });
 
-  document.addEventListener('click', (event) => {
-    if (!userDropdownButton.contains(event.target) && !userDropdown.contains(event.target)) {
-      userDropdown.classList.add('hidden');
-      arrow.classList.remove('open');
+    mobileCategoriesButton.addEventListener('click', () => {
+      mobileCategories.classList.toggle('hidden');
+      const icon = mobileCategoriesButton.querySelector('svg');
+      icon.style.transform = mobileCategories.classList.contains('hidden') ? 'rotate(0deg)' : 'rotate(180deg)';
+    });
+
+    // User dropdown functionality
+    const userDropdownButton = document.getElementById('userDropdownButton');
+    const userDropdown = document.getElementById('userDropdown');
+
+    userDropdownButton.addEventListener('click', (e) => {
+      e.stopPropagation();
+      userDropdown.classList.toggle('hidden');
+      if (!userDropdown.classList.contains('hidden')) {
+        userDropdown.classList.add('animate-slide-down');
+      }
+    });
+
+    // Close dropdowns when clicking outside
+    document.addEventListener('click', (e) => {
+      if (!userDropdownButton.contains(e.target)) {
+        userDropdown.classList.add('hidden');
+      }
+    });
+
+    // Fetch and update badges
+    async function updateBadges() {
+      try {
+        // Fetch wishlist count
+        const wishlistResponse = await fetch('/wishlist/count');
+        const wishlistData = await wishlistResponse.json();
+        const wishlistBadge = document.getElementById('wishlist-count-badge');
+
+        if (wishlistData.success && wishlistData.wishlistCount > 0) {
+          wishlistBadge.textContent = wishlistData.wishlistCount;
+          wishlistBadge.classList.add('badge-pop');
+          wishlistBadge.style.transform = 'scale(1)';
+        }
+
+        // Fetch cart count
+        const cartResponse = await fetch('/cart/count');
+        const cartData = await cartResponse.json();
+        const cartBadge = document.getElementById('cart-badge');
+
+        if (cartData.success && cartData.cartCount > 0) {
+          cartBadge.textContent = cartData.cartCount;
+          cartBadge.classList.add('badge-pop');
+          cartBadge.style.transform = 'scale(1)';
+        }
+      } catch (error) {
+        console.error('Error updating badges:', error);
+      }
     }
+
+    // Initialize badges
+    updateBadges();
+
+    // Search functionality
+    const searchInput = document.getElementById('search-input');
+    const searchResults = document.getElementById('search-results');
+    let searchTimeout;
+    searchResults.classList.add('max-h-[70vh]', 'overflow-y-auto', 'scrollbar-thin', 'scrollbar-thumb-gray-300', 'scrollbar-track-gray-100');
+
+    searchInput.addEventListener('input', () => {
+      clearTimeout(searchTimeout);
+      searchTimeout = setTimeout(performSearch, 300);
+    });
+
+    async function performSearch() {
+      const query = searchInput.value.trim();
+      if (!query) {
+        searchResults.classList.add('hidden');
+        return;
+      }
+
+      try {
+        const response = await fetch(`/search?q=${encodeURIComponent(query)}`);
+        const data = await response.json();
+
+        if (data.success) {
+          displaySearchResults(data.products, data.categories);
+        }
+      } catch (error) {
+        console.error('Search error:', error);
+      }
+    }
+
+    function displaySearchResults(products, categories) {
+      searchResults.innerHTML = '';
+
+      if (products.length === 0 && categories.length === 0) {
+        searchResults.innerHTML = `
+          <div class="px-4 py-3 text-sm text-gray-700">
+            No results found
+          </div>
+        `;
+      } else {
+        // Categories section
+        if (categories.length > 0) {
+          searchResults.innerHTML += `
+            <div class="px-4 py-2 text-xs font-semibold text-gray-500 bg-gray-50">
+              Categories
+            </div>
+          `;
+          categories.forEach(category => {
+            searchResults.innerHTML += `
+              <a href="/products/category/${category._id}" 
+                 class="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-50">
+                ${category.name}
+              </a>
+            `;
+          });
+        }
+
+        // Products section
+        if (products.length > 0) {
+          searchResults.innerHTML += `
+    <div class="px-4 py-2 text-xs font-semibold text-gray-500 bg-gray-50">
+      Products
+    </div>
+  `;
+          products.forEach(product => {
+            const formattedPrice = new Intl.NumberFormat('en-US', {
+              style: 'currency',
+              currency: 'INR'
+            }).format(product.salePrice);
+
+            searchResults.innerHTML += `
+                <a href="/product-detail/${product._id}" 
+                 class="block px-4 py-2 hover:bg-gray-50 transition-colors duration-200">
+              <div class="flex items-center space-x-3">
+               <div class="flex-shrink-0">
+                <img src="${product.images[0]}" 
+                 alt="${product.name}"
+                 class="w-12 h-12 object-cover rounded-md border border-gray-200"
+                 onerror="this.src='/images/placeholder.png'" />
+              </div>
+                 <div class="flex-1 min-w-0">
+                <p class="text-sm font-medium text-gray-900 truncate">
+                  ${product.name}
+                </p>
+                <p class="text-sm text-gray-500">
+                  ${formattedPrice}
+               </p>
+                 ${product.quantity > 0 ? `
+                 <p class="text-xs text-green-600">In Stock</p>
+               ` : `
+               <p class="text-xs text-red-600">Out of Stock</p>
+                `}
+              </div>
+              <div class="flex-shrink-0 text-gray-400">
+                <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7"></path>
+                </svg>
+                </div>
+              </div>
+              </a>
+           `;
+          });
+        }
+      }
+
+      searchResults.classList.remove('hidden');
+    }
+    // Continuing the JavaScript from previous section...
+
+    document.addEventListener('click', (e) => {
+      if (!searchInput.contains(e.target) && !searchResults.contains(e.target)) {
+        searchResults.classList.add('hidden');
+      }
+    });
+
+    // Scroll behavior
+    let lastScrollTop = 0;
+    const header = document.querySelector('header');
+    const headerHeight = header.offsetHeight;
+    document.body.style.paddingTop = `${headerHeight}px`;
+
+    window.addEventListener('scroll', () => {
+      const scrollTop = window.pageYOffset || document.documentElement.scrollTop;
+
+      // Add shadow and background opacity on scroll
+      if (scrollTop > 0) {
+        header.classList.add('shadow-md', 'bg-white/95', 'backdrop-blur-sm');
+      } else {
+        header.classList.remove('shadow-md', 'bg-white/95', 'backdrop-blur-sm');
+      }
+
+      // Hide/show header on scroll
+      if (scrollTop > lastScrollTop && scrollTop > headerHeight) {
+        // Scrolling down
+        header.style.transform = `translateY(-${headerHeight}px)`;
+      } else {
+        // Scrolling up
+        header.style.transform = 'translateY(0)';
+      }
+
+      lastScrollTop = scrollTop;
+    }, {
+      passive: true
+    });
+
+    // Enhanced dropdown animations
+    const dropdowns = document.querySelectorAll('.group');
+
+    dropdowns.forEach(dropdown => {
+      const dropdownContent = dropdown.querySelector('div[class*="absolute"]');
+
+      dropdown.addEventListener('mouseenter', () => {
+        dropdownContent.classList.remove('hidden');
+        dropdownContent.classList.add('animate-slide-down');
+      });
+
+      dropdown.addEventListener('mouseleave', () => {
+        dropdownContent.classList.add('hidden');
+        dropdownContent.classList.remove('animate-slide-down');
+      });
+    });
+
+    // Add touch support for mobile dropdowns
+    if ('ontouchstart' in window) {
+      dropdowns.forEach(dropdown => {
+        const button = dropdown.querySelector('button');
+        const dropdownContent = dropdown.querySelector('div[class*="absolute"]');
+
+        button.addEventListener('click', (e) => {
+          e.preventDefault();
+          dropdowns.forEach(otherDropdown => {
+            if (otherDropdown !== dropdown) {
+              otherDropdown.querySelector('div[class*="absolute"]').classList.add('hidden');
+            }
+          });
+          dropdownContent.classList.toggle('hidden');
+        });
+      });
+    }
+
+    // Badge notifications animation
+    function animateBadge(badgeElement) {
+      badgeElement.classList.remove('badge-pop');
+      void badgeElement.offsetWidth; // Force reflow
+      badgeElement.classList.add('badge-pop');
+    }
+
+    // Wishlist/Cart update functions
+    function updateWishlistBadge(count) {
+      const badge = document.getElementById('wishlist-count-badge');
+      if (count > 0) {
+        badge.textContent = count;
+        badge.style.transform = 'scale(1)';
+        animateBadge(badge);
+      } else {
+        badge.style.transform = 'scale(0)';
+      }
+    }
+
+    function updateCartBadge(count) {
+      const badge = document.getElementById('cart-badge');
+      if (count > 0) {
+        badge.textContent = count;
+        badge.style.transform = 'scale(1)';
+        animateBadge(badge);
+      } else {
+        badge.style.transform = 'scale(0)';
+      }
+    }
+
+    // Search input enhancement
+    const searchInputContainer = document.querySelector('.search-container');
+    const searchIcon = searchInputContainer.querySelector('button');
+
+    searchInput.addEventListener('focus', () => {
+      searchInputContainer.classList.add('ring-2', 'ring-blue-200', 'border-blue-500');
+    });
+
+    searchInput.addEventListener('blur', () => {
+      searchInputContainer.classList.remove('ring-2', 'ring-blue-200', 'border-blue-500');
+    });
+
+    // Add loading state for search
+    let isSearching = false;
+
+    async function performSearchWithLoading() {
+      if (isSearching) return;
+
+      const query = searchInput.value.trim();
+      if (!query) return;
+
+      try {
+        isSearching = true;
+        searchIcon.innerHTML = `
+        <svg class="animate-spin h-5 w-5 text-gray-500" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24">
+          <circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"></circle>
+          <path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path>
+        </svg>
+      `;
+
+        const response = await fetch(`/search?q=${encodeURIComponent(query)}`);
+        const data = await response.json();
+
+        if (data.success) {
+          displaySearchResults(data.products, data.categories);
+        }
+      } catch (error) {
+        console.error('Search error:', error);
+      } finally {
+        isSearching = false;
+        searchIcon.innerHTML = `
+        <svg class="w-5 h-5 text-gray-500" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"></path>
+        </svg>
+      `;
+      }
+    }
+
+    // Debounced search
+    function debounce(func, wait) {
+      let timeout;
+      return function executedFunction(...args) {
+        const later = () => {
+          clearTimeout(timeout);
+          func(...args);
+        };
+        clearTimeout(timeout);
+        timeout = setTimeout(later, wait);
+      };
+    }
+
+    const debouncedSearch = debounce(performSearchWithLoading, 300);
+    searchInput.addEventListener('input', debouncedSearch);
+
+    // Initialize
+    updateBadges();
   });
 
-
-  // Wishlist
-  document.addEventListener("DOMContentLoaded", function() {
-    // Fetch the wishlist count from the backend when the DOM is ready
-    fetch('/wishlist/count', {
-        method: 'GET',
-        headers: {
-          'Content-Type': 'application/json'
-        }
-      })
-      .then(response => response.json())
-      .then(data => {
-        if (data.success) {
-          // Update the wishlist count badge in the header
-          document.getElementById('wishlist-count-badge').textContent = data.wishlistCount;
-        } else {
-          console.error('Error fetching wishlist count:', data.message);
-        }
-      })
-      .catch(error => console.error('Error fetching wishlist count:', error));
-  });
-
-  document.addEventListener("DOMContentLoaded", function() {
-    // Fetch the wishlist count from the backend when the DOM is ready
-    fetch('/wishlist/count', {
-        method: 'GET',
-        headers: {
-          'Content-Type': 'application/json'
-        }
-      })
-      .then(response => response.json())
-      .then(data => {
-        if (data.success) {
-          // Update the wishlist count badge in the header
-          document.getElementById('wishlist-count-badge').textContent = data.wishlistCount;
-        } else {
-          console.error('Error fetching wishlist count:', data.message);
-        }
-      })
-      .catch(error => console.error('Error fetching wishlist count:', error));
-
-    // Fetch the cart count from the backend
-    fetch('/cart/count', {
-        method: 'GET',
-        headers: {
-          'Content-Type': 'application/json'
-        }
-      })
-      .then(response => response.json())
-      .then(data => {
-        if (data.success) {
-          // Update the cart count badge in the header
-          document.querySelector('#cart-badge').textContent = data.cartCount;
-        } else {
-          console.error('Error fetching cart count:', data.message);
-        }
-      })
-      .catch(error => console.error('Error fetching cart count:', error));
-  });
 
   const categoryDropdownButton = document.getElementById('categoryDropdownButton');
   const categoryDropdown = document.getElementById('categoryDropdown');
@@ -218,75 +534,6 @@
     if (!categoryDropdownButton.contains(event.target) && !categoryDropdown.contains(event.target)) {
       categoryDropdown.classList.add('hidden');
       categoryArrow.classList.remove('open');
-    }
-  });
-
-
-
-
-  const searchInput = document.getElementById('search-input');
-  const searchIcon = document.getElementById('search-icon');
-  const searchResults = document.getElementById('search-results');
-
-  // Event listener for "Enter" key or clicking search icon
-  searchInput.addEventListener('keypress', (e) => {
-    if (e.key === 'Enter') {
-      performSearch();
-    }
-  });
-
-  searchIcon.addEventListener('click', performSearch);
-
-  function performSearch() {
-    const query = searchInput.value.trim();
-    if (!query) return;
-
-    fetch(`/search?q=${encodeURIComponent(query)}`)
-      .then(response => response.json())
-      .then(data => {
-        if (data.success) {
-          displaySearchResults(data.products, data.categories);
-        } else {
-          console.error('Error fetching search results:', data.message);
-        }
-      })
-      .catch(error => console.error('Error fetching search results:', error));
-  }
-
-  function displaySearchResults(products, categories) {
-    // Clear previous results
-    searchResults.innerHTML = '';
-
-    if (products.length === 0 && categories.length === 0) {
-      searchResults.innerHTML = '<p class="px-4 py-2 text-sm text-gray-700">No results found</p>';
-    } else {
-      // Display products
-      products.forEach(product => {
-        searchResults.innerHTML += `
-          <a href="/product-detail/${product._id}" class="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-100">
-            Product: ${product.name}
-          </a>
-        `;
-      });
-
-      // Display categories
-      categories.forEach(category => {
-        searchResults.innerHTML += `
-          <a href="/products/category/${category._id}" class="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-100">
-            Category: ${category.name}
-          </a>
-        `;
-      });
-    }
-
-    // Show the results dropdown
-    searchResults.classList.remove('hidden');
-  }
-
-  // Hide search results if clicking outside of the input or results
-  document.addEventListener('click', (event) => {
-    if (!searchInput.contains(event.target) && !searchResults.contains(event.target)) {
-      searchResults.classList.add('hidden');
     }
   });
 </script>

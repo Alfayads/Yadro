@@ -1,127 +1,648 @@
 <!DOCTYPE html>
-<html lang="en" class="light">
+<html lang="en" class="dark">
 
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Add Product</title>
+  <title>Edit Product - Yadro</title>
   <script src="https://cdn.tailwindcss.com"></script>
-  <link rel="icon" href="/images/logo.png" type="image/x-icon">
-  <link rel="stylesheet" href="/css/admin-editproduct.css">
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
-  <script src="/js/toggle.js"></script>
+  <style>
+    :root {
+      --primary-dark: #1f2937;
+      --secondary-dark: #111827;
+      --accent-blue: #3b82f6;
+      --text-primary: #e5e7eb;
+      --text-secondary: #9ca3af;
+    }
+
+    .image-container {
+      position: relative;
+      transition: all 0.3s ease;
+    }
+
+    .image-container:hover .image-overlay {
+      opacity: 1;
+    }
+
+    .image-overlay {
+      position: absolute;
+      inset: 0;
+      background: rgba(0, 0, 0, 0.7);
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      opacity: 0;
+      transition: opacity 0.3s ease;
+      border-radius: 8px;
+    }
+
+    .remove-image-btn {
+      background: #ef4444;
+      color: white;
+      padding: 0.5rem;
+      border-radius: 50%;
+      width: 32px;
+      height: 32px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      transition: all 0.2s ease;
+    }
+
+    .remove-image-btn:hover {
+      background: #dc2626;
+      transform: scale(1.1);
+    }
+
+    .image-preview-container {
+      position: relative;
+      animation: fadeIn 0.3s ease-out;
+    }
+
+    @keyframes fadeIn {
+      from {
+        opacity: 0;
+        transform: translateY(10px);
+      }
+
+      to {
+        opacity: 1;
+        transform: translateY(0);
+      }
+    }
+
+    .removed-image {
+      animation: fadeOut 0.3s ease-out forwards;
+    }
+
+    @keyframes fadeOut {
+      from {
+        opacity: 1;
+        transform: scale(1);
+      }
+
+      to {
+        opacity: 0;
+        transform: scale(0.8);
+      }
+    }
+
+    body {
+      background-color: var(--secondary-dark);
+      color: var(--text-primary);
+    }
+
+    @keyframes fadeInUp {
+      from {
+        opacity: 0;
+        transform: translateY(20px);
+      }
+
+      to {
+        opacity: 1;
+        transform: translateY(0);
+      }
+    }
+
+    @keyframes glowPulse {
+      0% {
+        box-shadow: 0 0 5px rgba(59, 130, 246, 0.5);
+      }
+
+      50% {
+        box-shadow: 0 0 15px rgba(59, 130, 246, 0.8);
+      }
+
+      100% {
+        box-shadow: 0 0 5px rgba(59, 130, 246, 0.5);
+      }
+    }
+
+    .fade-in-up {
+      animation: fadeInUp 0.6s ease-out forwards;
+    }
+
+    /* Form Sections */
+    .form-section {
+      background: var(--primary-dark);
+      border-radius: 16px;
+      box-shadow: 0 4px 20px rgba(0, 0, 0, 0.3);
+      border: 1px solid rgba(255, 255, 255, 0.1);
+      transition: all 0.3s ease;
+    }
+
+    .form-section:hover {
+      box-shadow: 0 6px 24px rgba(0, 0, 0, 0.4);
+      border-color: rgba(59, 130, 246, 0.4);
+    }
+
+    /* Enhanced Input Styling */
+    .input-box input,
+    .input-box textarea,
+    .input-box select {
+      background: rgba(17, 24, 39, 0.8);
+      border: 1px solid rgba(255, 255, 255, 0.1);
+      color: var(--text-primary);
+      padding: 0.75rem 1rem;
+      border-radius: 8px;
+      transition: all 0.3s ease;
+      width: 100%;
+    }
+
+    .input-box input:focus,
+    .input-box textarea:focus,
+    .input-box select:focus {
+      background: rgba(17, 24, 39, 0.95);
+      border-color: var(--accent-blue);
+      box-shadow: 0 0 0 2px rgba(59, 130, 246, 0.2);
+      outline: none;
+    }
+
+    /* Section Headers */
+    .section-header {
+      font-size: 1.25rem;
+      font-weight: 600;
+      color: var(--text-primary);
+      padding-bottom: 0.5rem;
+      border-bottom: 2px solid rgba(59, 130, 246, 0.3);
+      margin-bottom: 1.5rem;
+    }
+
+    /* Image Upload Area */
+    .image-upload {
+      border: 2px dashed rgba(255, 255, 255, 0.2);
+      background: rgba(17, 24, 39, 0.6);
+      transition: all 0.3s ease;
+    }
+
+    .image-upload:hover {
+      border-color: var(--accent-blue);
+      background: rgba(17, 24, 39, 0.8);
+    }
+
+    /* Current Images Display */
+    .current-image {
+      position: relative;
+      transition: transform 0.3s ease;
+    }
+
+    .current-image:hover {
+      transform: scale(1.05);
+    }
+
+    .current-image img {
+      border-radius: 8px;
+      box-shadow: 0 4px 12px rgba(0, 0, 0, 0.2);
+    }
+
+    /* Save Button */
+    .save-button {
+      background: linear-gradient(135deg, #3b82f6, #2563eb);
+      color: white;
+      padding: 0.75rem 2rem;
+      border-radius: 8px;
+      font-weight: 500;
+      transition: all 0.3s ease;
+      text-shadow: 0 1px 2px rgba(0, 0, 0, 0.2);
+    }
+
+    .save-button:hover {
+      transform: translateY(-2px);
+      box-shadow: 0 4px 12px rgba(59, 130, 246, 0.3);
+      background: linear-gradient(135deg, #2563eb, #1d4ed8);
+    }
+
+    /* Loading Animation */
+    .loading-overlay {
+      background: rgba(0, 0, 0, 0.7);
+      backdrop-filter: blur(4px);
+    }
+
+    .loading-spinner {
+      width: 40px;
+      height: 40px;
+      border: 3px solid rgba(59, 130, 246, 0.3);
+      border-radius: 50%;
+      border-top-color: #3b82f6;
+      animation: spin 1s linear infinite;
+    }
+
+    @keyframes spin {
+      to {
+        transform: rotate(360deg);
+      }
+    }
+
+    .color-picker-wrapper {
+      position: relative;
+      width: 100%;
+    }
+
+    .color-preview {
+      width: 40px;
+      height: 40px;
+      border-radius: 8px;
+      margin-right: 12px;
+      transition: transform 0.3s ease;
+      border: 2px solid rgba(255, 255, 255, 0.1);
+      cursor: pointer;
+    }
+
+    .color-preview:hover {
+      transform: scale(1.05);
+      animation: glowPulse 1.5s infinite;
+    }
+
+    .color-input-group {
+      display: flex;
+      align-items: center;
+      background: rgba(17, 24, 39, 0.8);
+      border: 1px solid rgba(255, 255, 255, 0.1);
+      border-radius: 8px;
+      padding: 0.5rem;
+      transition: all 0.3s ease;
+    }
+
+    .color-input-group:focus-within {
+      border-color: var(--accent-blue);
+      box-shadow: 0 0 0 2px rgba(59, 130, 246, 0.2);
+    }
+
+    .color-text-input {
+      background: transparent !important;
+      border: none !important;
+      padding: 0.5rem !important;
+      color: var(--text-primary) !important;
+      width: calc(100% - 52px) !important;
+    }
+
+    .color-text-input:focus {
+      box-shadow: none !important;
+    }
+
+    .color-picker-popup {
+      position: absolute;
+      top: calc(100% + 10px);
+      left: 0;
+      background: var(--primary-dark);
+      border-radius: 12px;
+      padding: 1rem;
+      box-shadow: 0 8px 24px rgba(0, 0, 0, 0.4);
+      border: 1px solid rgba(59, 130, 246, 0.2);
+      z-index: 1000;
+      width: 300px;
+      opacity: 0;
+      transform: translateY(-10px);
+      transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+      pointer-events: none;
+    }
+
+    .color-picker-popup.active {
+      opacity: 1;
+      transform: translateY(0);
+      pointer-events: auto;
+    }
+
+    .preset-colors {
+      display: grid;
+      grid-template-columns: repeat(8, 1fr);
+      gap: 8px;
+      margin-bottom: 1rem;
+    }
+
+    .preset-color {
+      width: 100%;
+      padding-bottom: 100%;
+      border-radius: 6px;
+      cursor: pointer;
+      transition: transform 0.2s ease;
+      border: 2px solid rgba(255, 255, 255, 0.1);
+    }
+
+    .preset-color:hover {
+      transform: scale(1.1);
+      box-shadow: 0 0 12px rgba(59, 130, 246, 0.3);
+    }
+
+    .custom-picker {
+      width: 100%;
+      height: 40px;
+      margin-top: 0.5rem;
+      border-radius: 6px;
+      cursor: pointer;
+      background: linear-gradient(to right, #ff0000 0%, #ffff00 17%, #00ff00 33%, #00ffff 50%, #0000ff 67%, #ff00ff 83%, #ff0000 100%);
+    }
+
+    .custom-picker::-webkit-color-swatch-wrapper {
+      padding: 0;
+    }
+
+    .custom-picker::-webkit-color-swatch {
+      border: none;
+      border-radius: 6px;
+    }
+  </style>
 </head>
 
-<body class="bg-gray-100 font-sans transition-colors duration-300 dark:bg-gray-900">
-  <%- include('../layouts/admin-sidebar.ejs') %>
+<body class="min-h-screen">
+  <div class="flex">
+    <%- include('../layouts/admin-sidebar.ejs') %>
 
-  <div class="container mx-auto p-6 ml-64">
-    <div class="flex justify-between items-center mb-6">
-      <h1 class="text-3xl font-bold text-gray-800 dark:text-gray-200">Add New Product</h1>
-      <div class="theme-toggle" id="themeToggle"></div>
-    </div>
-
-    <!-- General Information Section -->
-    <form action="/admin/edittedProduct/<%= product._id %>" method="post" enctype="multipart/form-data">
-      <div class="bg-white dark:bg-gray-800 p-6 rounded-lg shadow-md mb-6 fade-in-up">
-        <h2 class="section-header mb-4 dark:text-gray-200">General Information</h2>
-        <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
-          <div class="input-box">
-            <label for="productName" class="block text-sm font-medium text-gray-700 dark:text-gray-300">Product Name</label>
-            <input type="text" value="<%= product.name %>" name="name" id="productName" class="mt-1 p-2 w-full border border-gray-300 rounded-md focus:ring-primary-light focus:border-primary-light dark:bg-gray-700 dark:border-gray-600 dark:text-white" placeholder="Enter product name">
-          </div>
-          <div class="input-box">
-            <label for="stockQuantity" class="block text-sm font-medium text-gray-700 dark:text-gray-300">Stock Quantity</label>
-            <input type="number" value="<%= product.quantity %>" name="stock" id="stockQuantity" class="mt-1 p-2 w-full border border-gray-300 rounded-md focus:ring-primary-light focus:border-primary-light dark:bg-gray-700 dark:border-gray-600 dark:text-white" placeholder="Enter stock quantity">
-          </div>
-          <div class="input-box">
-            <label for="brand" class="block text-sm font-medium text-gray-700 dark:text-gray-300">Brand</label>
-            <input type="text" name="brand" value="<%= product.brand %>" id="brand" class="mt-1 p-2 w-full border border-gray-300 rounded-md focus:ring-primary-light focus:border-primary-light dark:bg-gray-700 dark:border-gray-600 dark:text-white" placeholder="Brand">
-          </div>
-          <div class="input-box">
-            <label for="color" class="block text-sm font-medium text-gray-700 dark:text-gray-300">Colour</label>
-            <input type="text" name="color" value="<%= product.color %>" id="color" class="mt-1 p-2 w-full border border-gray-300 rounded-md focus:ring-primary-light focus:border-primary-light dark:bg-gray-700 dark:border-gray-600 dark:text-white" placeholder="Colour">
-          </div>
-          <div class="col-span-2 input-box">
-            <label for="description" class="block text-sm font-medium text-gray-700 dark:text-gray-300">Description</label>
-            <textarea id="description" name="description" rows="4" class="mt-1 p-2 w-full border border-gray-300 rounded-md focus:ring-primary-light focus:border-primary-light dark:bg-gray-700 dark:border-gray-600 dark:text-white" placeholder="Enter here"><%= product.description %></textarea>
-          </div>
-        </div>
+    <div class="flex-1 ml-64 p-8">
+      <!-- Header Section -->
+      <div class="flex items-center justify-between mb-8 fade-in-up">
+        <h1 class="text-4xl font-bold bg-gradient-to-r from-blue-400 to-blue-600 text-transparent bg-clip-text">
+          Edit Product
+        </h1>
       </div>
 
-      <!-- Pricing Section -->
-      <div class="bg-white dark:bg-gray-800 p-6 rounded-lg shadow-md mb-6 fade-in-up" style="animation-delay: 0.2s;">
-        <h2 class="section-header mb-4 dark:text-gray-200">Pricing</h2>
-        <div class="grid grid-cols-1 md:grid-cols-3 gap-6">
-          <div class="input-box">
-            <label for="basePrice" class="block text-sm font-medium text-gray-700 dark:text-gray-300">Base Price</label>
-            <input type="number" name="price" value="<%= product.regularPrice%>" id="basePrice" class="mt-1 p-2 w-full border border-gray-300 rounded-md focus:ring-primary-light focus:border-primary-light dark:bg-gray-700 dark:border-gray-600 dark:text-white" placeholder="Enter base price">
-          </div>
-
-          <div class="input-box">
-            <label for="discount" class="block text-sm font-medium text-gray-700 dark:text-gray-300">Discount Percentage</label>
-            <input type="number" name="discount" value="<%= product.productOffer %>" id="discount" class="mt-1 p-2 w-full border border-gray-300 rounded-md focus:ring-primary-light focus:border-primary-light dark:bg-gray-700 dark:border-gray-600 dark:text-white" placeholder="Enter discount percentage">
+      <form action="/admin/edittedProduct/<%= product._id %>" method="post" enctype="multipart/form-data">
+        <!-- General Information Section -->
+        <div class="form-section p-6 mb-6 fade-in-up">
+          <h2 class="section-header">General Information</h2>
+          <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+            <div class="input-box">
+              <label class="block text-sm font-medium text-gray-400 mb-2">Product Name</label>
+              <input type="text" value="<%= product.name %>" name="name" placeholder="Enter product name" />
+            </div>
+            <div class="input-box">
+              <label class="block text-sm font-medium text-gray-400 mb-2">Stock Quantity</label>
+              <input type="number" value="<%= product.quantity %>" name="stock" placeholder="Enter stock quantity" />
+            </div>
+            <div class="input-box">
+              <label class="block text-sm font-medium text-gray-400 mb-2">Brand</label>
+              <input type="text" value="<%= product.brand %>" name="brand" placeholder="Enter brand name" />
+            </div>
+            <div class="input-box">
+              <label class="block text-sm font-medium text-gray-400 mb-2">Color</label>
+              <div class="color-picker-wrapper">
+                <div class="color-input-group">
+                  <div class="color-preview" id="colorPreview"></div>
+                  <input type="text" value="<%= product.color %>" name="color" class="color-text-input" id="colorTextInput" placeholder="Select or enter color" readonly />
+                </div>
+                <div class="color-picker-popup" id="colorPickerPopup">
+                  <div class="preset-colors" id="presetColors"></div>
+                  <input type="color" class="custom-picker" id="customColorPicker" value="#ffffff" />
+                </div>
+              </div>
+            </div>
+            <div class="col-span-2 input-box">
+              <label class="block text-sm font-medium text-gray-400 mb-2">Description</label>
+              <textarea name="description" rows="4" placeholder="Enter product description"><%= product.description %></textarea>
+            </div>
           </div>
         </div>
-      </div>
 
-      <!-- Category Section -->
-      <div class="bg-white dark:bg-gray-800 p-6 rounded-lg shadow-md mb-6 fade-in-up" style="animation-delay: 0.4s;">
-        <h2 class="section-header mb-4 dark:text-gray-200">Category & Tags</h2>
-        <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+        <!-- Pricing Section -->
+        <div class="form-section p-6 mb-6 fade-in-up">
+          <h2 class="section-header">Pricing Information</h2>
+          <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+            <div class="input-box">
+              <label class="block text-sm font-medium text-gray-400 mb-2">Base Price</label>
+              <input type="number" value="<%= product.regularPrice %>" name="price" placeholder="Enter base price" />
+            </div>
+            <div class="input-box">
+              <label class="block text-sm font-medium text-gray-400 mb-2">Discount Percentage</label>
+              <input type="number" value="<%= product.productOffer %>" name="discount" placeholder="Enter discount percentage" />
+            </div>
+          </div>
+        </div>
+
+        <!-- Category Section -->
+        <div class="form-section p-6 mb-6 fade-in-up">
+          <h2 class="section-header">Category</h2>
           <div class="input-box">
-            <label for="category" class="block text-sm font-medium text-gray-700 dark:text-gray-300">Product Category</label>
-            <select id="category" name="category" class="mt-1 p-2 w-full border border-gray-300 rounded-md focus:ring-primary-light focus:border-primary-light dark:bg-gray-700 dark:border-gray-600 dark:text-white">
-              <option value="<%= category.name %>"><%= category.name %> ( Old Value )</option>
-              <% categories.forEach( category => { %>
+            <label class="block text-sm font-medium text-gray-400 mb-2">Product Category</label>
+            <select name="category" class="w-full">
+              <option value="<%= category.name %>"><%= category.name %> (Current)</option>
+              <% categories.forEach(category => { %>
               <option value="<%= category.name %>"><%= category.name %></option>
               <% }) %>
             </select>
           </div>
         </div>
-      </div>
 
-      <!-- Image Upload Section -->
-      <div class="bg-white dark:bg-gray-800 p-6 rounded-lg shadow-md mb-6 fade-in-up" style="animation-delay: 0.6s;">
-        <h2 class="section-header mb-4 dark:text-gray-200">Product Images</h2>
+        <!-- Images Section -->
+        <div class="form-section p-6 mb-6 fade-in-up">
+          <h2 class="section-header">Product Images</h2>
 
-        <!-- Existing Images -->
-        <div class="mb-4">
-          <h3 class="text-lg font-semibold mb-2 dark:text-gray-300">Current Images</h3>
-          <div class="grid grid-cols-2 md:grid-cols-4 gap-4">
-            <% product.images.forEach((image, index) => { %>
-            <div class="relative">
-              <img src="<%= image %>" alt="Product Image <%= index + 1 %>" class="w-full h-32 object-cover rounded-md">
-            </div>
-            <% }) %>
-          </div>
-        </div>
-
-        <!-- Upload New Images -->
-        <h3 class="text-lg font-semibold mb-2 dark:text-gray-300">Upload New Images</h3>
-        <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-          <div class="image-upload h-32 flex justify-center items-center rounded-md dark:border-gray-600">
-            <label class="cursor-pointer">
-              <input type="file" name="productImage" accept="image/png, image/jpeg, image/jpg" class="hidden" multiple />
-              <div class="text-gray-500 dark:text-gray-400 flex flex-col items-center">
-                <i class="fas fa-cloud-upload-alt text-3xl mb-2"></i>
-                <span>Upload Images (Max 4)</span>
+          <!-- Current Images -->
+          <div class="mb-6">
+            <h3 class="text-lg font-medium text-gray-300 mb-4">Current Images</h3>
+            <div class="grid grid-cols-2 md:grid-cols-4 gap-4" id="currentImages">
+              <% product.images.forEach((image, index) => { %>
+              <div class="image-container" data-image-index="<%= index %>">
+                <img src="<%= image %>" alt="Product Image <%= index + 1 %>" class="w-full h-32 object-cover rounded-lg" />
+                <div class="image-overlay">
+                  <button type="button" class="remove-image-btn" onclick="removeImage(<%= index %>)">
+                    <i class="fas fa-times"></i>
+                  </button>
+                </div>
+                <input type="hidden" name="existingImages[]" value="<%= image %>" />
               </div>
+              <% }) %>
+            </div>
+          </div>
+          <!-- Upload New Images -->
+          <h3 class="text-lg font-medium text-gray-300 mb-4">Upload New Images</h3>
+          <div class="image-upload rounded-lg p-6 text-center">
+            <input type="file" name="productImage" accept="image/png, image/jpeg, image/jpg" multiple class="hidden" id="imageInput" />
+            <label for="imageInput" class="cursor-pointer block">
+              <i class="fas fa-cloud-upload-alt text-3xl mb-2 text-blue-500"></i>
+              <p class="text-gray-400">Drop your images here or click to browse</p>
+              <p class="text-sm text-gray-500 mt-2">Maximum 4 images allowed</p>
             </label>
           </div>
-          <div id="imagePreviewContainer" class="col-span-2"></div>
+          <div id="imagePreview" class="grid grid-cols-2 md:grid-cols-4 gap-4 mt-4"></div>
         </div>
-      </div>
 
-      <!-- Submit Button -->
-      <div class="flex justify-center mb-6 fade-in-up" style="animation-delay: 0.8s;">
-        <button type="submit" class="px-6 py-2 bg-primary-light dark:bg-primary-dark text-white font-bold rounded-lg hover:bg-blue-700 dark:hover:bg-blue-600 focus:outline-none transition-all duration-300 transform hover:scale-105 hover:shadow-lg">Save Changes</button>
-      </div>
-    </form>
+        <!-- Submit Button -->
+        <div class="flex justify-center mb-6 fade-in-up">
+          <button type="submit" class="save-button">
+            <i class="fas fa-save mr-2"></i>
+            Save Changes
+          </button>
+        </div>
+      </form>
+    </div>
   </div>
 
-  <!-- JavaScript for animations and theme toggle -->
-  <script src="/js/edit-product.js"></script>
+  <!-- Loading Overlay -->
+  <div id="loadingOverlay" class="loading-overlay fixed inset-0 hidden items-center justify-center z-50">
+    <div class="bg-gray-900 p-8 rounded-lg shadow-xl">
+      <div class="loading-spinner mb-4"></div>
+      <p class="text-center text-gray-300">Saving changes...</p>
+    </div>
+  </div>
+
+  <script>
+    document.addEventListener('DOMContentLoaded', function() {
+      // Image preview functionality
+      const imageInput = document.getElementById('imageInput');
+      const imagePreview = document.getElementById('imagePreview');
+      const currentImages = document.getElementById('currentImages');
+      let removedImages = [];
+
+      // Function to remove existing image
+      window.removeImage = function(index) {
+        const imageContainer = currentImages.querySelector(`[data-image-index="${index}"]`);
+        if (imageContainer) {
+          imageContainer.classList.add('removed-image');
+          setTimeout(() => {
+            imageContainer.remove();
+          }, 300);
+
+          // Add to removed images array
+          const imageUrl = imageContainer.querySelector('img').src;
+          removedImages.push(imageUrl);
+
+          // Add hidden input for removed images
+          const removedInput = document.createElement('input');
+          removedInput.type = 'hidden';
+          removedInput.name = 'removedImages[]';
+          removedInput.value = imageUrl;
+          document.querySelector('form').appendChild(removedInput);
+        }
+      };
+
+      // Enhanced image preview functionality
+      imageInput.addEventListener('change', function(e) {
+        const files = Array.from(e.target.files);
+        const currentImageCount = currentImages.children.length;
+        const maxImages = 4;
+
+        // Check total images (current + new) doesn't exceed max
+        if (files.length + currentImageCount - removedImages.length > maxImages) {
+          alert(`You can only have a maximum of ${maxImages} images. Please select fewer images.`);
+          imageInput.value = '';
+          return;
+        }
+
+        imagePreview.innerHTML = '';
+        files.forEach((file, index) => {
+          const reader = new FileReader();
+          reader.onload = function(e) {
+            const previewContainer = document.createElement('div');
+            previewContainer.className = 'image-preview-container';
+            previewContainer.innerHTML = `
+                            <div class="relative group">
+                                <img src="${e.target.result}" class="w-full h-32 object-cover rounded-lg shadow-md" />
+                                <div class="absolute inset-0 bg-black bg-opacity-40 opacity-0 group-hover:opacity-100 
+                                            transition-opacity duration-300 rounded-lg flex items-center justify-center">
+                                    <button type="button" class="remove-image-btn" onclick="this.closest('.image-preview-container').remove()">
+                                        <i class="fas fa-times"></i>
+                                    </button>
+                                </div>
+                            </div>
+                        `;
+            imagePreview.appendChild(previewContainer);
+          };
+          reader.readAsDataURL(file);
+        });
+      });
+
+      // Form submission handling
+      document.querySelector('form').addEventListener('submit', function(e) {
+        const currentImageCount = currentImages.children.length;
+        const newImageCount = imagePreview.children.length;
+
+        if (currentImageCount + newImageCount === 0) {
+          e.preventDefault();
+          alert('Please maintain at least one product image.');
+          return;
+        }
+      });
+
+      imageInput.addEventListener('change', function(e) {
+        imagePreview.innerHTML = '';
+        const files = Array.from(e.target.files);
+
+        files.forEach(file => {
+          const reader = new FileReader();
+          reader.onload = function(e) {
+            const preview = document.createElement('div');
+            preview.className = 'relative';
+            preview.innerHTML = `
+              <img src="${e.target.result}" class="w-full h-32 object-cover rounded-lg shadow-md" />
+              <div class="absolute inset-0 bg-black bg-opacity-40 opacity-0 hover:opacity-100 transition-opacity duration-300 rounded-lg flex items-center justify-center">
+                <p class="text-white text-sm">${file.name}</p>
+              </div>
+            `;
+            imagePreview.appendChild(preview);
+          };
+          reader.readAsDataURL(file);
+        });
+      });
+
+      // Form submission and loading overlay
+      const form = document.querySelector('form');
+      const loadingOverlay = document.getElementById('loadingOverlay');
+
+      form.addEventListener('submit', function() {
+        loadingOverlay.classList.remove('hidden');
+        loadingOverlay.classList.add('flex');
+      });
+
+      // Animation for form sections
+      const formSections = document.querySelectorAll('.form-section');
+      formSections.forEach((section, index) => {
+        section.style.opacity = '0';
+        section.style.animation = `fadeInUp 0.6s ease-out ${index * 0.2}s forwards`;
+      });
+    });
+
+    document.addEventListener('DOMContentLoaded', function() {
+      const colorPreview = document.getElementById('colorPreview');
+      const colorTextInput = document.getElementById('colorTextInput');
+      const colorPickerPopup = document.getElementById('colorPickerPopup');
+      const customColorPicker = document.getElementById('customColorPicker');
+      const presetColorsDiv = document.getElementById('presetColors');
+
+      // Preset colors array
+      const presetColors = [
+        '#ff0000', '#ff4d00', '#ff9900', '#ffcc00', '#ffff00', '#ccff00', '#99ff00', '#4dff00',
+        '#00ff00', '#00ff4d', '#00ff99', '#00ffcc', '#00ffff', '#00ccff', '#0099ff', '#004dff',
+        '#0000ff', '#4d00ff', '#9900ff', '#cc00ff', '#ff00ff', '#ff00cc', '#ff0099', '#ff004d'
+      ];
+
+      // Create preset color buttons
+      presetColors.forEach(color => {
+        const colorDiv = document.createElement('div');
+        colorDiv.className = 'preset-color';
+        colorDiv.style.backgroundColor = color;
+        colorDiv.addEventListener('click', () => updateColor(color));
+        presetColorsDiv.appendChild(colorDiv);
+      });
+
+      // Initialize with current color
+      updateColor(colorTextInput.value || '#ffffff');
+
+      // Toggle color picker popup
+      colorPreview.addEventListener('click', () => {
+        colorPickerPopup.classList.toggle('active');
+      });
+
+      // Custom color picker change
+      customColorPicker.addEventListener('input', (e) => {
+        updateColor(e.target.value);
+      });
+
+      // Close popup when clicking outside
+      document.addEventListener('click', (e) => {
+        if (!colorPickerPopup.contains(e.target) &&
+          !colorPreview.contains(e.target)) {
+          colorPickerPopup.classList.remove('active');
+        }
+      });
+
+      function updateColor(color) {
+        colorPreview.style.backgroundColor = color;
+        colorTextInput.value = color;
+        customColorPicker.value = color;
+      }
+    });
+  </script>
 </body>
 
 </html>

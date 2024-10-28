@@ -118,6 +118,10 @@
           </div>
 
           <div class="mt-8">
+            <button type="button" id="resetPasswordBtn" class="w-full mb-4 bg-blue-500 text-white px-6 py-4 rounded-lg font-medium hover:bg-blue-600 focus:outline-none focus:ring-4 focus:ring-blue-300 focus:ring-opacity-50 transform hover:scale-105 transition-all duration-300 shadow-lg hover:shadow-xl">
+              <i class="fas fa-key mr-2"></i>
+              Reset Password
+            </button>
             <button type="submit" class="w-full bg-red-600 text-white px-6 py-4 rounded-lg font-medium hover:bg-red-700 focus:outline-none focus:ring-4 focus:ring-red-500 focus:ring-opacity-50 transform hover:scale-105 transition-all duration-300 shadow-lg hover:shadow-xl">
               <i class="fas fa-save mr-2"></i>
               Save Changes
@@ -132,6 +136,44 @@
   <%- include('../layouts/footer.ejs') %>
 
   <script>
+    document.addEventListener('DOMContentLoaded', () => {
+      const resetPasswordBtn = document.getElementById('resetPasswordBtn');
+
+      resetPasswordBtn.addEventListener('click', async function() {
+        // Add pulse animation
+        this.classList.add('animate-pulse');
+
+        try {
+          const response = await fetch('/account/reset-password', {
+            method: 'POST',
+            headers: {
+              'Content-Type': 'application/json',
+            },
+            body: JSON.stringify({
+              email: document.querySelector('input[name="email"]').value
+            })
+          });
+
+          const result = await response.json();
+
+          if (response.ok) {
+            NotificationSystem.show(result.message, 'success');
+          } else {
+            NotificationSystem.show(result.message || 'An error occurred', 'error');
+          }
+        } catch (error) {
+          console.error('Error:', error);
+          NotificationSystem.show('An unexpected error occurred', 'error');
+        } finally {
+          // Remove pulse animation
+          setTimeout(() => {
+            this.classList.remove('animate-pulse');
+          }, 1000);
+        }
+      });
+    });
+
+
     // Notification system
     class NotificationSystem {
       static show(message, type = 'success') {

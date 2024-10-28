@@ -1,301 +1,387 @@
 <!DOCTYPE html>
-<html lang="en" class="light">
+<html lang="en" class="dark">
 
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Yadro - Categories</title>
   <script src="https://cdn.tailwindcss.com"></script>
-  <link rel="icon" href="/images/logo.png" type="image/x-icon">
-  <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
-  <script src="/js/toggle.js"></script>
-  <link rel="stylesheet" href="/css/category.css">
-  <link rel="stylesheet" href="/css/products.css">
-
   <style>
-    @keyframes fadeIn {
+    :root {
+      --primary-dark: #1f2937;
+      --secondary-dark: #111827;
+      --accent-blue: #3b82f6;
+      --text-primary: #e5e7eb;
+      --text-secondary: #9ca3af;
+    }
+
+    body {
+      background-color: var(--secondary-dark);
+      color: var(--text-primary);
+    }
+
+    @keyframes fadeInUp {
       from {
         opacity: 0;
-        transform: scale(0.95);
+        transform: translateY(20px);
       }
 
       to {
         opacity: 1;
-        transform: scale(1);
+        transform: translateY(0);
       }
     }
 
-    @keyframes fadeOut {
-      from {
-        opacity: 1;
-        transform: scale(1);
+    @keyframes glowPulse {
+      0% {
+        box-shadow: 0 0 5px rgba(59, 130, 246, 0.5);
       }
 
-      to {
-        opacity: 0;
-        transform: scale(0.95);
+      50% {
+        box-shadow: 0 0 15px rgba(59, 130, 246, 0.8);
+      }
+
+      100% {
+        box-shadow: 0 0 5px rgba(59, 130, 246, 0.5);
       }
     }
 
-    .animate-fadeIn {
-      animation: fadeIn 0.3s ease-out forwards;
+    .fade-in-up {
+      animation: fadeInUp 0.6s ease-out forwards;
     }
 
-    .animate-fadeOut {
-      animation: fadeOut 0.3s ease-in forwards;
+    .search-container {
+      background: var(--primary-dark);
+      border-radius: 12px;
+      box-shadow: 0 4px 20px rgba(0, 0, 0, 0.3);
+      padding: 1.5rem;
+      transition: all 0.3s ease;
+      border: 1px solid rgba(255, 255, 255, 0.1);
+    }
+
+    .search-container:hover {
+      box-shadow: 0 6px 24px rgba(0, 0, 0, 0.4);
+      border-color: rgba(59, 130, 246, 0.4);
+    }
+
+    .search-input {
+      background: rgba(17, 24, 39, 0.8);
+      border: 1px solid rgba(255, 255, 255, 0.1);
+      color: var(--text-primary);
+      padding: 0.75rem 1rem;
+      border-radius: 8px;
+      transition: all 0.3s ease;
+      width: 300px;
+    }
+
+    .search-input:focus {
+      background: rgba(17, 24, 39, 0.95);
+      border-color: var(--accent-blue);
+      box-shadow: 0 0 0 2px rgba(59, 130, 246, 0.2);
+      outline: none;
+    }
+
+    .table-container {
+      background: var(--primary-dark);
+      border-radius: 16px;
+      box-shadow: 0 4px 20px rgba(0, 0, 0, 0.3);
+      border: 1px solid rgba(255, 255, 255, 0.1);
+      overflow: hidden;
+    }
+
+    .table-row {
+      transition: all 0.2s ease;
+      border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+    }
+
+    .table-row:hover {
+      background: rgba(59, 130, 246, 0.1);
+      transform: translateX(4px);
+    }
+
+    .status-badge {
+      padding: 0.25rem 0.75rem;
+      border-radius: 9999px;
+      font-size: 0.75rem;
+      font-weight: 500;
+      transition: all 0.3s ease;
+    }
+
+    .status-badge.active {
+      background: rgba(16, 185, 129, 0.2);
+      color: #34d399;
+      border: 1px solid rgba(16, 185, 129, 0.4);
+    }
+
+    .status-badge.not-listed {
+      background: rgba(239, 68, 68, 0.2);
+      color: #f87171;
+      border: 1px solid rgba(239, 68, 68, 0.4);
+    }
+
+    .action-icon {
+      padding: 0.5rem;
+      border-radius: 8px;
+      transition: all 0.2s ease;
+      color: var(--text-secondary);
+      position: relative;
+    }
+
+    .edit-icon:hover {
+      background: rgba(59, 130, 246, 0.2);
+      color: #60a5fa;
+    }
+
+    .view-icon:hover {
+      background: rgba(16, 185, 129, 0.2);
+      color: #34d399;
+    }
+
+    .delete-icon:hover {
+      background: rgba(239, 68, 68, 0.2);
+      color: #f87171;
+    }
+
+    .add-category-btn {
+      background: linear-gradient(135deg, #10b981, #059669);
+      color: white;
+      padding: 0.75rem 1.5rem;
+      border-radius: 8px;
+      transition: all 0.3s ease;
+      border: none;
+      font-weight: 500;
+      text-shadow: 0 1px 2px rgba(0, 0, 0, 0.2);
+    }
+
+    .add-category-btn:hover {
+      transform: translateY(-2px);
+      box-shadow: 0 4px 12px rgba(16, 185, 129, 0.3);
+    }
+
+    .tooltip {
+      position: absolute;
+      bottom: 100%;
+      left: 50%;
+      transform: translateX(-50%);
+      padding: 0.5rem 1rem;
+      background: rgba(0, 0, 0, 0.9);
+      color: white;
+      border-radius: 6px;
+      font-size: 0.875rem;
+      opacity: 0;
+      visibility: hidden;
+      transition: all 0.3s ease;
+      white-space: nowrap;
+      pointer-events: none;
+    }
+
+    .action-icon:hover .tooltip {
+      opacity: 1;
+      visibility: visible;
+      transform: translateX(-50%) translateY(-8px);
+    }
+
+    .offer-price {
+      background: rgba(59, 130, 246, 0.2);
+      color: #60a5fa;
+      border: 1px solid rgba(59, 130, 246, 0.4);
+      padding: 0.25rem 0.75rem;
+      border-radius: 9999px;
+      font-size: 0.875rem;
     }
   </style>
 </head>
 
-<body class="bg-gray-100 font-sans transition-all duration-300 dark:bg-gray-800">
-
+<body class="min-h-screen">
   <div class="flex">
-    <!-- Sidebar (assumed to be included) -->
     <%- include('../layouts/admin-sidebar.ejs') %>
 
-    <!-- Main Content -->
-    <div class="flex-1 ml-64 p-6">
-
-
-      <% if (success_msg.length > 0) { %>
-      <div id="successMessage" class="message bg-green-100 border border-green-400 text-green-700 px-4 py-3 rounded relative mb-6" role="alert">
-        <strong class="font-bold">Success!</strong>
-        <span class="block sm:inline"><%= success_msg %></span>
-      </div>
-      <% } %>
-
-      <% if (error_msg.length > 0) { %>
-      <div id="errorMessage" class="message bg-red-100 border border-red-400 text-red-700 px-4 py-3 rounded relative mb-6" role="alert">
-        <strong class="font-bold">Error!</strong>
-        <span class="block sm:inline"><%= error_msg %></span>
-      </div>
-      <% } %>
-
-
-
-
-      <div class="flex items-center justify-between mb-6">
-        <h1 class="text-3xl font-bold text-gray-800 dark:text-white fade-in-up">All Categories</h1>
-        <div class="flex items-center space-x-4">
-          <div class="theme-toggle" id="themeToggle"></div>
-          <a href="/admin/add-category" class="add-category-btn px-4 py-2 bg-green-600 text-white rounded-lg relative overflow-hidden button">
-            <span class="relative z-10">Add Category</span>
+    <div class="flex-1 ml-64 p-8">
+      <!-- Header Section -->
+      <div class="flex items-center justify-between mb-8 fade-in-up">
+        <h1 class="text-4xl font-bold bg-gradient-to-r from-blue-400 to-blue-600 text-transparent bg-clip-text">
+          Categories Management
+        </h1>
+        <div class="flex items-center space-x-6">
+          <a href="/admin/add-category" class="add-category-btn">
+            <i class="fas fa-plus mr-2"></i>
+            Add New Category
           </a>
         </div>
       </div>
 
-      <!-- Search and Filter -->
-      <form action="/admin/category" method="GET" class="mb-8 fade-in-up" style="animation-delay: 0.2s;">
-        <div class="search-container flex items-center justify-between">
-          <i class="fas fa-search search-icon ml-4"></i>
-          <input type="text" name="search" placeholder="Search customers..." class="search-input" />
-          <select name="status" class="search-select mr-5">
-            <option value="">All Status</option>
-            <option value="active">Active</option>
-            <option value="notListed">Not Listed</option>
-          </select>
-          <button type="submit" class="search-button">
-            Search
-          </button>
+      <!-- Search and Filter Section -->
+      <form action="/admin/category" method="GET" class="mb-8 fade-in-up">
+        <div class="search-container">
+          <div class="flex items-center justify-between">
+            <div class="flex items-center flex-1">
+              <i class="fas fa-search text-gray-400 ml-4"></i>
+              <input type="text" name="search" placeholder="Search categories..." class="search-input ml-4 flex-1" />
+            </div>
+            <div class="flex items-center space-x-4">
+              <select name="status" class="search-input">
+                <option value="">All Status</option>
+                <option value="active">Active</option>
+                <option value="notListed">Not Listed</option>
+              </select>
+              <button type="submit" class="add-category-btn">
+                <i class="fas fa-search mr-2"></i>
+                Search
+              </button>
+            </div>
+          </div>
         </div>
       </form>
 
       <!-- Categories Table -->
-      <div class="overflow-x-auto fade-in-up" style="animation-delay: 0.4s;">
-        <table class="min-w-full bg-white dark:bg-gray-700 border border-gray-200 dark:border-gray-600 shadow-md rounded-lg overflow-hidden">
+      <div class="table-container fade-in-up">
+        <table class="min-w-full">
           <thead>
-            <tr class="bg-gray-50 dark:bg-gray-600 text-gray-600 dark:text-gray-200 uppercase text-sm leading-normal">
-              <th class="py-3 px-6 text-left">Sl : </th>
-              <th class="py-3 px-6 text-left">Name</th>
-              <th class="py-3 px-6 text-left">Description</th>
-              <th class="py-3 px-6 text-left">Offer Price</th>
-              <th class="py-3 px-6 text-left">Status</th>
-              <th class="py-3 px-6 text-left">Action</th>
+            <tr class="text-gray-400 text-sm uppercase">
+              <th class="py-4 px-6 text-left font-medium">Sl</th>
+              <th class="py-4 px-6 text-left font-medium">Name</th>
+              <th class="py-4 px-6 text-left font-medium">Description</th>
+              <th class="py-4 px-6 text-left font-medium">Offer</th>
+              <th class="py-4 px-6 text-left font-medium">Status</th>
+              <th class="py-4 px-6 text-left font-medium">Action</th>
             </tr>
           </thead>
-          <tbody class="text-gray-600 dark:text-gray-200">
-
-            <% categories.forEach( (category , index) => { %>
-
-            <tr class="table-row border-b border-gray-200 dark:border-gray-700 hover:bg-gray-50 dark:hover:bg-gray-600" data-category-id="<%= category._id %>">
-              <th class="py-3 px-6 text-left"><%= index+1 %></th>
-              <td class="py-3 px-6"><%= category.name %></td>
-              <td class="py-3 px-6"><%= category.description %></td>
-              <td class="py-3 px-6 offer-price"><%= category.categoryOffer %>%</td>
-              <% if (category.isListed) { %>
-              <td class="py-3 px-6"><span class="bg-green-200 text-green-600 py-1 px-3 rounded-full text-xs">Active</span></td>
-              <% } else { %>
-              <td class="py-3 px-6"><span class="bg-red-200 text-red-600 py-1 px-3 rounded-full text-xs">Not Listed</span></td>
-              <% } %>
-              <td>
+          <tbody>
+            <% categories.forEach((category, index) => { %>
+            <tr class="table-row">
+              <td class="py-4 px-6 text-gray-300"><%= index + 1 %></td>
+              <td class="py-4 px-6 font-medium"><%= category.name %></td>
+              <td class="py-4 px-6 text-gray-300"><%= category.description %></td>
+              <td class="py-4 px-6">
+                <span class="offer-price"><%= category.categoryOffer %>%</span>
+              </td>
+              <td class="py-4 px-6">
+                <span class="status-badge <%= category.isListed ? 'active' : 'not-listed' %>">
+                  <%= category.isListed ? 'Active' : 'Not Listed' %>
+                </span>
+              </td>
+              <td class="py-4 px-6">
                 <div class="flex space-x-3">
-                  <a href="/admin/edit-category/<%= category._id %>" class="relative group action-icon edit-icon" title="Edit">
+                  <a href="/admin/edit-category/<%= category._id %>" class="action-icon edit-icon">
                     <i class="fas fa-edit"></i>
-                    <div class="tooltip hidden absolute bottom-full mb-2 w-max text-sm bg-gray-800 text-white p-2 rounded-lg opacity-0 transition-opacity duration-300 group-hover:opacity-100 group-hover:block">
-                      Edit
-                      <div class="tooltip-arrow"></div>
-                    </div>
+                    <span class="tooltip">Edit Category</span>
                   </a>
-                  <a href="/admin/viewCategory/<%= category._id %>" class="relative group action-icon view-icon" title="View">
+                  <a href="/admin/viewCategory/<%= category._id %>" class="action-icon view-icon">
                     <i class="fas fa-eye"></i>
-                    <div class="tooltip hidden absolute bottom-full mb-2 w-max text-sm bg-gray-800 text-white p-2 rounded-lg opacity-0 transition-opacity duration-300 group-hover:opacity-100 group-hover:block">
-                      View
-                      <div class="tooltip-arrow"></div>
-                    </div>
+                    <span class="tooltip">View Details</span>
                   </a>
-                  <a href="/admin/delete-category/<%= category._id %>" class="relative group action-icon delete-icon" title="Delete">
+                  <a href="/admin/delete-category/<%= category._id %>" class="action-icon delete-icon">
                     <i class="fas fa-trash"></i>
-                    <!-- Tooltip -->
-                    <div class="tooltip hidden absolute bottom-full mb-2 w-max text-sm bg-gray-800 text-white p-2 rounded-lg opacity-0 transition-opacity duration-300 group-hover:opacity-100 group-hover:block">
-                      Delete
-                      <div class="tooltip-arrow"></div>
-                    </div>
+                    <span class="tooltip">Delete Category</span>
                   </a>
                 </div>
               </td>
             </tr>
-
             <% }) %>
-
-            <!-- Add more rows as needed -->
           </tbody>
         </table>
-
       </div>
 
       <!-- Pagination -->
-      <div class="flex justify-between items-center mt-4 fade-in-up" style="animation-delay: 0.6s;">
-        <div class="flex space-x-2">
-          <% if (totalPages > 1) { %>
-          <a href="?page=<%= currentPage-1 %>&search=<%= searchTerm %>" class="pagination-button px-3 py-1 bg-gray-200 dark:bg-gray-600 text-gray-600 dark:text-gray-200 rounded-md hover:bg-gray-300 dark:hover:bg-gray-500 transition-colors duration-300">Previous</a>
-
-
-          <% for( let i = 0; i < totalPages; i++ ) { %>
-          <a href="?page=<%= i+1 %>&search=<%= searchTerm %>" class="pagination-button px-3 py-1 
-                 <%= currentPage == i+1 ? 'bg-blue-500 text-white' : 'bg-gray-100 text-black hover:text-white' %> 
-                  rounded-md hover:bg-blue-600 transition-colors duration-300">
-            <%= i+1 %>
-          </a>
-          <% } %>
-
-
-          <a href="?page=<%= currentPage+1 %>&search=<%= searchTerm %>" class="pagination-button px-3 py-1 bg-gray-200 dark:bg-gray-600 text-gray-600 dark:text-gray-200 rounded-md hover:bg-gray-300 dark:hover:bg-gray-500 transition-colors duration-300">Next</a>
-          <% } %>
-
-        </div>
+      <div class="flex justify-center mt-6 space-x-2 fade-in-up">
+        <% if (totalPages > 1) { %>
+        <a href="?page=<%= currentPage-1 %>&search=<%= searchTerm %>" class="px-4 py-2 bg-gray-700 text-gray-200 rounded-md hover:bg-gray-600 transition-colors">
+          Previous
+        </a>
+        <% for(let i = 0; i < totalPages; i++) { %>
+        <a href="?page=<%= i+1 %>&search=<%= searchTerm %>" class="px-4 py-2 rounded-md transition-colors <%= currentPage == i+1 ? 'bg-blue-600 text-white' : 'bg-gray-700 text-gray-200 hover:bg-gray-600' %>">
+          <%= i+1 %>
+        </a>
+        <% } %>
+        <a href="?page=<%= currentPage+1 %>&search=<%= searchTerm %>" class="px-4 py-2 bg-gray-700 text-gray-200 rounded-md hover:bg-gray-600 transition-colors">
+          Next
+        </a>
+        <% } %>
       </div>
     </div>
   </div>
 
-  <!-- Model for adding offer -->
-  >
-  <div id="addOfferModal" class="fixed inset-0 bg-gray-600 bg-opacity-50 overflow-y-auto h-full w-full hidden flex items-center justify-center">
-    <div class="modal-content transform transition-all ease-in-out duration-300 scale-95 opacity-0">
-      <div class="relative bg-white rounded-lg shadow-xl mx-auto max-w-md w-full">
-        <div class="absolute top-0 right-0 pt-4 pr-4">
-          <button id="closeModal" class="text-gray-400 hover:text-gray-500 focus:outline-none focus:text-gray-500 transition ease-in-out duration-150">
-            <svg class="h-6 w-6" stroke="currentColor" fill="none" viewBox="0 0 24 24">
-              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12" />
-            </svg>
-          </button>
-        </div>
-        <div class="p-6">
-          <h3 class="text-lg leading-6 font-medium text-gray-900 mb-4">Add Special Offer</h3>
-          <div class="mt-2">
-            <input type="hidden" id="categoryId">
-            <div class="mb-4">
-              <label for="offerPrice" class="block text-sm font-medium text-gray-700 mb-2">Offer Price</label>
-              <div class="mt-1 relative rounded-md shadow-sm">
-                <div class="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
-                  <span class="text-gray-500 sm:text-sm">%</span>
-                </div>
-                <input type="text" id="offerPrice" class="focus:ring-indigo-500 focus:border-indigo-500 block w-full pl-7 pr-12 sm:text-sm border-gray-300 rounded-md" placeholder="0.00">
-              </div>
-            </div>
-          </div>
-          <div class="mt-6">
-            <button id="submitOffer" class="w-full inline-flex justify-center rounded-md border border-transparent shadow-sm px-4 py-2 bg-indigo-600 text-base font-medium text-white hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500 sm:text-sm transition-all duration-300 ease-in-out transform hover:scale-105">
-              Submit Offer
-            </button>
-          </div>
-        </div>
-      </div>
-    </div>
-  </div>
 
-  <script src="/js/category.js"></script>
   <script>
-    // Create the modal HTML
-    const modalHTML = `
-<div id="deleteModal" class="fixed inset-0 bg-gray-600 bg-opacity-50 overflow-y-auto h-full w-full hidden" style="z-index: 1000;">
-  <div class="relative top-20 mx-auto p-5 border w-96 shadow-lg rounded-md bg-white dark:bg-gray-800">
-    <div class="mt-3 text-center">
-      <div class="mx-auto flex items-center justify-center h-12 w-12 rounded-full bg-red-100 dark:bg-red-900">
-        <svg class="h-6 w-6 text-red-600 dark:text-red-400" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
-          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-3L13.732 4c-.77-1.333-2.694-1.333-3.464 0L3.34 16c-.77 1.333.192 3 1.732 3z"></path>
-        </svg>
-      </div>
-      <h3 class="text-lg leading-6 font-medium text-gray-900 dark:text-white mt-4">Delete Category</h3>
-      <div class="mt-2 px-7 py-3">
-        <p class="text-sm text-gray-500 dark:text-gray-300">Are you sure you want to delete this Category? This action cannot be undone.</p>
-      </div>
-      <div class="items-center px-4 py-3">
-        <button id="deleteConfirm" class="px-4 py-2 bg-red-500 text-white text-base font-medium rounded-md w-24 mr-2 hover:bg-red-600 focus:outline-none focus:ring-2 focus:ring-red-300">Yes</button>
-        <button id="deleteCancel" class="px-4 py-2 bg-gray-300 text-gray-700 text-base font-medium rounded-md w-24 hover:bg-gray-400 focus:outline-none focus:ring-2 focus:ring-gray-500">No</button>
-      </div>
-    </div>
-  </div>
-</div>
-`;
+    document.addEventListener('DOMContentLoaded', function() {
+      // Stagger animation for table rows
+      const tableRows = document.querySelectorAll('.table-row');
+      tableRows.forEach((row, index) => {
+        row.style.opacity = '0';
+        row.style.transform = 'translateY(20px)';
+        setTimeout(() => {
+          row.style.transition = 'all 0.3s ease';
+          row.style.opacity = '1';
+          row.style.transform = 'translateY(0)';
+        }, 100 * index);
+      });
 
-    // Append the modal HTML to the body
-    document.body.insertAdjacentHTML('beforeend', modalHTML);
+      // Enhanced search experience
+      const searchInput = document.querySelector('input[name="search"]');
+      let searchTimeout;
 
-    // Get the modal
-    const modal = document.getElementById('deleteModal');
+      searchInput.addEventListener('input', function(e) {
+        clearTimeout(searchTimeout);
+        searchTimeout = setTimeout(() => {
+          this.closest('form').submit();
+        }, 500);
+      });
 
-    // Function to open the modal
-    function openModal(deleteUrl) {
-      modal.classList.remove('hidden');
-      modal.classList.add('flex', 'items-center', 'justify-center');
+      // Status badge animations
+      document.querySelectorAll('.bg-green-200, .bg-red-200').forEach(badge => {
+        badge.addEventListener('mouseover', function() {
+          this.style.transform = 'scale(1.1)';
+          this.style.animation = 'glowPulse 1.5s infinite';
+        });
 
-      // Add animation classes
-      modal.firstElementChild.classList.add('animate-fadeIn');
+        badge.addEventListener('mouseout', function() {
+          this.style.transform = 'scale(1)';
+          this.style.animation = 'none';
+        });
+      });
 
-      // Set up event listeners for the buttons
-      document.getElementById('deleteConfirm').onclick = () => {
-        window.location.href = deleteUrl;
-      };
-      document.getElementById('deleteCancel').onclick = closeModal;
-    }
+      // Add smooth scroll to top button
+      const scrollButton = document.createElement('button');
+      scrollButton.innerHTML = '<i class="fas fa-arrow-up"></i>';
+      scrollButton.className = 'fixed bottom-8 right-8 bg-blue-600 p-4 rounded-full shadow-lg opacity-0 transition-all duration-300 hover:bg-blue-700';
+      document.body.appendChild(scrollButton);
 
-    // Function to close the modal
-    function closeModal() {
-      modal.firstElementChild.classList.add('animate-fadeOut');
-      setTimeout(() => {
-        modal.classList.add('hidden');
-        modal.classList.remove('flex', 'items-center', 'justify-center');
-        modal.firstElementChild.classList.remove('animate-fadeIn', 'animate-fadeOut');
-      }, 300); // Match this with the animation duration
-    }
+      window.addEventListener('scroll', () => {
+        scrollButton.style.opacity = window.scrollY > 500 ? '1' : '0';
+        scrollButton.style.transform = window.scrollY > 500 ? 'scale(1)' : 'scale(0)';
+      });
 
-    // Add click event listeners to all delete icons
-    document.querySelectorAll('.delete-icon').forEach(icon => {
-      icon.addEventListener('click', function(e) {
-        e.preventDefault();
-        const deleteUrl = this.getAttribute('href');
-        openModal(deleteUrl);
+      scrollButton.addEventListener('click', () => {
+        window.scrollTo({
+          top: 0,
+          behavior: 'smooth'
+        });
+      });
+
+      // Auto-hide success/error messages
+      const messages = document.querySelectorAll('.message');
+      messages.forEach(message => {
+        setTimeout(() => {
+          message.style.animation = 'fadeOut 0.5s ease-out forwards';
+          setTimeout(() => message.remove(), 500);
+        }, 5000);
+      });
+
+      // Keyboard shortcuts
+      document.addEventListener('keydown', function(e) {
+        if (e.ctrlKey && e.key === 'f') {
+          e.preventDefault();
+          searchInput.focus();
+        }
+        if (e.ctrlKey && e.key === 'n') {
+          e.preventDefault();
+          window.location.href = '/admin/add-category';
+        }
       });
     });
-
-    // Close the modal if clicking outside of it
-    window.onclick = function(event) {
-      if (event.target === modal) {
-        closeModal();
-      }
-    }
   </script>
+
 </body>
 
 </html>

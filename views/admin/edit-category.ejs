@@ -1,80 +1,283 @@
 <!DOCTYPE html>
-<html lang="en" class="light">
+<html lang="en" class="dark">
 
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Add Category</title>
+  <title>Yadro - Edit Category</title>
   <script src="https://cdn.tailwindcss.com"></script>
-  <link rel="icon" href="/images/logo.png" type="image/x-icon">
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
-  <script src="/js/toggle.js"></script>
-  <link rel="stylesheet" href="/css/add-category.css">
+  <style>
+    :root {
+      --primary-dark: #1f2937;
+      --secondary-dark: #111827;
+      --accent-blue: #3b82f6;
+      --text-primary: #e5e7eb;
+      --text-secondary: #9ca3af;
+    }
+
+    body {
+      background-color: var(--secondary-dark);
+      color: var(--text-primary);
+    }
+
+    @keyframes fadeInUp {
+      from {
+        opacity: 0;
+        transform: translateY(20px);
+      }
+
+      to {
+        opacity: 1;
+        transform: translateY(0);
+      }
+    }
+
+    @keyframes glowPulse {
+      0% {
+        box-shadow: 0 0 5px rgba(59, 130, 246, 0.5);
+      }
+
+      50% {
+        box-shadow: 0 0 15px rgba(59, 130, 246, 0.8);
+      }
+
+      100% {
+        box-shadow: 0 0 5px rgba(59, 130, 246, 0.5);
+      }
+    }
+
+    .fade-in-up {
+      animation: fadeInUp 0.6s ease-out forwards;
+    }
+
+    .form-container {
+      background: var(--primary-dark);
+      border-radius: 16px;
+      box-shadow: 0 4px 20px rgba(0, 0, 0, 0.3);
+      border: 1px solid rgba(255, 255, 255, 0.1);
+      transition: all 0.3s ease;
+    }
+
+    .form-container:hover {
+      box-shadow: 0 6px 24px rgba(0, 0, 0, 0.4);
+      border-color: rgba(59, 130, 246, 0.4);
+    }
+
+    .form-input {
+      background: rgba(17, 24, 39, 0.8);
+      border: 1px solid rgba(255, 255, 255, 0.1);
+      color: var(--text-primary);
+      transition: all 0.3s ease;
+    }
+
+    .form-input:focus {
+      background: rgba(17, 24, 39, 0.95);
+      border-color: var(--accent-blue);
+      box-shadow: 0 0 0 2px rgba(59, 130, 246, 0.2);
+    }
+
+    .toggle-switch {
+      position: relative;
+      display: inline-block;
+      width: 60px;
+      height: 34px;
+    }
+
+    .toggle-switch input {
+      opacity: 0;
+      width: 0;
+      height: 0;
+    }
+
+    .toggle-slider {
+      position: absolute;
+      cursor: pointer;
+      top: 0;
+      left: 0;
+      right: 0;
+      bottom: 0;
+      background-color: #4b5563;
+      transition: .4s;
+      border-radius: 34px;
+    }
+
+    .toggle-slider:before {
+      position: absolute;
+      content: "";
+      height: 26px;
+      width: 26px;
+      left: 4px;
+      bottom: 4px;
+      background-color: white;
+      transition: .4s;
+      border-radius: 50%;
+    }
+
+    input:checked+.toggle-slider {
+      background-color: var(--accent-blue);
+    }
+
+    input:checked+.toggle-slider:before {
+      transform: translateX(26px);
+    }
+
+    .submit-button {
+      background: linear-gradient(135deg, #3b82f6, #2563eb);
+      transition: all 0.3s ease;
+    }
+
+    .submit-button:hover {
+      transform: translateY(-2px);
+      box-shadow: 0 4px 12px rgba(59, 130, 246, 0.3);
+    }
+
+    .image-upload {
+      border: 2px dashed rgba(255, 255, 255, 0.1);
+      transition: all 0.3s ease;
+    }
+
+    .image-upload:hover {
+      border-color: var(--accent-blue);
+      background: rgba(59, 130, 246, 0.1);
+    }
+  </style>
 </head>
 
-<body class="bg-gray-100 font-sans transition-colors duration-300 dark:bg-gray-900">
-  <%- include('../layouts/admin-sidebar.ejs') %>
+<body class="min-h-screen">
+  <div class="flex">
+    <%- include('../layouts/admin-sidebar.ejs') %>
 
-  <form action="/admin/edit-category/<%= category._id %>" method="post">
-
-
-    <div class="container mx-auto p-6 ml-64">
-      <div class="flex justify-between items-center mb-6">
-        <h1 class="text-3xl font-bold text-gray-800 dark:text-gray-200">Add Category</h1>
-        <div class="theme-toggle" id="themeToggle"></div>
-      </div>
-
-      <!-- Thumbnail Upload Section -->
-      <div class="bg-white dark:bg-gray-800 p-6 rounded-lg shadow-md mb-6 fade-in-up">
-        <h2 class="section-header mb-4 dark:text-gray-200">Thumbnail</h2>
-        <div class="image-upload h-48 flex justify-center items-center rounded-md dark:border-gray-600">
-          <label class="cursor-pointer">
-            <input type="file" class="hidden" />
-            <div class="text-gray-500 dark:text-gray-400 flex flex-col items-center">
-              <i class="fas fa-cloud-upload-alt text-3xl mb-2"></i>
-              <span>Drag and drop image here, or click to add image</span>
-              <button class="mt-2 px-4 py-2 bg-primary-light dark:bg-primary-dark text-white rounded-md hover:bg-blue-600 dark:hover:bg-blue-500 transition-colors duration-300">Add Image</button>
-            </div>
-          </label>
+    <div class="flex-1 ml-64 p-8">
+      <!-- Header Section -->
+      <div class="flex items-center justify-between mb-8 fade-in-up">
+        <h1 class="text-4xl font-bold bg-gradient-to-r from-blue-400 to-blue-600 text-transparent bg-clip-text">
+          Edit Category
+        </h1>
+        <div class="flex items-center space-x-6">
+          <div class="theme-toggle" id="themeToggle"></div>
+          <a href="/admin/category" class="px-6 py-3 bg-blue-500 text-white rounded-lg shadow-lg hover:bg-blue-600 transition-all duration-300 flex items-center space-x-2">
+            <i class="fas fa-arrow-left"></i>
+            <span>Back to Categories</span>
+          </a>
         </div>
       </div>
 
-      <!-- Category Information Section -->
-      <div class="bg-white dark:bg-gray-800 p-6 rounded-lg shadow-md mb-6 fade-in-up" style="animation-delay: 0.2s;">
-        <h2 class="section-header mb-4 dark:text-gray-200">Category Information</h2>
-        <div class="grid grid-cols-2 gap-6">
-          <div class="input-box">
-            <label for="categoryName" class="block text-sm font-medium text-gray-700 dark:text-gray-300">Category Name</label>
-            <input value="<%= category.name %>" type="text" name="name" id="categoryName" class="mt-1 p-2 w-full border border-gray-300 rounded-md focus:ring-primary-light focus:border-primary-light dark:bg-gray-700 dark:border-gray-600 dark:text-white" placeholder="Type category name here...">
-          </div>
-          <div class="input-box">
-            <label for="categoryName" class="block text-sm font-medium text-gray-700 dark:text-gray-300">Category Offer</label>
-            <input value="<%= category.categoryOffer %>" type="text" name="offer" id="categoryName" class="mt-1 p-2 w-full border border-gray-300 rounded-md focus:ring-primary-light focus:border-primary-light dark:bg-gray-700 dark:border-gray-600 dark:text-white" placeholder="Type category Offer here...">
-          </div>
-          <div class="input-box">
-            <label for="description" class="block text-sm font-medium text-gray-700 dark:text-gray-300">Description</label>
-            <textarea id="description" rows="4" name="description" class="mt-1 p-2 w-full border border-gray-300 rounded-md focus:ring-primary-light focus:border-primary-light dark:bg-gray-700 dark:border-gray-600 dark:text-white" placeholder="Type category description here..."><%= category.description %></textarea>
-          </div>
-          <!-- New Active/Inactive Toggle Section -->
-          <div class="input-box">
-            <label for="isActive" class="block text-sm font-medium text-gray-700 dark:text-gray-300">Category Status</label>
-            <div class="mt-2 flex items-center">
-              <input type="checkbox" id="isActive" name="isActive" class="form-checkbox h-5 w-5 text-primary-light dark:text-primary-dark rounded border-gray-300 focus:ring-primary-light dark:focus:ring-primary-dark">
-              <label for="isActive" class="ml-2 text-sm text-gray-700 dark:text-gray-300">Active</label>
+      <!-- Form Section -->
+      <div class="form-container p-8 fade-in-up">
+        <form action="/admin/edit-category/<%= category._id %>" method="post" id="categoryForm" class="space-y-8">
+          <!-- Thumbnail Upload Section -->
+          <div class="space-y-4 fade-in-up">
+            <label class="text-sm font-medium text-gray-400">Category Thumbnail</label>
+            <div class="image-upload h-48 flex justify-center items-center rounded-lg">
+              <label class="cursor-pointer">
+                <input type="file" class="hidden" />
+                <div class="text-gray-400 flex flex-col items-center">
+                  <i class="fas fa-cloud-upload-alt text-3xl mb-2"></i>
+                  <span>Drag and drop image here, or click to add image</span>
+                  <button type="button" class="mt-4 px-6 py-2 bg-blue-500 text-white rounded-lg hover:bg-blue-600 transition-all duration-300">
+                    Choose File
+                  </button>
+                </div>
+              </label>
             </div>
           </div>
-        </div>
-      </div>
 
-      <!-- Submit Button -->
-      <div class="flex justify-center mb-6 fade-in-up" style="animation-delay: 0.4s;">
-        <button class="px-6 py-2 bg-primary-light dark:bg-primary-dark text-white font-bold rounded-lg hover:bg-blue-700 dark:hover:bg-blue-600 focus:outline-none transition-all duration-300 transform hover:scale-105 hover:shadow-lg">Save Category</button>
+          <div class="grid grid-cols-1 md:grid-cols-2 gap-8">
+            <!-- Category Name -->
+            <div class="space-y-2">
+              <label class="text-sm font-medium text-gray-400">Category Name</label>
+              <input value="<%= category.name %>" type="text" name="name" class="form-input w-full px-4 py-3 rounded-lg" placeholder="Enter category name">
+            </div>
+
+            <!-- Category Offer -->
+            <div class="space-y-2">
+              <label class="text-sm font-medium text-gray-400">Category Offer</label>
+              <input value="<%= category.categoryOffer %>" type="text" name="offer" class="form-input w-full px-4 py-3 rounded-lg" placeholder="Enter category offer">
+            </div>
+
+            <!-- Description -->
+            <div class="space-y-2 md:col-span-2">
+              <label class="text-sm font-medium text-gray-400">Description</label>
+              <textarea name="description" rows="4" class="form-input w-full px-4 py-3 rounded-lg" placeholder="Enter category description"><%= category.description %></textarea>
+            </div>
+          </div>
+
+          <!-- Status Toggle -->
+          <div class="flex items-center space-x-4 pt-4">
+            <label class="toggle-switch">
+              <input type="checkbox" name="isActive" <%= category.isActive ? 'checked' : '' %>>
+              <span class="toggle-slider"></span>
+            </label>
+            <span class="text-sm font-medium text-gray-400">Active Status</span>
+          </div>
+
+          <!-- Submit Button -->
+          <button type="submit" class="submit-button w-full px-6 py-4 text-white rounded-lg shadow-lg mt-8 font-medium">
+            Save Category
+          </button>
+        </form>
       </div>
     </div>
-  </form>
+  </div>
 
-  <!-- JavaScript for animations and theme toggle -->
-  <script src="/js/add-category.js"></script>
+  <script>
+    document.addEventListener('DOMContentLoaded', () => {
+      // Animate form elements
+      const animateElements = () => {
+        const elements = document.querySelectorAll('.fade-in-up');
+        elements.forEach((element, index) => {
+          element.style.animationDelay = `${index * 0.1}s`;
+          element.style.opacity = '1';
+        });
+      };
+      animateElements();
+
+      // Enhanced form interactions
+      const formInputs = document.querySelectorAll('.form-input');
+      formInputs.forEach(input => {
+        input.addEventListener('focus', () => {
+          input.parentElement.style.transform = 'translateY(-2px)';
+        });
+
+        input.addEventListener('blur', () => {
+          input.parentElement.style.transform = '';
+        });
+      });
+
+      // Submit button animation
+      const submitButton = document.querySelector('.submit-button');
+      submitButton.addEventListener('mouseenter', () => {
+        submitButton.style.animation = 'glowPulse 2s infinite';
+      });
+
+      submitButton.addEventListener('mouseleave', () => {
+        submitButton.style.animation = '';
+      });
+
+      // Image upload preview
+      const fileInput = document.querySelector('input[type="file"]');
+      const uploadArea = document.querySelector('.image-upload');
+
+      uploadArea.addEventListener('dragover', (e) => {
+        e.preventDefault();
+        uploadArea.style.borderColor =
+          var (--accent - blue);
+      });
+
+      uploadArea.addEventListener('dragleave', () => {
+        uploadArea.style.borderColor = 'rgba(255, 255, 255, 0.1)';
+      });
+
+      // Form validation
+      const form = document.getElementById('categoryForm');
+      form.addEventListener('submit', (e) => {
+        e.preventDefault();
+        // Add your validation logic here
+        form.submit();
+      });
+    });
+  </script>
 </body>
 
 </html>

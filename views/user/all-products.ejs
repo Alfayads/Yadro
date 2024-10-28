@@ -96,7 +96,11 @@
                 <span class="text-2xl font-bold text-red-600">₹<%= Math.round(product.salePrice) %></span>
                 <span class="text-sm text-gray-500 line-through ml-2">₹<%= product.regularPrice %></span>
               </div>
-              <span class="bg-red-100 text-red-800 text-xs font-semibold px-2.5 py-0.5 rounded"> <%= product.productOffer %> % OFF</span>
+              <% if (product.quantity > 0) { %>
+              <span class="bg-red-100 text-red-800 text-xs font-semibold px-2.5 py-0.5 rounded"><%= product.productOffer %> % OFF</span>
+              <% } else { %>
+              <span class="bg-gray-100 text-gray-800 text-xs font-semibold px-2.5 py-0.5 rounded out-of-stock-indicator">Out of Stock</span>
+              <% } %>
             </div>
 
             <!-- Rating Stars -->
@@ -112,23 +116,23 @@
             </div>
         </a>
         <!-- Quantity Selector -->
+        <!-- Quantity Selector -->
         <div class="flex items-center justify-between mb-4">
           <span class="text-gray-700 font-medium">Quantity:</span>
           <div class="flex items-center border border-gray-300 rounded-full">
-            <button class="quantity-btn minus w-8 h-8 flex items-center justify-center text-gray-600 hover:bg-gray-100 rounded-full focus:outline-none">-</button>
-            <input type="number" id="quantity-<%= product._id %>" class="quantity-input w-12 text-center border-none focus:outline-none" value="1" min="1" max="10">
-
-            <button class="quantity-btn plus w-8 h-8 flex items-center justify-center text-gray-600 hover:bg-gray-100 rounded-full focus:outline-none">+</button>
+            <button class="quantity-btn minus w-8 h-8 flex items-center justify-center text-gray-600 hover:bg-gray-100 rounded-full focus:outline-none" <%= product.quantity === 0 ? 'disabled' : '' %>>-</button>
+            <input type="number" id="quantity-<%= product._id %>" class="quantity-input w-12 text-center border-none focus:outline-none" value="1" min="1" max="<%= product.quantity %>" <%= product.quantity === 0 ? 'disabled' : '' %>>
+            <button class="quantity-btn plus w-8 h-8 flex items-center justify-center text-gray-600 hover:bg-gray-100 rounded-full focus:outline-none" <%= product.quantity === 0 ? 'disabled' : '' %>>+</button>
           </div>
         </div>
 
         <!-- Add to Cart Button -->
-        <button data-product-id="<%= product._id %>" class="w-full bg-red-600 hover:bg-red-700 text-white font-bold py-3 px-4 rounded-full transition duration-300 ease-in-out transform hover:scale-105 add-to-cart-btn">
+        <button data-product-id="<%= product._id %>" class="w-full bg-red-600 hover:bg-red-700 text-white font-bold py-3 px-4 rounded-full transition duration-300 ease-in-out transform hover:scale-105 add-to-cart-btn <%= product.quantity === 0 ? 'opacity-50 cursor-not-allowed' : '' %>" <%= product.quantity === 0 ? 'disabled' : '' %>>
           <span class="add-to-cart-text flex items-center justify-center">
             <svg class="w-5 h-5 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
               <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 3h2l.4 2M7 13h10l4-8H5.4M7 13L5.4 5M7 13l-2.293 2.293c-.63.63-.184 1.707.707 1.707H17m0 0a2 2 0 100 4 2 2 0 000-4zm-8 2a2 2 0 11-4 0 2 2 0 014 0z"></path>
             </svg>
-            Add to Cart
+            <%= product.quantity > 0 ? 'Add to Cart' : 'Out of Stock' %>
           </span>
         </button>
       </div>

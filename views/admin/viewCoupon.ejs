@@ -1,0 +1,295 @@
+<!DOCTYPE html>
+<html lang="en" class="dark">
+
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Yadro - View Coupon</title>
+  <script src="https://cdn.tailwindcss.com"></script>
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
+  <style>
+    :root {
+      --primary-dark: #1f2937;
+      --secondary-dark: #111827;
+      --accent-blue: #3b82f6;
+      --text-primary: #e5e7eb;
+      --text-secondary: #9ca3af;
+    }
+
+    body {
+      background-color: var(--secondary-dark);
+      color: var(--text-primary);
+    }
+
+    @keyframes fadeInUp {
+      from {
+        opacity: 0;
+        transform: translateY(20px);
+      }
+
+      to {
+        opacity: 1;
+        transform: translateY(0);
+      }
+    }
+
+    .fade-in-up {
+      animation: fadeInUp 0.6s ease-out forwards;
+    }
+
+    .coupon-card {
+      background: var(--primary-dark);
+      border-radius: 16px;
+      box-shadow: 0 4px 20px rgba(0, 0, 0, 0.3);
+      border: 1px solid rgba(255, 255, 255, 0.1);
+      transition: all 0.3s ease;
+    }
+
+    .coupon-card:hover {
+      box-shadow: 0 6px 24px rgba(0, 0, 0, 0.4);
+      border-color: rgba(59, 130, 246, 0.4);
+    }
+
+    .info-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+      gap: 1.5rem;
+    }
+
+    .info-item {
+      background: rgba(17, 24, 39, 0.8);
+      border-radius: 12px;
+      padding: 1.25rem;
+      border: 1px solid rgba(255, 255, 255, 0.1);
+      transition: all 0.3s ease;
+    }
+
+    .info-item:hover {
+      transform: translateY(-2px);
+      border-color: rgba(59, 130, 246, 0.4);
+      box-shadow: 0 4px 12px rgba(59, 130, 246, 0.2);
+    }
+
+    .back-button {
+      background: linear-gradient(135deg, #3b82f6, #2563eb);
+      color: white;
+      padding: 0.75rem 1.5rem;
+      border-radius: 8px;
+      transition: all 0.3s ease;
+      border: none;
+      font-weight: 500;
+      text-shadow: 0 1px 2px rgba(0, 0, 0, 0.2);
+    }
+
+    .back-button:hover {
+      transform: translateY(-2px);
+      box-shadow: 0 4px 12px rgba(59, 130, 246, 0.3);
+    }
+
+    .status-badge {
+      padding: 0.25rem 0.75rem;
+      border-radius: 9999px;
+      font-size: 0.875rem;
+      font-weight: 500;
+      transition: all 0.3s ease;
+    }
+
+    .status-badge.active {
+      background: rgba(16, 185, 129, 0.2);
+      color: #34d399;
+      border: 1px solid rgba(16, 185, 129, 0.4);
+    }
+
+    .status-badge.inactive {
+      background: rgba(239, 68, 68, 0.2);
+      color: #f87171;
+      border: 1px solid rgba(239, 68, 68, 0.4);
+    }
+
+    .code-badge {
+      background: rgba(59, 130, 246, 0.2);
+      color: #60a5fa;
+      border: 1px solid rgba(59, 130, 246, 0.4);
+      padding: 0.5rem 1rem;
+      border-radius: 8px;
+      font-size: 1.25rem;
+      font-family: monospace;
+      letter-spacing: 2px;
+    }
+  </style>
+</head>
+
+<body class="min-h-screen">
+  <div class="flex">
+    <%- include('../layouts/admin-sidebar.ejs') %>
+
+    <div class="flex-1 ml-64 p-8">
+      <!-- Header Section -->
+      <div class="flex items-center justify-between mb-8 fade-in-up">
+        <div>
+          <h1 class="text-4xl font-bold bg-gradient-to-r from-blue-400 to-blue-600 text-transparent bg-clip-text">
+            Coupon Details
+          </h1>
+          <p class="text-gray-400 mt-2">View complete information about this coupon</p>
+        </div>
+        <a href="/admin/coupons" class="back-button">
+          <i class="fas fa-arrow-left mr-2"></i>
+          Back to Coupons
+        </a>
+      </div>
+
+      <!-- Coupon Details Card -->
+      <div class="coupon-card p-8 mb-8 fade-in-up">
+        <!-- Main Coupon Info -->
+        <div class="flex items-start justify-between mb-8">
+          <div>
+            <h2 class="text-2xl font-bold mb-2"><%= coupon.name %></h2>
+            <div class="code-badge">
+              <%= coupon.code %>
+            </div>
+          </div>
+          <span class="status-badge <%= coupon.isActive ? 'active' : 'inactive' %>">
+            <%= coupon.isActive ? 'Active' : 'Inactive' %>
+          </span>
+        </div>
+
+        <!-- Detailed Info Grid -->
+        <div class="info-grid">
+          <div class="info-item">
+            <span class="text-gray-400 text-sm">Offer Type</span>
+            <p class="text-xl font-semibold mt-1">
+              <%= coupon.offerType.charAt(0).toUpperCase() + coupon.offerType.slice(1) %>
+            </p>
+          </div>
+
+          <div class="info-item">
+            <span class="text-gray-400 text-sm">Offer Value</span>
+            <p class="text-xl font-semibold mt-1">
+              <%= coupon.offerValue %><%= coupon.offerType === 'percentage' ? '%' : '₹' %>
+            </p>
+          </div>
+
+          <div class="info-item">
+            <span class="text-gray-400 text-sm">Minimum Purchase</span>
+            <p class="text-xl font-semibold mt-1">₹<%= coupon.minimumPrice %></p>
+          </div>
+
+          <div class="info-item">
+            <span class="text-gray-400 text-sm">Usage Limit</span>
+            <p class="text-xl font-semibold mt-1"><%= coupon.usageLimit || 'Unlimited' %></p>
+          </div>
+
+          <div class="info-item">
+            <span class="text-gray-400 text-sm">Per User Limit</span>
+            <p class="text-xl font-semibold mt-1"><%= coupon.usagePerUserLimit %></p>
+          </div>
+
+          <div class="info-item">
+            <span class="text-gray-400 text-sm">Created On</span>
+            <p class="text-xl font-semibold mt-1">
+              <%= new Date(coupon.createdOn).toLocaleDateString('en-US', { 
+                year: 'numeric', 
+                month: 'long', 
+                day: 'numeric'
+              }) %>
+            </p>
+          </div>
+
+          <div class="info-item">
+            <span class="text-gray-400 text-sm">Expires On</span>
+            <p class="text-xl font-semibold mt-1">
+              <%= new Date(coupon.expiredOn).toLocaleDateString('en-US', { 
+                year: 'numeric', 
+                month: 'long', 
+                day: 'numeric'
+              }) %>
+            </p>
+          </div>
+
+          <div class="info-item">
+            <span class="text-gray-400 text-sm">Time Remaining</span>
+            <p class="text-xl font-semibold mt-1" id="timeRemaining">Calculating...</p>
+          </div>
+        </div>
+
+        <!-- Usage Statistics -->
+        <div class="mt-8">
+          <h3 class="text-xl font-semibold mb-4">Usage Statistics</h3>
+          <div class="info-grid">
+            <div class="info-item">
+              <span class="text-gray-400 text-sm">Total Uses</span>
+              <p class="text-xl font-semibold mt-1"><%= coupon.usageCount || 0 %></p>
+            </div>
+
+            <div class="info-item">
+              <span class="text-gray-400 text-sm">Total Savings Generated</span>
+              <p class="text-xl font-semibold mt-1">₹<%= coupon.totalSavings || 0 %></p>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <script>
+    document.addEventListener('DOMContentLoaded', () => {
+      // Initialize animations
+      const animateElements = () => {
+        const elements = document.querySelectorAll('.fade-in-up');
+        elements.forEach((element, index) => {
+          element.style.animationDelay = `${index * 0.1}s`;
+          element.style.opacity = '1';
+        });
+      };
+      animateElements();
+
+      // Update time remaining
+      const updateTimeRemaining = () => {
+        const expiryDate = new Date('<%= coupon.expiredOn %>');
+        const now = new Date();
+        const timeRemaining = expiryDate - now;
+
+        const timeRemainingElement = document.getElementById('timeRemaining');
+
+        if (timeRemaining <= 0) {
+          timeRemainingElement.textContent = 'Expired';
+          timeRemainingElement.style.color = '#ef4444';
+          return;
+        }
+
+        const days = Math.floor(timeRemaining / (1000 * 60 * 60 * 24));
+        const hours = Math.floor((timeRemaining % (1000 * 60 * 60 * 24)) / (1000 * 60 * 60));
+        const minutes = Math.floor((timeRemaining % (1000 * 60 * 60)) / (1000 * 60));
+
+        timeRemainingElement.textContent = `${days}d ${hours}h ${minutes}m`;
+      };
+
+      updateTimeRemaining();
+      setInterval(updateTimeRemaining, 60000); // Update every minute
+
+      // Enhanced hover effects
+      const infoItems = document.querySelectorAll('.info-item');
+      infoItems.forEach(item => {
+        item.addEventListener('mouseenter', () => {
+          item.style.transform = 'translateY(-4px)';
+        });
+
+        item.addEventListener('mouseleave', () => {
+          item.style.transform = 'translateY(-2px)';
+        });
+      });
+
+      // Back button animation
+      const backButton = document.querySelector('.back-button');
+      backButton.addEventListener('mousedown', () => {
+        backButton.style.transform = 'scale(0.98) translateY(-2px)';
+      });
+
+      backButton.addEventListener('mouseup', () => {
+        backButton.style.transform = 'translateY(-2px)';
+      });
+    });
+  </script>
+</body>
+
+</html>

@@ -10,6 +10,7 @@ const Category = require('../models/Category');
 const Coupon = require('../models/Coupon');
 const Brand = require('../models/Brand');
 const Order = require('../models/Order');
+const exp = require('constants');
 
 const getHome = (req, res) => {
     try {
@@ -101,7 +102,7 @@ const getProduct = async (req, res) => {
             $or: [
                 { name: { $regex: search, $options: "i" } },
             ]
-        }).limit(limit).skip((page - 1) * limit).exec();
+        }).populate('category', 'name').limit(limit).skip((page - 1) * limit).exec();
 
         const categories = await Category.find({});
 
@@ -129,8 +130,10 @@ const getProduct = async (req, res) => {
 
 const getAddProduct = async (req, res) => {
     try {
+        const oldValue = req.session.oldValue || {};
         const categories = await Category.find({});
-        return res.render('admin/add-product', { categories });
+        req.session.oldValue = null;
+        return res.render('admin/add-product', { categories, oldValue });
     } catch (error) {
         console.log(error.message);
     }
@@ -143,33 +146,45 @@ const addProduct = async (req, res) => {
         const { name, description, brand, price, category, quantity, color, discount } = req.body;
 
         if (!name || !description || !brand || !color || !category || !quantity || !discount || !price) {
+            const oldValue = { name, description, brand, color, category, quantity, discount, price };
+            req.session.oldValue = oldValue;
             req.flash('error_msg', 'Please provide all fields');
             return res.redirect('/admin/add-product');
         }
 
         if (price < 100) {
+            const oldValue = { name, description, brand, color, category, quantity, discount, price };
+            req.session.oldValue = oldValue;
             req.flash('error_msg', 'Price must be greater than 100');
             return res.redirect('/admin/add-product');
         }
 
         if (quantity <= 0) {
+            const oldValue = { name, description, brand, color, category, quantity, discount, price };
+            req.session.oldValue = oldValue;
             req.flash('error_msg', 'quantity must be greater than 1');
             return res.redirect('/admin/add-product');
         }
 
         if (discount > 90) {
+            const oldValue = { name, description, brand, color, category, quantity, discount, price };
+            req.session.oldValue = oldValue;
             req.flash('error_msg', 'Discount must be less than 90%');
             return res.redirect('/admin/add-product');
         }
 
         let findProduct = await Product.findOne({ name });
         if (findProduct) {
+            const oldValue = { name, description, brand, color, category, quantity, discount, price };
+            req.session.oldValue = oldValue;
             req.flash('error_msg', 'Product Already Exists');
             return res.redirect('/admin/add-product');
         }
 
         const categoryDoc = await Category.findOne({ name: category });
         if (!categoryDoc) {
+            const oldValue = { name, description, brand, color, category, quantity, discount, price };
+            req.session.oldValue = oldValue;
             req.flash('error_msg', 'Invalid category');
             return res.redirect('/admin/add-product');
         }
@@ -228,28 +243,36 @@ const editProduct = async (req, res) => {
 const edittedProduct = async (req, res) => {
     try {
         const id = req.params.id;
-        const { name, description, stock: quantity, price, color, brand, discount, category } = req.body;
-        console.log("sdagvrtdfhjn", req.files)
-        console.log("ergete5ryhr6uh", req);
+        const {
+            name,
+            description,
+            stock: quantity,
+            price,
+            color,
+            brand,
+            discount,
+            category,
+            existingImages,
+            removedImages
+        } = req.body;
+
+        console.log("Files:", req.files);
+
         const parsedQuantity = parseInt(quantity);
 
+        // Validation checks
         if (price < 100) {
-            req.flash('error_msg', 'Discount Must be less than 90');
+            req.flash('error_msg', 'Price must be at least 100');
             return res.redirect(`/admin/product`);
         }
 
         if (parsedQuantity <= 0) {
-            req.flash('error_msg', 'Quantity Must be greter than 1');
+            req.flash('error_msg', 'Quantity must be greater than 1');
             return res.redirect(`/admin/product`);
         }
 
         if (discount > 90) {
-            req.flash('error_msg', 'Discount Must be less than 90');
-            return res.redirect(`/admin/product`);
-        }
-
-        if (quantity <= 0) {
-            req.flash('error_msg', 'Stock Must be greater that 1');
+            req.flash('error_msg', 'Discount must be less than 90');
             return res.redirect(`/admin/product`);
         }
 
@@ -264,28 +287,70 @@ const edittedProduct = async (req, res) => {
             return res.redirect(`/admin/edit-product/${id}`);
         }
 
+        // Category validation
         const categoryDoc = await Category.findOne({ name: category });
         if (!categoryDoc) {
             req.flash('error_msg', 'Invalid category');
             return res.redirect('/admin/add-product');
         }
 
+        // Find existing product
         const existingProduct = await Product.findById(id);
         if (!existingProduct) {
             req.flash('error_msg', 'Product not found');
             return res.redirect('/admin/product');
         }
 
+        // Handle image management
+        let finalImagePaths = [];
 
-        let imagePaths = existingProduct.images;
-        if (req.files && req.files.length > 0) {
-            existingProduct.images.forEach(imagePath => {
-                const fullPath = path.join(__dirname, 'uploads', imagePath);
+        // Handle removed images
+        const removedImagesArray = Array.isArray(removedImages) ? removedImages :
+            removedImages ? [removedImages] : [];
+
+        if (removedImagesArray.length > 0) {
+            // Remove files from storage
+            removedImagesArray.forEach(imagePath => {
+                // Extract filename from path
+                const filename = imagePath.split('/').pop();
+                const fullPath = path.join(__dirname, '../public/products', filename);
                 if (fs.existsSync(fullPath)) {
                     fs.unlinkSync(fullPath);
                 }
             });
-            imagePaths = req.files.map(file => `/products/${file.filename}`);
+        }
+
+        // Keep existing images that weren't removed
+        const existingImagesArray = Array.isArray(existingImages) ? existingImages :
+            existingImages ? [existingImages] : [];
+
+        finalImagePaths = existingImagesArray.filter(img =>
+            !removedImagesArray.includes(img)
+        );
+
+        // Add new images
+        if (req.files && req.files.length > 0) {
+            const newImagePaths = req.files.map(file => `/products/${file.filename}`);
+            finalImagePaths = [...finalImagePaths, ...newImagePaths];
+        }
+
+        // Validate final image count
+        if (finalImagePaths.length === 0) {
+            req.flash('error_msg', 'Product must have at least one image');
+            return res.redirect(`/admin/edit-product/${id}`);
+        }
+
+        if (finalImagePaths.length > 4) {
+            // Remove excess files if they were somehow uploaded
+            const excessImages = finalImagePaths.slice(4);
+            excessImages.forEach(imagePath => {
+                const filename = imagePath.split('/').pop();
+                const fullPath = path.join(__dirname, '../public/products', filename);
+                if (fs.existsSync(fullPath)) {
+                    fs.unlinkSync(fullPath);
+                }
+            });
+            finalImagePaths = finalImagePaths.slice(0, 4);
         }
 
         const updatedProduct = {
@@ -299,14 +364,17 @@ const edittedProduct = async (req, res) => {
             quantity: parsedQuantity,
             color,
             status: parsedQuantity > 0 ? "Available" : "Out Of Stock",
-            images: imagePaths
+            images: finalImagePaths
         };
 
         await Product.updateOne({ _id: id }, { $set: updatedProduct });
         req.flash('success_msg', `${name} Edited Successfully...`);
         return res.redirect('/admin/product');
+
     } catch (error) {
-        console.log(error.message);
+        console.error('Error in edittedProduct:', error);
+        req.flash('error_msg', 'An error occurred while updating the product');
+        return res.redirect('/admin/product');
     }
 }
 
@@ -656,9 +724,11 @@ const getCoupons = async (req, res) => {
 
 const getAddCoupon = (req, res) => {
     try {
+        const oldValue = req.session.adminOldValue || {};
+        req.session.adminOldValue = null;
         const date = new Date();
         console.log(date.toISOString().split('T')[0])
-        return res.render('admin/add-coupon');
+        return res.render('admin/add-coupon', { oldValue });
     } catch (error) {
         console.log(error.message);
     }
@@ -666,27 +736,137 @@ const getAddCoupon = (req, res) => {
 
 const addCoupon = async (req, res) => {
     try {
-        const { name, code, discount, minAmount, validityTill, isActive } = req.body;
+        const {
+            name,
+            code,
+            offerType,
+            offerValue,
+            minimumPrice,
+            expiredOn,
+            isActive,
+            usageLimit,
+            usagePerUserLimit,
+        } = req.body;
 
-        const formattedValidityTill = new Date(validityTill).toISOString().split('T')[0];
+        if (!name || !code || !offerType || !minimumPrice || !expiredOn || !usageLimit) {
+            const oldValue = { name, code, offerType, offerValue, minimumPrice, expiredOn, usageLimit, usagePerUserLimit };
+            req.session.adminOldValue = oldValue;
+            req.flash('error_msg', 'All Fields are required Check Again !! ');
+            return res.redirect('/admin/add-coupon')
+        }
+
+        const existingCoupon = await Coupon.findOne({ $or: [{ name }, { code }] });
+        if (existingCoupon) {
+            req.flash('error_msg', 'Coupon with the same name or code already exists.');
+            return res.redirect('/admin/add-coupon');
+        }
 
         const newCoupon = new Coupon({
             name,
-            code: code,
-            expiredOn: formattedValidityTill,
-            offer: discount,
-            minimumPrice: minAmount,
-            isList: isActive ? true : false,
-        })
+            code,
+            offerType,
+            offerValue,
+            minimumPrice,
+            expiredOn,
+            isActive: isActive ? true : false,
+            usageLimit,
+            usagePerUserLimit,
+        });
 
         await newCoupon.save();
-        req.flash('success_msg', `Coupon ${name} is Added Successfully..`);
+        req.flash('success_msg', `Coupon ${name} has been added successfully.`);
         res.redirect('/admin/coupons');
-
     } catch (error) {
         console.log(error.message);
+        req.flash('error_msg', 'An error occurred while adding the coupon.');
+        res.redirect('/admin/coupons');
+    }
+};
+
+const getEditCoupon = async (req, res) => {
+    try {
+        const id = req.params.id;
+        const oldValue = req.session.oldValue || {};
+        req.session.oldValue = {};
+        const coupon = await Coupon.findById(id);
+        res.render('admin/edit-coupon', { coupon, oldValue, Id: coupon._id })
+    } catch (error) {
+        console.log(error.message);
+        req.flash('error_msg', 'An error occurred while editing the coupon.');
+        res.redirect('/admin/coupons');
     }
 }
+
+
+const editCoupon = async (req, res) => {
+    try {
+        const userId = req.params.id; // Coupon ID passed as a route parameter
+        const {
+            name,
+            code,
+            offerType,
+            offerValue,
+            minimumPrice,
+            expiredOn,
+            isActive,
+            usageLimit,
+            usagePerUserLimit,
+        } = req.body;
+
+        const updatedData = {
+            name: name,
+            code: code,
+            offerType: offerType,
+            offerValue: offerValue,
+            minimumPrice: minimumPrice,
+            expiredOn: new Date(req.body.expiredOn),
+            usageLimit: usageLimit,
+            usagePerUserLimit: usagePerUserLimit,
+            isActive: isActive ? true : false // Check if the toggle is on
+        };
+
+
+        await Coupon.findByIdAndUpdate(userId, updatedData);
+        req.flash('success_msg', `Coupon ${name} has been updated successfully.`);
+        res.redirect('/admin/coupons');
+    } catch (error) {
+        console.log(error.message);
+        req.flash('error_msg', 'An error occurred while editing the coupon.');
+        res.redirect('/admin/coupons');
+    }
+};
+
+const viewCoupon = async (req, res) => {
+    try {
+        const id = req.params.id;
+        const coupon = await Coupon.findById(id);
+        res.render('admin/viewCoupon', { coupon })
+    } catch (error) {
+        console.log(error.message);
+        req.flash('error_msg', 'An error occurred while editing the coupon.');
+        res.redirect('/admin/coupons');
+    }
+}
+
+
+
+const deleteCoupon = async (req, res) => {
+    try {
+        const { id } = req.params;
+        const deletedCoupon = await Coupon.findByIdAndDelete(id);
+        if (!deletedCoupon) {
+            req.flash('error_msg', 'Coupon not found.');
+            return res.redirect('/admin/coupons');
+        }
+
+        req.flash('success_msg', `Coupon ${deletedCoupon.name} has been deleted successfully.`);
+        res.redirect('/admin/coupons');
+    } catch (error) {
+        console.log(error.message);
+        req.flash('error_msg', 'An error occurred while deleting the coupon.');
+        res.redirect('/admin/coupons');
+    }
+};
 
 const getOrders = async (req, res) => {
     try {
@@ -713,44 +893,140 @@ const getOrders = async (req, res) => {
 }
 
 const updateOrderStatus = async (req, res) => {
-    const { orderId, status } = req.body;
     try {
-        await Order.findByIdAndUpdate(orderId, { orderStatus: status });
-        res.redirect('/admin/orders');
-    } catch (error) {
-        res.status(500).json({ message: 'Error updating order status' });
-    }
-}
+        const { orderId, status } = req.body;
 
-const viewOrderDetail = async (req, res) => {
-    try {
-        console.log("Request Params: ", req.params); // Log all request params
-
-        const orderId = req.params.id;
-
-        // Check if orderId is valid
-        if (!mongoose.Types.ObjectId.isValid(orderId)) {
-            return res.status(400).send('Invalid Order ID');
+        // Validate inputs
+        if (!orderId || !status) {
+            return res.status(400).json({
+                success: false,
+                message: 'Order ID and status are required'
+            });
         }
 
+        // Update the order
+        const updatedOrder = await Order.findByIdAndUpdate(
+            orderId,
+            { orderStatus: status },
+            { new: true } // Returns the updated document
+        );
+
+        if (!updatedOrder) {
+            return res.status(404).json({
+                success: false,
+                message: 'Order not found'
+            });
+        }
+
+        // Send success response
+        res.status(200).json({
+            success: true,
+            message: 'Order status updated successfully',
+            order: updatedOrder
+        });
+
+    } catch (error) {
+        console.error('Error updating order status:', error);
+        res.status(500).json({
+            success: false,
+            message: 'Error updating order status',
+            error: error.message
+        });
+    }
+};
+
+
+const viewOrderDetails = async (req, res) => {
+    try {
+        const orderId = req.params.orderId;
+
+        // Fetch order with populated references
         const order = await Order.findById(orderId)
-            .populate('userId', 'fname lname email') // Adjust for 'fname' and 'lname'
+            .populate('userId', 'fname lname email phone') // Populate user details
             .populate({
-                path: 'deliveryAddress',  // Populate deliveryAddress
-                populate: { path: 'address' }  // Ensure we populate the embedded 'address' array
-            }) // Ensure this path is correct in your schema
-            .populate('items.productId', 'name image') // Fetch necessary product details
-            .exec();
+                path: 'items.productId',
+                select: 'name price images' // Select the fields you want from product
+            });
 
         if (!order) {
-            return res.status(404).send('Order not found');
+            return res.status(404).render('error', {
+                message: 'Order not found',
+                error: { status: 404 }
+            });
         }
 
-        res.render('admin/order-detail', { order });
+        // Add timeline data if not exists
+        if (!order.timeline || order.timeline.length === 0) {
+            order.timeline = [{
+                status: order.orderStatus,
+                timestamp: order.orderDate,
+                comment: 'Order placed successfully'
+            }];
+        }
+
+        // Calculate order summary
+        const orderSummary = {
+            subtotal: order.items.reduce((sum, item) => sum + (item.price * item.quantity), 0),
+            shippingCost: order.shippingCost || 0,
+            discount: order.discount || 0,
+            totalAmount: order.totalAmount
+        };
+
+        // Merge orderSummary with order object
+        const enrichedOrder = {
+            ...order.toObject(),
+            ...orderSummary
+        };
+
+        // Render the order details page
+        res.render('admin/viewOrder', {
+            order: enrichedOrder,
+            title: `Order Details - #${order._id}`
+        });
+
     } catch (error) {
-        console.log(error.message)
+        console.error('Error fetching order details:', error);
+        res.status(500).json({
+            message: 'Error fetching order details',
+            error: { status: 500 }
+        });
     }
-}
+};
+
+
+
+
+
+
+// const viewOrderDetail = async (req, res) => {
+//     try {
+//         console.log("Request Params: ", req.params); // Log all request params
+
+//         const orderId = req.params.id;
+
+//         // Check if orderId is valid
+//         if (!mongoose.Types.ObjectId.isValid(orderId)) {
+//             return res.status(400).send('Invalid Order ID');
+//         }
+
+//         const order = await Order.findById(orderId)
+//             .populate('userId', 'fname lname email') // Adjust for 'fname' and 'lname'
+//             .populate({
+//                 path: 'deliveryAddress',  // Populate deliveryAddress
+//                 populate: { path: 'address' }  // Ensure we populate the embedded 'address' array
+//             }) // Ensure this path is correct in your schema
+//             .populate('items.productId', 'name image') // Fetch necessary product details
+//             .exec();
+
+//         if (!order) {
+//             return res.status(404).send('Order not found');
+//         }
+
+//         res.render('admin/order-detail', { order });
+//     } catch (error) {
+//         console.log(error.message)
+//     }
+// }
 
 const getBrands = async (req, res) => {
     try {
@@ -811,7 +1087,118 @@ const getAddBanner = (req, res) => {
     }
 }
 
+
+const getSalesReport = async (req, res) => {
+    try {
+        const { startDate, endDate, timeFrame = 'daily' } = req.query;
+
+        // Base match condition
+        let matchCondition = {
+            orderStatus: { $ne: 'Cancelled' }
+        };
+
+
+        if (startDate && endDate) {
+            const start = new Date(startDate);
+            const end = new Date(endDate);
+            if (!isNaN(start) && !isNaN(end)) {
+                matchCondition.orderDate = { $gte: start, $lte: end };
+            } else {
+                return res.status(400).json({ success: false, message: "Invalid date format" });
+            }
+        }
+
+        let dateFormat;
+        switch (timeFrame) {
+            case 'weekly':
+                dateFormat = { $dateToString: { format: "%Y-W%V", date: "$orderDate" } };
+                break;
+            case 'monthly':
+                dateFormat = { $dateToString: { format: "%Y-%m", date: "$orderDate" } };
+                break;
+            case 'yearly':
+                dateFormat = { $dateToString: { format: "%Y", date: "$orderDate" } };
+                break;
+            default:
+                dateFormat = { $dateToString: { format: "%Y-%m-%d", date: "$orderDate" } };
+        }
+
+        const salesData = await Order.aggregate([
+            { $match: matchCondition },
+            {
+                $group: {
+                    _id: dateFormat,
+                    sales: { $sum: { $subtract: ["$totalAmount", "$offerApplied"] } },
+                    orders: { $sum: 1 },
+                    avgOrderValue: { $avg: { $subtract: ["$totalAmount", "$offerApplied"] } },
+                    totalItems: {
+                        $sum: {
+                            $reduce: {
+                                input: "$items",
+                                initialValue: 0,
+                                in: { $add: ["$$value", "$$this.quantity"] }
+                            }
+                        }
+                    }
+                }
+            },
+            { $sort: { "_id": 1 } },
+            {
+                $project: {
+                    date: "$_id",
+                    sales: 1,
+                    orders: 1,
+                    avgOrderValue: { $round: ["$avgOrderValue", 2] },
+                    totalItems: 1,
+                    _id: 0
+                }
+            }
+        ]);
+
+        const summary = salesData.length ? {
+            totalSales: salesData.reduce((sum, item) => sum + item.sales, 0),
+            totalOrders: salesData.reduce((sum, item) => sum + item.orders, 0),
+            avgOrderValue: (salesData.reduce((sum, item) => sum + item.avgOrderValue, 0) / salesData.length).toFixed(2),
+            totalItems: salesData.reduce((sum, item) => sum + item.totalItems, 0)
+        } : { totalSales: 0, totalOrders: 0, avgOrderValue: 0, totalItems: 0 };
+
+        // Get payment method distribution
+        const paymentMethodStats = await Order.aggregate([
+            { $match: matchCondition },
+            {
+                $group: {
+                    _id: "$paymentMethod",
+                    count: { $sum: 1 },
+                    total: { $sum: "$totalAmount" }
+                }
+            }
+        ]);
+
+        res.json({
+            success: true,
+            data: { salesData, summary, paymentMethodStats }
+        });
+
+    } catch (error) {
+        console.error('Sales Report Error:', error);
+        res.status(500).json({
+            success: false,
+            message: 'Error generating sales report',
+            error: error.message
+        });
+    }
+};
+
+
+
+
 module.exports = {
+
+    getSalesReport,
+
+
+
+
     getHome,
     getLogin,
     checkLogin,
@@ -843,10 +1230,14 @@ module.exports = {
     getCoupons,
     getAddCoupon,
     addCoupon,
+    getEditCoupon,
+    editCoupon,
+    deleteCoupon,
+    viewCoupon,
 
     getOrders,
     updateOrderStatus,
-    viewOrderDetail,
+    viewOrderDetails,
 
     getBrands,
     getAddBrand,
@@ -855,3 +1246,7 @@ module.exports = {
     getBanners,
     getAddBanner
 }
+
+
+
+

@@ -32,9 +32,9 @@ const cartSchema = mongoose.Schema({
             type: String,
             default: "Placed"
         },
-        cancellationReson: {
-            type: String,
-            default: "none"
+        shippingCharge: {
+            type: Number,
+            default: 0
         }
     }]
 })

@@ -1,5 +1,10 @@
 document.querySelectorAll('.add-to-cart-btn').forEach(button => {
     button.addEventListener('click', function (e) {
+
+        if (this.disabled) {
+            e.preventDefault();
+            return;
+        }
         e.preventDefault();
         this.classList.add('animate-pulse');
         setTimeout(() => this.classList.remove('animate-pulse'), 500);

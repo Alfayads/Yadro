@@ -41,12 +41,16 @@ admin_router.get('/deleteCustomer', adminAuth, Controller.deleteCustomer); // De
 //Coupon Route
 admin_router.get('/coupons', adminAuth, Controller.getCoupons); // for get Coupons page
 admin_router.get('/add-coupon', adminAuth, Controller.getAddCoupon); // for add Coupon page
-admin_router.post('/add-coupon', adminAuth, Controller.addCoupon);
+admin_router.post('/addCoupon', Controller.addCoupon);
+admin_router.get('/viewCoupon/:id', adminAuth, Controller.viewCoupon)
+admin_router.get('/editCoupon/:id', adminAuth, Controller.getEditCoupon);
+admin_router.post('/editCoupon/:id', Controller.editCoupon);
+admin_router.get('/deleteCoupon/:id', Controller.deleteCoupon);
 
 // All orders route
 admin_router.get('/orders', adminAuth, Controller.getOrders);// for get all orders page
 admin_router.post('/orders/update-status', adminAuth, Controller.updateOrderStatus);
-admin_router.get('/viewOrderDetails/:id', Controller.viewOrderDetail);
+admin_router.get('/viewOrderDetails/:orderId', Controller.viewOrderDetails);
 
 // Brand Route
 admin_router.get('/brands', adminAuth, Controller.getBrands); // for get brand listing page
@@ -60,6 +64,14 @@ admin_router.get('/add-banner', adminAuth, Controller.getAddBanner); // for get 
 
 //Logout Route
 admin_router.get('/logout', Controller.logout); // for admin can logout 
+
+
+
+
+
+// Sales Report
+
+admin_router.get('/sales-report', adminAuth, Controller.getSalesReport);
 
 
 module.exports = admin_router;

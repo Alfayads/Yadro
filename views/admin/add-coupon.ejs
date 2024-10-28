@@ -1,93 +1,295 @@
 <!DOCTYPE html>
-<html lang="en" class="light">
+<html lang="en" class="dark">
 
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Yadro - Add Coupons</title>
-  <link rel="icon" href="/images/logo.png" type="image/x-icon">
   <script src="https://cdn.tailwindcss.com"></script>
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
-  <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.11.4/gsap.min.js"></script>
   <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/flatpickr/dist/flatpickr.min.css">
   <script src="https://cdn.jsdelivr.net/npm/flatpickr"></script>
-  <script src="/js/toggle.js"></script>
-  <link rel="stylesheet" href="/css/add-coupon.css">
-  <script>
-    // Check for saved theme preference or default to 'light'
-    if (localStorage.getItem('color-theme') === 'dark' || (!('color-theme' in localStorage) && window.matchMedia('(prefers-color-scheme: dark)').matches)) {
-      document.documentElement.classList.add('dark');
-    } else {
-      document.documentElement.classList.remove('dark');
+  <style>
+    :root {
+      --primary-dark: #1f2937;
+      --secondary-dark: #111827;
+      --accent-blue: #3b82f6;
+      --text-primary: #e5e7eb;
+      --text-secondary: #9ca3af;
     }
-  </script>
+
+    body {
+      background-color: var(--secondary-dark);
+      color: var(--text-primary);
+    }
+
+    @keyframes fadeInUp {
+      from {
+        opacity: 0;
+        transform: translateY(20px);
+      }
+
+      to {
+        opacity: 1;
+        transform: translateY(0);
+      }
+    }
+
+    @keyframes glowPulse {
+      0% {
+        box-shadow: 0 0 5px rgba(59, 130, 246, 0.5);
+      }
+
+      50% {
+        box-shadow: 0 0 15px rgba(59, 130, 246, 0.8);
+      }
+
+      100% {
+        box-shadow: 0 0 5px rgba(59, 130, 246, 0.5);
+      }
+    }
+
+    .fade-in-up {
+      animation: fadeInUp 0.6s ease-out forwards;
+    }
+
+    .form-container {
+      background: var(--primary-dark);
+      border-radius: 16px;
+      box-shadow: 0 4px 20px rgba(0, 0, 0, 0.3);
+      border: 1px solid rgba(255, 255, 255, 0.1);
+      transition: all 0.3s ease;
+    }
+
+    .form-container:hover {
+      box-shadow: 0 6px 24px rgba(0, 0, 0, 0.4);
+      border-color: rgba(59, 130, 246, 0.4);
+    }
+
+    .form-input {
+      background: rgba(17, 24, 39, 0.8);
+      border: 1px solid rgba(255, 255, 255, 0.1);
+      color: var(--text-primary);
+      transition: all 0.3s ease;
+    }
+
+    .form-input:focus {
+      background: rgba(17, 24, 39, 0.95);
+      border-color: var(--accent-blue);
+      box-shadow: 0 0 0 2px rgba(59, 130, 246, 0.2);
+    }
+
+    .toggle-switch {
+      position: relative;
+      display: inline-block;
+      width: 60px;
+      height: 34px;
+    }
+
+    .toggle-switch input {
+      opacity: 0;
+      width: 0;
+      height: 0;
+    }
+
+    .toggle-slider {
+      position: absolute;
+      cursor: pointer;
+      top: 0;
+      left: 0;
+      right: 0;
+      bottom: 0;
+      background-color: #4b5563;
+      transition: .4s;
+      border-radius: 34px;
+    }
+
+    .toggle-slider:before {
+      position: absolute;
+      content: "";
+      height: 26px;
+      width: 26px;
+      left: 4px;
+      bottom: 4px;
+      background-color: white;
+      transition: .4s;
+      border-radius: 50%;
+    }
+
+    input:checked+.toggle-slider {
+      background-color: var(--accent-blue);
+    }
+
+    input:checked+.toggle-slider:before {
+      transform: translateX(26px);
+    }
+
+    .submit-button {
+      background: linear-gradient(135deg, #3b82f6, #2563eb);
+      transition: all 0.3s ease;
+    }
+
+    .submit-button:hover {
+      transform: translateY(-2px);
+      box-shadow: 0 4px 12px rgba(59, 130, 246, 0.3);
+    }
+  </style>
 </head>
 
-<body class="bg-gray-100 font-sans transition-all duration-300 dark:bg-gray-800">
-
+<body class="min-h-screen">
   <div class="flex">
-    <!-- Sidebar -->
     <%- include('../layouts/admin-sidebar.ejs') %>
 
-    <!-- Main Content -->
-    <div class="flex-1 p-6 ml-64">
-
-      <div class="flex items-center justify-between mb-6">
-        <h1 class="text-3xl font-bold text-gray-800 dark:text-white fade-in-up">Add Coupons</h1>
-        <div class="flex items-center space-x-4">
-          <button id="themeToggle" class="theme-toggle" type="button" aria-label="Toggle color mode">
-            <i class="fas fa-sun"></i>
-          </button>
-          <a href="/admin/coupons" class="px-4 py-2 bg-blue-500 text-white rounded-lg shadow-lg hover:bg-blue-600 transition-all duration-300 ease-in-out transform hover:scale-105">
-            Show All Coupons
+    <div class="flex-1 ml-64 p-8">
+      <!-- Header Section -->
+      <div class="flex items-center justify-between mb-8 fade-in-up">
+        <h1 class="text-4xl font-bold bg-gradient-to-r from-blue-400 to-blue-600 text-transparent bg-clip-text">
+          Add New Coupon
+        </h1>
+        <div class="flex items-center space-x-6">
+          <div class="theme-toggle" id="themeToggle"></div>
+          <a href="/admin/coupons" class="px-6 py-3 bg-blue-500 text-white rounded-lg shadow-lg hover:bg-blue-600 transition-all duration-300 flex items-center space-x-2">
+            <i class="fas fa-arrow-left"></i>
+            <span>Back to Coupons</span>
           </a>
         </div>
       </div>
 
-      <!-- Add Coupon Form -->
-      <div class="bg-white dark:bg-gray-700 rounded-lg shadow-lg p-6 fade-in-up" style="animation-delay: 0.2s;">
-        <form method="post" action="/admin/add-coupon" id="couponForm" class="space-y-6">
-          <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+      <% if (error_msg.length > 0) { %>
+      <div id="errorMessage" class="bg-red-100 border border-red-400 text-red-700 px-4 py-3 rounded mb-6 fade-in-up" role="alert">
+        <strong class="font-bold">Error!</strong>
+        <span class="block sm:inline"><%= error_msg %></span>
+      </div>
+      <% } %>
+
+
+      <!-- Form Section -->
+      <div class="form-container p-8 fade-in-up">
+        <form method="post" action="/admin/addCoupon" id="couponForm" class="space-y-8">
+          <div class="grid grid-cols-1 md:grid-cols-2 gap-8">
+            <!-- Coupon Name -->
             <div class="space-y-2">
-              <label for="couponName" class="block text-gray-700 dark:text-gray-200 font-semibold">Coupon Name</label>
-              <input type="text" id="couponName" name="name" placeholder="Enter coupon name" class="w-full px-4 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 dark:bg-gray-600 dark:border-gray-500 dark:text-white transition-all duration-300 ease-in-out">
+              <label class="text-sm font-medium text-gray-400">Coupon Name</label>
+              <input value="<%= oldValue.name || '' %>" type="text" name="name" class="form-input w-full px-4 py-3 rounded-lg" placeholder="Enter coupon name">
             </div>
+
+            <!-- Coupon Code -->
             <div class="space-y-2">
-              <label for="couponCode" class="block text-gray-700 dark:text-gray-200 font-semibold flex items-center">
+              <label class="text-sm font-medium text-gray-400 flex items-center">
                 Coupon Code
-                <span class="ml-2 text-xs bg-blue-500 text-white px-2 py-1 rounded">UPPERCASE</span>
+                <span class="ml-2 text-xs bg-blue-500/20 text-blue-400 px-2 py-1 rounded">UPPERCASE</span>
               </label>
-              <input type="text" id="couponCode" name="code" placeholder="Enter coupon code" class="w-full px-4 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 dark:bg-gray-600 dark:border-gray-500 dark:text-white transition-all duration-300 ease-in-out uppercase" oninput="this.value = this.value.toUpperCase()">
+              <input value="<%= oldValue.code || '' %>" type="text" name="code" class="form-input w-full px-4 py-3 rounded-lg uppercase" placeholder="Enter coupon code" oninput="this.value = this.value.toUpperCase()">
             </div>
+
+            <!-- Offer Type -->
             <div class="space-y-2">
-              <label for="discount" class="block text-gray-700 dark:text-gray-200 font-semibold">Discount</label>
-              <input type="text" id="discount" name="discount" placeholder="Enter discount amount" class="w-full px-4 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 dark:bg-gray-600 dark:border-gray-500 dark:text-white transition-all duration-300 ease-in-out">
+              <label class="text-sm font-medium text-gray-400">Offer Type</label>
+              <select name="offerType" class="form-input w-full px-4 py-3 rounded-lg">
+                <option value="<%= oldValue.offerType || '' %>"><%= oldValue.offerType || 'Select Offer Type' %></option>
+                <option value="percentage">Percentage</option>
+                <option value="flat">Flat</option>
+              </select>
             </div>
+
+            <!-- Offer Value -->
             <div class="space-y-2">
-              <label for="minimumAmount" class="block text-gray-700 dark:text-gray-200 font-semibold">Minimum Amount</label>
-              <input type="text" id="minimumAmount" name="minAmount" placeholder="Enter minimum amount" class="w-full px-4 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 dark:bg-gray-600 dark:border-gray-500 dark:text-white transition-all duration-300 ease-in-out">
+              <label class="text-sm font-medium text-gray-400">Offer Value</label>
+              <input value="<%= oldValue.offerValue || '' %>" type="number" name="offerValue" class="form-input w-full px-4 py-3 rounded-lg" placeholder="Enter offer value">
+            </div>
+
+            <!-- Minimum Price -->
+            <div class="space-y-2">
+              <label class="text-sm font-medium text-gray-400">Minimum Purchase Amount</label>
+              <input value="<%= oldValue.minimumPrice || '' %>" type="number" name="minimumPrice" class="form-input w-full px-4 py-3 rounded-lg" placeholder="Enter minimum amount">
+            </div>
+
+            <!-- Expiry Date -->
+            <div class="space-y-2">
+              <label class="text-sm font-medium text-gray-400">Expiry Date</label>
+              <input value="<%= oldValue.expiredOn || '' %>" type="text" name="expiredOn" class="form-input w-full px-4 py-3 rounded-lg flatpickr-input" placeholder="Select expiry date">
+            </div>
+
+            <!-- Usage Limit -->
+            <div class="space-y-2">
+              <label class="text-sm font-medium text-gray-400">Usage Limit</label>
+              <input value="<%= oldValue.usageLimit || '' %>" type="number" name="usageLimit" class="form-input w-full px-4 py-3 rounded-lg" placeholder="Enter usage limit">
+            </div>
+
+            <!-- Usage Per User -->
+            <div class="space-y-2">
+              <label class="text-sm font-medium text-gray-400">Usage Per User</label>
+              <input value="<%= oldValue.usagePerUserLimit || '' %>" type="number" name="usagePerUserLimit" class="form-input w-full px-4 py-3 rounded-lg" placeholder="Enter per user limit" value="1">
             </div>
           </div>
-          <div class="space-y-2">
-            <label for="validityTill" class="block text-gray-700 dark:text-gray-200 font-semibold">Validity Till</label>
-            <input type="text" id="validityTill" name="validityTill" placeholder="Select date" class="w-full px-4 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 dark:bg-gray-600 dark:border-gray-500 dark:text-white transition-all duration-300 ease-in-out flatpickr-input">
-          </div>
-          <div class="flex items-center space-x-2">
+
+          <!-- Status Toggle -->
+          <div class="flex items-center space-x-4 pt-4">
             <label class="toggle-switch">
-              <input type="checkbox" id="isActive" name="isActive">
+              <input type="checkbox" name="isActive" checked>
               <span class="toggle-slider"></span>
             </label>
-            <span id="toggleLabel" class="toggle-label text-gray-700 dark:text-gray-200">Inactive</span>
+            <span class="text-sm font-medium text-gray-400">Active Status</span>
           </div>
-          <button type="submit" class="w-full px-6 py-3 bg-blue-500 text-white rounded-lg shadow-lg hover:bg-blue-600 transition-all duration-300 ease-in-out transform hover:scale-105">
-            Add Coupon
+
+          <!-- Submit Button -->
+          <button type="submit" class="submit-button w-full px-6 py-4 text-white rounded-lg shadow-lg mt-8 font-medium">
+            Create Coupon
           </button>
         </form>
       </div>
     </div>
   </div>
 
-  <script src="/js/add-coupon.js"></script>
+  <script>
+    document.addEventListener('DOMContentLoaded', () => {
+      // Initialize flatpickr
+      flatpickr(".flatpickr-input", {
+        minDate: "today",
+        dateFormat: "Y-m-d"
+      });
+
+      // Animate form elements
+      const animateElements = () => {
+        const elements = document.querySelectorAll('.fade-in-up');
+        elements.forEach((element, index) => {
+          element.style.animationDelay = `${index * 0.1}s`;
+          element.style.opacity = '1';
+        });
+      };
+      animateElements();
+
+      // Enhanced form interactions
+      const formInputs = document.querySelectorAll('.form-input');
+      formInputs.forEach(input => {
+        input.addEventListener('focus', () => {
+          input.parentElement.style.transform = 'translateY(-2px)';
+        });
+
+        input.addEventListener('blur', () => {
+          input.parentElement.style.transform = '';
+        });
+      });
+
+      // Submit button animation
+      const submitButton = document.querySelector('.submit-button');
+      submitButton.addEventListener('mouseenter', () => {
+        submitButton.style.animation = 'glowPulse 2s infinite';
+      });
+
+      submitButton.addEventListener('mouseleave', () => {
+        submitButton.style.animation = '';
+      });
+
+      // Form validation
+      const form = document.getElementById('couponForm');
+      form.addEventListener('submit', (e) => {
+        e.preventDefault();
+        // Add your validation logic here
+        form.submit();
+      });
+    });
+  </script>
 </body>
 
 </html>

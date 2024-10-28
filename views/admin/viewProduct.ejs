@@ -7,113 +7,319 @@
   <title>Product View - Yadro</title>
   <script src="https://cdn.tailwindcss.com"></script>
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
-  <script src="/js/toggle.js"></script>
-  <link rel="icon" href="/images/logo.png" type="image/x-icon">
-  <link rel="stylesheet" href="/css/admin-viewProduct.css">
+  <style>
+    :root {
+      --primary-dark: #1f2937;
+      --secondary-dark: #111827;
+      --accent-blue: #3b82f6;
+      --text-primary: #e5e7eb;
+      --text-secondary: #9ca3af;
+    }
+
+    /* Animation Keyframes */
+    @keyframes fadeInUp {
+      from {
+        opacity: 0;
+        transform: translateY(20px);
+      }
+
+      to {
+        opacity: 1;
+        transform: translateY(0);
+      }
+    }
+
+    @keyframes slideIn {
+      from {
+        opacity: 0;
+        transform: translateX(-20px);
+      }
+
+      to {
+        opacity: 1;
+        transform: translateX(0);
+      }
+    }
+
+    @keyframes pulse {
+
+      0%,
+      100% {
+        transform: scale(1);
+      }
+
+      50% {
+        transform: scale(1.05);
+      }
+    }
+
+    /* Base Animations */
+    .fade-in-up {
+      animation: fadeInUp 0.6s ease-out forwards;
+    }
+
+    .slide-in {
+      animation: slideIn 0.6s ease-out forwards;
+    }
+
+    /* Image Gallery Styles */
+    .image-container {
+      position: relative;
+      overflow: hidden;
+      border-radius: 1rem;
+      box-shadow: 0 4px 20px rgba(0, 0, 0, 0.1);
+      transition: transform 0.3s ease;
+    }
+
+    .image-container:hover {
+      transform: translateY(-5px);
+    }
+
+    .thumbnail {
+      transition: all 0.3s ease;
+      border: 2px solid transparent;
+    }
+
+    .thumbnail:hover {
+      transform: scale(1.1);
+      border-color: var(--accent-blue);
+    }
+
+    .thumbnail.active {
+      border-color: var(--accent-blue);
+      transform: scale(1.1);
+    }
+
+    /* Status Badge Styles */
+    .status-badge {
+      transition: all 0.3s ease;
+    }
+
+    .status-badge:hover {
+      transform: translateY(-2px);
+      box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+    }
+
+    /* Color Selector Styles */
+    .color-option {
+      cursor: pointer;
+      transition: all 0.3s ease;
+      position: relative;
+    }
+
+    .color-option:hover {
+      transform: scale(1.2);
+    }
+
+    .color-option::after {
+      content: '';
+      position: absolute;
+      top: -2px;
+      left: -2px;
+      right: -2px;
+      bottom: -2px;
+      border: 2px solid transparent;
+      border-radius: 9999px;
+      transition: all 0.3s ease;
+    }
+
+    .color-option:hover::after {
+      border-color: var(--accent-blue);
+    }
+
+    /* Dark Mode Styles */
+    .dark .image-container {
+      box-shadow: 0 4px 20px rgba(0, 0, 0, 0.3);
+    }
+
+    .dark .status-badge {
+      box-shadow: 0 2px 8px rgba(0, 0, 0, 0.2);
+    }
+
+    /* Theme Toggle Styles */
+    .theme-toggle {
+      cursor: pointer;
+      padding: 0.5rem;
+      border-radius: 9999px;
+      transition: all 0.3s ease;
+    }
+
+    .theme-toggle:hover {
+      transform: rotate(180deg);
+    }
+
+    /* Rating Stars Animation */
+    .star-rating {
+      transition: all 0.3s ease;
+    }
+
+    .star-rating:hover {
+      transform: scale(1.1);
+      color: #fbbf24;
+    }
+  </style>
 </head>
 
 <body class="bg-gray-100 font-sans transition-colors duration-300 dark:bg-gray-900">
   <%- include('../layouts/admin-sidebar.ejs') %>
-  <div class="container mx-auto p-6 ml-64">
 
-    <div class="flex justify-between items-center mb-6">
-      <h1 class="text-3xl font-bold text-gray-800 dark:text-gray-200">Product View</h1>
-      <div class="theme-toggle" id="themeToggle"></div>
+  <div class="container mx-auto p-6 ml-64">
+    <!-- Header Section -->
+    <div class="flex justify-between items-center mb-6 fade-in-up">
+      <h1 class="text-3xl font-bold bg-gradient-to-r from-blue-500 to-purple-500 bg-clip-text text-transparent">
+        Product View
+      </h1>
+      <button class="theme-toggle p-2 rounded-full bg-gray-200 dark:bg-gray-700" id="themeToggle">
+        <i class="fas fa-moon dark:hidden"></i>
+        <i class="fas fa-sun hidden dark:block"></i>
+      </button>
     </div>
 
     <div class="grid grid-cols-1 md:grid-cols-2 gap-8">
-      <!-- Left side - Image gallery -->
+      <!-- Image Gallery Section -->
       <div class="fade-in-up" style="animation-delay: 0.2s;">
-        <div class="image-container mb-4">
-          <img id="mainImage" src="<%= product.images[0] %>" alt="Product Image" class="w-full h-auto rounded-lg shadow-md">
+        <div class="image-container group mb-4">
+          <img id="mainImage" src="<%= product.images[0] %>" alt="Product Image" class="w-full h-auto rounded-lg transition-transform duration-300 group-hover:scale-105">
         </div>
         <div class="grid grid-cols-5 gap-2">
-          <% product.images.forEach( image => { %>
-          <img src="<%= image %>" alt="<%= product.name %>" class="thumbnail w-full h-auto rounded-md cursor-pointer">
+          <% product.images.forEach((image, index) => { %>
+          <img src="<%= image %>" alt="<%= product.name %>" class="thumbnail w-full h-auto rounded-md cursor-pointer <%= index === 0 ? 'active' : '' %>" onclick="updateMainImage(this.src, this)">
           <% }) %>
-
         </div>
       </div>
 
-      <!-- Right side - Product details -->
+      <!-- Product Details Section -->
       <div class="fade-in-up" style="animation-delay: 0.4s;">
-        <!-- Product Name, Brand, and Rating -->
-        <h2 class="text-2xl font-bold text-gray-800 dark:text-gray-200 mb-4"><%= product.name %></h2>
-        <p class="text-gray-600 dark:text-gray-400 mb-4">Brand: <%= product.brand %></p>
-        <div class="flex items-center mb-4">
-          <span class="text-yellow-400 mr-1"><i class="fas fa-star"></i></span>
-          <span class="text-yellow-400 mr-1"><i class="fas fa-star"></i></span>
-          <span class="text-yellow-400 mr-1"><i class="fas fa-star"></i></span>
-          <span class="text-yellow-400 mr-1"><i class="fas fa-star"></i></span>
-          <span class="text-gray-400 mr-2"><i class="fas fa-star"></i></span>
-          <span class="text-gray-600 dark:text-gray-400">(4.0) 1,234 reviews</span>
-        </div>
-
-        <!-- Pricing Details -->
-        <div class="mb-4">
-          <span class="text-3xl font-bold text-gray-800 dark:text-gray-200">₹ <%= product.salePrice %></span>
-          <span class="text-lg text-gray-500 dark:text-gray-400 line-through ml-2">₹ <%= product.regularPrice %></span>
-          <span class="text-green-500 ml-2"><%= product.productOffer %>% off</span>
-        </div>
-
-        <!-- Product Description -->
-        <p class="text-gray-700 dark:text-gray-300 mb-4">
-          <%= product.description %>
+        <!-- Product Name and Brand -->
+        <h2 class="text-2xl font-bold text-gray-800 dark:text-gray-200 mb-4 slide-in">
+          <%= product.name %>
+        </h2>
+        <p class="text-gray-600 dark:text-gray-400 mb-4 slide-in">
+          Brand: <%= product.brand %>
         </p>
 
-        <!-- Stock and Category Information -->
-        <div class="mb-6">
-          <h3 class="text-lg dark:text-white-500  font-semibold mb-2">Stock: <%= product.quantity %></h3>
-          <h3 class="text-lg font-semibold mb-2">Category:</h3>
-          <span class="inline-block bg-gray-200 rounded-full px-3 py-1 text-sm font-semibold text-gray-700 mr-2">
-            <%= categories.name %>
+        <!-- Rating Section -->
+        <div class="flex items-center mb-4 slide-in">
+          <% for(let i = 0; i < 5; i++) { %>
+          <span class="star-rating text-yellow-400 mr-1">
+            <i class="fas fa-star"></i>
           </span>
+          <% } %>
+          <span class="text-gray-600 dark:text-gray-400 ml-2">(4.0) 1,234 reviews</span>
         </div>
 
-        <!-- Product Status -->
-        <div class="mb-6">
-          <h3 class="text-lg font-semibold mb-2">Status:</h3>
-          <span class="inline-flex items-center px-3 py-1 rounded-full text-sm font-semibold transition duration-300 ease-in-out
-        <% if (product.status === 'Active') { %>
-          bg-green-100 text-green-800
-        <% } else if (product.status === 'Inactive') { %>
-          bg-red-100 text-red-800
-        <% } else if (product.status === 'Out of Stock') { %>
-          bg-yellow-100 text-yellow-800
-        <% } else { %>
-          bg-gray-100 text-gray-800
-        <% } %>
-        shadow-md hover:shadow-lg">
-            <!-- Status Icon -->
-            <% if (product.status === 'Active') { %>
-            <i class="fas fa-check-circle mr-2"></i>
-            <% } else if (product.status === 'Inactive') { %>
-            <i class="fas fa-times-circle mr-2"></i>
-            <% } else if (product.status === 'Out of Stock') { %>
-            <i class="fas fa-exclamation-triangle mr-2"></i>
-            <% } else { %>
-            <i class="fas fa-info-circle mr-2"></i>
-            <% } %>
+        <!-- Pricing Section -->
+        <div class="mb-6 slide-in">
+          <div class="flex items-center">
+            <span class="text-3xl font-bold text-gray-800 dark:text-gray-200">
+              ₹<%= product.salePrice %>
+            </span>
+            <span class="text-lg text-gray-500 dark:text-gray-400 line-through ml-2">
+              ₹<%= product.regularPrice %>
+            </span>
+            <span class="ml-2 px-2 py-1 bg-green-100 text-green-800 rounded-full text-sm">
+              <%= product.productOffer %>% off
+            </span>
+          </div>
+        </div>
 
-            <!-- Status Text -->
+        <!-- Description -->
+        <div class="mb-6 slide-in">
+          <p class="text-gray-700 dark:text-gray-300">
+            <%= product.description %>
+          </p>
+        </div>
+
+        <!-- Stock and Category -->
+        <div class="mb-6 slide-in">
+          <div class="flex items-center mb-2">
+            <i class="fas fa-box mr-2 text-gray-500 dark:text-gray-400"></i>
+            <span class="text-lg dark:text-gray-200">
+              Stock: <%= product.quantity %>
+            </span>
+          </div>
+          <div class="flex items-center">
+            <i class="fas fa-tag mr-2 text-gray-500 dark:text-gray-400"></i>
+            <span class="inline-block bg-gray-200 dark:bg-gray-700 rounded-full px-3 py-1 text-sm font-semibold text-gray-700 dark:text-gray-300">
+              <%= categories.name %>
+            </span>
+          </div>
+        </div>
+
+        <!-- Status Badge -->
+        <div class="mb-6 slide-in">
+          <span class="status-badge inline-flex items-center px-4 py-2 rounded-full text-sm font-semibold
+                        <%= product.status === 'Active' ? 'bg-green-100 text-green-800' : 
+                           product.status === 'Inactive' ? 'bg-red-100 text-red-800' : 
+                           'bg-yellow-100 text-yellow-800' %>">
+            <i class="fas <%= product.status === 'Active' ? 'fa-check-circle' : 
+                                       product.status === 'Inactive' ? 'fa-times-circle' : 
+                                       'fa-exclamation-triangle' %> mr-2"></i>
             <%= product.status %>
           </span>
         </div>
 
-
-        <!-- Available Colors -->
-        <div class="mb-4">
-          <h3 class="section-header mb-2 dark:text-gray-200">Available Colors</h3>
-          <div class="flex space-x-2">
-            <button class="w-8 h-8 rounded-full" style="background-color: <%= product.color %>;"></button>
+        <!-- Color Options -->
+        <div class="mb-6 slide-in">
+          <h3 class="text-lg font-semibold mb-2 dark:text-gray-200">Available Colors</h3>
+          <div class="flex space-x-3">
+            <button class="color-option w-8 h-8 rounded-full" style="background-color: <%= product.color %>;">
+            </button>
           </div>
         </div>
       </div>
-
     </div>
   </div>
 
-  <script src="/js/admin-viewProduct.js"></script>
+  <script>
+    // Theme Toggle
+    const themeToggle = document.getElementById('themeToggle');
+    themeToggle.addEventListener('click', () => {
+      document.documentElement.classList.toggle('dark');
+    });
+
+    // Image Gallery
+    function updateMainImage(src, thumbnail) {
+      document.getElementById('mainImage').src = src;
+      document.querySelectorAll('.thumbnail').forEach(thumb => {
+        thumb.classList.remove('active');
+      });
+      thumbnail.classList.add('active');
+    }
+
+    // Lazy Loading Images
+    document.addEventListener('DOMContentLoaded', () => {
+      const images = document.querySelectorAll('img');
+      const imageOptions = {
+        threshold: 0.1,
+        rootMargin: '0px 0px 50px 0px'
+      };
+
+      const observer = new IntersectionObserver((entries, observer) => {
+        entries.forEach(entry => {
+          if (entry.isIntersecting) {
+            const img = entry.target;
+            if (img.dataset.src) {
+              img.src = img.dataset.src;
+            }
+            observer.unobserve(img);
+          }
+        });
+      }, imageOptions);
+
+      images.forEach(img => observer.observe(img));
+    });
+
+    // Interactive Elements
+    document.querySelectorAll('.star-rating').forEach(star => {
+      star.addEventListener('mouseover', () => {
+        star.style.transform = 'scale(1.2)';
+      });
+      star.addEventListener('mouseout', () => {
+        star.style.transform = 'scale(1)';
+      });
+    });
+  </script>
 </body>
 
 </html>

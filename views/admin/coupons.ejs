@@ -1,129 +1,625 @@
 <!DOCTYPE html>
-<html lang="en" class="light">
+<html lang="en" class="dark">
 
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Yadro - Coupons</title>
   <script src="https://cdn.tailwindcss.com"></script>
-  <link rel="icon" href="/images/logo.png" type="image/x-icon">
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
-  <script src="/js/toggle.js"></script>
-  <link rel="stylesheet" href="/css/coupons.css">
-  <link rel="stylesheet" href="/css/products.css">
+  <style>
+    :root {
+      --primary-dark: #1f2937;
+      --secondary-dark: #111827;
+      --accent-blue: #3b82f6;
+      --text-primary: #e5e7eb;
+      --text-secondary: #9ca3af;
+    }
+
+    body {
+      background-color: var(--secondary-dark);
+      color: var(--text-primary);
+    }
+
+    /* Custom Animations */
+    @keyframes fadeInUp {
+      from {
+        opacity: 0;
+        transform: translateY(20px);
+      }
+
+      to {
+        opacity: 1;
+        transform: translateY(0);
+      }
+    }
+
+    @keyframes glowPulse {
+      0% {
+        box-shadow: 0 0 5px rgba(59, 130, 246, 0.5);
+      }
+
+      50% {
+        box-shadow: 0 0 15px rgba(59, 130, 246, 0.8);
+      }
+
+      100% {
+        box-shadow: 0 0 5px rgba(59, 130, 246, 0.5);
+      }
+    }
+
+    .fade-in-up {
+      animation: fadeInUp 0.6s ease-out forwards;
+    }
+
+    /* Enhanced Search Container */
+    .search-container {
+      background: var(--primary-dark);
+      border-radius: 12px;
+      box-shadow: 0 4px 20px rgba(0, 0, 0, 0.3);
+      padding: 1.5rem;
+      transition: all 0.3s ease;
+      border: 1px solid rgba(255, 255, 255, 0.1);
+    }
+
+    .search-container:hover {
+      box-shadow: 0 6px 24px rgba(0, 0, 0, 0.4);
+      border-color: rgba(59, 130, 246, 0.4);
+    }
+
+    .search-input {
+      background: rgba(17, 24, 39, 0.8);
+      border: 1px solid rgba(255, 255, 255, 0.1);
+      color: var(--text-primary);
+      padding: 0.75rem 1rem;
+      width: 300px;
+      border-radius: 8px;
+      transition: all 0.3s ease;
+    }
+
+    .search-input:focus {
+      background: rgba(17, 24, 39, 0.95);
+      border-color: var(--accent-blue);
+      box-shadow: 0 0 0 2px rgba(59, 130, 246, 0.2);
+      outline: none;
+    }
+
+    .search-select {
+      background: rgba(17, 24, 39, 0.8);
+      border: 1px solid rgba(255, 255, 255, 0.1);
+      color: var(--text-primary);
+      padding: 0.75rem;
+      border-radius: 8px;
+      transition: all 0.3s ease;
+    }
+
+    .search-select:focus {
+      border-color: var(--accent-blue);
+      box-shadow: 0 0 0 2px rgba(59, 130, 246, 0.2);
+    }
+
+    .search-button {
+      background: linear-gradient(135deg, #3b82f6, #2563eb);
+      color: white;
+      padding: 0.75rem 1.5rem;
+      border-radius: 8px;
+      transition: all 0.3s ease;
+      border: none;
+      font-weight: 500;
+      text-shadow: 0 1px 2px rgba(0, 0, 0, 0.2);
+    }
+
+    .search-button:hover {
+      transform: translateY(-1px);
+      box-shadow: 0 4px 12px rgba(59, 130, 246, 0.3);
+    }
+
+    /* Table Styling */
+    .table-container {
+      background: var(--primary-dark);
+      border-radius: 16px;
+      box-shadow: 0 4px 20px rgba(0, 0, 0, 0.3);
+      border: 1px solid rgba(255, 255, 255, 0.1);
+      overflow: hidden;
+    }
+
+    .table-row {
+      transition: all 0.2s ease;
+      border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+    }
+
+    .table-row:hover {
+      background: rgba(59, 130, 246, 0.1);
+    }
+
+    /* Action Icons */
+    .action-icon {
+      padding: 0.5rem;
+      border-radius: 8px;
+      transition: all 0.2s ease;
+      color: var(--text-secondary);
+    }
+
+    .edit-icon:hover {
+      background: rgba(59, 130, 246, 0.2);
+      color: #60a5fa;
+    }
+
+    .view-icon:hover {
+      background: rgba(16, 185, 129, 0.2);
+      color: #34d399;
+    }
+
+    .delete-icon:hover {
+      background: rgba(239, 68, 68, 0.2);
+      color: #f87171;
+    }
+
+    /* Add Coupon Button */
+    .add-coupon-btn {
+      background: linear-gradient(135deg, #10b981, #059669);
+      color: white;
+      padding: 0.75rem 1.5rem;
+      border-radius: 8px;
+      transition: all 0.3s ease;
+      border: none;
+      font-weight: 500;
+      text-shadow: 0 1px 2px rgba(0, 0, 0, 0.2);
+    }
+
+    .add-coupon-btn:hover {
+      transform: translateY(-2px);
+      box-shadow: 0 4px 12px rgba(16, 185, 129, 0.3);
+    }
+
+    /* Status Badge */
+    .status-badge {
+      padding: 0.25rem 0.75rem;
+      border-radius: 9999px;
+      font-size: 0.75rem;
+      font-weight: 500;
+      transition: all 0.3s ease;
+    }
+
+    .status-badge.active {
+      background: rgba(16, 185, 129, 0.2);
+      color: #34d399;
+      border: 1px solid rgba(16, 185, 129, 0.4);
+    }
+
+    .status-badge.inactive {
+      background: rgba(239, 68, 68, 0.2);
+      color: #f87171;
+      border: 1px solid rgba(239, 68, 68, 0.4);
+    }
+
+    /* Tooltip */
+    .tooltip {
+      position: absolute;
+      bottom: 100%;
+      left: 50%;
+      transform: translateX(-50%);
+      padding: 0.5rem 1rem;
+      background: rgba(0, 0, 0, 0.9);
+      color: white;
+      border-radius: 6px;
+      font-size: 0.875rem;
+      opacity: 0;
+      visibility: hidden;
+      transition: all 0.3s ease;
+      border: 1px solid rgba(255, 255, 255, 0.1);
+    }
+
+    .action-icon:hover .tooltip {
+      opacity: 1;
+      visibility: visible;
+      transform: translateX(-50%) translateY(-8px);
+    }
+
+    /* Code Badge */
+    .code-badge {
+      background: rgba(59, 130, 246, 0.2);
+      color: #60a5fa;
+      border: 1px solid rgba(59, 130, 246, 0.4);
+      padding: 0.25rem 0.75rem;
+      border-radius: 9999px;
+      font-size: 0.875rem;
+      font-family: monospace;
+    }
+
+    /* Scrollbar Styling */
+    ::-webkit-scrollbar {
+      width: 8px;
+      height: 8px;
+    }
+
+    ::-webkit-scrollbar-track {
+      background: var(--primary-dark);
+    }
+
+    ::-webkit-scrollbar-thumb {
+      background: #4b5563;
+      border-radius: 4px;
+    }
+
+    ::-webkit-scrollbar-thumb:hover {
+      background: #6b7280;
+    }
+
+
+
+    /* Modal overlay background */
+    .modal-overlay {
+      position: fixed;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      background-color: rgba(0, 0, 0, 0.5);
+      display: none;
+      /* Hidden by default */
+      align-items: center;
+      justify-content: center;
+      animation: fadeIn 0.3s ease forwards;
+    }
+
+    /* Modal box styling */
+    .modal-content {
+      background: #fff;
+      padding: 2rem;
+      border-radius: 8px;
+      width: 90%;
+      max-width: 400px;
+      text-align: center;
+      transform: translateY(50px);
+      animation: slideUp 0.3s ease forwards;
+      box-shadow: 0px 8px 16px rgba(0, 0, 0, 0.2);
+    }
+
+    /* Modal title and buttons */
+    .modal-content h2 {
+      margin-top: 0;
+    }
+
+    .modal-buttons {
+      display: flex;
+      justify-content: space-around;
+      margin-top: 20px;
+    }
+
+    /* Buttons styling */
+    .confirm-btn,
+    .cancel-btn {
+      padding: 0.5rem 1rem;
+      border: none;
+      border-radius: 4px;
+      cursor: pointer;
+      transition: background-color 0.2s ease;
+    }
+
+    .confirm-btn {
+      background-color: #ff4d4f;
+      color: white;
+    }
+
+    .confirm-btn:hover {
+      background-color: #e63946;
+    }
+
+    .cancel-btn {
+      background-color: #6c757d;
+      color: white;
+    }
+
+    .cancel-btn:hover {
+      background-color: #5a6268;
+    }
+
+    /* Animations */
+    @keyframes fadeIn {
+      from {
+        opacity: 0;
+      }
+
+      to {
+        opacity: 1;
+      }
+    }
+
+    @keyframes slideUp {
+      from {
+        transform: translateY(50px);
+      }
+
+      to {
+        transform: translateY(0);
+      }
+    }
+  </style>
 </head>
 
-<body class="bg-gray-100 font-sans transition-all duration-300 dark:bg-gray-800">
-
+<body class="min-h-screen">
   <div class="flex">
-    <!-- Sidebar -->
     <%- include('../layouts/admin-sidebar.ejs') %>
 
-    <!-- Main Content -->
-    <div class="flex-1 ml-64 p-6">
-      <div class="flex items-center justify-between mb-6">
-        <h1 class="text-3xl font-bold text-gray-800 dark:text-white fade-in-up">Coupons</h1>
-        <div class="flex items-center space-x-4">
+    <div class="flex-1 ml-64 p-8">
+      <!-- Header Section -->
+      <div class="flex items-center justify-between mb-8 fade-in-up">
+        <h1 class="text-4xl font-bold bg-gradient-to-r from-blue-400 to-blue-600 text-transparent bg-clip-text">
+          Coupons Management
+        </h1>
+        <div class="flex items-center space-x-6">
           <div class="theme-toggle" id="themeToggle"></div>
-          <a href="/admin/add-coupon" class="add-coupon-btn px-4 py-2 bg-green-600 text-white rounded-lg relative overflow-hidden button">
-            <span class="relative z-10">Add Coupon</span>
+          <a href="/admin/add-coupon" class="add-coupon-btn">
+            <i class="fas fa-plus mr-2"></i>
+            Add New Coupon
           </a>
         </div>
       </div>
 
-      <!-- Search and Filter -->
-      <form action="/admin/customers" method="GET" class="mb-8 fade-in-up" style="animation-delay: 0.2s;">
-        <div class="search-container flex items-center justify-between">
-          <i class="fas fa-search search-icon ml-4"></i>
-          <input type="text" name="search" placeholder="Search Coupons..." class="search-input" />
-          <select name="status" class="search-select mr-5">
-            <option value="">All Status</option>
-            <option value="active">Active</option>
-            <option value="blocked">Blocked</option>
-          </select>
-          <button type="submit" class="search-button">
-            Search
-          </button>
+      <!-- Search and Filter Section -->
+      <form action="/admin/coupons" method="GET" class="mb-8 fade-in-up">
+        <div class="search-container">
+          <div class="flex items-center justify-between">
+            <div class="flex items-center flex-1">
+              <i class="fas fa-search text-gray-400 ml-4"></i>
+              <input type="text" name="search" placeholder="Search coupons by name or code..." class="search-input ml-4 flex-1" />
+            </div>
+            <div class="flex items-center space-x-4">
+              <select name="status" class="search-select">
+                <option value="">All Status</option>
+                <option value="active">Active</option>
+                <option value="inactive">Inactive</option>
+              </select>
+              <button type="submit" class="search-button">
+                <i class="fas fa-search mr-2"></i>
+                Search
+              </button>
+            </div>
+          </div>
         </div>
       </form>
 
-      <!-- Coupons Table -->
-      <div class="overflow-x-auto fade-in-up" style="animation-delay: 0.4s;">
-        <table class="min-w-full bg-white dark:bg-gray-700 border border-gray-200 dark:border-gray-600 shadow-md rounded-lg overflow-hidden">
+      <!-- Table Section -->
+      <div class="table-container fade-in-up">
+        <table class="min-w-full">
           <thead>
-            <tr class="bg-gray-50 dark:bg-gray-600 text-gray-600 dark:text-gray-200 uppercase text-sm leading-normal">
-              <th class="py-3 px-6 text-left">Sl No</th>
-              <th class="py-3 px-6 text-left">Coupon Code</th>
-              <th class="py-3 px-6 text-left">Discount</th>
-              <th class="py-3 px-6 text-left">Min Amount</th>
-              <th class="py-3 px-6 text-left">Validity</th>
-              <th class="py-3 px-6 text-left">Created</th>
-              <th class="py-3 px-6 text-left">Status</th>
-              <th class="py-3 px-6 text-left">Action</th>
+            <tr class="text-gray-400 text-sm uppercase">
+              <th class="py-4 px-6 text-left font-medium">Sl No</th>
+              <th class="py-4 px-6 text-left font-medium">Name</th>
+              <th class="py-4 px-6 text-left font-medium">Code</th>
+              <th class="py-4 px-6 text-left font-medium">Offer Type</th>
+              <th class="py-4 px-6 text-left font-medium">Offer Value</th>
+              <th class="py-4 px-6 text-left font-medium">Min Price</th>
+              <th class="py-4 px-6 text-left font-medium">Created On</th>
+              <th class="py-4 px-6 text-left font-medium">Expired On</th>
+              <th class="py-4 px-6 text-left font-medium">Usage Limit</th>
+              <th class="py-4 px-6 text-left font-medium">Per User Limit</th>
+              <th class="py-4 px-6 text-left font-medium">Status</th>
+              <th class="py-4 px-6 text-left font-medium">Action</th>
             </tr>
           </thead>
-          <tbody class="text-gray-600 dark:text-gray-200">
-            <% coupons.forEach( (coupon , index) => { %>
-            <tr class="table-row border-b border-gray-200 dark:border-gray-700 hover:bg-gray-50 dark:hover:bg-gray-600">
-              <td class="py-3 px-6"><%= index + 1 %></td>
-              <td class="py-3 px-6"><%= coupon.code %></td>
-              <td class="py-3 px-6"><%= coupon.offer %> %</td>
-              <td class="py-3 px-6">₹ <%= coupon.minimumPrice %></td>
-              <td class="py-3 px-6"><%= coupon.expiredOn %></td>
-              <td class="py-3 px-6"><%= coupon.createdOn %></td>
-              <% if (coupon.isList) { %>
-              <td class="py-3 px-6"><span class="bg-green-200 text-green-600 py-1 px-3 rounded-full text-xs">Active</span></td>
-              <% } else { %>
-              <td class="py-3 px-6"><span class="bg-red-200 text-red-600 py-1 px-3 rounded-full text-xs">InActive</span></td>
-              <% } %>
-              <td class="py-3 px-6">
+          <tbody>
+            <% coupons.forEach((coupon, index) => { %>
+            <tr class="table-row">
+              <td class="py-4 px-6 text-gray-300"><%= index + 1 %></td>
+              <td class="py-4 px-6 font-medium"><%= coupon.name %></td>
+              <td class="py-4 px-6">
+                <span class="code-badge">
+                  <%= coupon.code %>
+                </span>
+              </td>
+              <td class="py-4 px-6 text-gray-300"><%= coupon.offerType %></td>
+              <td class="py-4 px-6 font-medium">
+                <%= coupon.offerValue %>
+                <%= coupon.offerType === 'percentage' ? '%' : '₹' %>
+              </td>
+              <td class="py-4 px-6 text-gray-300">₹ <%= coupon.minimumPrice %></td>
+              <td class="py-4 px-6 text-gray-300"> <%= new Date(coupon.createdOn).toLocaleDateString('en-US', { 
+                year: 'numeric', 
+                month: 'long', 
+                day: 'numeric',
+                hour: '2-digit',
+                minute: '2-digit'
+              }) %></td>
+              <td class="py-4 px-6 text-gray-300"> <%= new Date(coupon.expiredOn).toLocaleDateString('en-US', { 
+                year: 'numeric', 
+                month: 'long', 
+                day: 'numeric',
+                hour: '2-digit',
+                minute: '2-digit'
+              }) %></td>
+              <td class="py-4 px-6 text-gray-300"><%= coupon.usageLimit || 'Unlimited' %></td>
+              <td class="py-4 px-6 text-gray-300"><%= coupon.usagePerUserLimit %></td>
+              <td class="py-4 px-6">
+                <span class="status-badge <%= coupon.isActive ? 'active' : 'inactive' %>">
+                  <%= coupon.isActive ? 'Active' : 'Inactive' %>
+                </span>
+              </td>
+              <td class="py-4 px-6">
                 <div class="flex space-x-3">
-                  <a href="/admin/editProduct/" class="relative group action-icon edit-icon" title="Edit">
+                  <a href="/admin/editCoupon/<%= coupon._id %>" class="action-icon edit-icon">
                     <i class="fas fa-edit"></i>
-                    <div class="tooltip hidden absolute bottom-full mb-2 w-max text-sm bg-gray-800 text-white p-2 rounded-lg opacity-0 transition-opacity duration-300 group-hover:opacity-100 group-hover:block">
-                      Edit
-                      <div class="tooltip-arrow"></div>
-                    </div>
+                    <span class="tooltip">Edit Coupon</span>
                   </a>
-                  <a href="/admin/viewProduct/" class="relative group action-icon view-icon" title="View">
+                  <a href="/admin/viewCoupon/<%= coupon._id %>" class="action-icon view-icon">
                     <i class="fas fa-eye"></i>
-                    <div class="tooltip hidden absolute bottom-full mb-2 w-max text-sm bg-gray-800 text-white p-2 rounded-lg opacity-0 transition-opacity duration-300 group-hover:opacity-100 group-hover:block">
-                      View
-                      <div class="tooltip-arrow"></div>
-                    </div>
+                    <span class="tooltip">View Details</span>
                   </a>
-                  <a href="/admin/deleteProduct/" class="relative group action-icon delete-icon" title="Delete">
+                  <a href="/admin/deleteCoupon/<%= coupon._id %>" class="delete-btn action-icon delete-icon">
                     <i class="fas fa-trash"></i>
-                    <!-- Tooltip -->
-                    <div class="tooltip hidden absolute bottom-full mb-2 w-max text-sm bg-gray-800 text-white p-2 rounded-lg opacity-0 transition-opacity duration-300 group-hover:opacity-100 group-hover:block">
-                      Delete
-                      <div class="tooltip-arrow"></div>
-                    </div>
+                    <span class="tooltip">Delete Coupon</span>
                   </a>
                 </div>
               </td>
             </tr>
             <% }) %>
-            <!-- Add more rows as needed -->
           </tbody>
         </table>
       </div>
 
-      <!-- Pagination -->
-      <div class="flex justify-between items-center mt-4 fade-in-up" style="animation-delay: 0.6s;">
-        <span class="text-gray-600 dark:text-gray-300">Showing 1-4 of 4 coupons</span>
-        <div class="flex space-x-2">
-          <button class="pagination-button px-3 py-1 bg-gray-200 dark:bg-gray-600 text-gray-600 dark:text-gray-200 rounded-md hover:bg-gray-300 dark:hover:bg-gray-500 transition-colors duration-300">Previous</button>
-          <button class="pagination-button px-3 py-1 bg-blue-500 text-white rounded-md hover:bg-blue-600 transition-colors duration-300">1</button>
-          <button class="pagination-button px-3 py-1 bg-gray-200 dark:bg-gray-600 text-gray-600 dark:text-gray-200 rounded-md hover:bg-gray-300 dark:hover:bg-gray-500 transition-colors duration-300">2</button>
-          <button class="pagination-button px-3 py-1 bg-gray-200 dark:bg-gray-600 text-gray-600 dark:text-gray-200 rounded-md hover:bg-gray-300 dark:hover:bg-gray-500 transition-colors duration-300">3</button>
-          <button class="pagination-button px-3 py-1 bg-gray-200 dark:bg-gray-600 text-gray-600 dark:text-gray-200 rounded-md hover:bg-gray-300 dark:hover:bg-gray-500 transition-colors duration-300">Next</button>
+      <!-- Modal Structure -->
+      <div id="confirmModal" class="modal-overlay">
+        <div class="modal-content">
+          <h2>Are you sure?</h2>
+          <p>Do you want to delete this coupon? This action cannot be undone.</p>
+          <div class="modal-buttons">
+            <button onclick="confirmDelete()" class="confirm-btn">Yes, delete it</button>
+            <button onclick="closeModal()" class="cancel-btn">Cancel</button>
+          </div>
         </div>
       </div>
+
+      <!-- Empty State (shown when no coupons exist) -->
+      <% if (coupons.length === 0) { %>
+      <div class="flex flex-col items-center justify-center py-12 text-center fade-in-up">
+        <div class="bg-gray-800 p-6 rounded-full mb-6">
+          <i class="fas fa-ticket-alt text-4xl text-blue-400"></i>
+        </div>
+        <h3 class="text-xl font-semibold mb-2">No Coupons Found</h3>
+        <p class="text-gray-400 mb-6">Start by adding your first coupon to the system</p>
+        <a href="/admin/add-coupon" class="add-coupon-btn">
+          <i class="fas fa-plus mr-2"></i>
+          Create First Coupon
+        </a>
+      </div>
+      <% } %>
     </div>
   </div>
 
-  <script src="/js/coupons.js"></script>
+  <script>
+    // Enhanced Animations and Interactions
+    document.addEventListener('DOMContentLoaded', () => {
+      // Smooth scroll behavior
+      document.documentElement.style.scrollBehavior = 'smooth';
+
+      // Initialize animations
+      const animateElements = () => {
+        const elements = document.querySelectorAll('.fade-in-up');
+        elements.forEach((element, index) => {
+          element.style.animationDelay = `${index * 0.1}s`;
+          element.style.opacity = '1';
+        });
+      };
+      animateElements();
+
+      // Enhanced table row interactions
+      const tableRows = document.querySelectorAll('.table-row');
+      tableRows.forEach(row => {
+        row.addEventListener('mouseenter', () => {
+          row.style.transform = 'translateX(4px)';
+          const cells = row.querySelectorAll('td');
+          cells.forEach(cell => {
+            cell.style.transition = 'all 0.3s ease';
+          });
+        });
+
+        row.addEventListener('mouseleave', () => {
+          row.style.transform = 'translateX(0)';
+        });
+      });
+
+      // Button click effects
+      const buttons = document.querySelectorAll('button, .add-coupon-btn');
+      buttons.forEach(button => {
+        button.addEventListener('mousedown', () => {
+          button.style.transform = 'scale(0.98)';
+        });
+
+        button.addEventListener('mouseup', () => {
+          button.style.transform = '';
+        });
+
+        // Add hover glow effect
+        button.addEventListener('mouseenter', () => {
+          button.style.animation = 'glowPulse 2s infinite';
+        });
+
+        button.addEventListener('mouseleave', () => {
+          button.style.animation = '';
+        });
+      });
+
+      // Enhanced search input interaction
+      const searchInput = document.querySelector('.search-input');
+      if (searchInput) {
+        searchInput.addEventListener('focus', () => {
+          const searchContainer = document.querySelector('.search-container');
+          searchContainer.style.transform = 'scale(1.01)';
+          searchContainer.style.boxShadow = '0 8px 28px rgba(0, 0, 0, 0.5)';
+        });
+
+        searchInput.addEventListener('blur', () => {
+          const searchContainer = document.querySelector('.search-container');
+          searchContainer.style.transform = '';
+          searchContainer.style.boxShadow = '';
+        });
+      }
+
+      // Status badge animation
+      const statusBadges = document.querySelectorAll('.status-badge');
+      statusBadges.forEach(badge => {
+        badge.addEventListener('mouseenter', () => {
+          badge.style.transform = 'scale(1.1)';
+        });
+
+        badge.addEventListener('mouseleave', () => {
+          badge.style.transform = '';
+        });
+      });
+
+      // Action icons tooltip positioning
+      const actionIcons = document.querySelectorAll('.action-icon');
+      actionIcons.forEach(icon => {
+        icon.addEventListener('mouseenter', (e) => {
+          const tooltip = icon.querySelector('.tooltip');
+          if (tooltip) {
+            // Ensure tooltip stays within viewport
+            const iconRect = icon.getBoundingClientRect();
+            const tooltipRect = tooltip.getBoundingClientRect();
+            const offset = (tooltipRect.width - iconRect.width) / 2;
+
+            if (iconRect.left - offset < 0) {
+              tooltip.style.left = '0';
+              tooltip.style.transform = 'translateX(0) translateY(-8px)';
+            } else if (iconRect.right + offset > window.innerWidth) {
+              tooltip.style.left = 'auto';
+              tooltip.style.right = '0';
+              tooltip.style.transform = 'translateX(0) translateY(-8px)';
+            }
+          }
+        });
+      });
+
+      // Enhanced table header shadows
+      const tableHeader = document.querySelector('thead');
+      if (tableHeader) {
+        const tableContainer = document.querySelector('.table-container');
+        tableContainer.addEventListener('scroll', () => {
+          if (tableContainer.scrollTop > 0) {
+            tableHeader.style.boxShadow = '0 4px 6px rgba(0, 0, 0, 0.1)';
+          } else {
+            tableHeader.style.boxShadow = 'none';
+          }
+        });
+      }
+    });
+
+    // Handle theme toggle
+    const themeToggle = document.getElementById('themeToggle');
+    if (themeToggle) {
+      themeToggle.addEventListener('click', () => {
+        document.documentElement.classList.toggle('dark');
+        const isDark = document.documentElement.classList.contains('dark');
+        localStorage.setItem('theme', isDark ? 'dark' : 'light');
+      });
+    }
+
+    // Handle loading state
+    window.addEventListener('load', () => {
+      document.body.classList.add('loaded');
+    });
+  </script>
 </body>
 
 </html>

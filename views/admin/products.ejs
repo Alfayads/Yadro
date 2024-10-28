@@ -1,187 +1,316 @@
 <!DOCTYPE html>
-<html lang="en" class="light">
+<html lang="en" class="dark">
 
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Yadro - Products</title>
   <script src="https://cdn.tailwindcss.com"></script>
-  <link rel="icon" href="/images/logo.png" type="image/x-icon">
-  <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
-  <script src="/js/toggle.js"></script>
-  <link rel="stylesheet" href="/css/products.css">
-
   <style>
-    @keyframes fadeIn {
+    :root {
+      --primary-dark: #1f2937;
+      --secondary-dark: #111827;
+      --accent-blue: #3b82f6;
+      --text-primary: #e5e7eb;
+      --text-secondary: #9ca3af;
+    }
+
+    body {
+      background-color: var(--secondary-dark);
+      color: var(--text-primary);
+    }
+
+    @keyframes fadeInUp {
       from {
         opacity: 0;
-        transform: scale(0.95);
+        transform: translateY(20px);
       }
 
       to {
         opacity: 1;
-        transform: scale(1);
+        transform: translateY(0);
       }
     }
 
-    @keyframes fadeOut {
-      from {
-        opacity: 1;
-        transform: scale(1);
+    @keyframes glowPulse {
+      0% {
+        box-shadow: 0 0 5px rgba(59, 130, 246, 0.5);
       }
 
-      to {
-        opacity: 0;
-        transform: scale(0.95);
+      50% {
+        box-shadow: 0 0 15px rgba(59, 130, 246, 0.8);
+      }
+
+      100% {
+        box-shadow: 0 0 5px rgba(59, 130, 246, 0.5);
       }
     }
 
-    .animate-fadeIn {
-      animation: fadeIn 0.3s ease-out forwards;
+    .fade-in-up {
+      animation: fadeInUp 0.6s ease-out forwards;
     }
 
-    .animate-fadeOut {
-      animation: fadeOut 0.3s ease-in forwards;
+    /* Enhanced Search Container */
+    .search-container {
+      background: var(--primary-dark);
+      border-radius: 12px;
+      box-shadow: 0 4px 20px rgba(0, 0, 0, 0.3);
+      padding: 1.5rem;
+      transition: all 0.3s ease;
+      border: 1px solid rgba(255, 255, 255, 0.1);
+    }
+
+    .search-container:hover {
+      box-shadow: 0 6px 24px rgba(0, 0, 0, 0.4);
+      border-color: rgba(59, 130, 246, 0.4);
+    }
+
+    .search-input {
+      background: rgba(17, 24, 39, 0.8);
+      border: 1px solid rgba(255, 255, 255, 0.1);
+      color: var(--text-primary);
+      padding: 0.75rem 1rem;
+      width: 300px;
+      border-radius: 8px;
+      transition: all 0.3s ease;
+    }
+
+    .search-input:focus {
+      background: rgba(17, 24, 39, 0.95);
+      border-color: var(--accent-blue);
+      box-shadow: 0 0 0 2px rgba(59, 130, 246, 0.2);
+      outline: none;
+    }
+
+    /* Table Styling */
+    .table-container {
+      background: var(--primary-dark);
+      border-radius: 16px;
+      box-shadow: 0 4px 20px rgba(0, 0, 0, 0.3);
+      border: 1px solid rgba(255, 255, 255, 0.1);
+      overflow: hidden;
+    }
+
+    .table-row {
+      transition: all 0.2s ease;
+      border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+    }
+
+    .table-row:hover {
+      background: rgba(59, 130, 246, 0.1);
+      transform: translateX(4px);
+    }
+
+    /* Product Image */
+    .product-image {
+      transition: transform 0.3s ease;
+    }
+
+    .product-image:hover {
+      transform: scale(1.1);
+    }
+
+    /* Status Badge */
+    .status-badge {
+      padding: 0.25rem 0.75rem;
+      border-radius: 9999px;
+      font-size: 0.75rem;
+      font-weight: 500;
+      transition: all 0.3s ease;
+    }
+
+    .status-badge.active {
+      background: rgba(16, 185, 129, 0.2);
+      color: #34d399;
+      border: 1px solid rgba(16, 185, 129, 0.4);
+    }
+
+    .status-badge.blocked {
+      background: rgba(239, 68, 68, 0.2);
+      color: #f87171;
+      border: 1px solid rgba(239, 68, 68, 0.4);
+    }
+
+    /* Action Icons */
+    .action-icon {
+      padding: 0.5rem;
+      border-radius: 8px;
+      transition: all 0.2s ease;
+      color: var(--text-secondary);
+      position: relative;
+    }
+
+    .edit-icon:hover {
+      background: rgba(59, 130, 246, 0.2);
+      color: #60a5fa;
+    }
+
+    .view-icon:hover {
+      background: rgba(16, 185, 129, 0.2);
+      color: #34d399;
+    }
+
+    .delete-icon:hover {
+      background: rgba(239, 68, 68, 0.2);
+      color: #f87171;
+    }
+
+    /* Add Product Button */
+    .add-product-btn {
+      background: linear-gradient(135deg, #10b981, #059669);
+      color: white;
+      padding: 0.75rem 1.5rem;
+      border-radius: 8px;
+      transition: all 0.3s ease;
+      border: none;
+      font-weight: 500;
+      text-shadow: 0 1px 2px rgba(0, 0, 0, 0.2);
+    }
+
+    .add-product-btn:hover {
+      transform: translateY(-2px);
+      box-shadow: 0 4px 12px rgba(16, 185, 129, 0.3);
+    }
+
+    /* Tooltip */
+    .tooltip {
+      position: absolute;
+      bottom: 100%;
+      left: 50%;
+      transform: translateX(-50%);
+      padding: 0.5rem 1rem;
+      background: rgba(0, 0, 0, 0.9);
+      color: white;
+      border-radius: 6px;
+      font-size: 0.875rem;
+      opacity: 0;
+      visibility: hidden;
+      transition: all 0.3s ease;
+      white-space: nowrap;
+      pointer-events: none;
+    }
+
+    .action-icon:hover .tooltip {
+      opacity: 1;
+      visibility: visible;
+      transform: translateX(-50%) translateY(-8px);
+    }
+
+    /* Price Badge */
+    .price-badge {
+      background: rgba(59, 130, 246, 0.2);
+      color: #60a5fa;
+      border: 1px solid rgba(59, 130, 246, 0.4);
+      padding: 0.25rem 0.75rem;
+      border-radius: 9999px;
+      font-size: 0.875rem;
     }
   </style>
 </head>
 
-<body class="bg-gray-100 font-sans transition-all duration-300 dark:bg-gray-800">
-
+<body class="min-h-screen">
   <div class="flex">
-    <!-- Sidebar (assumed to be included) -->
     <%- include('../layouts/admin-sidebar.ejs') %>
 
-    <!-- Main Content -->
-    <div class="flex-1 ml-64 p-6">
-
-
-      <% if (success_msg.length > 0) { %>
-      <div id="successMessage" class="message bg-green-100 border border-green-400 text-green-700 px-4 py-3 rounded relative mb-6" role="alert">
-        <strong class="font-bold">Success!</strong>
-        <span class="block sm:inline"><%= success_msg %></span>
-      </div>
-      <% } %>
-
-      <% if (error_msg.length > 0) { %>
-      <div id="errorMessage" class="message bg-red-100 border border-red-400 text-red-700 px-4 py-3 rounded relative mb-6" role="alert">
-        <strong class="font-bold">Error!</strong>
-        <span class="block sm:inline"><%= error_msg %></span>
-      </div>
-      <% } %>
-
-
-      <div class="flex items-center justify-between mb-6">
-        <h1 class="text-3xl font-bold text-gray-800 dark:text-white fade-in-up">All Products</h1>
-        <div class="flex items-center space-x-4">
-          <div class="theme-toggle" id="themeToggle"></div>
-          <a href="/admin/add-product" class="add-product-btn px-4 py-2 bg-green-600 text-white rounded-lg relative overflow-hidden button">
-            <span class="relative z-10">Add Product</span>
+    <div class="flex-1 ml-64 p-8">
+      <!-- Header Section -->
+      <div class="flex items-center justify-between mb-8 fade-in-up">
+        <h1 class="text-4xl font-bold bg-gradient-to-r from-blue-400 to-blue-600 text-transparent bg-clip-text">
+          Products Management
+        </h1>
+        <div class="flex items-center space-x-6">
+          <a href="/admin/add-product" class="add-product-btn">
+            <i class="fas fa-plus mr-2"></i>
+            Add New Product
           </a>
         </div>
       </div>
 
-      <!-- Search and Filter -->
-      <form action="/admin/product" method="GET" class="mb-8 fade-in-up" style="animation-delay: 0.2s;">
-        <div class="search-container flex items-center justify-between">
-          <i class="fas fa-search search-icon ml-4"></i>
-          <input type="text" name="search" placeholder="Search customers..." class="search-input" />
-          <select name="status" class="search-select mr-5">
-            <option value="">All Status</option>
-            <% categories.forEach( category => { %>
-            <option value="<%= category.name %>"><%= category.name %></option>
-            <% }) %>
-          </select>
-          <button type="submit" class="search-button">
-            Search
-          </button>
+      <!-- Search and Filter Section -->
+      <form action="/admin/product" method="GET" class="mb-8 fade-in-up">
+        <div class="search-container">
+          <div class="flex items-center justify-between">
+            <div class="flex items-center flex-1">
+              <i class="fas fa-search text-gray-400 ml-4"></i>
+              <input type="text" name="search" placeholder="Search products..." class="search-input ml-4 flex-1" />
+            </div>
+            <div class="flex items-center space-x-4">
+              <select name="category" class="search-input">
+                <option value="">All Categories</option>
+                <% categories.forEach(category => { %>
+                <option value="<%= category.name %>"><%= category.name %></option>
+                <% }) %>
+              </select>
+              <button type="submit" class="add-product-btn">
+                <i class="fas fa-search mr-2"></i>
+                Search
+              </button>
+            </div>
+          </div>
         </div>
       </form>
 
       <!-- Products Table -->
-      <div class="overflow-x-auto fade-in-up" style="animation-delay: 0.4s;">
-        <table class="min-w-full bg-white dark:bg-gray-700 border border-gray-200 dark:border-gray-600 shadow-md rounded-lg overflow-hidden">
+      <div class="table-container fade-in-up">
+        <table class="min-w-full">
           <thead>
-            <tr class="bg-gray-50 dark:bg-gray-600 text-gray-600 dark:text-gray-200 uppercase text-sm leading-normal">
-              <th class="py-3 px-6 text-left">Sl</th>
-              <th class="py-3 px-6 text-left">Product Image</th>
-              <th class="py-3 px-6 text-left">Product Name</th>
-              <th class="py-3 px-6 text-left">Status</th>
-              <th class="py-3 px-6 text-left">Product ID</th>
-              <th class="py-3 px-6 text-left">Category</th>
-              <th class="py-3 px-6 text-left">Stock</th>
-              <th class="py-3 px-6 text-left">Product Price</th>
-              <th class="py-3 px-6 text-left">Product Offer</th>
-              <th class="py-3 px-6 text-left">Sale Price</th>
-              <th class="py-3 px-6 text-left">Action</th>
+            <tr class="text-gray-400 text-sm uppercase">
+              <th class="py-4 px-6 text-left font-medium">Sl</th>
+              <th class="py-4 px-6 text-left font-medium">Image</th>
+              <th class="py-4 px-6 text-left font-medium">Name</th>
+              <th class="py-4 px-6 text-left font-medium">Category</th>
+              <th class="py-4 px-6 text-left font-medium">Stock</th>
+              <th class="py-4 px-6 text-left font-medium">Price</th>
+              <th class="py-4 px-6 text-left font-medium">Offer</th>
+              <th class="py-4 px-6 text-left font-medium">Sale Price</th>
+              <th class="py-4 px-6 text-left font-medium">Status</th>
+              <th class="py-4 px-6 text-left font-medium">Action</th>
             </tr>
           </thead>
-          <tbody class="text-gray-600 dark:text-gray-200">
-            <% data.forEach( (product, index) => { %>
-            <tr class="table-row border-b border-gray-200 dark:border-gray-700 hover:bg-gray-50 dark:hover:bg-gray-600">
-              <td class="py-3 px-6"><%= index+1 %></td>
-              <td class="py-3 px-6"><% if (product.images && product.images.length > 0) { %>
-                <img src="<%= product.images[0]%>" alt="<%= product.name %>" class="h-16 w-16 object-cover rounded-lg" />
+          <tbody>
+            <% data.forEach((product, index) => { %>
+            <tr class="table-row">
+              <td class="py-4 px-6 text-gray-300"><%= index + 1 %></td>
+              <td class="py-4 px-6">
+                <% if (product.images && product.images.length > 0) { %>
+                <img src="<%= product.images[0] %>" alt="<%= product.name %>" class="h-16 w-16 object-cover rounded-lg product-image" />
                 <% } else { %>
-                <img src="/images/placeholder.jpg" alt="No image available" class="h-16 w-16 object-cover rounded-lg" />
+                <img src="/images/placeholder.jpg" alt="No image" class="h-16 w-16 object-cover rounded-lg product-image" />
                 <% } %>
               </td>
-              <td class="py-3 px-6"><%= product.name %></td>
-              <% if (product.isBlocked === false) { %>
-              <td class="py-3 px-6"><span class="bg-green-200 text-green-600 py-1 px-3 rounded-full text-xs">Active</span></td>
-              <% } else { %>
-              <td class="py-3 px-6"><span class="bg-red-200 text-red-600 py-1 px-3 rounded-full text-xs">Blocked</span></td>
-              <% } %>
-              <td class="py-3 px-6"><%= product._id %></td>
-              <td class="py-3 px-6"><%= product.category %></td>
-              <td class="py-3 px-6"><%= product.quantity %></td>
-              <td class="py-3 px-6">₹<%= product.regularPrice %></td>
-              <td class="py-3 px-6"><%= product.productOffer %> %</td>
-              <td class="py-3 px-6">₹<%= product.salePrice %></td>
-              <td class="py-3 px-6">
+              <td class="py-4 px-6 font-medium"><%= product.name %></td>
+              <td class="py-4 px-6 text-gray-300"><%= product.category.name %></td>
+              <td class="py-4 px-6 text-gray-300"><%= product.quantity %></td>
+              <td class="py-4 px-6">
+                <span class="price-badge">₹<%= product.regularPrice %></span>
+              </td>
+              <td class="py-4 px-6 text-gray-300"><%= product.productOffer %>%</td>
+              <td class="py-4 px-6">
+                <span class="price-badge">₹<%= product.salePrice %></span>
+              </td>
+              <td class="py-4 px-6">
+                <span class="status-badge <%= product.isBlocked ? 'blocked' : 'active' %>">
+                  <%= product.isBlocked ? 'Blocked' : 'Active' %>
+                </span>
+              </td>
+              <td class="py-4 px-6">
                 <div class="flex space-x-3">
-                  <!-- Block Button with Tooltip -->
-                  <% if (product.isBlocked === false) { %>
-                  <a href="/admin/blockProduct/<%= product._id %>" class="relative group action-icon block-icon" title="Block">
-                    <i class="fa-solid fa-lock-open"></i>
-                    <!-- Tooltip -->
-                    <div class="tooltip hidden absolute bottom-full mb-2 w-max text-sm bg-gray-800 text-white p-2 rounded-lg opacity-0 transition-opacity duration-300 group-hover:opacity-100 group-hover:block">
-                      Block
-                      <div class="tooltip-arrow"></div>
-                    </div>
-                  </a>
-                  <% } else { %>
-                  <a href="/admin/unblockProduct/<%= product._id %>" class="relative group action-icon block-icon" title="Block">
-                    <i class="fa-solid fa-lock"></i>
-                    <!-- Tooltip -->
-                    <div class="tooltip hidden absolute bottom-full mb-2 w-max text-sm bg-gray-800 text-white p-2 rounded-lg opacity-0 transition-opacity duration-300 group-hover:opacity-100 group-hover:block">
-                      Unblock
-                      <div class="tooltip-arrow"></div>
-                    </div>
-                  </a>
-                  <% } %>
-                  <a href="/admin/editProduct/<%= product._id %>" class="relative group action-icon edit-icon" title="Edit">
+                  <a href="/admin/editProduct/<%= product._id %>" class="action-icon edit-icon">
                     <i class="fas fa-edit"></i>
-                    <div class="tooltip hidden absolute bottom-full mb-2 w-max text-sm bg-gray-800 text-white p-2 rounded-lg opacity-0 transition-opacity duration-300 group-hover:opacity-100 group-hover:block">
-                      Edit
-                      <div class="tooltip-arrow"></div>
-                    </div>
+                    <span class="tooltip">Edit Product</span>
                   </a>
-                  <a href="/admin/viewProduct/<%= product._id %>" class="relative group action-icon view-icon" title="View">
+                  <a href="/admin/viewProduct/<%= product._id %>" class="action-icon view-icon">
                     <i class="fas fa-eye"></i>
-                    <div class="tooltip hidden absolute bottom-full mb-2 w-max text-sm bg-gray-800 text-white p-2 rounded-lg opacity-0 transition-opacity duration-300 group-hover:opacity-100 group-hover:block">
-                      View
-                      <div class="tooltip-arrow"></div>
-                    </div>
+                    <span class="tooltip">View Details</span>
                   </a>
-                  <a href="/admin/deleteProduct/<%= product._id %>" class="relative group action-icon delete-icon" title="Delete">
+                  <a href="/admin/deleteProduct/<%= product._id %>" class="action-icon delete-icon">
                     <i class="fas fa-trash"></i>
-                    <!-- Tooltip -->
-                    <div class="tooltip hidden absolute bottom-full mb-2 w-max text-sm bg-gray-800 text-white p-2 rounded-lg opacity-0 transition-opacity duration-300 group-hover:opacity-100 group-hover:block">
-                      Delete
-                      <div class="tooltip-arrow"></div>
-                    </div>
+                    <span class="tooltip">Delete Product</span>
+                  </a>
+                  <a href="/admin/<%= product.isBlocked ? 'unblock' : 'block' %>Product/<%= product._id %>" class="action-icon <%= product.isBlocked ? 'edit-icon' : 'delete-icon' %>">
+                    <i class="fas fa-<%= product.isBlocked ? 'lock-open' : 'lock' %>"></i>
+                    <span class="tooltip"><%= product.isBlocked ? 'Unblock' : 'Block' %> Product</span>
                   </a>
                 </div>
               </td>
@@ -192,134 +321,140 @@
       </div>
 
       <!-- Pagination -->
-      <div class="flex justify-between items-center mt-4 fade-in-up" style="animation-delay: 0.6s;">
-        <div class="flex space-x-2">
-          <% if (totalPages > 1) { %>
-          <a href="?page=<%= currentPage-1 %>&search=<%= searchTerm %>" class="pagination-button px-3 py-1 bg-gray-200 dark:bg-gray-600 text-gray-600 dark:text-gray-200 rounded-md hover:bg-gray-300 dark:hover:bg-gray-500 transition-colors duration-300">Previous</a>
-
-
-          <% for( let i = 0; i < totalPages; i++ ) { %>
-          <a href="?page=<%= i+1 %>&search=<%= searchTerm %>" class="pagination-button px-3 py-1 
-                   <%= currentPage == i+1 ? 'bg-blue-500 text-white' : 'bg-gray-100 text-black hover:text-white' %> 
-                    rounded-md hover:bg-blue-600 transition-colors duration-300">
-            <%= i+1 %>
-          </a>
-          <% } %>
-
-
-          <a href="?page=<%= currentPage+1 %>&search=<%= searchTerm %>" class="pagination-button px-3 py-1 bg-gray-200 dark:bg-gray-600 text-gray-600 dark:text-gray-200 rounded-md hover:bg-gray-300 dark:hover:bg-gray-500 transition-colors duration-300">Next</a>
-          <% } %>
-        </div>
+      <div class="flex justify-center mt-6 space-x-2 fade-in-up">
+        <% if (totalPages > 1) { %>
+        <a href="?page=<%= currentPage-1 %>&search=<%= searchTerm %>" class="px-4 py-2 bg-gray-700 text-gray-200 rounded-md hover:bg-gray-600 transition-colors">
+          Previous
+        </a>
+        <% for(let i = 0; i < totalPages; i++) { %>
+        <a href="?page=<%= i+1 %>&search=<%= searchTerm %>" class="px-4 py-2 rounded-md transition-colors <%= currentPage == i+1 ? 'bg-blue-600 text-white' : 'bg-gray-700 text-gray-200 hover:bg-gray-600' %>">
+          <%= i+1 %>
+        </a>
+        <% } %>
+        <a href="?page=<%= currentPage+1 %>&search=<%= searchTerm %>" class="px-4 py-2 bg-gray-700 text-gray-200 rounded-md hover:bg-gray-600 transition-colors">
+          Next
+        </a>
+        <% } %>
       </div>
+
+      <!-- No Results Message -->
+      <% if (data.length === 0) { %>
+      <div class="flex flex-col items-center justify-center py-12 fade-in-up">
+        <div class="text-6xl mb-4">
+          <i class="fas fa-search text-gray-500"></i>
+        </div>
+        <h3 class="text-xl text-gray-400 mb-2">No products found</h3>
+        <p class="text-gray-500">Try adjusting your search or filter criteria</p>
+      </div>
+      <% } %>
+    </div>
+  </div>
+
+  <!-- Loading Overlay -->
+  <div id="loadingOverlay" class="fixed inset-0 bg-black bg-opacity-50 items-center justify-center hidden">
+    <div class="bg-primary-dark p-8 rounded-lg shadow-xl">
+      <div class="animate-spin rounded-full h-16 w-16 border-t-4 border-blue-500 mx-auto"></div>
+      <p class="text-center mt-4 text-gray-300">Loading...</p>
     </div>
   </div>
 
   <script>
-    document.addEventListener("DOMContentLoaded", function() {
-      // Fade-in animation
-      const fadeElements = document.querySelectorAll('.fade-in-up');
-      fadeElements.forEach((el, index) => {
-        el.style.opacity = "0";
+    // Enhanced animations and interactions
+    document.addEventListener('DOMContentLoaded', function() {
+      // Stagger animation for table rows
+      const tableRows = document.querySelectorAll('.table-row');
+      tableRows.forEach((row, index) => {
+        row.style.opacity = '0';
+        row.style.transform = 'translateY(20px)';
         setTimeout(() => {
-          el.style.animation = `fadeInUp 0.5s ease-out ${index * 0.1}s forwards`;
-        }, 100);
+          row.style.transition = 'all 0.3s ease';
+          row.style.opacity = '1';
+          row.style.transform = 'translateY(0)';
+        }, 100 * index);
       });
 
-      // Theme toggle functionality
-      const themeToggle = document.getElementById('themeToggle');
-      const html = document.documentElement;
-
-      themeToggle.addEventListener('click', () => {
-        html.classList.toggle('dark');
-        localStorage.setItem('theme', html.classList.contains('dark') ? 'dark' : 'light');
-      });
-
-      // Check for saved theme preference or prefer-color-scheme
-      const savedTheme = localStorage.getItem('theme');
-      const prefersDark = window.matchMedia && window.matchMedia('(prefers-color-scheme: dark)').matches;
-
-      if (savedTheme === 'dark' || (!savedTheme && prefersDark)) {
-        html.classList.add('dark');
+      // Loading overlay
+      function showLoading() {
+        document.getElementById('loadingOverlay').classList.remove('hidden');
+        document.getElementById('loadingOverlay').classList.add('flex');
       }
 
-      // Auto-hide messages after 5 seconds
-      const messages = document.querySelectorAll('.message');
-      messages.forEach(message => {
-        setTimeout(() => {
-          message.style.display = 'none';
-        }, 5000);
-      });
-    });
-
-    // Create the modal HTML
-    const modalHTML = `
-<div id="deleteModal" class="fixed inset-0 bg-gray-600 bg-opacity-50 overflow-y-auto h-full w-full hidden" style="z-index: 1000;">
-  <div class="relative top-20 mx-auto p-5 border w-96 shadow-lg rounded-md bg-white dark:bg-gray-800">
-    <div class="mt-3 text-center">
-      <div class="mx-auto flex items-center justify-center h-12 w-12 rounded-full bg-red-100 dark:bg-red-900">
-        <svg class="h-6 w-6 text-red-600 dark:text-red-400" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
-          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-3L13.732 4c-.77-1.333-2.694-1.333-3.464 0L3.34 16c-.77 1.333.192 3 1.732 3z"></path>
-        </svg>
-      </div>
-      <h3 class="text-lg leading-6 font-medium text-gray-900 dark:text-white mt-4">Delete Product</h3>
-      <div class="mt-2 px-7 py-3">
-        <p class="text-sm text-gray-500 dark:text-gray-300">Are you sure you want to delete this product? This action cannot be undone.</p>
-      </div>
-      <div class="items-center px-4 py-3">
-        <button id="deleteConfirm" class="px-4 py-2 bg-red-500 text-white text-base font-medium rounded-md w-24 mr-2 hover:bg-red-600 focus:outline-none focus:ring-2 focus:ring-red-300">Yes</button>
-        <button id="deleteCancel" class="px-4 py-2 bg-gray-300 text-gray-700 text-base font-medium rounded-md w-24 hover:bg-gray-400 focus:outline-none focus:ring-2 focus:ring-gray-500">No</button>
-      </div>
-    </div>
-  </div>
-</div>
-`;
-
-    // Append the modal HTML to the body
-    document.body.insertAdjacentHTML('beforeend', modalHTML);
-
-    // Get the modal
-    const modal = document.getElementById('deleteModal');
-
-    // Function to open the modal
-    function openModal(deleteUrl) {
-      modal.classList.remove('hidden');
-      modal.classList.add('flex', 'items-center', 'justify-center');
-
-      // Add animation classes
-      modal.firstElementChild.classList.add('animate-fadeIn');
-
-      // Set up event listeners for the buttons
-      document.getElementById('deleteConfirm').onclick = () => {
-        window.location.href = deleteUrl;
-      };
-      document.getElementById('deleteCancel').onclick = closeModal;
-    }
-
-    // Function to close the modal
-    function closeModal() {
-      modal.firstElementChild.classList.add('animate-fadeOut');
-      setTimeout(() => {
-        modal.classList.add('hidden');
-        modal.classList.remove('flex', 'items-center', 'justify-center');
-        modal.firstElementChild.classList.remove('animate-fadeIn', 'animate-fadeOut');
-      }, 300); // Match this with the animation duration
-    }
-
-    // Add click event listeners to all delete icons
-    document.querySelectorAll('.delete-icon').forEach(icon => {
-      icon.addEventListener('click', function(e) {
-        e.preventDefault();
-        const deleteUrl = this.getAttribute('href');
-        openModal(deleteUrl);
-      });
-    });
-
-    // Close the modal if clicking outside of it
-    window.onclick = function(event) {
-      if (event.target === modal) {
-        closeModal();
+      function hideLoading() {
+        document.getElementById('loadingOverlay').classList.add('hidden');
+        document.getElementById('loadingOverlay').classList.remove('flex');
       }
-    }
+
+      // Add loading state to all links and forms
+      document.querySelectorAll('a, form').forEach(element => {
+        element.addEventListener('click', (e) => {
+          if (!element.classList.contains('no-loading')) {
+            showLoading();
+          }
+        });
+      });
+
+      // Enhanced search experience
+      const searchInput = document.querySelector('input[name="search"]');
+      let searchTimeout;
+
+      searchInput.addEventListener('input', function(e) {
+        clearTimeout(searchTimeout);
+        searchTimeout = setTimeout(() => {
+          this.closest('form').submit();
+        }, 500);
+      });
+
+      // Interactive product images
+      document.querySelectorAll('.product-image').forEach(img => {
+        img.addEventListener('click', function() {
+          this.classList.toggle('scale-150');
+          this.style.zIndex = this.classList.contains('scale-150') ? '50' : '1';
+        });
+      });
+
+      // Enhanced status badges
+      document.querySelectorAll('.status-badge').forEach(badge => {
+        badge.addEventListener('mouseover', function() {
+          this.style.transform = 'scale(1.1)';
+          this.style.animation = 'glowPulse 1.5s infinite';
+        });
+
+        badge.addEventListener('mouseout', function() {
+          this.style.transform = 'scale(1)';
+          this.style.animation = 'none';
+        });
+      });
+
+      // Add smooth scroll to top button
+      const scrollButton = document.createElement('button');
+      scrollButton.innerHTML = '<i class="fas fa-arrow-up"></i>';
+      scrollButton.className = 'fixed bottom-8 right-8 bg-blue-600 p-4 rounded-full shadow-lg opacity-0 transition-all duration-300 hover:bg-blue-700';
+      document.body.appendChild(scrollButton);
+
+      window.addEventListener('scroll', () => {
+        scrollButton.style.opacity = window.scrollY > 500 ? '1' : '0';
+        scrollButton.style.transform = window.scrollY > 500 ? 'scale(1)' : 'scale(0)';
+      });
+
+      scrollButton.addEventListener('click', () => {
+        window.scrollTo({
+          top: 0,
+          behavior: 'smooth'
+        });
+      });
+
+      // Add keyboard shortcuts
+      document.addEventListener('keydown', function(e) {
+        if (e.ctrlKey && e.key === 'f') {
+          e.preventDefault();
+          searchInput.focus();
+        }
+        if (e.ctrlKey && e.key === 'n') {
+          e.preventDefault();
+          window.location.href = '/admin/add-product';
+        }
+      });
+    });
   </script>
 </body>
 

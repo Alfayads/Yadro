@@ -57,21 +57,41 @@ const sendVerificationEmail = async (email, otp) => {
     }
 }
 
-
 const getHomeWithUser = async (req, res) => {
     try {
         const userId = req.session.user_id;
-        const products = await Product.find({}).limit(4);
+
+        // Get latest products (last 30 days, limit 4)
+        const latestProducts = await Product.find({})
+            .sort({ createdAt: -1 })
+            .limit(4);
+
+        // Get popular products (based on salesCount)
+        const popularProducts = await Product.find({})
+            .sort({ salesCount: -1 })
+            .limit(4);
+
+        // Get budget-friendly products (sorted by salePrice)
+        const budgetProducts = await Product.find({})
+            .sort({ salePrice: 1 })
+            .limit(4);
+
         const categories = await Category.find({});
         const user = await Users.findById({ _id: userId });
-        return res.render('user/home-with-user', { products, categories, user });
+
+        return res.render('user/home-with-user', {
+            latestProducts,
+            popularProducts,
+            budgetProducts,
+            categories,
+            user
+        });
     } catch (error) {
         console.error(error.message);
         let errorMessage = { message: "An error occurred. Please try again later." };
         return res.render('user/error', { error: errorMessage });
     }
 }
-
 
 
 
@@ -248,6 +268,7 @@ const forgotPassword = (req, res) => {
         return res.render('user/error', { error: errorMessage });
     }
 }
+
 
 const getLogout = (req, res) => {
     try {

@@ -9,8 +9,11 @@ const { getAddress, addAddress, editAddress, getAddAddress, getEditAddress, dele
 const { productDetails, getProductByCategory, getAllProducts } = require('../controllers/productController');
 const { getCart, addToCart, deleteCart, getCartCount, getCheckOut, orderTracking, placeOrder, orderConfirm, updateQuantity } = require('../controllers/cartController');
 const { getWishList, addWishlist, removeWishlist, getWishlistCount } = require('../controllers/wishlistController');
-const { getAccount, getWallet, getTransactionHistory, getContact, editProfile } = require('../controllers/userController');
-const { getOrders, cancelOrder } = require('../controllers/orderController');
+const { getAccount, getWallet, getTransactionHistory, getContact, editProfile, filterProducts, getWalletDetails } = require('../controllers/userController');
+const { getOrders, cancelOrder, getOrderReturn, createReturn } = require('../controllers/orderController');
+const { applyCoupon } = require('../controllers/couponController');
+const { createOrder, verifyPayment } = require('../controllers/payments.controller');
+const { downloadInvoice } = require('../controllers/invoiceController');
 
 
 // lead Page
@@ -51,12 +54,17 @@ user_router.post('/cart/update-quantity', updateQuantity);
 user_router.post('/place-order', placeOrder)
 user_router.get('/order-confirmation/:id', orderConfirm);
 
+// Coupon
+user_router.post('/apply-coupon', applyCoupon);
+
 // Order Tracking
 user_router.get('/order-tracking/:id', auth.isLogout, orderTracking);
 
 // All Orders page
 user_router.get('/orders', auth.isLogout, getOrders);
-user_router.post('/orders/cancel/:id', cancelOrder)
+user_router.post('/order/cancel/:id', cancelOrder)
+user_router.get('/order/return/:id', getOrderReturn);
+user_router.post('/orders/return/:id', createReturn);
 
 // Account
 user_router.get('/account', auth.isLogout, getAccount);
@@ -64,6 +72,7 @@ user_router.post('/account/editProfile/:id', editProfile)
 
 // Wallet 
 user_router.get('/wallet', auth.isLogout, getWallet);
+user_router.get('/wallet', auth.isLogout, getWalletDetails);
 
 // Transaction History
 user_router.get('/wallet/history', auth.isLogout, getTransactionHistory);
@@ -98,6 +107,7 @@ user_router.post('/login', authController.checkUser);
 user_router.get('/forgot-password', authController.forgotPassword);
 
 
+
 //logout
 user_router.get('/logout', authController.getLogout);
 
@@ -105,6 +115,16 @@ user_router.get('/logout', authController.getLogout);
 
 // Contact Page
 user_router.get('/contact', auth.isLogout, getContact)
+
+// Razorpay
+
+user_router.post('/createOrder', createOrder);
+// user_router.post('/verifyPayment', verifyPayment);
+
+
+// Invoice Route
+user_router.get('/order/invoice/:id', downloadInvoice);
+
 
 // Google Authentication
 user_router.get('/auth/google',

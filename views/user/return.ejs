@@ -1,0 +1,329 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Return Request - <%= order._id %></title>
+  <script src="https://cdn.tailwindcss.com"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.11.4/gsap.min.js"></script>
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
+
+  <style>
+    @keyframes shimmer {
+      0% {
+        background-position: -1000px 0;
+      }
+
+      100% {
+        background-position: 1000px 0;
+      }
+    }
+
+    .animate-shimmer {
+      animation: shimmer 2s infinite linear;
+      background: linear-gradient(to right, #f6f7f8 8%, #edeef1 18%, #f6f7f8 33%);
+      background-size: 1000px 100%;
+    }
+
+    @keyframes slide-in {
+      0% {
+        transform: translateX(-100%);
+        opacity: 0;
+      }
+
+      100% {
+        transform: translateX(0);
+        opacity: 1;
+      }
+    }
+
+    .slide-in {
+      animation: slide-in 0.5s ease-out forwards;
+    }
+
+    @keyframes pulse-border {
+      0% {
+        border-color: #e5e7eb;
+      }
+
+      50% {
+        border-color: #6366f1;
+      }
+
+      100% {
+        border-color: #e5e7eb;
+      }
+    }
+
+    .pulse-border {
+      animation: pulse-border 2s infinite;
+    }
+
+    .step-transition {
+      transition: transform 0.5s ease-out, opacity 0.5s ease-out;
+    }
+  </style>
+</head>
+
+<body class="bg-gray-50 min-h-screen">
+  <!-- Header -->
+  <%- include('../layouts/header-with-user.ejs') %>
+
+  <main class="container mx-auto py-8 px-4 sm:px-6 lg:px-8">
+    <!-- Breadcrumb -->
+    <div class="mb-8">
+      <nav class="flex" aria-label="Breadcrumb">
+        <ol class="flex items-center space-x-4">
+          <li>
+            <a href="/" class="text-gray-400 hover:text-gray-500">Home</a>
+          </li>
+          <li>
+            <div class="flex items-center">
+              <svg class="flex-shrink-0 h-5 w-5 text-gray-300" fill="currentColor" viewBox="0 0 20 20">
+                <path d="M5.555 17.776l8-16 .894.448-8 16-.894-.448z" />
+              </svg>
+              <a href="/orders" class="ml-4 text-gray-400 hover:text-gray-500">Orders</a>
+            </div>
+          </li>
+          <li>
+            <div class="flex items-center">
+              <svg class="flex-shrink-0 h-5 w-5 text-gray-300" fill="currentColor" viewBox="0 0 20 20">
+                <path d="M5.555 17.776l8-16 .894.448-8 16-.894-.448z" />
+              </svg>
+              <span class="ml-4 text-gray-500">Return Request</span>
+            </div>
+          </li>
+        </ol>
+      </nav>
+    </div>
+
+    <!-- Main Return Form Card -->
+    <div class="max-w-4xl mx-auto bg-white rounded-xl shadow-lg overflow-hidden">
+      <!-- Progress Bar -->
+      <div class="relative h-2">
+        <div class="absolute w-full h-full bg-gray-100"></div>
+        <div id="progressBar" class="absolute h-full bg-gradient-to-r from-orange-500 to-red-500 transition-all duration-500 ease-out" style="width: 33%;"></div>
+      </div>
+
+      <!-- Form Content -->
+      <div class="p-8">
+        <div class="text-center mb-8">
+          <h1 class="text-2xl font-bold text-gray-900">Return Request</h1>
+          <p class="text-gray-500 mt-2">Order #<%= order._id %></p>
+        </div>
+
+        <form id="returnForm" data-order-id="<%= order._id %>">
+          <!-- Step 1: Select Items -->
+          <div id="step1" class="step-content">
+            <h2 class="text-xl font-semibold mb-4">Step 1: Select Items to Return</h2>
+            <div class="space-y-4">
+              <% order.items.forEach(item => { %>
+              <div class="flex items-center p-4 border rounded-lg hover:border-red-500 transition-colors duration-200">
+                <input type="checkbox" name="items" value="<%= item._id %>" class="w-5 h-5 text-red-600 rounded border-gray-300 focus:ring-red-500">
+                <div class="ml-4 flex items-center flex-1">
+                  <div class="w-16 h-16 rounded-lg overflow-hidden">
+                    <img src="<%= item.productId.images[0] %>" alt="<%= item.productId.name %>" class="w-full h-full object-cover">
+                  </div>
+                  <div class="ml-4">
+                    <h3 class="text-sm font-medium text-gray-900"><%= item.productId.name %></h3>
+                    <p class="text-sm text-gray-500">Quantity: <%= item.quantity %></p>
+                    <p class="text-sm text-gray-500">₹<%= item.price %></p>
+                  </div>
+                </div>
+              </div>
+              <% }); %>
+            </div>
+          </div>
+
+          <!-- Step 2: Return Details -->
+          <div id="step2" class="step-content hidden">
+            <h2 class="text-xl font-semibold mb-4">Step 2: Return Details</h2>
+            <div class="space-y-6">
+              <!-- Return Reason -->
+              <div>
+                <label class="block text-sm font-medium text-gray-700 mb-2">Reason for Return *</label>
+                <select name="reason" required class="w-full p-4 rounded-lg border-gray-300 focus:ring-indigo-500 focus:border-indigo-500">
+                  <option value="">Select a reason</option>
+                  <option value="defective">Item is defective/damaged</option>
+                  <option value="wrong_item">Received wrong item</option>
+                  <option value="not_as_described">Item not as described</option>
+                  <option value="size_issues">Size/fit issues</option>
+                  <option value="changed_mind">Changed my mind</option>
+                </select>
+              </div>
+
+              <!-- Item Condition -->
+              <div>
+                <label class="block text-sm font-medium text-gray-700 mb-2">Item Condition *</label>
+                <select name="condition" required class="w-full p-4 rounded-lg border-gray-300 focus:ring-indigo-500 focus:border-indigo-500">
+                  <option value="">Select condition</option>
+                  <option value="unused">Unused with tags</option>
+                  <option value="opened">Opened but unused</option>
+                  <option value="damaged">Damaged/Defective</option>
+                </select>
+              </div>
+
+              <!-- Comments -->
+              <div>
+                <label class="block text-sm font-medium text-gray-700 mb-2">Additional Comments</label>
+                <textarea name="comments" rows="4" class=" p-4 w-full rounded-lg border-gray-300 focus:ring-indigo-500 focus:border-indigo-500" placeholder="Please provide any additional details about your return..."></textarea>
+              </div>
+
+              <!-- Image Upload -->
+              <div>
+                <label class="block text-sm font-medium text-gray-700 mb-2">Upload Images (Optional)</label>
+                <div class="mt-2 flex justify-center px-6 pt-5 pb-6 border-2 border-gray-300 border-dashed rounded-lg hover:border-indigo-500 transition-colors duration-200">
+                  <div class="space-y-2 text-center">
+                    <svg class="mx-auto h-12 w-12 text-gray-400" stroke="currentColor" fill="none" viewBox="0 0 48 48">
+                      <path d="M28 8H12a4 4 0 00-4 4v20m32-12v8m0 0v8a4 4 0 01-4 4H12a4 4 0 01-4-4v-4m32-4l-3.172-3.172a4 4 0 00-5.656 0L28 28M8 32l9.172-9.172a4 4 0 015.656 0L28 28m0 0l4-4m4-12h8m-4-4v8m-12 4h.02" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" />
+                    </svg>
+                    <div class="flex text-sm text-gray-600">
+                      <label class="relative cursor-pointer rounded-md font-medium text-indigo-600 hover:text-indigo-500 focus-within:outline-none">
+                        <span>Upload images</span>
+                        <input type="file" name="images" multiple accept="image/*" class="sr-only">
+                      </label>
+                      <p class="pl-1">or drag and drop</p>
+                    </div>
+                    <p class="text-xs text-gray-500">PNG, JPG, GIF up to 10MB</p>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <!-- Step 3: Confirmation -->
+          <div id="step3" class="step-content hidden text-center">
+            <div class="flex flex-col items-center justify-center py-12">
+              <div class="rounded-full bg-green-100 p-6 mb-6">
+                <svg class="w-16 h-16 text-green-500" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"></path>
+                </svg>
+              </div>
+              <h2 class="text-2xl font-bold text-gray-900 mb-2">Return Request Submitted!</h2>
+              <p class="text-gray-500 mb-8">We'll review your request and get back to you within 24-48 hours.</p>
+              <a href="/orders" class="inline-flex items-center px-6 py-3 border border-transparent text-base font-medium rounded-md text-white bg-indigo-600 hover:bg-indigo-700">
+                Back to Orders
+              </a>
+            </div>
+          </div>
+
+          <!-- Navigation Buttons -->
+          <div class="flex justify-between pt-6">
+            <button type="button" id="prevBtn" class="hidden px-6 py-3 bg-gray-100 text-gray-700 rounded-md hover:bg-gray-200 transition-colors duration-200">
+              Previous
+            </button>
+            <button type="button" id="nextBtn" class="ml-auto px-6 py-3 bg-red-600 text-white rounded-md hover:bg-red-700 transition-colors duration-200">
+              Next
+            </button>
+          </div>
+        </form>
+      </div>
+    </div>
+  </main>
+
+  <!-- Footer -->
+  <%- include('../layouts/footer.ejs') %>
+
+  <script type="text/javascript">
+    document.addEventListener('DOMContentLoaded', function() {
+      let currentStep = 1;
+      const totalSteps = 3;
+      const form = document.getElementById('returnForm');
+      const nextBtn = document.getElementById('nextBtn');
+      const prevBtn = document.getElementById('prevBtn');
+      const progressBar = document.getElementById('progressBar');
+
+      function updateStep(newStep) {
+        document.querySelectorAll('.step-content').forEach(step => {
+          step.classList.add('hidden');
+        });
+        document.getElementById(`step${newStep}`).classList.remove('hidden');
+
+        gsap.from(`#step${newStep}`, {
+          opacity: 0,
+          x: newStep > currentStep ? 50 : -50,
+          duration: 0.5,
+          ease: "power2.out"
+        });
+
+        progressBar.style.width = `${(newStep / totalSteps) * 100}%`;
+        prevBtn.classList.toggle('hidden', newStep === 1);
+        nextBtn.textContent = newStep === totalSteps ? 'Submit' : 'Next';
+        currentStep = newStep;
+      }
+
+      nextBtn.addEventListener('click', () => {
+        if (currentStep === 1) {
+          const selectedItems = document.querySelectorAll('input[name="items"]:checked');
+          if (selectedItems.length === 0) {
+            alert('Please select at least one item to return');
+            return;
+          }
+          updateStep(2);
+        } else if (currentStep === 2) {
+          const reason = document.querySelector('select[name="reason"]').value;
+          const condition = document.querySelector('select[name="condition"]').value;
+
+          if (!reason || !condition) {
+            alert('Please fill in all required fields');
+            return;
+          }
+          handleSubmit();
+        }
+      });
+
+      prevBtn.addEventListener('click', () => {
+        if (currentStep > 1) {
+          updateStep(currentStep - 1);
+        }
+      });
+
+      function handleSubmit() {
+        nextBtn.disabled = true;
+        nextBtn.innerHTML = `
+                <svg class="animate-spin -ml-1 mr-3 h-5 w-5 text-white" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24">
+                    <circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"></circle>
+                    <path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path>
+                </svg> Processing...`;
+
+        const formData = new FormData();
+        const selectedItems = Array.from(document.querySelectorAll('input[name="items"]:checked')).map(checkbox => checkbox.value);
+        selectedItems.forEach(item => formData.append('items[]', item));
+        formData.append('reason', document.querySelector('select[name="reason"]').value);
+        formData.append('condition', document.querySelector('select[name="condition"]').value);
+        formData.append('comments', document.querySelector('textarea[name="comments"]').value);
+
+        const orderId = form.getAttribute('data-order-id');
+
+        fetch(`/orders/return/${orderId}`, {
+            method: 'POST',
+            body: formData
+          })
+          .then(response => {
+            if (!response.ok) throw new Error('Network response was not ok');
+            return response.json();
+          })
+          .then(data => {
+            updateStep(3);
+            gsap.from('#step3 .rounded-full', {
+              scale: 0,
+              rotation: 360,
+              duration: 0.5,
+              ease: "back.out(1.7)"
+            });
+            form.reset();
+          })
+          .catch(error => {
+            console.error('Error:', error);
+            alert('There was an error submitting your return request. Please try again.');
+            nextBtn.disabled = false;
+            nextBtn.textContent = 'Submit';
+          });
+      }
+    });
+  </script>
+
+</body>
+
+</html>

@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="en" class="dark">
 
 <head>
   <meta charset="UTF-8">
@@ -7,219 +7,521 @@
   <title>Yadro - Dashboard</title>
   <script src="https://cdn.tailwindcss.com"></script>
   <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
-  <link rel="icon" href="/images/logo.png" type="image/x-icon">
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
-  <link rel="stylesheet" href="/css/admin-home.css">
-  <script src="/js/toggle.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/apexcharts/3.42.0/apexcharts.min.js"></script>
+  <!-- <script src="/js/admin/saleReport.js"></script> -->
+  <style>
+    :root {
+      --primary-dark: #1f2937;
+      --secondary-dark: #111827;
+      --accent-blue: #3b82f6;
+      --text-primary: #e5e7eb;
+      --text-secondary: #9ca3af;
+    }
+
+    body {
+      background-color: var(--secondary-dark);
+      color: var(--text-primary);
+    }
+
+    @keyframes fadeInUp {
+      from {
+        opacity: 0;
+        transform: translateY(20px);
+      }
+
+      to {
+        opacity: 1;
+        transform: translateY(0);
+      }
+    }
+
+    @keyframes glowPulse {
+      0% {
+        box-shadow: 0 0 5px rgba(59, 130, 246, 0.5);
+      }
+
+      50% {
+        box-shadow: 0 0 15px rgba(59, 130, 246, 0.8);
+      }
+
+      100% {
+        box-shadow: 0 0 5px rgba(59, 130, 246, 0.5);
+      }
+    }
+
+    .metric-card {
+      background: var(--primary-dark);
+      border-radius: 16px;
+      border: 1px solid rgba(255, 255, 255, 0.1);
+      transition: all 0.3s ease;
+    }
+
+    .metric-card:hover {
+      transform: translateY(-5px);
+      border-color: var(--accent-blue);
+      box-shadow: 0 8px 24px rgba(59, 130, 246, 0.2);
+    }
+
+    .icon-container {
+      width: 48px;
+      height: 48px;
+      border-radius: 12px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      transition: all 0.3s ease;
+    }
+
+    .metric-card:hover .icon-container {
+      transform: scale(1.1);
+      animation: glowPulse 2s infinite;
+    }
+
+    .chart-container {
+      background: var(--primary-dark);
+      border-radius: 16px;
+      border: 1px solid rgba(255, 255, 255, 0.1);
+      transition: all 0.3s ease;
+    }
+
+    .chart-container:hover {
+      border-color: var(--accent-blue);
+      box-shadow: 0 8px 24px rgba(0, 0, 0, 0.2);
+    }
+
+    .table-container {
+      background: var(--primary-dark);
+      border-radius: 16px;
+      border: 1px solid rgba(255, 255, 255, 0.1);
+      overflow: hidden;
+    }
+
+    .table-row {
+      transition: all 0.2s ease;
+      border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+    }
+
+    .table-row:hover {
+      background: rgba(59, 130, 246, 0.1);
+      transform: translateX(4px);
+    }
+
+    .fade-in-up {
+      animation: fadeInUp 0.6s ease-out forwards;
+    }
+
+
+    @keyframes downloadPulse {
+      0% {
+        box-shadow: 0 0 0 0 rgba(59, 130, 246, 0.4);
+      }
+
+      70% {
+        box-shadow: 0 0 0 10px rgba(59, 130, 246, 0);
+      }
+
+      100% {
+        box-shadow: 0 0 0 0 rgba(59, 130, 246, 0);
+      }
+    }
+
+    #downloadReport {
+      position: relative;
+      overflow: hidden;
+      transform: translateZ(0);
+    }
+
+    #downloadReport:active {
+      transform: scale(0.97);
+    }
+
+    #downloadReport.downloading {
+      animation: downloadPulse 1.5s infinite;
+      cursor: wait;
+    }
+
+    .download-progress {
+      position: absolute;
+      bottom: 0;
+      left: 0;
+      height: 3px;
+      background: rgb(219, 234, 254);
+      transition: width 0.3s ease-in-out;
+    }
+
+    .chart-container {
+      background: var(--primary-dark);
+      border-radius: 16px;
+      border: 1px solid rgba(255, 255, 255, 0.1);
+      transition: all 0.3s ease;
+      width: 100%;
+      /* Make sure the container takes full width */
+      max-width: 100%;
+      /* Ensure it doesn't exceed the screen width */
+    }
+
+    .chart-container canvas {
+      width: 100%;
+      /* Ensures the canvas fills the container */
+      height: 100%;
+      /* Makes the canvas height responsive */
+    }
+
+    /* To increase the size of the charts */
+    .chart-container.col-span-1 {
+      height: 500px;
+      /* Increased height for doughnut chart */
+    }
+
+    .chart-container.col-span-3 {
+      height: 500px;
+      /* Increased height for line chart */
+    }
+
+    /* To make sure the charts look nice */
+    @media (max-width: 768px) {
+      .chart-container {
+        flex-direction: column;
+        /* Stack charts on small screens */
+      }
+    }
+  </style>
 </head>
 
-<body class="bg-gray-100 font-sans transition-bg dark:bg-gray-800">
+<body class="min-h-screen">
   <div class="flex">
-    <!-- Sidebar -->
     <%- include('../layouts/admin-sidebar.ejs') %>
 
-    <!-- Main Content -->
-    <div class="flex-1 ml-64 p-10">
-      <div class="flex justify-between items-center mb-8">
-        <h1 class="text-3xl font-bold dark:text-white">Dashboard Overview</h1>
-        <div class="theme-toggle" id="themeToggle"></div>
+    <div class="flex-1 ml-64 p-8">
+      <!-- Header Section -->
+      <div class="flex justify-between items-center mb-8 fade-in-up">
+        <h1 class="text-4xl font-bold bg-gradient-to-r from-blue-400 to-blue-600 text-transparent bg-clip-text">
+          Dashboard Overview
+        </h1>
       </div>
 
-      <!-- Metrics Cards Section -->
-      <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6 mb-8">
-        <!-- Total Orders Card -->
-        <div class="bg-white dark:bg-gray-700 rounded-lg p-6 shadow-lg hover:shadow-xl transition-shadow duration-300">
-          <div class="flex items-center justify-between">
-            <div>
-              <p class="text-sm font-medium text-gray-500 dark:text-gray-400">Total Orders</p>
-              <p class="text-3xl font-bold text-gray-700 dark:text-white">1200</p>
+      <!-- Sales Report Section -->
+      <div class="sales-report-section mb-8 fade-in-up">
+        <!-- Filter Controls -->
+        <div class="chart-container p-6 mb-6">
+          <div class="flex flex-col md:flex-row justify-between items-center mb-6">
+            <h2 class="text-xl font-bold mb-4 md:mb-0">Sales Report</h2>
+            <div class="flex gap-4 items-center">
+              <div class="relative">
+                <input type="date" id="startDate" class="bg-gray-700 text-white rounded-lg px-4 py-2 focus:ring-2 focus:ring-blue-500 outline-none">
+              </div>
+              <span class="text-gray-400">to</span>
+              <div class="relative">
+                <input type="date" id="endDate" class="bg-gray-700 text-white rounded-lg px-4 py-2 focus:ring-2 focus:ring-blue-500 outline-none">
+              </div>
+              <select id="timeFrame" class="bg-gray-700 text-white rounded-lg px-4 py-2 focus:ring-2 focus:ring-blue-500 outline-none">
+                <option value="daily">Daily</option>
+                <option value="weekly">Weekly</option>
+                <option value="monthly">Monthly</option>
+                <option value="yearly">Yearly</option>
+              </select>
+              <button id="applyFilterButton" class="bg-blue-500 hover:bg-blue-600 text-white px-4 py-2 rounded-lg transition-colors">
+                Apply Filter
+              </button>
+
+              <!-- Add this right after the Apply Filter button -->
+              <button id="downloadReport" class="group relative bg-gradient-to-r from-blue-500 to-blue-600 hover:from-blue-600 hover:to-blue-700 text-white px-6 py-2 rounded-lg transition-all duration-300 ease-in-out flex items-center gap-2 overflow-hidden">
+                <span class="relative z-10 flex items-center gap-2">
+                  <i class="fas fa-download transition-transform group-hover:-translate-y-1 group-hover:translate-x-1"></i>
+                  Download Report
+                </span>
+                <span class="absolute inset-0 bg-gradient-to-r from-blue-600 to-blue-700 transform translate-y-full transition-transform duration-300 ease-out group-hover:translate-y-0"></span>
+              </button>
             </div>
-            <div class="p-3 bg-blue-500 rounded-full flex items-center justify-center relative w-12 h-12">
-              <i class="fas fa-shopping-cart text-white w-8 h-8 absolute top-4 left-4"></i>
+          </div>
+
+
+
+          <!-- Summary Cards -->
+          <div class="grid grid-cols-1 md:grid-cols-4 gap-6 mb-6">
+            <div class="metric-card p-6">
+              <div class="flex items-center justify-between">
+                <div>
+                  <p class="text-gray-400 text-sm mb-1">Total Sales</p>
+                  <p class="text-2xl font-bold text-white" id="totalSales">₹0</p>
+                </div>
+                <div class="icon-container bg-blue-500/20">
+                  <i class="fas fa-chart-line text-blue-500 text-xl"></i>
+                </div>
+              </div>
             </div>
+
+            <div class="metric-card p-6">
+              <div class="flex items-center justify-between">
+                <div>
+                  <p class="text-gray-400 text-sm mb-1">Total Orders</p>
+                  <p class="text-2xl font-bold text-white" id="totalOrders">0</p>
+                </div>
+                <div class="icon-container bg-green-500/20">
+                  <i class="fas fa-shopping-cart text-green-500 text-xl"></i>
+                </div>
+              </div>
+            </div>
+
+            <div class="metric-card p-6">
+              <div class="flex items-center justify-between">
+                <div>
+                  <p class="text-gray-400 text-sm mb-1">Avg. Order Value</p>
+                  <p class="text-2xl font-bold text-white" id="avgOrderValue">₹0</p>
+                </div>
+                <div class="icon-container bg-purple-500/20">
+                  <i class="fas fa-coins text-purple-500 text-xl"></i>
+                </div>
+              </div>
+            </div>
+
+            <div class="metric-card p-6">
+              <div class="flex items-center justify-between">
+                <div>
+                  <p class="text-gray-400 text-sm mb-1">Total Items Sold</p>
+                  <p class="text-2xl font-bold text-white" id="totalItems">0</p>
+                </div>
+                <div class="icon-container bg-yellow-500/20">
+                  <i class="fas fa-box text-yellow-500 text-xl"></i>
+                </div>
+              </div>
+            </div>
+            <div class="chart-container col-span-3 p-4">
+              <canvas id="salesChart" height="500" width="1600"></canvas>
+            </div>
+            <div class="chart-container col-span-1 p-4 flex items-center justify-center">
+              <canvas id="paymentMethodChart" height="500" width="500"></canvas>
+            </div>
+
           </div>
         </div>
 
-        <!-- Total Sales Card -->
-        <div class="bg-white dark:bg-gray-700 rounded-lg p-6 shadow-lg hover:shadow-xl transition-shadow duration-300">
-          <div class="flex items-center justify-between">
-            <div>
-              <p class="text-sm font-medium text-gray-500 dark:text-gray-400">Total Sales</p>
-              <p class="text-3xl font-bold text-gray-700 dark:text-white">₹2,50,000</p>
-            </div>
-            <div class="p-3 bg-green-500 rounded-full flex items-center justify-center  relative w-12 h-12">
-              <i class="fas fa-money-bill-wave text-white w-8 h-8 absolute top-4 left-4"></i>
-            </div>
+        <!-- Detailed Sales Table -->
+        <div class="table-container p-6">
+          <div class="overflow-x-auto">
+            <table class="w-full" id="salesTable">
+              <thead>
+                <tr class="text-gray-400 text-sm uppercase">
+                  <th class="py-3 px-4 text-left">Date</th>
+                  <th class="py-3 px-4 text-left">Orders</th>
+                  <th class="py-3 px-4 text-left">Sales</th>
+                  <th class="py-3 px-4 text-left">Avg. Order Value</th>
+                  <th class="py-3 px-4 text-left">Items Sold</th>
+                </tr>
+              </thead>
+              <tbody id="salesTableBody">
+                <!-- Table rows will be populated by JavaScript -->
+              </tbody>
+            </table>
           </div>
         </div>
-
-        <!-- Total Products Card -->
-        <div class="bg-white dark:bg-gray-700 rounded-lg p-6 shadow-lg hover:shadow-xl transition-shadow duration-300">
-          <div class="flex items-center justify-between">
-            <div>
-              <p class="text-sm font-medium text-gray-500 dark:text-gray-400">Total Products</p>
-              <p class="text-3xl font-bold text-gray-700 dark:text-white">350</p>
-            </div>
-            <div class="p-3 bg-yellow-500 rounded-full flex items-center justify-center  relative w-12 h-12">
-              <i class="fas fa-box text-white w-8 h-8 absolute top-4 left-4"></i>
-            </div>
-          </div>
-        </div>
-
-        <!-- Monthly Earnings Card -->
-        <div class="bg-white dark:bg-gray-700 rounded-lg p-6 shadow-lg hover:shadow-xl transition-shadow duration-300">
-          <div class="flex items-center justify-between">
-            <div>
-              <p class="text-sm font-medium text-gray-500 dark:text-gray-400">Monthly Earnings</p>
-              <p class="text-3xl font-bold text-gray-700 dark:text-white">₹50,000</p>
-            </div>
-            <div class="p-3 bg-purple-500 rounded-full flex items-center justify-center  relative w-12 h-12">
-              <i class="fas fa-chart-line text-white w-8 h-8 absolute top-4 left-4"></i>
-            </div>
-          </div>
-        </div>
-
-        <!-- Users Count Card -->
-        <div class="bg-white dark:bg-gray-700 rounded-lg p-6 shadow-lg hover:shadow-xl transition-shadow duration-300">
-          <div class="flex items-center justify-between">
-            <div>
-              <p class="text-sm font-medium text-gray-500 dark:text-gray-400">No. of Users</p>
-              <p class="text-3xl font-bold text-gray-700 dark:text-white">850</p>
-            </div>
-            <div class="p-3 bg-pink-500 rounded-full flex items-center justify-center  relative w-12 h-12">
-              <i class="fas fa-users text-white w-8 h-8 absolute top-4 left-4"></i>
-            </div>
-          </div>
-        </div>
-
-        <!-- Pending Orders Card -->
-        <div class="bg-white dark:bg-gray-700 rounded-lg p-6 shadow-lg hover:shadow-xl transition-shadow duration-300">
-          <div class="flex items-center justify-between">
-            <div>
-              <p class="text-sm font-medium text-gray-500 dark:text-gray-400">Pending Orders</p>
-              <p class="text-3xl font-bold text-gray-700 dark:text-white">15</p>
-            </div>
-            <div class="p-3 bg-red-500 rounded-full flex items-center justify-center  relative w-12 h-12">
-              <i class="fas fa-exclamation-circle text-white w-8 h-8 absolute top-4 left-4"></i>
-            </div>
-          </div>
-        </div>
-
-        <!-- Completed Orders Card -->
-        <div class="bg-white dark:bg-gray-700 rounded-lg p-6 shadow-lg hover:shadow-xl transition-shadow duration-300">
-          <div class="flex items-center justify-between">
-            <div>
-              <p class="text-sm font-medium text-gray-500 dark:text-gray-400">Completed Orders</p>
-              <p class="text-3xl font-bold text-gray-700 dark:text-white">1185</p>
-            </div>
-            <div class="p-3 bg-green-500 rounded-full flex items-center justify-center  relative w-12 h-12">
-              <i class="fas fa-check-circle text-white w-8 h-8 absolute top-4 left-4"></i>
-            </div>
-          </div>
-        </div>
-
-        <!-- Total Discount Card -->
-        <div class="bg-white dark:bg-gray-700 rounded-lg p-6 shadow-lg hover:shadow-xl transition-shadow duration-300">
-          <div class="flex items-center justify-between">
-            <div>
-              <p class="text-sm font-medium text-gray-500 dark:text-gray-400">Total Discount</p>
-              <p class="text-3xl font-bold text-gray-700 dark:text-white">₹10,000</p>
-            </div>
-            <div class="p-3 bg-indigo-500 rounded-full flex items-center justify-center  relative w-12 h-12">
-              <i class="fas fa-tags text-white w-8 h-8 absolute top-4 left-4"></i>
-            </div>
-          </div>
-        </div>
-      </div>
-
-      <!-- Sales Statistics (Bar) & Order Statistics (Pie) -->
-      <div class="flex flex-col md:flex-row gap-6 mb-8">
-        <!-- Sales Statistics (Bar Chart) -->
-        <div class="bg-white dark:bg-gray-700 rounded-lg shadow-lg p-6 flex-1">
-          <h2 class="text-xl font-bold text-gray-700 dark:text-white mb-4">Sales Statistics</h2>
-          <canvas id="salesChart" class="w-full"></canvas>
-        </div>
-
-        <!-- Order Statistics (Pie Chart) -->
-        <div class="bg-white dark:bg-gray-700 rounded-lg shadow-lg p-6 flex-1">
-          <h2 class="text-xl font-bold text-gray-700 dark:text-white mb-4">Order Statistics</h2>
-          <canvas id="orderChart" class="w-full"></canvas>
-        </div>
-      </div>
-
-      <!-- Top Selling Products Table -->
-      <div class="bg-white dark:bg-gray-700 rounded-lg shadow-lg p-6 mb-8">
-        <h2 class="text-xl font-bold text-gray-700 dark:text-white mb-4">Top Selling Products</h2>
-        <table class="w-full table-auto text-left">
-          <thead>
-            <tr class="bg-gray-100 dark:bg-gray-600">
-              <th class="px-4 py-2 text-gray-600 dark:text-gray-200">Product Name</th>
-              <th class="px-4 py-2 text-gray-600 dark:text-gray-200">Units Sold</th>
-              <th class="px-4 py-2 text-gray-600 dark:text-gray-200">Total Revenue</th>
-            </tr>
-          </thead>
-          <tbody>
-            <tr class="border-b dark:border-gray-600">
-              <td class="px-4 py-2 text-gray-700 dark:text-gray-200">Product A</td>
-              <td class="px-4 py-2 text-gray-700 dark:text-gray-200">200</td>
-              <td class="px-4 py-2 text-gray-700 dark:text-gray-200">₹40,000</td>
-            </tr>
-            <tr class="border-b dark:border-gray-600">
-              <td class="px-4 py-2 text-gray-700 dark:text-gray-200">Product B</td>
-              <td class="px-4 py-2 text-gray-700 dark:text-gray-200">150</td>
-              <td class="px-4 py-2 text-gray-700 dark:text-gray-200">₹30,000</td>
-            </tr>
-            <tr class="border-b dark:border-gray-600">
-              <td class="px-4 py-2 text-gray-700 dark:text-gray-200">Product C</td>
-              <td class="px-4 py-2 text-gray-700 dark:text-gray-200">100</td>
-              <td class="px-4 py-2 text-gray-700 dark:text-gray-200">₹20,000</td>
-            </tr>
-          </tbody>
-        </table>
-      </div>
-
-      <!-- Recent Orders Table -->
-      <div class="bg-white dark:bg-gray-700 rounded-lg shadow-lg p-6 mb-8">
-        <h2 class="text-xl font-bold text-gray-700 dark:text-white mb-4">Recent Orders</h2>
-        <table class="w-full table-auto text-left">
-          <thead>
-            <tr class="bg-gray-100 dark:bg-gray-600">
-              <th class="px-4 py-2 text-gray-600 dark:text-gray-200">Order ID</th>
-              <th class="px-4 py-2 text-gray-600 dark:text-gray-200">Customer</th>
-              <th class="px-4 py-2 text-gray-600 dark:text-gray-200">Amount</th>
-              <th class="px-4 py-2 text-gray-600 dark:text-gray-200">Date</th>
-              <th class="px-4 py-2 text-gray-600 dark:text-gray-200">Status</th>
-            </tr>
-          </thead>
-          <tbody>
-            <tr class="border-b dark:border-gray-600">
-              <td class="px-4 py-2 text-gray-700 dark:text-gray-200">ORD-101</td>
-              <td class="px-4 py-2 text-gray-700 dark:text-gray-200">John Doe</td>
-              <td class="px-4 py-2 text-gray-700 dark:text-gray-200">₹2,500</td>
-              <td class="px-4 py-2 text-gray-700 dark:text-gray-200">2023-09-20</td>
-              <td class="px-4 py-2 text-gray-700 dark:text-gray-200">Pending</td>
-            </tr>
-            <tr class="border-b dark:border-gray-600">
-              <td class="px-4 py-2 text-gray-700 dark:text-gray-200">ORD-102</td>
-              <td class="px-4 py-2 text-gray-700 dark:text-gray-200">Jane Smith</td>
-              <td class="px-4 py-2 text-gray-700 dark:text-gray-200">₹3,200</td>
-              <td class="px-4 py-2 text-gray-700 dark:text-gray-200">2023-09-21</td>
-              <td class="px-4 py-2 text-gray-700 dark:text-gray-200">Completed</td>
-            </tr>
-            <tr class="border-b dark:border-gray-600">
-              <td class="px-4 py-2 text-gray-700 dark:text-gray-200">ORD-103</td>
-              <td class="px-4 py-2 text-gray-700 dark:text-gray-200">Alice Brown</td>
-              <td class="px-4 py-2 text-gray-700 dark:text-gray-200">₹1,800</td>
-              <td class="px-4 py-2 text-gray-700 dark:text-gray-200">2023-09-22</td>
-              <td class="px-4 py-2 text-gray-700 dark:text-gray-200">Pending</td>
-            </tr>
-          </tbody>
-        </table>
       </div>
     </div>
   </div>
 
-  <script src="/js/admin-home.js"></script>
+
+
+  <script>
+    document.addEventListener('DOMContentLoaded', function() {
+      const startDateInput = document.getElementById('startDate');
+      const endDateInput = document.getElementById('endDate');
+      // Get today's date
+      const today = new Date();
+      const startDate = new Date();
+      startDate.setDate(today.getDate() - 7); // 7 days ago
+
+      // Set the values for the date inputs
+      startDateInput.value = startDate.toISOString().split('T')[0]; // Format as YYYY-MM-DD
+      endDateInput.value = new Date(today.setDate(today.getDate() + 1)).toISOString().split('T')[0]; // Set to tomorrow
+    });
+
+
+
+
+    document.addEventListener('DOMContentLoaded', function() {
+      // Shared colors for consistency
+      const colors = ['#3b82f6', '#10b981', '#f59e0b', '#ef4444', '#8b5cf6'];
+
+      // Shared chart options
+      const sharedOptions = {
+        theme: {
+          mode: 'dark',
+          palette: 'palette1'
+        },
+        chart: {
+          background: 'transparent',
+          fontFamily: 'inherit',
+        },
+        legend: {
+          labels: {
+            colors: '#9ca3af'
+          }
+        }
+      };
+
+    });
+
+
+
+
+    document.getElementById('applyFilterButton').addEventListener('click', async () => {
+      const startDate = document.getElementById('startDate').value;
+      const endDate = document.getElementById('endDate').value;
+      const timeFrame = document.getElementById('timeFrame').value;
+
+      try {
+        const response = await fetch(`/admin/sales-report?startDate=${startDate}&endDate=${endDate}&timeFrame=${timeFrame}`);
+        const result = await response.json();
+
+        if (result.success) {
+          document.getElementById('totalSales').innerText = `₹${result.data.summary.totalSales.toFixed(2)}`;
+          document.getElementById('totalOrders').innerText = result.data.summary.totalOrders;
+          document.getElementById('avgOrderValue').innerText = `₹${result.data.summary.avgOrderValue}`;
+          document.getElementById('totalItems').innerText = result.data.summary.totalItems;
+
+          // Populate table with sales data
+          const salesTableBody = document.getElementById('salesTableBody');
+          salesTableBody.innerHTML = ''; // Clear existing data
+
+          result.data.salesData.forEach((item) => {
+            const row = document.createElement('tr');
+            row.classList.add('table-row');
+            row.innerHTML = `
+                    <td class="py-3 px-4">${item.date}</td>
+                    <td class="py-3 px-4">${item.orders}</td>
+                    <td class="py-3 px-4">₹${item.sales.toFixed(2)}</td>
+                    <td class="py-3 px-4">₹${item.avgOrderValue}</td>
+                    <td class="py-3 px-4">${item.totalItems}</td>
+                `;
+            salesTableBody.appendChild(row);
+          });
+
+          // (Optional) Call to update the chart if using ApexCharts or Chart.js
+          updateSalesChart(result.data.salesData);
+
+        } else {
+          alert(result.message || 'Failed to fetch sales report.');
+        }
+      } catch (error) {
+        console.error('Error fetching sales report:', error);
+      }
+    });
+
+    const ctx = document.getElementById('salesChart').getContext('2d');
+    let salesChart;
+
+    function updateSalesChart(data) {
+      const labels = data.map(item => item.date);
+      const sales = data.map(item => item.sales);
+
+      if (salesChart) salesChart.destroy();
+
+      salesChart = new Chart(ctx, {
+        type: 'line',
+        data: {
+          labels: labels,
+          datasets: [{
+            label: 'Sales',
+            data: sales,
+            backgroundColor: 'rgba(59, 130, 246, 0.2)',
+            borderColor: 'rgba(59, 130, 246, 1)',
+            fill: true,
+            tension: 0.3
+          }]
+        },
+        options: {
+          responsive: true,
+          scales: {
+            x: {
+              title: {
+                color: '#fff',
+                display: true,
+                text: 'Date'
+              }
+            },
+            y: {
+              title: {
+                color: '#fff',
+                display: true,
+                text: 'Sales (₹)'
+              }
+            }
+          }
+        }
+      });
+    }
+
+
+
+
+    // payment graph
+
+    async function fetchSalesReport() {
+      try {
+        const response = await fetch('/admin/sales-report'); // Replace with your actual endpoint
+        const reportData = await response.json();
+
+        if (reportData.success) {
+          const paymentMethodStats = reportData.data.paymentMethodStats;
+          const labels = paymentMethodStats.map(stat => stat._id);
+          const values = paymentMethodStats.map(stat => stat.count);
+
+          renderPaymentMethodChart(labels, values);
+        } else {
+          console.error("Error fetching sales report:", reportData.message);
+        }
+      } catch (error) {
+        console.error("Error fetching sales report:", error);
+      }
+    }
+
+    function renderPaymentMethodChart(labels, values) {
+      const ctx = document.getElementById('paymentMethodChart').getContext('2d');
+      new Chart(ctx, {
+        type: 'doughnut',
+        data: {
+          labels: labels,
+          datasets: [{
+            label: 'Payment Method Distribution',
+            data: values,
+            backgroundColor: [
+              'rgba(54, 162, 235, 0.6)',
+              'rgba(255, 206, 86, 0.6)',
+              'rgba(75, 192, 192, 0.6)',
+              'rgba(255, 99, 132, 0.6)'
+            ],
+            borderColor: [
+              'rgba(54, 162, 235, 1)',
+              'rgba(255, 206, 86, 1)',
+              'rgba(75, 192, 192, 1)',
+              'rgba(255, 99, 132, 1)'
+            ],
+            borderWidth: 1
+          }]
+        },
+        options: {
+          responsive: true,
+          plugins: {
+            legend: {
+              position: 'top',
+            },
+            tooltip: {
+              callbacks: {
+                label: function(context) {
+                  const total = values.reduce((a, b) => a + b, 0);
+                  const percentage = ((context.raw / total) * 100).toFixed(2);
+                  return `${context.label}: ${context.raw} (${percentage}%)`;
+                }
+              }
+            }
+          }
+        }
+      });
+    }
+
+    fetchSalesReport();
+  </script>
 </body>
 
 </html>

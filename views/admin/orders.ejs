@@ -1,18 +1,26 @@
 <!DOCTYPE html>
-<html lang="en" class="light">
+<html lang="en" class="dark">
 
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Yadro - Orders</title>
   <script src="https://cdn.tailwindcss.com"></script>
-  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
-  <script src="/js/toggle.js"></script>
-  <link rel="icon" href="/images/logo.png" type="image/x-icon">
-  <link rel="stylesheet" href="/css/orders.css">
-  <link rel="stylesheet" href="/css/products.css">
-
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
   <style>
+    :root {
+      --primary-dark: #1f2937;
+      --secondary-dark: #111827;
+      --accent-blue: #3b82f6;
+      --text-primary: #e5e7eb;
+      --text-secondary: #9ca3af;
+    }
+
+    body {
+      background-color: var(--secondary-dark);
+      color: var(--text-primary);
+    }
+
     @keyframes fadeInUp {
       from {
         opacity: 0;
@@ -25,191 +33,472 @@
       }
     }
 
+    @keyframes glowPulse {
+      0% {
+        box-shadow: 0 0 5px rgba(59, 130, 246, 0.5);
+      }
+
+      50% {
+        box-shadow: 0 0 15px rgba(59, 130, 246, 0.8);
+      }
+
+      100% {
+        box-shadow: 0 0 5px rgba(59, 130, 246, 0.5);
+      }
+    }
+
     .fade-in-up {
-      animation: fadeInUp 0.5s ease-out;
+      animation: fadeInUp 0.6s ease-out forwards;
+    }
+
+    .stats-card {
+      background: var(--primary-dark);
+      border-radius: 16px;
+      border: 1px solid rgba(255, 255, 255, 0.1);
+      transition: all 0.3s ease;
+    }
+
+    .stats-card:hover {
+      transform: translateY(-4px);
+      border-color: var(--accent-blue);
+      box-shadow: 0 8px 24px rgba(59, 130, 246, 0.2);
+    }
+
+    .status-filter {
+      transition: all 0.3s ease;
+      position: relative;
+      overflow: hidden;
+    }
+
+    .status-filter::after {
+      content: '';
+      position: absolute;
+      bottom: 0;
+      left: 50%;
+      width: 0;
+      height: 2px;
+      background: var(--accent-blue);
+      transition: all 0.3s ease;
+      transform: translateX(-50%);
+    }
+
+    .status-filter:hover::after {
+      width: 100%;
+    }
+
+    .orders-table {
+      background: var(--primary-dark);
+      border-radius: 16px;
+      box-shadow: 0 4px 20px rgba(0, 0, 0, 0.3);
+      border: 1px solid rgba(255, 255, 255, 0.1);
+      overflow: hidden;
+    }
+
+    .table-row {
+      transition: all 0.2s ease;
+      border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+    }
+
+    .table-row:hover {
+      background: rgba(59, 130, 246, 0.1);
+      transform: translateX(4px);
     }
 
     .status-dropdown {
-      appearance: none;
-      background-image: url("data:image/svg+xml,%3csvg xmlns='http://www.w3.org/2000/svg' fill='none' viewBox='0 0 20 20'%3e%3cpath stroke='%236b7280' stroke-linecap='round' stroke-linejoin='round' stroke-width='1.5' d='M6 8l4 4 4-4'/%3e%3c/svg%3e");
-      background-position: right 0.5rem center;
-      background-repeat: no-repeat;
-      background-size: 1.5em 1.5em;
-      padding-right: 2.5rem;
+      background: rgba(17, 24, 39, 0.8);
+      border: 1px solid rgba(255, 255, 255, 0.1);
+      border-radius: 8px;
+      padding: 0.5rem;
+      color: var(--text-primary);
+      transition: all 0.3s ease;
+    }
+
+    .status-dropdown:focus {
+      border-color: var(--accent-blue);
+      box-shadow: 0 0 0 2px rgba(59, 130, 246, 0.2);
+      outline: none;
+    }
+
+    .action-icon {
+      padding: 0.5rem;
+      border-radius: 8px;
+      transition: all 0.2s ease;
+      color: var(--text-secondary);
+      position: relative;
+    }
+
+    .view-icon:hover {
+      background: rgba(16, 185, 129, 0.2);
+      color: #34d399;
+    }
+
+    .tooltip {
+      position: absolute;
+      bottom: 100%;
+      left: 50%;
+      transform: translateX(-50%);
+      padding: 0.5rem 1rem;
+      background: rgba(0, 0, 0, 0.9);
+      color: white;
+      border-radius: 6px;
+      font-size: 0.875rem;
+      opacity: 0;
+      visibility: hidden;
+      transition: all 0.3s ease;
+      white-space: nowrap;
+      z-index: 50;
+    }
+
+    .action-icon:hover .tooltip {
+      opacity: 1;
+      visibility: visible;
+      transform: translateX(-50%) translateY(-8px);
+    }
+
+    .status-badge {
+      padding: 0.25rem 0.75rem;
+      border-radius: 9999px;
+      font-size: 0.75rem;
+      font-weight: 500;
+    }
+
+    .status-ordered {
+      background: rgba(59, 130, 246, 0.2);
+      color: #60a5fa;
+      border: 1px solid rgba(59, 130, 246, 0.4);
+    }
+
+    .status-shipped {
+      background: rgba(139, 92, 246, 0.2);
+      color: #a78bfa;
+      border: 1px solid rgba(139, 92, 246, 0.4);
+    }
+
+    .status-delivered {
+      background: rgba(16, 185, 129, 0.2);
+      color: #34d399;
+      border: 1px solid rgba(16, 185, 129, 0.4);
+    }
+
+    .status-cancelled {
+      background: rgba(239, 68, 68, 0.2);
+      color: #f87171;
+      border: 1px solid rgba(239, 68, 68, 0.4);
+    }
+
+    /* Added Styles for Search and Pagination */
+    .search-box {
+      background: var(--primary-dark);
+      border: 1px solid rgba(255, 255, 255, 0.1);
+      border-radius: 8px;
+      transition: all 0.3s ease;
+    }
+
+    .search-box:focus-within {
+      border-color: var(--accent-blue);
+      box-shadow: 0 0 0 2px rgba(59, 130, 246, 0.2);
+    }
+
+    .pagination-button {
+      background: var(--primary-dark);
+      border: 1px solid rgba(255, 255, 255, 0.1);
+      border-radius: 8px;
+      transition: all 0.3s ease;
+    }
+
+    .pagination-button:hover:not(:disabled) {
+      border-color: var(--accent-blue);
+      background: rgba(59, 130, 246, 0.1);
+    }
+
+    .pagination-button:disabled {
+      opacity: 0.5;
+      cursor: not-allowed;
     }
   </style>
 </head>
 
-<body class="bg-gray-100 font-sans transition-all duration-300 dark:bg-gray-800">
+<body class="min-h-screen">
   <div class="flex">
-    <!-- Sidebar placeholder -->
+    <!-- Sidebar Include -->
     <%- include('../layouts/admin-sidebar.ejs') %>
 
-    <!-- Main Content -->
-    <div class="flex-1 p-8 ml-64">
-      <div class="flex justify-between items-center mb-8">
-        <h2 class="text-3xl font-bold text-gray-800 dark:text-white">Orders</h2>
-        <div class="theme-toggle" id="themeToggle"></div>
+    <div class="flex-1 ml-64 p-8">
+      <!-- Header Section -->
+      <div class="flex items-center justify-between mb-8 fade-in-up">
+        <h1 class="text-4xl font-bold bg-gradient-to-r from-blue-400 to-blue-600 text-transparent bg-clip-text">
+          Orders Management
+        </h1>
+        <!-- Added Search Box -->
+        <div class="search-box flex items-center px-4 py-2">
+          <i class="fas fa-search text-gray-400 mr-2"></i>
+          <input type="text" placeholder="Search orders..." class="bg-transparent border-none focus:outline-none text-gray-300 w-64">
+        </div>
       </div>
 
       <!-- Order Statistics -->
-      <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4 mb-8 fade-in-up">
-        <div class="bg-white dark:bg-gray-700 p-6 rounded-lg shadow-lg transition-all duration-300 hover:shadow-xl">
+      <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6 mb-8">
+        <div class="stats-card p-6 fade-in-up" style="animation-delay: 0.1s">
           <div class="flex items-center justify-between">
             <div>
-              <h3 class="text-lg font-semibold text-gray-600 dark:text-gray-300">Pending Payment</h3>
+              <h3 class="text-gray-400 text-sm font-semibold mb-2">Pending Payment</h3>
               <p class="text-3xl font-bold text-blue-500">56</p>
             </div>
-            <i class="fas fa-clock text-4xl text-blue-400"></i>
-          </div>
-        </div>
-        <div class="bg-white dark:bg-gray-700 p-6 rounded-lg shadow-lg transition-all duration-300 hover:shadow-xl">
-          <div class="flex items-center justify-between">
-            <div>
-              <h3 class="text-lg font-semibold text-gray-600 dark:text-gray-300">Completed</h3>
-              <p class="text-3xl font-bold text-green-500">4873</p>
+            <div class="p-4 bg-blue-500 bg-opacity-20 rounded-lg">
+              <i class="fas fa-clock text-2xl text-blue-500"></i>
             </div>
-            <i class="fas fa-check-circle text-4xl text-green-400"></i>
           </div>
         </div>
-        <div class="bg-white dark:bg-gray-700 p-6 rounded-lg shadow-lg transition-all duration-300 hover:shadow-xl">
+
+        <div class="stats-card p-6 fade-in-up" style="animation-delay: 0.2s">
           <div class="flex items-center justify-between">
             <div>
-              <h3 class="text-lg font-semibold text-gray-600 dark:text-gray-300">Refunded</h3>
+              <h3 class="text-gray-400 text-sm font-semibold mb-2">Completed</h3>
+              <p class="text-3xl font-bold text-green-500">4,873</p>
+            </div>
+            <div class="p-4 bg-green-500 bg-opacity-20 rounded-lg">
+              <i class="fas fa-check-circle text-2xl text-green-500"></i>
+            </div>
+          </div>
+        </div>
+
+        <div class="stats-card p-6 fade-in-up" style="animation-delay: 0.3s">
+          <div class="flex items-center justify-between">
+            <div>
+              <h3 class="text-gray-400 text-sm font-semibold mb-2">Refunded</h3>
               <p class="text-3xl font-bold text-yellow-500">231</p>
             </div>
-            <i class="fas fa-undo text-4xl text-yellow-400"></i>
+            <div class="p-4 bg-yellow-500 bg-opacity-20 rounded-lg">
+              <i class="fas fa-undo text-2xl text-yellow-500"></i>
+            </div>
           </div>
         </div>
-        <div class="bg-white dark:bg-gray-700 p-6 rounded-lg shadow-lg transition-all duration-300 hover:shadow-xl">
+
+        <div class="stats-card p-6 fade-in-up" style="animation-delay: 0.4s">
           <div class="flex items-center justify-between">
             <div>
-              <h3 class="text-lg font-semibold text-gray-600 dark:text-gray-300">Failed</h3>
+              <h3 class="text-gray-400 text-sm font-semibold mb-2">Failed</h3>
               <p class="text-3xl font-bold text-red-500">23</p>
             </div>
-            <i class="fas fa-times-circle text-4xl text-red-400"></i>
+            <div class="p-4 bg-red-500 bg-opacity-20 rounded-lg">
+              <i class="fas fa-times-circle text-2xl text-red-500"></i>
+            </div>
           </div>
         </div>
       </div>
 
       <!-- Order Filters -->
-      <div class="flex flex-wrap gap-2 mb-6 fade-in-up" style="animation-delay: 0.2s;">
-        <button class="px-4 py-2 bg-blue-500 text-white rounded-full shadow hover:bg-blue-600 transition-colors duration-300">
-          <i class="fas fa-list-ul mr-2"></i>All Status
+      <div class="flex flex-wrap gap-4 mb-8 fade-in-up" style="animation-delay: 0.5s">
+        <button class="status-filter px-6 py-3 bg-blue-600 text-white rounded-lg shadow hover:bg-blue-700 transition-colors">
+          <i class="fas fa-list-ul mr-2"></i>All Orders
         </button>
-        <button class="px-4 py-2 bg-gray-200 text-gray-700 rounded-full shadow hover:bg-gray-300 transition-colors duration-300">
-          <i class="fas fa-cog mr-2"></i>Ordered
+        <button class="status-filter px-6 py-3 bg-gray-700 text-gray-300 rounded-lg shadow hover:bg-gray-600 transition-colors">
+          <i class="fas fa-shopping-cart mr-2"></i>New Orders
         </button>
-        <button class="px-4 py-2 bg-gray-200 text-gray-700 rounded-full shadow hover:bg-gray-300 transition-colors duration-300">
+        <button class="status-filter px-6 py-3 bg-gray-700 text-gray-300 rounded-lg shadow hover:bg-gray-600 transition-colors">
           <i class="fas fa-truck mr-2"></i>Shipped
         </button>
-        <button class="px-4 py-2 bg-gray-200 text-gray-700 rounded-full shadow hover:bg-gray-300 transition-colors duration-300">
+        <button class="status-filter px-6 py-3 bg-gray-700 text-gray-300 rounded-lg shadow hover:bg-gray-600 transition-colors">
           <i class="fas fa-box mr-2"></i>Delivered
         </button>
-        <button class="px-4 py-2 bg-gray-200 text-gray-700 rounded-full shadow hover:bg-gray-300 transition-colors duration-300">
+        <button class="status-filter px-6 py-3 bg-gray-700 text-gray-300 rounded-lg shadow hover:bg-gray-600 transition-colors">
           <i class="fas fa-ban mr-2"></i>Cancelled
         </button>
       </div>
 
       <!-- Orders Table -->
-      <div class="bg-white dark:bg-gray-700 rounded-lg shadow-lg overflow-hidden">
-        <table class="min-w-full table-auto">
-          <thead class="bg-gray-50 dark:bg-gray-600 text-gray-600 dark:text-gray-200 uppercase text-sm leading-normal">
-            <tr>
-              <th class="py-3 px-6 text-left">Order ID</th>
-              <th class="py-3 px-6 text-left">Customer</th>
-              <th class="py-3 px-6 text-left">Order Date</th>
-              <th class="py-3 px-6 text-left">Address</th>
-              <th class="py-3 px-6 text-left">Payment</th>
-              <th class="py-3 px-6 text-left">Total</th>
-              <th class="py-3 px-6 text-left">Status</th>
-              <th class="py-3 px-6 text-left">Action</th>
+      <div class="orders-table fade-in-up" style="animation-delay: 0.6s">
+        <table class="min-w-full">
+          <thead>
+            <tr class="text-gray-400 text-sm uppercase border-b border-gray-700">
+              <th class="py-4 px-6 text-left font-medium">Order ID</th>
+              <th class="py-4 px-6 text-left font-medium">Customer</th>
+              <th class="py-4 px-6 text-left font-medium">Order Date</th>
+              <th class="py-4 px-6 text-left font-medium">Payment</th>
+              <th class="py-4 px-6 text-left font-medium">Total</th>
+              <th class="py-4 px-6 text-left font-medium">Status</th>
+              <th class="py-4 px-6 text-left font-medium">Action</th>
             </tr>
           </thead>
-          <tbody class="text-gray-600 dark:text-gray-200 text-sm font-light">
+          <tbody>
             <% orders.forEach(order => { %>
-            <tr class="border-b dark:border-gray-700 hover:bg-gray-50 dark:hover:bg-gray-600">
-              <td class="py-3 px-6 font-medium"><%= order._id %></td>
-              <td class="py-3 px-6"> <%= order.userId.fname %> <%= order.userId.lname %></td>
-              <td class="py-3 px-6"><%= order.orderDate.toDateString() %></td>
-              <td class="py-3 px-6">
-                <% if (order.deliveryAddress && order.deliveryAddress.address && order.deliveryAddress.address.length > 0) { %>
-                <% const address = order.deliveryAddress.address[0]; %>
-                <%= address.name %>, <%= address.streetAddress %>, <%= address.city %>, <%= address.state %>, <%= address.country %>, <%= address.postalCode %>
-                <% } else { %>
-                No delivery address available
-                <% } %>
+            <tr class="table-row">
+              <td class="py-4 px-6 font-medium text-blue-400">#<%= order._id %></td>
+              <td class="py-4 px-6 text-gray-300">
+                <!-- <%=// order.userId.fname %> <%= //order.userId.lname %> -->
               </td>
-              <td class="py-3 px-6"><%= order.paymentMethod %></td>
-              <td class="py-3 px-6">₹ <%= order.totalAmount %></td>
-              <% if (order.orderStatus !== "Cancelled" && order.orderStatus !== "Delivered") { %>
-              <td class="py-3 px-6">
-                <form action="/admin/orders/update-status" method="POST">
+              <td class="py-4 px-6 text-gray-300">
+                <%= order.orderDate.toDateString() %>
+              </td>
+              <td class="py-4 px-6 text-gray-300">
+                <%= order.paymentMethod %>
+              </td>
+              <td class="py-4 px-6">
+                <span class="text-green-400 font-medium">₹<%= order.totalAmount %></span>
+              </td>
+              <td class="py-4 px-6">
+                <% if (order.orderStatus !== "Cancelled" && order.orderStatus !== "Delivered") { %>
+                <form action="/admin/orders/update-status" method="POST" class="flex items-center space-x-2">
                   <input type="hidden" name="orderId" value="<%= order._id %>">
-                  <select name="status" class="status-dropdown py-1 px-3 rounded-full text-xs border-2">
+                  <select name="status" class="status-dropdown text-sm">
                     <option value="Ordered" <%= order.orderStatus === 'Ordered' ? 'selected' : '' %>>Ordered</option>
                     <option value="Shipped" <%= order.orderStatus === 'Shipped' ? 'selected' : '' %>>Shipped</option>
-                    <option value="Out For Delivery" <%= order.orderStatus === 'Out For Delivery' ? 'selected' : '' %>>Out For Delivery</option>
+                    <option value="Out For Delivery" <%= order.orderStatus ==='Out For Delivery' ? 'selected' : '' %>>Out For Delivery</option>
                     <option value="Delivered" <%= order.orderStatus === 'Delivered' ? 'selected' : '' %>>Delivered</option>
                     <option value="Cancelled" <%= order.orderStatus === 'Cancelled' ? 'selected' : '' %>>Cancelled</option>
                   </select>
-                  <button type="submit" class="ml-2 text-blue-500">Update</button>
+                  <button type="submit" class="text-blue-400 hover:text-blue-300 transition-colors">
+                    <i class="fas fa-sync-alt"></i>
+                  </button>
                 </form>
+                <% } else { %>
+                <span class="status-badge <%= order.orderStatus.toLowerCase() %>">
+                  <%= order.orderStatus %>
+                </span>
+                <% } %>
               </td>
-              <% } else { %>
-              <td class="py-3 px-6"><%= order.orderStatus %></td>
-              <% } %>
-
-              <td class="py-3 px-6">
-                <a href="/admin/viewOrderDetails/<%= order._id %>" class="relative group action-icon view-icon" title="View">
+              <td class="py-4 px-6">
+                <a href="/admin/viewOrderDetails/<%= order._id %>" class="action-icon view-icon">
                   <i class="fas fa-eye"></i>
-                  <div class="tooltip hidden absolute bottom-full mb-2 w-max text-sm bg-gray-800 text-white p-2 rounded-lg opacity-0 transition-opacity duration-300 group-hover:opacity-100 group-hover:block">
-                    View
-                    <div class="tooltip-arrow"></div>
-                  </div>
+                  <span class="tooltip">View Details</span>
                 </a>
               </td>
             </tr>
             <% }) %>
           </tbody>
         </table>
-      </div>
 
-      <!-- Pagination -->
-      <!-- <div class="flex justify-center mt-6 fade-in-up" style="animation-delay: 0.6s;">
-        <nav class="inline-flex rounded-md shadow-sm">
-          <button class="px-3 py-2 rounded-l-md border border-gray-300 bg-white text-sm font-medium text-gray-500 hover:bg-gray-50">
-            <i class="fas fa-chevron-left"></i>
-          </button>
-          <button class="px-3 py-2 border-t border-b border-gray-300 bg-white text-sm font-medium text-blue-600 hover:bg-blue-50">1</button>
-          <button class="px-3 py-2 border-t border-b border-gray-300 bg-white text-sm font-medium text-gray-500 hover:bg-gray-50">2</button>
-          <button class="px-3 py-2 border-t border-b border-gray-300 bg-white text-sm font-medium text-gray-500 hover:bg-gray-50">3</button>
-          <button class="px-3 py-2 rounded-r-md border border-gray-300 bg-white text-sm font-medium text-gray-500 hover:bg-gray-50">
-            <i class="fas fa-chevron-right"></i>
-          </button>
-        </nav>
-      </div> -->
+        <!-- Added Pagination -->
+        <div class="flex items-center justify-between p-6 border-t border-gray-700">
+          <div class="text-sm text-gray-400">
+            Showing <span class="font-medium">1</span> to <span class="font-medium">10</span> of <span class="font-medium">100</span> results
+          </div>
+          <div class="flex gap-2">
+            <button class="pagination-button px-4 py-2 text-sm text-gray-400 disabled" disabled>
+              <i class="fas fa-chevron-left mr-2"></i>
+              Previous
+            </button>
+            <button class="pagination-button px-4 py-2 text-sm text-gray-400">
+              Next
+              <i class="fas fa-chevron-right ml-2"></i>
+            </button>
+          </div>
+        </div>
+      </div>
     </div>
   </div>
 
-  <script src="/js/orders.js"></script>
+  <!-- Added JavaScript for functionality -->
   <script>
-    document.addEventListener('DOMContentLoaded', (event) => {
-      const statusDropdowns = document.querySelectorAll('.status-dropdown');
+    // Search functionality
+    const searchInput = document.querySelector('input[type="text"]');
+    searchInput.addEventListener('input', (e) => {
+      const searchTerm = e.target.value.toLowerCase();
+      const tableRows = document.querySelectorAll('.table-row');
 
-      statusDropdowns.forEach(dropdown => {
-        const updateDropdownStyle = () => {
-          const selectedOption = dropdown.options[dropdown.selectedIndex];
-          dropdown.style.backgroundColor = selectedOption.style.backgroundColor;
-          dropdown.style.color = selectedOption.style.color;
-          dropdown.style.borderColor = selectedOption.style.color;
+      tableRows.forEach(row => {
+        const text = row.textContent.toLowerCase();
+        row.style.display = text.includes(searchTerm) ? '' : 'none';
+      });
+    });
+
+    // Status filter functionality
+    const filterButtons = document.querySelectorAll('.status-filter');
+    filterButtons.forEach(button => {
+      button.addEventListener('click', () => {
+        // Remove active class from all buttons
+        filterButtons.forEach(btn => {
+          btn.classList.remove('bg-blue-600', 'text-white');
+          btn.classList.add('bg-gray-700', 'text-gray-300');
+        });
+
+        // Add active class to clicked button
+        button.classList.remove('bg-gray-700', 'text-gray-300');
+        button.classList.add('bg-blue-600', 'text-white');
+
+        // Filter table rows based on status
+        const status = button.textContent.trim();
+        const tableRows = document.querySelectorAll('.table-row');
+
+        if (status === 'All Orders') {
+          tableRows.forEach(row => row.style.display = '');
+        } else {
+          tableRows.forEach(row => {
+            const rowStatus = row.querySelector('.status-badge')?.textContent.trim() ||
+              row.querySelector('select[name="status"]')?.value;
+            row.style.display = rowStatus === status ? '' : 'none';
+          });
+        }
+      });
+    });
+
+    // Frontend JavaScript
+    const statusForms = document.querySelectorAll('form[action="/admin/orders/update-status"]');
+    statusForms.forEach(form => {
+      form.addEventListener('submit', async (e) => {
+        e.preventDefault();
+
+        // Get the form data
+        const formData = new FormData(form);
+
+        // Convert FormData to JSON object
+        const data = {
+          orderId: formData.get('orderId'),
+          status: formData.get('status')
         };
 
-        // Set initial style
-        updateDropdownStyle();
+        try {
+          const response = await fetch(form.action, {
+            method: 'POST',
+            headers: {
+              'Content-Type': 'application/json'
+            },
+            body: JSON.stringify(data)
+          });
 
-        // Update style when selection changes
-        dropdown.addEventListener('change', updateDropdownStyle);
+          const result = await response.json();
+
+          if (response.ok) {
+            // Show success notification
+            const notification = document.createElement('div');
+            notification.className = 'fixed bottom-4 right-4 bg-green-500 text-white px-6 py-3 rounded-lg shadow-lg fade-in-up z-50';
+            notification.textContent = result.message || 'Order status updated successfully';
+            document.body.appendChild(notification);
+
+            // Remove notification after 3 seconds
+            setTimeout(() => {
+              notification.remove();
+            }, 3000);
+
+            // Optionally refresh the page
+            setTimeout(() => {
+              window.location.reload();
+            }, 1000);
+          } else {
+            throw new Error(result.message || 'Failed to update status');
+          }
+        } catch (error) {
+          // Show error notification
+          const notification = document.createElement('div');
+          notification.className = 'fixed bottom-4 right-4 bg-red-500 text-white px-6 py-3 rounded-lg shadow-lg fade-in-up z-50';
+          notification.textContent = error.message || 'Error updating order status';
+          document.body.appendChild(notification);
+
+          setTimeout(() => {
+            notification.remove();
+          }, 3000);
+        }
+      });
+    });
+
+    // Add smooth scrolling to table
+    const tableContainer = document.querySelector('.orders-table');
+    tableContainer.addEventListener('scroll', () => {
+      requestAnimationFrame(() => {
+        const scrolled = tableContainer.scrollTop > 0;
+        tableContainer.style.boxShadow = scrolled ?
+          '0 4px 20px rgba(0, 0, 0, 0.3), 0 -4px 20px rgba(0, 0, 0, 0.3)' :
+          '0 4px 20px rgba(0, 0, 0, 0.3)';
       });
     });
   </script>

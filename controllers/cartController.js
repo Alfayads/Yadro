@@ -4,6 +4,8 @@ const Cart = require('../models/Cart');
 const Address = require('../models/address')
 const Product = require('../models/Product');
 const Order = require('../models/Order');
+const Coupon = require('../models/Coupon');
+const { default: mongoose, Types } = require('mongoose');
 
 const getCart = async (req, res) => {
     try {
@@ -147,7 +149,7 @@ const getCheckOut = async (req, res) => {
 
         const cart = await Cart.findOne({ userId }).populate('items.productId');
 
-        if (!cart) {
+        if (cart.items.length < 1) {
             return res.render('user/cart', { user, cartItems: [], totalPrice: 0 });
         }
 
@@ -181,12 +183,15 @@ const getCheckOut = async (req, res) => {
     }
 }
 
-
 const updateQuantity = async (req, res) => {
     console.log('update quantity')
     try {
-        const { productId, quantity } = req.body;
+        const { productId, quantity, shippingCharge } = req.body;  // Add shippingCharge to destructuring
         const userId = req.session.user_id;
+
+        // Constants for shipping calculations
+        const FREE_SHIPPING_THRESHOLD = 50000; // ₹50,000
+        const BASE_SHIPPING_CHARGE = 400; // ₹400
 
         if (!userId) {
             return res.status(401).json({ success: false, message: 'User not authenticated' });
@@ -212,11 +217,23 @@ const updateQuantity = async (req, res) => {
         cart.items[cartItemIndex].quantity = newQuantity;
         cart.items[cartItemIndex].totalPrice = Number((cart.items[cartItemIndex].price * newQuantity).toFixed(2));
 
-        // Recalculate cart total
-        cart.total = Number(cart.items.reduce((total, item) => total + item.totalPrice, 0).toFixed(2));
+        // Recalculate subtotal (before shipping)
+        const subtotal = Number(cart.items.reduce((total, item) => total + item.totalPrice, 0).toFixed(2));
+
+        // Calculate shipping charge
+        let finalShippingCharge = subtotal >= FREE_SHIPPING_THRESHOLD ? 0 : BASE_SHIPPING_CHARGE;
+
+        // Calculate final total with shipping
+        cart.total = Number((subtotal + finalShippingCharge).toFixed(2));
+
+        // Store shipping information in cart (optional, if you want to persist it)
+        cart.shippingCharge = finalShippingCharge;
+        cart.subtotal = subtotal;
 
         // Use mongoose's markModified to ensure the changes are saved
         cart.markModified('items');
+        cart.markModified('shippingCharge');
+        cart.markModified('subtotal');
 
         await cart.save();
 
@@ -224,32 +241,54 @@ const updateQuantity = async (req, res) => {
             success: true,
             newQuantity: cart.items[cartItemIndex].quantity,
             newTotalPrice: cart.items[cartItemIndex].totalPrice,
+            subtotal: cart.subtotal,
+            shippingCharge: finalShippingCharge,
             cartTotal: cart.total
         });
     } catch (error) {
-        console.log(error.message);
+        console.error('Error updating quantity:', error);
+        res.status(500).json({
+            success: false,
+            message: 'Failed to update quantity',
+            error: error.message
+        });
     }
 }
 
 const placeOrder = async (req, res) => {
     try {
-        const { deliveryAddress, paymentMethod, items, totalAmount } = req.body;
+        const { deliveryAddress, paymentMethod, items, totalAmount, couponDiscountValue, couponCode } = req.body;
         const userId = req.session.user_id;
 
+        console.log("fasdfasdfasdfasdfasdfasdfasdfasdf", deliveryAddress);
+
+        const coupon = await Coupon.findOne({ code: couponCode });
+
+        console.log("coupon ==========================> ", couponDiscountValue)
+
+        const address = await Address.findOne({ userId });
+        const findAddress = address.address.find(a => a._id.toString() === deliveryAddress._id);
+
+        console.log('finddddddAddressss', findAddress)
 
         const orderItems = items.map(item => ({
-            productId: item.id,
+            productId: item.productId,
             quantity: item.quantity,
-            price: item.price
+            price: item.totalPrice
         }))
+
+        console.log('items order ------ >', orderItems)
 
         const newOrder = new Order({
             userId,
-            deliveryAddress: deliveryAddress._id,
+            deliveryAddress: findAddress,
             items: orderItems,
             totalAmount,
+            offerApplied: couponDiscountValue ? couponDiscountValue : 0,
+            couponApplied: coupon,
             paymentMethod: paymentMethod
         })
+
 
         for (const item of orderItems) {
             const product = await Product.findById(item.productId);
@@ -264,7 +303,24 @@ const placeOrder = async (req, res) => {
         }
 
         await newOrder.save();
-        return res.status(201).json({ message: 'Order placed successfully', orderId: newOrder._id })
+
+
+
+        if (coupon) {
+            await Users.findByIdAndUpdate(userId, {
+                $push: { couponUsed: coupon._id }
+            });
+        }
+
+        await Cart.findOneAndUpdate(
+            { userId },
+            { $set: { items: [] } }
+        );
+
+        console.log("newwwwwwwwwwwwwwwwwwwwww order ====> ", newOrder)
+
+
+        return res.status(200).json({ message: 'Order placed successfully', orderId: newOrder._id })
     } catch (error) {
         console.log(error.message)
     }
@@ -294,15 +350,9 @@ const orderTracking = async (req, res) => {
                 select: 'productName images price description'
             })
             .populate({
-                path: 'deliveryAddress',
-                select: 'fullName addressLine city state pincode phone'
-            })
-            .populate({
                 path: 'userId',
-                select: 'name email'
+                select: 'fname lname email'
             });
-
-        console.log(order._doc)
 
         if (!order || order.userId._id.toString() !== userId) {
             let errorMessage = { message: "Order not found or unauthorized access" };
@@ -325,6 +375,8 @@ const orderTracking = async (req, res) => {
             { text: 'Orders', url: '/orders' },
             { text: `Order #${order._id.toString().slice(-6)}`, url: null }
         ];
+
+        console.log("////////////////////", order.deliveryAddress)
 
         return res.render('user/order-tracking', {
             user,

@@ -1,0 +1,270 @@
+<!DOCTYPE html>
+<html lang="en" class="dark">
+
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Yadro - Order Details</title>
+  <script src="https://cdn.tailwindcss.com"></script>
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
+  <style>
+    :root {
+      --primary-dark: #1f2937;
+      --secondary-dark: #111827;
+      --accent-blue: #3b82f6;
+      --text-primary: #e5e7eb;
+      --text-secondary: #9ca3af;
+    }
+
+    body {
+      background-color: var(--secondary-dark);
+      color: var(--text-primary);
+    }
+
+    @keyframes fadeInUp {
+      from {
+        opacity: 0;
+        transform: translateY(20px);
+      }
+
+      to {
+        opacity: 1;
+        transform: translateY(0);
+      }
+    }
+
+    .fade-in-up {
+      animation: fadeInUp 0.6s ease-out forwards;
+    }
+
+    .detail-card {
+      background: var(--primary-dark);
+      border-radius: 16px;
+      border: 1px solid rgba(255, 255, 255, 0.1);
+      transition: all 0.3s ease;
+    }
+
+    .detail-card:hover {
+      border-color: var(--accent-blue);
+      box-shadow: 0 8px 24px rgba(59, 130, 246, 0.2);
+    }
+
+    .status-badge {
+      padding: 0.25rem 0.75rem;
+      border-radius: 9999px;
+      font-size: 0.875rem;
+      font-weight: 500;
+    }
+
+    .print-button {
+      transition: all 0.3s ease;
+    }
+
+    .print-button:hover {
+      transform: translateY(-2px);
+      box-shadow: 0 4px 12px rgba(59, 130, 246, 0.3);
+    }
+
+    .timeline-item::before {
+      content: '';
+      position: absolute;
+      left: -33px;
+      top: 0;
+      width: 12px;
+      height: 12px;
+      border-radius: 50%;
+      background: var(--accent-blue);
+      border: 2px solid var(--primary-dark);
+    }
+
+    .timeline-item::after {
+      content: '';
+      position: absolute;
+      left: -27px;
+      top: 12px;
+      width: 2px;
+      height: calc(100% + 20px);
+      background: rgba(59, 130, 246, 0.2);
+    }
+
+    .timeline-item:last-child::after {
+      display: none;
+    }
+  </style>
+</head>
+
+<body class="min-h-screen">
+  <div class="flex">
+    <!-- Sidebar Include -->
+    <%- include('../layouts/admin-sidebar.ejs') %>
+
+    <div class="flex-1 ml-64 p-8">
+      <!-- Header Section -->
+      <div class="flex items-center justify-between mb-8 fade-in-up">
+        <div>
+          <h1 class="text-4xl font-bold bg-gradient-to-r from-blue-400 to-blue-600 text-transparent bg-clip-text">
+            Order Details
+          </h1>
+          <p class="text-gray-400 mt-2">Order #<%= order._id %></p>
+        </div>
+        <div class="flex gap-4">
+          <button onclick="window.print()" class="print-button flex items-center gap-2 px-6 py-3 bg-blue-600 text-white rounded-lg shadow hover:bg-blue-700 transition-colors">
+            <i class="fas fa-print"></i>
+            Print Invoice
+          </button>
+          <a href="/admin/orders" class="flex items-center gap-2 px-6 py-3 bg-gray-700 text-gray-300 rounded-lg shadow hover:bg-gray-600 transition-colors">
+            <i class="fas fa-arrow-left"></i>
+            Back to Orders
+          </a>
+        </div>
+      </div>
+
+      <div class="grid grid-cols-3 gap-6 mb-8">
+        <!-- Order Summary -->
+        <div class="detail-card p-6 col-span-2 fade-in-up" style="animation-delay: 0.1s">
+          <h2 class="text-xl font-semibold mb-4">Order Summary</h2>
+          <div class="grid grid-cols-2 gap-4">
+            <div>
+              <p class="text-gray-400">Order Date</p>
+              <p class="font-medium"><%= order.orderDate.toLocaleDateString('en-US', { weekday: 'long', year: 'numeric', month: 'long', day: 'numeric' }) %></p>
+            </div>
+            <div>
+              <p class="text-gray-400">Payment Method</p>
+              <p class="font-medium"><%= order.paymentMethod %></p>
+            </div>
+            <div>
+              <p class="text-gray-400">Payment Status</p>
+              <% if(order.paymentStatus === "Delivered" && order.paymentMethod === "razorpay") { %>
+              <span class="status-badge bg-green-500 bg-opacity-20 text-green-400">
+                Received
+              </span>
+              <% } else { %>
+              <span class="status-badge bg-green-500 bg-opacity-20 text-green-400">
+                Pending
+              </span>
+              <% } %>
+            </div>
+            <div>
+              <p class="text-gray-400">Order Status</p>
+              <span class="status-badge bg-blue-500 bg-opacity-20 text-blue-400">
+                <%= order.orderStatus %>
+              </span>
+            </div>
+          </div>
+        </div>
+
+        <!-- Amount Summary -->
+        <div class="detail-card p-6 fade-in-up" style="animation-delay: 0.2s">
+          <h2 class="text-xl font-semibold mb-4">Amount Details</h2>
+          <div class="space-y-3">
+            <div class="flex justify-between">
+              <span class="text-gray-400">Subtotal</span>
+              <span class="font-medium">₹<%= order.subtotal %></span>
+            </div>
+            <div class="flex justify-between">
+              <span class="text-gray-400">Shipping</span>
+              <span class="font-medium">₹<%= order.shippingCost %></span>
+            </div>
+            <div class="flex justify-between">
+              <span class="text-gray-400">Discount</span>
+              <span class="font-medium text-green-400">-₹<%= order.discount %></span>
+            </div>
+            <div class="flex justify-between pt-3 border-t border-gray-700">
+              <span class="font-semibold">Total</span>
+              <span class="font-bold text-blue-400">₹<%= order.totalAmount %></span>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <div class="grid grid-cols-3 gap-6 mb-8">
+        <!-- Customer Details -->
+        <div class="detail-card p-6 fade-in-up" style="animation-delay: 0.3s">
+          <h2 class="text-xl font-semibold mb-4">Customer Details</h2>
+          <div class="space-y-4">
+            <div class="flex items-center gap-4">
+              <div class="w-12 h-12 bg-gray-700 rounded-full flex items-center justify-center">
+                <i class="fas fa-user text-gray-400"></i>
+              </div>
+              <div>
+                <p class="font-medium"><%= order.userId.fname %> <%= order.userId.lname %></p>
+                <p class="text-gray-400 text-sm"><%= order.userId.email %></p>
+              </div>
+            </div>
+            <div>
+              <p class="text-gray-400">Phone</p>
+              <p class="font-medium"><%= order.userId.phone %></p>
+            </div>
+          </div>
+        </div>
+
+        <!-- Shipping Address -->
+        <div class="detail-card p-6 fade-in-up" style="animation-delay: 0.4s">
+          <h2 class="text-xl font-semibold mb-4">Shipping Address</h2>
+          <div class="space-y-2">
+            <p class="font-medium"><%= order.deliveryAddress.streetAddress %></p>
+            <p class="text-gray-400"><%= order.deliveryAddress.city %>, <%= order.deliveryAddress.addressType %></p>
+            <p class="text-gray-400"><%= order.deliveryAddress.postalCode %> - <%= order.deliveryAddress.phone %></p>
+          </div>
+        </div>
+
+
+        <!-- Order Items -->
+        <div class="detail-card p-6 mb-8 fade-in-up" style="animation-delay: 0.6s">
+          <h2 class="text-xl font-semibold mb-4">Order Items</h2>
+          <div class="overflow-x-auto">
+            <table class="min-w-full">
+              <thead>
+                <tr class="text-gray-400 text-sm uppercase border-b border-gray-700">
+                  <th class="py-4 px-6 text-left">Product</th>
+                  <th class="py-4 px-6 text-center">Name</th>
+                  <th class="py-4 px-6 text-center">Quantity</th>
+                  <th class="py-4 px-6 text-right">Price</th>
+                  <th class="py-4 px-6 text-right">Total</th>
+                </tr>
+              </thead>
+              <tbody>
+                <% order.items.forEach(item => { %>
+                <tr class="border-b border-gray-700 last:border-0">
+                  <td class="py-4 px-6">
+                    <div class="flex items-center gap-4">
+                      <div class="w-16 h-16 bg-gray-700 rounded-lg overflow-hidden">
+                        <img src="<%= item.productId.images[0] %>" alt="<%= item.productId.name %>" class="w-full h-full object-cover">
+                      </div>
+                    </div>
+                  </td>
+                  <td class="py-4 px-6 text-center"><%= item.productId.name %></td>
+                  <td class="py-4 px-6 text-center"><%= item.quantity %></td>
+                  <td class="py-4 px-6 text-right">₹<%= item.price %></td>
+                  <td class="py-4 px-6 text-right font-medium">₹<%= item.quantity * item.price %></td>
+                </tr>
+                <% }) %>
+              </tbody>
+            </table>
+          </div>
+        </div>
+
+        <!-- Order Timeline -->
+        <!-- <div class="detail-card p-6 fade-in-up" style="animation-delay: 0.7s">
+          <h2 class="text-xl font-semibold mb-6">Order Timeline</h2>
+          <div class="relative pl-10">
+            <%//  order.timeline.forEach(event => { %>
+            <div class="timeline-item relative mb-8 last:mb-0">
+              <div class="flex items-center justify-between">
+                <div>
+                  <h3 class="font-medium"><%= //event.status %></h3>
+                  <p class="text-sm text-gray-400"><%= //event.timestamp.toLocaleString() %></p>
+                </div>
+                <%// if (event.comment) { %>
+                <p class="text-sm text-gray-400"><%= //event.comment %></p>
+                <%// } %>
+              </div>
+            </div>
+            <%// }) %>
+          </div>
+        </div> -->
+      </div>
+    </div>
+</body>
+
+</html>

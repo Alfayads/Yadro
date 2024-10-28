@@ -74,14 +74,28 @@
     </div>
     <div class="flex flex-col lg:flex-row">
       <!-- Sidebar -->
-      <div class="w-full lg:w-1/4 mb-8 lg:mb-0 lg:pr-8">
-        <h2 class="text-2xl font-bold text-gray-900 mb-6">Manage My Account</h2>
-        <nav class="space-y-2">
-          <a href="/account" class="block px-4 py-3 rounded-lg text-sm font-medium text-gray-700 hover:bg-white hover:shadow transition duration-150 ease-in-out">My Profile</a>
-          <a href="/address" class="block px-4 py-3 rounded-lg text-sm font-medium text-red-600 bg-white shadow-md">Address Book</a>
-          <a href="/orders" class="block px-4 py-3 rounded-lg text-sm font-medium text-gray-700 hover:bg-white hover:shadow transition duration-150 ease-in-out">My Orders</a>
-          <a href="#" class="block px-4 py-3 rounded-lg text-sm font-medium text-gray-700 hover:bg-white hover:shadow transition duration-150 ease-in-out">My Payment Options</a>
-        </nav>
+      <div class="w-full md:w-1/4 mr-3">
+        <div class="bg-white rounded-xl shadow-lg p-6">
+          <h2 class="text-2xl font-bold text-gray-900 mb-6 border-b pb-4">Manage Account</h2>
+          <nav class="space-y-3">
+            <a href="/account" class="flex items-center px-4 py-3 rounded-lg text-sm font-medium text-gray-700 transform hover:scale-105 transition-all duration-300">
+              <i class="fas fa-user mr-3"></i>
+              My Profile
+            </a>
+            <a href="#" class="flex items-center px-4 py-3 rounded-lg text-sm font-medium text-white bg-red-600 hover:text-white transform hover:scale-105 transition-all duration-300">
+              <i class="fas fa-map-marker-alt mr-3"></i>
+              Address Book
+            </a>
+            <a href="/orders" class="flex items-center px-4 py-3 rounded-lg text-sm font-medium text-gray-700 hover:bg-red-50 hover:text-red-600 transform hover:scale-105 transition-all duration-300">
+              <i class="fas fa-shopping-bag mr-3"></i>
+              My Orders
+            </a>
+            <a href="#" class="flex items-center px-4 py-3 rounded-lg text-sm font-medium text-gray-700 hover:bg-red-50 hover:text-red-600 transform hover:scale-105 transition-all duration-300">
+              <i class="fas fa-credit-card mr-3"></i>
+              Payment Options
+            </a>
+          </nav>
+        </div>
       </div>
 
       <!-- Form -->

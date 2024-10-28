@@ -7,9 +7,14 @@ const orderSchema = mongoose.Schema({
         required: true
     },
     deliveryAddress: {
-        type: mongoose.Schema.Types.ObjectId,
-        ref: 'Address',
-        required: true
+        name: { type: String },
+        streetAddress: { type: String },
+        addressType: { type: String },
+        city: { type: String },
+        apartment: { type: String },
+        landMark: { type: String },
+        postalCode: { type: Number },
+        phone: { type: String }
     },
     items: [
         {
@@ -45,6 +50,27 @@ const orderSchema = mongoose.Schema({
     orderDate: {
         type: Date,
         default: Date.now
+    },
+    couponApplied: {
+        type: mongoose.Schema.Types.ObjectId,
+        ref: 'Coupon',
+        default: null
+    },
+    offerApplied: {
+        type: Number,
+        default: 0
+    },
+    cancellationReason: {
+        type: String,
+        default: null
+    },
+    cancellationComment: {
+        type: String,
+        default: null
+    },
+    cancelDate: {
+        type: String,
+        default: null
     }
 })
 
