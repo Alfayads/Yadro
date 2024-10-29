@@ -9,6 +9,8 @@ const nocache = require('nocache');
 const flash = require('connect-flash');
 const keys = require('./config/keys');
 const path = require('path')
+const cors = require('cors');
+
 
 
 const app = express();
@@ -21,7 +23,7 @@ app.use(session({
         maxAge: 24 * 60 * 60 * 1000
     }
 }))
-
+app.use(cors());
 app.use(flash());
 
 app.use(passport.initialize());

@@ -49,6 +49,10 @@ const couponSchema = mongoose.Schema({
         type: mongoose.Schema.Types.ObjectId,
         ref: "User",
         default: null
+    },
+    couponUsed: {
+        type: Number,
+        default: 0
     }
 });
 

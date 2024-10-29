@@ -104,7 +104,8 @@ user_router.get('/login', auth.isLogin, authController.getLogin);
 user_router.post('/login', authController.checkUser);
 
 // Forgot Password
-user_router.get('/forgot-password', authController.forgotPassword);
+user_router.get('/forgot-password', auth.isLogout, authController.forgotPassword);
+user_router.post('/reset-password', authController.resetPassword)
 
 
 

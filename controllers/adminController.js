@@ -11,6 +11,7 @@ const Coupon = require('../models/Coupon');
 const Brand = require('../models/Brand');
 const Order = require('../models/Order');
 const exp = require('constants');
+const Announcement = require('../models/announcement');
 
 const getHome = (req, res) => {
     try {
@@ -1088,40 +1089,66 @@ const getAddBanner = (req, res) => {
 }
 
 
+const announcement = async (req, res) => {
+    try {
+        const announcements = await Announcement.find({});
+        return res.render('admin/announcement', { announcements });
+    } catch (error) {
+        console.log(error.message);
+    }
+}
+
+const addAnnouncement = async (req, res) => {
+    try {
+        console.log('Received data:', req.body); // Log the incoming request data
+        const { content } = req.body;
+        if (!content) {
+            return res.status(400).json({ error: "Content is required" });
+        }
+        const newAnnouncement = new Announcement({ content });
+        await newAnnouncement.save();
+
+        res.json({ message: "Announcement added successfully!" });
+    } catch (error) {
+        console.log("Error while adding announcement:", error.message);
+        res.status(500).json({ error: "Server Error" });
+    }
+};
+
+
+
+const deleteAnnouncement = async (req, res) => {
+    try {
+        const id = req.params.id;
+        await Announcement.findByIdAndDelete(id);
+        res.redirect('/admin/announcement');
+    } catch (error) {
+        console.log(error.message)
+    }
+}
+
 const getSalesReport = async (req, res) => {
     try {
         const { startDate, endDate, timeFrame = 'daily' } = req.query;
 
-        // Base match condition
-        let matchCondition = {
-            orderStatus: { $ne: 'Cancelled' }
-        };
-
-
+        // Validate and parse date range
+        let matchCondition = { orderStatus: { $ne: 'Cancelled' } };
         if (startDate && endDate) {
             const start = new Date(startDate);
             const end = new Date(endDate);
-            if (!isNaN(start) && !isNaN(end)) {
-                matchCondition.orderDate = { $gte: start, $lte: end };
-            } else {
-                return res.status(400).json({ success: false, message: "Invalid date format" });
-            }
+            if (start > end) return res.status(400).json({ success: false, message: "End date must be after start date" });
+            if (!isNaN(start) && !isNaN(end)) matchCondition.orderDate = { $gte: start, $lte: end };
+            else return res.status(400).json({ success: false, message: "Invalid date format" });
         }
 
-        let dateFormat;
-        switch (timeFrame) {
-            case 'weekly':
-                dateFormat = { $dateToString: { format: "%Y-W%V", date: "$orderDate" } };
-                break;
-            case 'monthly':
-                dateFormat = { $dateToString: { format: "%Y-%m", date: "$orderDate" } };
-                break;
-            case 'yearly':
-                dateFormat = { $dateToString: { format: "%Y", date: "$orderDate" } };
-                break;
-            default:
-                dateFormat = { $dateToString: { format: "%Y-%m-%d", date: "$orderDate" } };
-        }
+        // Determine date format for grouping
+        const dateFormats = {
+            daily: "%Y-%m-%d",
+            weekly: "%Y-W%V",
+            monthly: "%Y-%m",
+            yearly: "%Y"
+        };
+        const dateFormat = { $dateToString: { format: dateFormats[timeFrame] || dateFormats.daily, date: "$orderDate" } };
 
         const salesData = await Order.aggregate([
             { $match: matchCondition },
@@ -1139,6 +1166,28 @@ const getSalesReport = async (req, res) => {
                                 in: { $add: ["$$value", "$$this.quantity"] }
                             }
                         }
+                    },
+                    totalCouponsUsed: {
+                        $sum: {
+                            $cond: [
+                                { $ne: ["$couponApplied", null] }, // Checks if a coupon is applied in the order
+                                1,
+                                0
+                            ]
+                        }
+                    },
+                    couponDeductions: { $sum: "$offerApplied" },
+                    totalDiscounts: {
+                        $sum: "$offerApplied"
+                    },
+                    grossRevenue: { $sum: "$totalAmount" },
+                    netRevenue: {
+                        $sum: {
+                            $subtract: [
+                                "$totalAmount",
+                                "$offerApplied"
+                            ]
+                        }
                     }
                 }
             },
@@ -1150,19 +1199,18 @@ const getSalesReport = async (req, res) => {
                     orders: 1,
                     avgOrderValue: { $round: ["$avgOrderValue", 2] },
                     totalItems: 1,
+                    totalCouponsUsed: 1,
+                    couponDeductions: { $round: ["$couponDeductions", 2] },
+                    totalDiscounts: { $round: ["$totalDiscounts", 2] },
+                    grossRevenue: { $round: ["$grossRevenue", 2] },
+                    netRevenue: { $round: ["$netRevenue", 2] },
                     _id: 0
                 }
             }
         ]);
 
-        const summary = salesData.length ? {
-            totalSales: salesData.reduce((sum, item) => sum + item.sales, 0),
-            totalOrders: salesData.reduce((sum, item) => sum + item.orders, 0),
-            avgOrderValue: (salesData.reduce((sum, item) => sum + item.avgOrderValue, 0) / salesData.length).toFixed(2),
-            totalItems: salesData.reduce((sum, item) => sum + item.totalItems, 0)
-        } : { totalSales: 0, totalOrders: 0, avgOrderValue: 0, totalItems: 0 };
+        const summary = generateSummary(salesData);
 
-        // Get payment method distribution
         const paymentMethodStats = await Order.aggregate([
             { $match: matchCondition },
             {
@@ -1189,13 +1237,126 @@ const getSalesReport = async (req, res) => {
     }
 };
 
+// Helper function for summary calculation
+const generateSummary = (salesData) => {
+    if (!salesData.length) return {
+        totalSales: 0,
+        totalOrders: 0,
+        avgOrderValue: 0,
+        totalItems: 0,
+        totalCouponsUsed: 0,
+        couponDeductions: 0,
+        totalDiscounts: 0,
+        grossRevenue: 0,
+        netRevenue: 0
+    };
 
+    return {
+        totalSales: salesData.reduce((sum, item) => sum + item.sales, 0),
+        totalOrders: salesData.reduce((sum, item) => sum + item.orders, 0),
+        avgOrderValue: (salesData.reduce((sum, item) => sum + item.avgOrderValue, 0) / salesData.length).toFixed(2),
+        totalItems: salesData.reduce((sum, item) => sum + item.totalItems, 0),
+        totalCouponsUsed: salesData.reduce((sum, item) => sum + item.totalCouponsUsed, 0),
+        couponDeductions: salesData.reduce((sum, item) => sum + item.couponDeductions, 0).toFixed(2),
+        totalDiscounts: salesData.reduce((sum, item) => sum + item.totalDiscounts, 0).toFixed(2),
+        grossRevenue: salesData.reduce((sum, item) => sum + item.grossRevenue, 0).toFixed(2),
+        netRevenue: salesData.reduce((sum, item) => sum + item.netRevenue, 0).toFixed(2)
+    };
+};
+
+
+
+const topSellers = async (req, res) => {
+    try {
+        // Top Products
+        const topProducts = await Order.aggregate([
+            { $unwind: "$items" },
+            { $group: { _id: "$items.productId", value: { $sum: "$items.quantity" } } },
+            {
+                $lookup: {
+                    from: "products",
+                    localField: "_id",
+                    foreignField: "_id",
+                    as: "productInfo"
+                }
+            },
+            { $unwind: "$productInfo" },
+            { $project: { name: "$productInfo.name", value: 1 } },
+            { $sort: { value: -1 } },
+            { $limit: 10 }
+        ]);
+
+        const topCategories = await Order.aggregate([
+            { $unwind: "$items" },
+            {
+                $lookup: {
+                    from: "products",
+                    localField: "items.productId",
+                    foreignField: "_id",
+                    as: "productInfo"
+                }
+            },
+            { $unwind: "$productInfo" },
+            {
+                $group: {
+                    _id: "$productInfo.category",
+                    value: { $sum: "$items.quantity" }
+                }
+            },
+            {
+                $lookup: {
+                    from: "categories",
+                    localField: "_id",
+                    foreignField: "_id",
+                    as: "categoryInfo"
+                }
+            },
+            { $unwind: "$categoryInfo" },
+            {
+                $project: {
+                    name: "$categoryInfo.name",
+                    value: 1
+                }
+            },
+            { $sort: { value: -1 } },
+            { $limit: 10 }
+        ]);
+
+        // Top Brands
+        const topBrands = await Order.aggregate([
+            { $unwind: "$items" },
+            {
+                $lookup: {
+                    from: "products",
+                    localField: "items.productId",
+                    foreignField: "_id",
+                    as: "productInfo"
+                }
+            },
+            { $unwind: "$productInfo" },
+            { $group: { _id: "$productInfo.brand", value: { $sum: "$items.quantity" } } },
+            { $project: { name: "$_id", value: 1 } },
+            { $sort: { value: -1 } },
+            { $limit: 10 }
+        ]);
+
+        res.json({
+            success: true,
+            products: topProducts,
+            categories: topCategories,
+            brands: topBrands
+        });
+    } catch (error) {
+        console.error('Error fetching top sellers:', error);
+        res.status(500).json({ success: false, error: 'Error fetching top sellers' });
+    }
+}
 
 
 module.exports = {
 
     getSalesReport,
-
+    topSellers,
 
 
 
@@ -1244,7 +1405,10 @@ module.exports = {
     addBrand,
 
     getBanners,
-    getAddBanner
+    getAddBanner,
+    announcement,
+    addAnnouncement,
+    deleteAnnouncement
 }
 
 

@@ -6,6 +6,7 @@ const nodemailer = require('nodemailer')
 const Users = require('../models/User');
 const Product = require('../models/Product');
 const Category = require('../models/Category');
+const Announcement = require('../models/announcement');
 
 
 //Secure Password
@@ -60,7 +61,7 @@ const sendVerificationEmail = async (email, otp) => {
 const getHomeWithUser = async (req, res) => {
     try {
         const userId = req.session.user_id;
-
+        const announcements = await Announcement.find({});
         // Get latest products (last 30 days, limit 4)
         const latestProducts = await Product.find({})
             .sort({ createdAt: -1 })
@@ -84,7 +85,8 @@ const getHomeWithUser = async (req, res) => {
             popularProducts,
             budgetProducts,
             categories,
-            user
+            user,
+            announcements
         });
     } catch (error) {
         console.error(error.message);
@@ -99,6 +101,7 @@ const getHomeWithUser = async (req, res) => {
 
 const getHomeWithoutUser = async (req, res) => {
     try {
+
         const products = await Product.find({}).limit(4);
         const categories = await Category.find({});
         return res.render('user/home-without-user', { products, categories })
@@ -270,6 +273,31 @@ const forgotPassword = (req, res) => {
 }
 
 
+const resetPassword = async (req, res) => {
+    try {
+        const { email, newPassword } = req.body;
+
+        if (!email || !newPassword) {
+            return res.status(400).json({ message: "Email and new password are required." });
+        }
+
+        const user = await Users.findOne({ email });
+        if (!user) {
+            return res.status(404).json({ message: "User not found." });
+        }
+
+        // Save the new password securely (hash it)
+        user.password = await bcrypt.hash(newPassword, 10);
+        await user.save();
+
+        // Send success response
+        return res.status(200).json({ success: true, message: "Password reset successful." });
+    } catch (error) {
+        console.error(error.message);
+        return res.status(500).json({ success: false, message: "An error occurred. Please try again later." });
+    }
+};
+
 const getLogout = (req, res) => {
     try {
         req.flash('success_msg', 'Logout Successfully !!!')
@@ -373,6 +401,7 @@ module.exports = {
     getSignup,
     getLogin,
     forgotPassword,
+    resetPassword,
     getHomeWithoutUser,
     getHomeWithUser,
     userSearch,

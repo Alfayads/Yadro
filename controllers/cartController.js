@@ -5,6 +5,7 @@ const Address = require('../models/address')
 const Product = require('../models/Product');
 const Order = require('../models/Order');
 const Coupon = require('../models/Coupon');
+const Announcement = require('../models/announcement')
 const { default: mongoose, Types } = require('mongoose');
 
 const getCart = async (req, res) => {
@@ -13,6 +14,7 @@ const getCart = async (req, res) => {
         const user = await Users.findById({ _id: userId });
         const categories = await Category.find({});
         const cart = await Cart.findOne({ userId }).populate('items.productId');
+        const announcements = await Announcement.find({});
 
         if (!cart) {
             return res.render('user/cart', { user, cartItems: [], totalPrice: 0 });
@@ -32,7 +34,7 @@ const getCart = async (req, res) => {
 
         const totalPrice = cartItems.reduce((acc, item) => acc + item.totalPrice, 0);
 
-        return res.render('user/cart', { user, cartItems, categories, totalPrice });
+        return res.render('user/cart', { user, cartItems, categories, totalPrice, announcements });
     } catch (error) {
         console.error(error.message);
         let errorMessage = { message: "An error occurred. Please try again later." };
@@ -141,6 +143,7 @@ const getCheckOut = async (req, res) => {
         const user = await Users.findById({ _id: userId });
         const categories = await Category.find({});
         const oldValue = req.session.oldValue || {};
+        const announcements = await Announcement.find({});
         req.session.oldValue = null;
 
         const userAddresses = await Address.findOne({ userId: userId });
@@ -174,7 +177,8 @@ const getCheckOut = async (req, res) => {
             addresses,
             cartItems,
             oldValue,
-            totalPrice
+            totalPrice,
+            announcements
         });
     } catch (error) {
         console.error(error.message);
@@ -342,6 +346,7 @@ const orderTracking = async (req, res) => {
     try {
         const userId = req.session.user_id;
         const orderId = req.params.id;
+        const announcements = await Announcement.find({});
 
         // Find the order and populate all necessary fields
         const order = await Order.findById(orderId)
@@ -390,7 +395,8 @@ const orderTracking = async (req, res) => {
                     month: 'long',
                     day: 'numeric'
                 })
-            }
+            },
+            announcements
         });
 
     } catch (error) {

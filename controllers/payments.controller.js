@@ -9,10 +9,12 @@ exports.createOrder = async (req, res) => {
     console.log('AAAAAAAMOUNT ==> ', amount)
     console.log("^^^^^^^^^^^^^^^^^", orderData)
     const options = {
-        amount: orderData.totalAmount * 100,
+        amount: amount * 100,
         currency: 'INR',
         receipt: `order_rcptid_${Math.floor(Math.random() * 1000000)}`,
     };
+
+    console.log('===========> options', options)
 
     try {
         const order = await razorpayInstance.orders.create(options);

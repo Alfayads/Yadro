@@ -1,18 +1,19 @@
 const Users = require('../models/User');
 const Category = require("../models/Category");
 const Address = require('../models/address');
+const Announcement = require('../models/announcement')
 
 const getAddress = async (req, res) => {
     try {
         const userId = req.session.user_id;
         const user = await Users.findById({ _id: userId });
         const categories = await Category.find({});
-
+        const announcements = await Announcement.find({});
         let userAddress = await Address.findOne({ userId });
 
 
         const addresses = userAddress ? userAddress.address : [];
-        return res.render('user/address-book', { user, categories, addresses });
+        return res.render('user/address-book', { user, categories, addresses, announcements });
     } catch (error) {
         console.error(error.message);
         let errorMessage = { message: "An error occurred. Please try again later." };
@@ -24,10 +25,11 @@ const getAddAddress = async (req, res) => {
     try {
         const oldValue = req.session.oldValue || {};
         const userId = req.session.user_id;
+        const announcements = await Announcement.find({});
         const user = await Users.findById({ _id: userId });
         const categories = await Category.find({});
         req.session.oldValue = null;
-        return res.render('user/add-address', { user, categories, oldValue });
+        return res.render('user/add-address', { user, categories, oldValue, announcements });
     } catch (error) {
         console.error(error.message);
         let errorMessage = { message: "An error occurred. Please try again later." };
@@ -159,13 +161,15 @@ const getEditAddress = async (req, res) => {
         const categories = await Category.find({});
         const addressRecord = await Address.findOne({ userId });
         const address = addressRecord.address.id(addressId);
+        const announcements = await Announcement.find({});
         let address_id = address._id.toString();
         return res.render('user/edit-address', {
             user,
             categories,
             address,
             address_id,
-            oldValue
+            oldValue,
+            announcements
         })
     } catch (error) {
         console.error(error);

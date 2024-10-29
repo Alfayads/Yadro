@@ -5,12 +5,14 @@ const Product = require('../models/Product');
 const Coupon = require('../models/Coupon');
 const mongoose = require('mongoose');
 const Wallet = require('../models/wallet');
+const Announcement = require('../models/announcement')
 
 const getOrders = async (req, res) => {
     try {
         const userId = req.session.user_id;
         const user = await Users.findById({ _id: userId });
         const categories = await Category.find({});
+        const announcements = await Announcement.find({});
         const orders = await Order.find({ userId }).sort({ createdAt: -1 }).populate({
             path: 'items.productId',
             select: 'name images'
@@ -22,6 +24,7 @@ const getOrders = async (req, res) => {
             user,
             categories,
             orders,
+            announcements
         })
     } catch (error) {
         console.error(error.message);
@@ -112,6 +115,7 @@ const getOrderReturn = async (req, res) => {
         const user = await Users.findById({ _id: userId });
         const categories = await Category.find({});
         const id = req.params.id;
+        const announcements = await Announcement.find({});
         const order = await Order.findById(id).populate({
             path: 'items.productId',
             select: 'name images'
@@ -119,7 +123,7 @@ const getOrderReturn = async (req, res) => {
             path: 'couponApplied',
             select: 'code'
         });
-        res.render('user/return', { order, user, categories })
+        res.render('user/return', { order, user, categories, announcements })
     } catch (error) {
         console.error(error);
         res.status(500).send('Internal Server Error');

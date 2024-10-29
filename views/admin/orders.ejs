@@ -325,7 +325,7 @@
             <tr class="table-row">
               <td class="py-4 px-6 font-medium text-blue-400">#<%= order._id %></td>
               <td class="py-4 px-6 text-gray-300">
-                <!-- <%=// order.userId.fname %> <%= //order.userId.lname %> -->
+                <%= order.deliveryAddress.name %>
               </td>
               <td class="py-4 px-6 text-gray-300">
                 <%= order.orderDate.toDateString() %>
@@ -403,6 +403,7 @@
     });
 
     // Status filter functionality
+    // Status filter functionality
     const filterButtons = document.querySelectorAll('.status-filter');
     filterButtons.forEach(button => {
       button.addEventListener('click', () => {
@@ -420,15 +421,19 @@
         const status = button.textContent.trim();
         const tableRows = document.querySelectorAll('.table-row');
 
-        if (status === 'All Orders') {
-          tableRows.forEach(row => row.style.display = '');
-        } else {
-          tableRows.forEach(row => {
-            const rowStatus = row.querySelector('.status-badge')?.textContent.trim() ||
-              row.querySelector('select[name="status"]')?.value;
-            row.style.display = rowStatus === status ? '' : 'none';
-          });
-        }
+        tableRows.forEach(row => {
+          const rowStatus = row.querySelector('.status-badge')?.textContent.trim() ||
+            row.querySelector('select[name="status"]')?.value;
+
+          // Display rows based on selected filter
+          if (status === 'All Orders') {
+            row.style.display = ''; // Show all orders
+          } else if (status === 'New Orders') {
+            row.style.display = rowStatus === 'New' ? '' : 'none'; // Show only new orders
+          } else {
+            row.style.display = rowStatus === status ? '' : 'none'; // Filter by specific status
+          }
+        });
       });
     });
 

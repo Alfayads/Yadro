@@ -62,16 +62,22 @@ admin_router.get('/banners', adminAuth, Controller.getBanners);// for get Banner
 admin_router.get('/add-banner', adminAuth, Controller.getAddBanner); // for get add Banner page 
 
 
+
+
 //Logout Route
 admin_router.get('/logout', Controller.logout); // for admin can logout 
 
-
+// Announcement
+admin_router.get('/announcement', adminAuth, Controller.announcement);
+admin_router.post('/add-announcement', Controller.addAnnouncement);
+admin_router.get('/deleteAnnouncement/:id', Controller.deleteAnnouncement);
 
 
 
 // Sales Report
 
 admin_router.get('/sales-report', adminAuth, Controller.getSalesReport);
+admin_router.get('/top-sellers', adminAuth, Controller.topSellers)
 
 
 module.exports = admin_router;

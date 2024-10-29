@@ -9,6 +9,10 @@
   <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
   <script src="https://cdnjs.cloudflare.com/ajax/libs/apexcharts/3.42.0/apexcharts.min.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.4.0/jspdf.umd.min.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf-autotable/3.5.13/jspdf.plugin.autotable.min.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/xlsx/0.17.0/xlsx.full.min.js"></script>
+
   <!-- <script src="/js/admin/saleReport.js"></script> -->
   <style>
     :root {
@@ -186,6 +190,107 @@
         /* Stack charts on small screens */
       }
     }
+
+
+    .top-sellers-section .progress-bar {
+      height: 8px;
+      background: rgba(59, 130, 246, 0.1);
+      border-radius: 4px;
+      overflow: hidden;
+    }
+
+    .top-sellers-section .progress-value {
+      height: 100%;
+      border-radius: 4px;
+      transition: width 1s ease-in-out;
+    }
+
+    .top-sellers-section .item-row {
+      animation: slideIn 0.5s ease-out forwards;
+      opacity: 0;
+      transform: translateY(10px);
+    }
+
+    @keyframes slideIn {
+      to {
+        opacity: 1;
+        transform: translateY(0);
+      }
+    }
+
+    .top-sellers-section .rank-badge {
+      width: 24px;
+      height: 24px;
+      border-radius: 50%;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 0.875rem;
+      font-weight: 600;
+    }
+
+    .top-sellers-section .rank-1 {
+      background: linear-gradient(135deg, #ffd700, #ffa500);
+      color: #000;
+    }
+
+    .top-sellers-section .rank-2 {
+      background: linear-gradient(135deg, #C0C0C0, #A9A9A9);
+      color: #000;
+    }
+
+    .top-sellers-section .rank-3 {
+      background: linear-gradient(135deg, #CD7F32, #8B4513);
+      color: #fff;
+    }
+
+    .top-sellers-section .item-row:hover {
+      transform: translateX(8px);
+      transition: transform 0.3s ease;
+    }
+
+
+    @keyframes shake {
+
+      0%,
+      100% {
+        transform: translateX(0);
+      }
+
+      25% {
+        transform: translateX(-5px);
+      }
+
+      75% {
+        transform: translateX(5px);
+      }
+    }
+
+    .shake {
+      animation: shake 0.5s ease-in-out;
+    }
+
+    .download-progress {
+      transition: width 1s ease-in-out;
+      width: 0%;
+    }
+
+    #modalContent {
+      transition: all 0.3s ease-in-out;
+    }
+
+    .format-button {
+      position: relative;
+      overflow: hidden;
+    }
+
+    .format-button:hover .download-progress {
+      background-opacity: 0.8;
+    }
+
+    .format-button:active {
+      transform: scale(0.98);
+    }
   </style>
 </head>
 
@@ -225,6 +330,8 @@
                 Apply Filter
               </button>
 
+
+
               <!-- Add this right after the Apply Filter button -->
               <button id="downloadReport" class="group relative bg-gradient-to-r from-blue-500 to-blue-600 hover:from-blue-600 hover:to-blue-700 text-white px-6 py-2 rounded-lg transition-all duration-300 ease-in-out flex items-center gap-2 overflow-hidden">
                 <span class="relative z-10 flex items-center gap-2">
@@ -233,6 +340,46 @@
                 </span>
                 <span class="absolute inset-0 bg-gradient-to-r from-blue-600 to-blue-700 transform translate-y-full transition-transform duration-300 ease-out group-hover:translate-y-0"></span>
               </button>
+
+              <!-- Download Modal -->
+              <div id="downloadModal" class="fixed inset-0 bg-black/50 backdrop-blur-sm z-50 hidden flex items-center justify-center">
+                <div class="bg-gray-900 rounded-xl p-6 max-w-md w-full mx-4 transform transition-all duration-300 scale-95 opacity-0" id="modalContent">
+                  <div class="flex justify-between items-center mb-6">
+                    <h3 class="text-xl font-bold text-white">Download Sales Report</h3>
+                    <button onclick="closeModal()" class="text-gray-400 hover:text-white transition-colors">
+                      <i class="fas fa-times text-lg"></i>
+                    </button>
+                  </div>
+
+                  <p class="text-gray-400 mb-6">Choose your preferred format to download the sales report:</p>
+
+                  <div class="grid grid-cols-2 gap-4 mb-6">
+                    <!-- PDF Option -->
+                    <button onclick="handleDownload('pdf')" class="format-button bg-gray-800 hover:bg-gray-700 p-4 rounded-lg transition-all duration-300 group" id="pdfButton">
+                      <div class="flex flex-col items-center">
+                        <div class="w-12 h-12 bg-red-500/20 rounded-full flex items-center justify-center mb-3 group-hover:scale-110 transition-transform">
+                          <i class="fas fa-file-pdf text-red-500 text-xl"></i>
+                        </div>
+                        <span class="text-white font-medium">PDF Format</span>
+                        <span class="text-gray-400 text-sm">Download as PDF file</span>
+                      </div>
+                      <div class="download-progress hidden h-1 bg-red-500 mt-3 rounded-full"></div>
+                    </button>
+
+                    <!-- Excel Option -->
+                    <button onclick="handleDownload('excel')" class="format-button bg-gray-800 hover:bg-gray-700 p-4 rounded-lg transition-all duration-300 group" id="excelButton">
+                      <div class="flex flex-col items-center">
+                        <div class="w-12 h-12 bg-green-500/20 rounded-full flex items-center justify-center mb-3 group-hover:scale-110 transition-transform">
+                          <i class="fas fa-file-excel text-green-500 text-xl"></i>
+                        </div>
+                        <span class="text-white font-medium">Excel Format</span>
+                        <span class="text-gray-400 text-sm">Download as Excel file</span>
+                      </div>
+                      <div class="download-progress hidden h-1 bg-green-500 mt-3 rounded-full"></div>
+                    </button>
+                  </div>
+                </div>
+              </div>
             </div>
           </div>
 
@@ -251,6 +398,7 @@
                 </div>
               </div>
             </div>
+
 
             <div class="metric-card p-6">
               <div class="flex items-center justify-between">
@@ -287,6 +435,57 @@
                 </div>
               </div>
             </div>
+
+            <!-- New Metric Cards -->
+            <div class="metric-card p-6">
+              <div class="flex items-center justify-between">
+                <div>
+                  <p class="text-gray-400 text-sm mb-1">Total Coupons Used</p>
+                  <p class="text-2xl font-bold text-white" id="totalCoupons">0</p>
+                </div>
+                <div class="icon-container bg-pink-500/20">
+                  <i class="fas fa-ticket-alt text-pink-500 text-xl"></i>
+                </div>
+              </div>
+            </div>
+
+            <div class="metric-card p-6">
+              <div class="flex items-center justify-between">
+                <div>
+                  <p class="text-gray-400 text-sm mb-1">Coupon Deductions</p>
+                  <p class="text-2xl font-bold text-white" id="couponDeductions">₹0</p>
+                </div>
+                <div class="icon-container bg-red-500/20">
+                  <i class="fas fa-tags text-red-500 text-xl"></i>
+                </div>
+              </div>
+            </div>
+
+            <div class="metric-card p-6">
+              <div class="flex items-center justify-between">
+                <div>
+                  <p class="text-gray-400 text-sm mb-1">Total Discounts</p>
+                  <p class="text-2xl font-bold text-white" id="totalDiscounts">₹0</p>
+                </div>
+                <div class="icon-container bg-orange-500/20">
+                  <i class="fas fa-percent text-orange-500 text-xl"></i>
+                </div>
+              </div>
+            </div>
+
+            <div class="metric-card p-6">
+              <div class="flex items-center justify-between">
+                <div>
+                  <p class="text-gray-400 text-sm mb-1">Net Revenue</p>
+                  <p class="text-2xl font-bold text-white" id="netRevenue">₹0</p>
+                </div>
+                <div class="icon-container bg-emerald-500/20">
+                  <i class="fas fa-sack-dollar text-emerald-500 text-xl"></i>
+                </div>
+              </div>
+            </div>
+
+
             <div class="chart-container col-span-3 p-4">
               <canvas id="salesChart" height="500" width="1600"></canvas>
             </div>
@@ -317,28 +516,61 @@
           </div>
         </div>
       </div>
+      <!-- Top Sellers Section -->
+      <div class="top-sellers-section mb-8 fade-in-up">
+        <div class="grid grid-cols-1 md:grid-cols-3 gap-6">
+          <!-- Best Selling Products Card -->
+          <div class="chart-container p-6">
+            <div class="flex items-center justify-between mb-6">
+              <h3 class="text-lg font-bold">Top Products</h3>
+              <div class="icon-container bg-indigo-500/20">
+                <i class="fas fa-box-open text-indigo-500 text-xl"></i>
+              </div>
+            </div>
+            <div class="space-y-4">
+              <div id="topProductsList" class="space-y-3">
+                <!-- Products will be populated by JavaScript -->
+              </div>
+            </div>
+          </div>
+
+          <!-- Best Selling Categories Card -->
+          <div class="chart-container p-6">
+            <div class="flex items-center justify-between mb-6">
+              <h3 class="text-lg font-bold">Top Categories</h3>
+              <div class="icon-container bg-emerald-500/20">
+                <i class="fas fa-layer-group text-emerald-500 text-xl"></i>
+              </div>
+            </div>
+            <div class="space-y-4">
+              <div id="topCategoriesList" class="space-y-3">
+                <!-- Categories will be populated by JavaScript -->
+              </div>
+            </div>
+          </div>
+
+          <!-- Best Selling Brands Card -->
+          <div class="chart-container p-6">
+            <div class="flex items-center justify-between mb-6">
+              <h3 class="text-lg font-bold">Top Brands</h3>
+              <div class="icon-container bg-rose-500/20">
+                <i class="fas fa-star text-rose-500 text-xl"></i>
+              </div>
+            </div>
+            <div class="space-y-4">
+              <div id="topBrandsList" class="space-y-3">
+                <!-- Brands will be populated by JavaScript -->
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
     </div>
   </div>
 
 
 
   <script>
-    document.addEventListener('DOMContentLoaded', function() {
-      const startDateInput = document.getElementById('startDate');
-      const endDateInput = document.getElementById('endDate');
-      // Get today's date
-      const today = new Date();
-      const startDate = new Date();
-      startDate.setDate(today.getDate() - 7); // 7 days ago
-
-      // Set the values for the date inputs
-      startDateInput.value = startDate.toISOString().split('T')[0]; // Format as YYYY-MM-DD
-      endDateInput.value = new Date(today.setDate(today.getDate() + 1)).toISOString().split('T')[0]; // Set to tomorrow
-    });
-
-
-
-
     document.addEventListener('DOMContentLoaded', function() {
       // Shared colors for consistency
       const colors = ['#3b82f6', '#10b981', '#f59e0b', '#ef4444', '#8b5cf6'];
@@ -364,6 +596,101 @@
 
 
 
+    async function downloadPDF() {
+      const {
+        jsPDF
+      } = window.jspdf;
+      const doc = new jsPDF();
+
+      doc.text("Sales Report", 14, 10);
+      doc.setFontSize(10);
+
+      // Fetch data for the table
+      const data = await fetchSalesDataForPDF();
+
+      // AutoTable headers and rows
+      const headers = [
+        ["Date", "Orders", "Sales (₹)", "Avg Order Value (₹)", "Items Sold"]
+      ];
+      const rows = data.map(item => [
+        item.date,
+        item.orders,
+        `₹${item.sales.toFixed(2)}`,
+        `₹${item.avgOrderValue}`,
+        item.totalItems
+      ]);
+
+      doc.autoTable({
+        head: headers,
+        body: rows,
+        startY: 20,
+        theme: "striped"
+      });
+
+      doc.save("Sales_Report.pdf");
+    }
+
+    async function downloadExcel() {
+      const data = await fetchSalesDataForPDF(); // Use the same function as PDF fetch
+
+      // Structure data for the Excel file
+      const worksheetData = [
+        ["Date", "Orders", "Sales (₹)", "Avg Order Value (₹)", "Items Sold"]
+      ];
+      data.forEach(item => {
+        worksheetData.push([item.date, item.orders, `₹${item.sales.toFixed(2)}`, `₹${item.avgOrderValue}`, item.totalItems]);
+      });
+
+      // Create workbook and worksheet
+      const wb = XLSX.utils.book_new();
+      const ws = XLSX.utils.aoa_to_sheet(worksheetData);
+      XLSX.utils.book_append_sheet(wb, ws, "Sales Report");
+
+      // Save the Excel file
+      XLSX.writeFile(wb, "Sales_Report.xlsx");
+    }
+
+
+    async function fetchSalesDataForPDF() {
+      const startDate = document.getElementById('startDate').value;
+      const endDate = document.getElementById('endDate').value;
+      const timeFrame = document.getElementById('timeFrame').value;
+
+      const response = await fetch(`/admin/sales-report?startDate=${startDate}&endDate=${endDate}&timeFrame=${timeFrame}`);
+      const result = await response.json();
+      return result.data.salesData;
+    }
+
+
+    document.addEventListener('DOMContentLoaded', function() {
+      const startDateInput = document.getElementById('startDate');
+      const endDateInput = document.getElementById('endDate');
+      // Get today's date
+      const today = new Date();
+      const startDate = new Date();
+      startDate.setDate(today.getDate() - 7); // 7 days ago
+
+      // Set the values for the date inputs
+      startDateInput.value = startDate.toISOString().split('T')[0]; // Format as YYYY-MM-DD
+      endDateInput.value = new Date(today.setDate(today.getDate() + 1)).toISOString().split('T')[0]; // Set to tomorrow
+    });
+
+
+    function updateMetricCards(summary) {
+      // Update existing metrics
+      document.getElementById('totalSales').textContent = `₹${summary.grossRevenue}`;
+      document.getElementById('totalOrders').textContent = summary.totalOrders;
+      document.getElementById('avgOrderValue').textContent = `₹${summary.avgOrderValue}`;
+      document.getElementById('totalItems').textContent = summary.totalItems;
+
+      // Update new metrics
+      document.getElementById('totalCoupons').textContent = summary.totalCouponsUsed;
+      document.getElementById('couponDeductions').textContent = `₹${summary.couponDeductions}`;
+      document.getElementById('totalDiscounts').textContent = `₹${summary.totalDiscounts}`;
+      document.getElementById('netRevenue').textContent = `₹${summary.netRevenue}`;
+    }
+
+
 
     document.getElementById('applyFilterButton').addEventListener('click', async () => {
       const startDate = document.getElementById('startDate').value;
@@ -379,6 +706,7 @@
           document.getElementById('totalOrders').innerText = result.data.summary.totalOrders;
           document.getElementById('avgOrderValue').innerText = `₹${result.data.summary.avgOrderValue}`;
           document.getElementById('totalItems').innerText = result.data.summary.totalItems;
+          updateMetricCards(result.data.summary);
 
           // Populate table with sales data
           const salesTableBody = document.getElementById('salesTableBody');
@@ -521,6 +849,178 @@
     }
 
     fetchSalesReport();
+
+
+
+
+    // Function to format numbers with k/m suffix
+
+    function formatNumber(num) {
+      if (num >= 1000000) return (num / 1000000).toFixed(1) + 'm';
+      if (num >= 1000) return (num / 1000).toFixed(1) + 'k';
+      return num;
+    }
+
+    // Function to create item rows with progress bars
+    function createItemRow(item, index, maxValue, type) {
+      const percentage = (item.value / maxValue) * 100;
+      const delay = index * 0.1;
+      const rankClass = index < 3 ? `rank-${index + 1}` : 'bg-gray-600 text-white';
+
+      return `
+    <div class="item-row" style="animation-delay: ${delay}s">
+      <div class="flex items-center justify-between mb-2">
+        <div class="flex items-center gap-3">
+          <div class="rank-badge ${rankClass}">${index + 1}</div>
+          <div>
+            <h4 class="font-medium text-sm text-gray-200">${item.name}</h4>
+            <p class="text-xs text-gray-400">${formatNumber(item.value)} ${type}</p>
+          </div>
+        </div>
+        <div class="text-sm font-medium text-gray-400">${percentage.toFixed(1)}%</div>
+      </div>
+      <div class="progress-bar">
+        <div class="progress-value" style="width: ${percentage}%; 
+          background: ${index < 3 
+            ? `linear-gradient(90deg, var(--accent-blue), ${index === 0 ? '#4f46e5' : index === 1 ? '#0ea5e9' : '#06b6d4'})` 
+            : 'var(--accent-blue)'}">
+        </div>
+      </div>
+    </div>
+  `;
+    }
+
+    // Function to fetch and update top sellers data
+    async function fetchTopSellers() {
+      try {
+        const response = await fetch('/admin/top-sellers'); // Replace with your actual endpoint
+        const data = await response.json();
+
+        if (data.success) {
+          // Update Products
+          const maxProductValue = Math.max(...data.products.map(p => p.value));
+          const productsHTML = data.products
+            .slice(0, 10)
+            .map((product, index) => createItemRow(product, index, maxProductValue, 'sales'))
+            .join('');
+          document.getElementById('topProductsList').innerHTML = productsHTML;
+
+          // Update Categories
+          const maxCategoryValue = Math.max(...data.categories.map(c => c.value));
+          const categoriesHTML = data.categories
+            .slice(0, 10)
+            .map((category, index) => createItemRow(category, index, maxCategoryValue, 'items'))
+            .join('');
+          document.getElementById('topCategoriesList').innerHTML = categoriesHTML;
+
+          // Update Brands
+          const maxBrandValue = Math.max(...data.brands.map(b => b.value));
+          const brandsHTML = data.brands
+            .slice(0, 10)
+            .map((brand, index) => createItemRow(brand, index, maxBrandValue, 'products'))
+            .join('');
+          document.getElementById('topBrandsList').innerHTML = brandsHTML;
+        }
+      } catch (error) {
+        console.error('Error fetching top sellers:', error);
+      }
+    }
+
+    // Initial load
+    fetchTopSellers();
+
+    // Refresh data every 5 minutes
+    setInterval(fetchTopSellers, 300000);
+
+
+
+
+    // Modal handling functions
+    function openModal() {
+      const modal = document.getElementById('downloadModal');
+      const modalContent = document.getElementById('modalContent');
+      modal.classList.remove('hidden');
+      // Trigger reflow to ensure animation works
+      void modalContent.offsetWidth;
+      modalContent.classList.remove('scale-95', 'opacity-0');
+      modalContent.classList.add('scale-100', 'opacity-100');
+    }
+
+    function closeModal() {
+      const modal = document.getElementById('downloadModal');
+      const modalContent = document.getElementById('modalContent');
+      modalContent.classList.remove('scale-100', 'opacity-100');
+      modalContent.classList.add('scale-95', 'opacity-0');
+      setTimeout(() => {
+        modal.classList.add('hidden');
+      }, 300);
+    }
+
+    async function handleDownload(format) {
+      const button = document.getElementById(`${format}Button`);
+      const progressBar = button.querySelector('.download-progress');
+
+      // Disable both buttons during download
+      document.querySelectorAll('.format-button').forEach(btn => {
+        btn.disabled = true;
+        btn.classList.add('opacity-50');
+      });
+
+      // Show and animate progress bar
+      progressBar.classList.remove('hidden');
+      progressBar.style.width = '0%';
+
+      // Animate progress bar
+      setTimeout(() => {
+        progressBar.style.width = '100%';
+        progressBar.style.transition = 'width 1s ease-in-out';
+      }, 100);
+
+      try {
+        if (format === 'pdf') {
+          await downloadPDF();
+        } else {
+          await downloadExcel();
+        }
+
+        // Show success state
+        button.querySelector('i').classList.add('text-white');
+        button.classList.add('bg-opacity-80');
+
+        // Close modal after successful download
+        setTimeout(() => {
+          closeModal();
+          // Reset button states
+          document.querySelectorAll('.format-button').forEach(btn => {
+            btn.disabled = false;
+            btn.classList.remove('opacity-50');
+            btn.querySelector('i').classList.remove('text-white');
+            btn.classList.remove('bg-opacity-80');
+            btn.querySelector('.download-progress').classList.add('hidden');
+          });
+        }, 1000);
+
+      } catch (error) {
+        console.error(`Error downloading ${format}:`, error);
+        // Handle error state
+        progressBar.classList.add('bg-red-500');
+        button.classList.add('shake');
+
+        setTimeout(() => {
+          // Reset error state
+          progressBar.classList.remove('bg-red-500');
+          button.classList.remove('shake');
+          progressBar.classList.add('hidden');
+          document.querySelectorAll('.format-button').forEach(btn => {
+            btn.disabled = false;
+            btn.classList.remove('opacity-50');
+          });
+        }, 2000);
+      }
+    }
+
+    // Update the download report button click handler
+    document.getElementById("downloadReport").addEventListener("click", openModal);
   </script>
 </body>
 

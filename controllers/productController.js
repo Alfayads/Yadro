@@ -1,6 +1,7 @@
 const Product = require('../models/Product');
 const Category = require('../models/Category');
 const Users = require('../models/User');
+const Announcement = require('../models/announcement');
 
 const productDetails = async (req, res) => {
     try {
@@ -34,10 +35,11 @@ const getProductByCategory = async (req, res) => {
         const id = req.params.id;
         const userId = req.session.user_id;
         const categories = await Category.find({});
+        const announcements = await Announcement.find({});
         const user = await Users.findById({ _id: userId });
         const category = await Category.findById({ _id: id });
         const products = await Product.find({ category: id })
-        return res.render('user/productByCategory', { products, category, categories, user })
+        return res.render('user/productByCategory', { products, category, categories, user, announcements })
     } catch (error) {
         console.error(error.message);
         let errorMessage = { message: "An error occurred. Please try again later." };
@@ -51,6 +53,7 @@ const getAllProducts = async (req, res) => {
         const userId = req.session.user_id;
         const user = await Users.findById({ _id: userId });
         const categories = await Category.find({});
+        const announcements = await Announcement.find({});
 
         const { sort, search } = req.query;
 
@@ -85,7 +88,7 @@ const getAllProducts = async (req, res) => {
 
         const products = await Product.find(query).sort(sortOption);
 
-        return res.render('user/all-products', { products, user, categories, currentSort: sort, searchQuery: search });
+        return res.render('user/all-products', { products, user, categories, currentSort: sort, searchQuery: search, announcements });
     } catch (error) {
         console.error(error.message);
         let errorMessage = { message: "An error occurred. Please try again later." };

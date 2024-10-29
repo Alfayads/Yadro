@@ -2,6 +2,7 @@ const Users = require('../models/User');
 const Category = require('../models/Category');
 const User = require('../models/User');
 const Wallet = require('../models/wallet')
+const Announcement = require('../models/announcement')
 
 
 const getAccount = async (req, res) => {
@@ -9,7 +10,8 @@ const getAccount = async (req, res) => {
         const userId = req.session.user_id;
         const user = await Users.findById({ _id: userId });
         const categories = await Category.find({});
-        return res.render('user/Account', { user, categories });
+        const announcements = await Announcement.find({});
+        return res.render('user/Account', { user, categories, announcements });
     } catch (error) {
         console.error(error.message);
         let errorMessage = { message: "An error occurred. Please try again later." };
@@ -69,6 +71,7 @@ const editProfile = async (req, res) => {
 const getWallet = async (req, res) => {
     try {
         const userId = req.session.user_id;
+        const announcements = await Announcement.find({});
         const user = await Users.findById({ _id: userId });
         const categories = await Category.find({});
         const wallet = await Wallet.findOne({ userId })
@@ -94,7 +97,7 @@ const getWallet = async (req, res) => {
 
 
         console.log(wallet)
-        return res.render('user/wallet', { user, categories, wallet });
+        return res.render('user/wallet', { user, categories, wallet, announcements });
     } catch (error) {
         console.error(error.message);
         let errorMessage = { message: "An error occurred. Please try again later." };
@@ -143,7 +146,8 @@ const getTransactionHistory = async (req, res) => {
         const userId = req.session.user_id;
         const user = await Users.findById({ _id: userId });
         const categories = await Category.find({});
-        return res.render('user/transaction-history', { user, categories });
+        const announcements = await Announcement.find({});
+        return res.render('user/transaction-history', { user, categories, announcements });
     } catch (error) {
         console.error(error.message);
         let errorMessage = { message: "An error occurred. Please try again later." };
@@ -156,7 +160,8 @@ const getContact = async (req, res) => {
         const userId = req.session.user_id;
         const user = await Users.findById({ _id: userId });
         const categories = await Category.find({});
-        return res.render('user/contact', { user, categories });
+        const announcements = await Announcement.find({});
+        return res.render('user/contact', { user, categories, announcements });
     } catch (error) {
         console.error(error.message);
         let errorMessage = { message: "An error occurred. Please try again later." };

@@ -61,15 +61,48 @@
       padding-top: 5rem;
     }
   }
+
+  /* Styles for the marquee */
+  #announcement-marquee {
+    display: flex;
+    animation: marquee 30s linear infinite;
+  }
+
+  /* Individual items style */
+  .marquee-item {
+    white-space: nowrap;
+  }
+
+  /* Keyframes for sliding marquee effect */
+  @keyframes marquee {
+    from {
+      transform: translateX(0);
+    }
+
+    to {
+      transform: translateX(-100%);
+    }
+  }
 </style>
 
 <header class="bg-white shadow-md fixed w-full top-0 z-50">
   <div class="container mx-auto px-4">
-    <!-- Top bar with announcement -->
-    <!-- <div class="hidden lg:flex justify-center py-2 bg-gray-50 text-sm text-gray-600">
-      <p>🎉 Free shipping on orders over $50! Shop now</p>
-    </div> -->
-
+    <!-- Top bar with announcement marquee -->
+    <div class="hidden lg:flex justify-center py-2 bg-gray-50 text-sm text-gray-600 relative overflow-hidden h-8">
+      <div id="announcement-marquee" class="whitespace-nowrap flex">
+        <% announcements.forEach((announcement, index) => { %>
+        <p class="marquee-item px-12 inline-block">
+          <%= announcement.content %>
+        </p>
+        <% }) %>
+        <% announcements.forEach((announcement, index) => { %>
+        <!-- Repeat items for seamless loop -->
+        <p class="marquee-item px-12 inline-block">
+          <%= announcement.content %>
+        </p>
+        <% }) %>
+      </div>
+    </div>
     <!-- Main header content -->
     <div class="flex items-center justify-between py-6">
       <!-- Mobile menu button -->
@@ -535,5 +568,25 @@
       categoryDropdown.classList.add('hidden');
       categoryArrow.classList.remove('open');
     }
+  });
+
+
+
+  // Top Bar Marquee Effect 
+  document.addEventListener("DOMContentLoaded", function() {
+    const marquee = document.getElementById("announcement-marquee");
+    const announcements = marquee.children;
+    let index = 0;
+    const totalAnnouncements = announcements.length;
+
+    function scrollAnnouncements() {
+      // Move to the next announcement
+      index = (index + 1) % totalAnnouncements;
+      // Calculate the offset for smooth scrolling
+      marquee.style.transform = `translateX(-${index * 100}%)`;
+    }
+
+    // Scroll every 3 seconds
+    setInterval(scrollAnnouncements, 3000);
   });
 </script>

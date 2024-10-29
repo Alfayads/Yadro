@@ -2,7 +2,8 @@ const Users = require('../models/User');
 const Category = require('../models/Category');
 const Wishlist = require('../models/Wishlist');
 const mongoose = require('mongoose')
-const Product = require('../models/Product')
+const Product = require('../models/Product');
+const Announcement = require('../models/announcement')
 
 
 const getWishList = async (req, res) => {
@@ -11,6 +12,7 @@ const getWishList = async (req, res) => {
         const user = await Users.findById({ _id: userId });
         const categories = await Category.find({});
         const wishlist = await Wishlist.findOne({ userId }).populate('products');
+        const announcements = await Announcement.find({});
 
         const wishlistProducts = wishlist ? wishlist.products : [];
 
@@ -20,9 +22,9 @@ const getWishList = async (req, res) => {
             const products = await Product.find({ _id: { $in: productIds } });
 
 
-            res.render('user/wishlist', { wishlistProducts: products, user, categories });
+            res.render('user/wishlist', { wishlistProducts: products, user, categories, announcements });
         } else {
-            res.render('user/wishlist', { wishlistProducts: [], user, categories });
+            res.render('user/wishlist', { wishlistProducts: [], user, categories, announcements });
         }
     } catch (error) {
         console.error(error.message);
