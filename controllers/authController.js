@@ -7,6 +7,7 @@ const Users = require('../models/User');
 const Product = require('../models/Product');
 const Category = require('../models/Category');
 const Announcement = require('../models/announcement');
+const Wallet = require('../models/wallet')
 
 
 //Secure Password
@@ -58,7 +59,7 @@ const sendVerificationEmail = async (email, otp) => {
     }
 }
 
-const getHomeWithUser = async (req, res) => {
+const getHomeWithUser = async (req, res, next) => {
     try {
         const userId = req.session.user_id;
         const announcements = await Announcement.find({});
@@ -92,6 +93,7 @@ const getHomeWithUser = async (req, res) => {
         console.error(error.message);
         let errorMessage = { message: "An error occurred. Please try again later." };
         return res.render('user/error', { error: errorMessage });
+        next(error)
     }
 }
 
@@ -99,7 +101,7 @@ const getHomeWithUser = async (req, res) => {
 
 
 
-const getHomeWithoutUser = async (req, res) => {
+const getHomeWithoutUser = async (req, res, next) => {
     try {
 
         const products = await Product.find({}).limit(4);
@@ -109,13 +111,14 @@ const getHomeWithoutUser = async (req, res) => {
         console.error(error.message);
         let errorMessage = { message: "An error occurred. Please try again later." };
         return res.render('user/error', { error: errorMessage });
+        next(error)
     }
 
 }
 
 
 
-const userSearch = async (req, res) => {
+const userSearch = async (req, res, next) => {
     try {
         const query = req.query.q;
         if (!query) {
@@ -140,25 +143,27 @@ const userSearch = async (req, res) => {
         });
     } catch (error) {
         res.status(500).json({ success: false, message: 'Error fetching search results', error });
+        next(error)
     }
 }
 
 
 
-const getSignup = (req, res) => {
+const getSignup = (req, res, next) => {
     try {
         return res.render('user/signup');
     } catch (error) {
         console.error(error.message);
         let errorMessage = { message: "An error occurred. Please try again later." };
         return res.render('user/error', { error: errorMessage });
+        next(error)
     }
 
 }
 
 
 
-const newUser = async (req, res) => {
+const newUser = async (req, res, next) => {
 
     const { fname, lname, email, password, phone, cpassword, gender } = req.body;
     console.log(fname, lname, email, password, phone, cpassword, gender);
@@ -209,6 +214,8 @@ const newUser = async (req, res) => {
             return res.redirect('/signup')
         }
 
+
+
         req.session.otp = otp;
         req.session.user = { fname, lname, gender, email, password, phone };
         req.flash('success_msg', 'OTP Sent Successfully Check Your Email !!! ');
@@ -217,22 +224,25 @@ const newUser = async (req, res) => {
     } catch (error) {
         console.error(error.message);
         let errorMessage = { message: "An error occurred. Please try again later." };
+        next(error)
         return res.render('user/error', { error: errorMessage });
+
     }
 }
 
 
-const getLogin = (req, res) => {
+const getLogin = (req, res, next) => {
     try {
         return res.render('user/login')
     } catch (error) {
         console.error(error.message);
         let errorMessage = { message: "An error occurred. Please try again later." };
+        next(error)
         return res.render('user/error', { error: errorMessage });
     }
 }
 
-const checkUser = async (req, res) => {
+const checkUser = async (req, res, next) => {
     const Emailregex = /^[a-zA-Z0-9._%+-]+@gmail\.com$/;
     try {
         const { email, password } = req.body;
@@ -258,30 +268,43 @@ const checkUser = async (req, res) => {
     } catch (error) {
         console.error(error.message);
         let errorMessage = { message: "An error occurred. Please try again later." };
+        next(error)
         return res.render('user/error', { error: errorMessage });
     }
 }
 
-const forgotPassword = (req, res) => {
+const forgotPassword = async (req, res, next) => {
     try {
-        return res.render('user/email-reset-password');
+        const userId = req.session.user_id;
+        const user = await Users.findById({ _id: userId });
+        const categories = await Category.find({});
+        const announcements = await Announcement.find({});
+        return res.render('user/email-reset-password', { user, categories, announcements });
     } catch (error) {
         console.error(error.message);
         let errorMessage = { message: "An error occurred. Please try again later." };
+        next(error)
         return res.render('user/error', { error: errorMessage });
     }
 }
 
 
-const resetPassword = async (req, res) => {
+const resetPassword = async (req, res, next) => {
     try {
-        const { email, newPassword } = req.body;
+        const { email, newPassword, currentPassword } = req.body;
 
         if (!email || !newPassword) {
             return res.status(400).json({ message: "Email and new password are required." });
         }
 
         const user = await Users.findOne({ email });
+
+        const ifcurrentPassword = await bcrypt.compare(currentPassword, user.password)
+
+        if (!ifcurrentPassword) {
+            return res.status(404).json({ message: "Current Password is Invalid" })
+        }
+
         if (!user) {
             return res.status(404).json({ message: "User not found." });
         }
@@ -294,11 +317,12 @@ const resetPassword = async (req, res) => {
         return res.status(200).json({ success: true, message: "Password reset successful." });
     } catch (error) {
         console.error(error.message);
+        next(error)
         return res.status(500).json({ success: false, message: "An error occurred. Please try again later." });
     }
 };
 
-const getLogout = (req, res) => {
+const getLogout = (req, res, next) => {
     try {
         req.flash('success_msg', 'Logout Successfully !!!')
         req.session.destroy((err) => {
@@ -312,21 +336,23 @@ const getLogout = (req, res) => {
     } catch (error) {
         console.error(error.message);
         let errorMessage = { message: "An error occurred. Please try again later." };
+        next(error)
         return res.render('user/error', { error: errorMessage });
     }
 }
 
-const getOtpVerify = async (req, res) => {
+const getOtpVerify = async (req, res, next) => {
     try {
         return res.render('user/otp-verify')
     } catch (error) {
         console.error(error.message);
         let errorMessage = { message: "An error occurred. Please try again later." };
+        next(error)
         return res.render('user/error', { error: errorMessage });
     }
 }
 
-const verifyOtp = async (req, res) => {
+const verifyOtp = async (req, res, next) => {
     try {
         const { otp } = req.body;
         const enteredOtp = String(otp).trim();
@@ -353,20 +379,31 @@ const verifyOtp = async (req, res) => {
                 user.googleId = undefined;
             }
             await saveUserData.save();
+
+
+            const newWallet = new Wallet({
+                userId: saveUserData._id,
+                balance: 0,
+                transactions: []
+            });
+
+            await newWallet.save();
             req.flash('success_msg', `Welcome ${fname} ${lname} Login to Your account ...`);
             res.redirect('/login')
         } else {
             req.flash('error_msg', 'OTP is Incorrect !! Try again ');
             res.redirect('/otp-verify');
+
         }
     } catch (err) {
         console.error(err.message);
         let errorMessage = { message: "An error occurred. Please try again later." };
+        next(error)
         return res.render('user/error', { error: errorMessage });
     }
 }
 
-const resendOtp = async (req, res) => {
+const resendOtp = async (req, res, next) => {
     try {
         const { email } = req.session.user;
         if (!email) {
@@ -392,6 +429,7 @@ const resendOtp = async (req, res) => {
     } catch (error) {
         console.error(error.message);
         const errorMessage = { message: "An error occurred. Please try again later." };
+        next(error)
         return res.render('user/error', { error: errorMessage });
     }
 };

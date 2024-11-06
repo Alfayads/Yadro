@@ -8,7 +8,7 @@ const Coupon = require('../models/Coupon');
 const Announcement = require('../models/announcement')
 const { default: mongoose, Types } = require('mongoose');
 
-const getCart = async (req, res) => {
+const getCart = async (req, res, next) => {
     try {
         const userId = req.session.user_id;
         const user = await Users.findById({ _id: userId });
@@ -38,11 +38,12 @@ const getCart = async (req, res) => {
     } catch (error) {
         console.error(error.message);
         let errorMessage = { message: "An error occurred. Please try again later." };
+        next(error)
         return res.render('user/error', { error: errorMessage });
     }
 }
 
-const addToCart = async (req, res) => {
+const addToCart = async (req, res, next) => {
     const { productId, quantity } = req.body;
     const userId = req.session.user_id;
     try {
@@ -78,10 +79,11 @@ const addToCart = async (req, res) => {
         res.json({ success: true, message: 'Product added to cart' });
     } catch (error) {
         console.log(error.message)
+        next(error)
     }
 }
 
-const deleteCart = async (req, res) => {
+const deleteCart = async (req, res, next) => {
     try {
         const { productId } = req.body;
         const userId = req.session.user_id;
@@ -106,10 +108,11 @@ const deleteCart = async (req, res) => {
         }
     } catch (error) {
         console.log(error.message)
+        next(error)
     }
 }
 
-const getCartCount = async (req, res) => {
+const getCartCount = async (req, res, next) => {
     try {
         const userId = req.session.user_id;
         if (!userId) {
@@ -133,11 +136,12 @@ const getCartCount = async (req, res) => {
     } catch (error) {
         console.error(error.message);
         return res.json({ success: false, message: 'Failed to fetch cart count' });
+        next(error)
     }
 }
 
 
-const getCheckOut = async (req, res) => {
+const getCheckOut = async (req, res, next) => {
     try {
         const userId = req.session.user_id;
         const user = await Users.findById({ _id: userId });
@@ -183,11 +187,12 @@ const getCheckOut = async (req, res) => {
     } catch (error) {
         console.error(error.message);
         let errorMessage = { message: "An error occurred. Please try again later." };
+        next(error)
         return res.render('user/error', { error: errorMessage });
     }
 }
 
-const updateQuantity = async (req, res) => {
+const updateQuantity = async (req, res, next) => {
     console.log('update quantity')
     try {
         const { productId, quantity, shippingCharge } = req.body;  // Add shippingCharge to destructuring
@@ -256,10 +261,11 @@ const updateQuantity = async (req, res) => {
             message: 'Failed to update quantity',
             error: error.message
         });
+        next(error)
     }
 }
 
-const placeOrder = async (req, res) => {
+const placeOrder = async (req, res, next) => {
     try {
         const { deliveryAddress, paymentMethod, items, totalAmount, couponDiscountValue, couponCode } = req.body;
         const userId = req.session.user_id;
@@ -327,22 +333,24 @@ const placeOrder = async (req, res) => {
         return res.status(200).json({ message: 'Order placed successfully', orderId: newOrder._id })
     } catch (error) {
         console.log(error.message)
+        next(error)
     }
 }
 
-const orderConfirm = (req, res) => {
+const orderConfirm = (req, res, next) => {
     try {
         const orderId = req.params.id;
         return res.render('user/order-confirm', { orderId })
     } catch (error) {
         console.log(error.message)
+        next(error)
     }
 }
 
 
 // Order Tracking Page
 
-const orderTracking = async (req, res) => {
+const orderTracking = async (req, res, next) => {
     try {
         const userId = req.session.user_id;
         const orderId = req.params.id;
@@ -402,7 +410,9 @@ const orderTracking = async (req, res) => {
     } catch (error) {
         console.error(error.message);
         let errorMessage = { message: "An error occurred. Please try again later." };
+        next(error)
         return res.render('user/error', { error: errorMessage });
+
     }
 }
 

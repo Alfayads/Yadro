@@ -1,15 +1,113 @@
-<header class="container mx-auto px-4 py-4 flex justify-between items-center border-b">
-  <a href="/" class="text-2xl font-bold">Yadro</a>
-  <nav>
+<!-- <style>
+  #mobile-menu-button {
+    position: relative;
+    /* Make sure it’s positioned within its space */
+    z-index: 50;
+    /* Bring to the top */
+  }
+</style> -->
+
+<header class="container mx-auto px-4 py-4 flex justify-between items-center border-b shadow-md bg-white">
+  <a href="/" class="text-2xl font-bold text-gray-800 hover:text-red-500 transition duration-300">Yadro</a>
+
+  <!-- Desktop Navigation -->
+  <nav class="hidden md:flex">
     <ul class="flex space-x-6">
-      <li><a href="#" class="text-gray-600 hover:text-gray-900">Home</a></li>
-      <li><a href="#" class="text-gray-600 hover:text-gray-900">Contact</a></li>
-      <li><a href="#" class="text-gray-600 hover:text-gray-900">About</a></li>
-      <li><a href="#category" class="text-gray-600 hover:text-gray-900">Categories</a></li>
+      <li><a href="#" class="text-gray-600 hover:text-red-500 transition duration-300">Home</a></li>
+      <li><a href="#" class="text-gray-600 hover:text-red-500 transition duration-300">Contact</a></li>
+      <li><a href="#" class="text-gray-600 hover:text-red-500 transition duration-300">About</a></li>
+
+      <!-- Categories Dropdown with Chevron Icon -->
+      <li class="relative group">
+        <a href="#category" class="text-gray-600 hover:text-red-500 transition duration-300 flex items-center">
+          Categories
+          <svg class="w-4 h-4 ml-1 text-gray-600 group-hover:text-red-500 transition duration-300" fill="currentColor" viewBox="0 0 20 20">
+            <path fill-rule="evenodd" d="M5.293 7.293a1 1 0 011.414 0L10 10.586l3.293-3.293a1 1 0 011.414 1.414l-4 4a1 1 0 01-1.414 0l-4-4a1 1 0 010-1.414z" clip-rule="evenodd" />
+          </svg>
+        </a>
+
+        <!-- Dropdown Menu -->
+        <ul class="absolute hidden group-hover:block bg-white shadow-lg rounded-lg mt-2 py-2 w-48">
+          <li><a href="#" class="block px-4 py-2 text-gray-600 hover:bg-red-100 hover:text-red-500 transition duration-300">Headphones</a></li>
+          <li><a href="#" class="block px-4 py-2 text-gray-600 hover:bg-red-100 hover:text-red-500 transition duration-300">Speakers</a></li>
+          <li><a href="#" class="block px-4 py-2 text-gray-600 hover:bg-red-100 hover:text-red-500 transition duration-300">Accessories</a></li>
+        </ul>
+      </li>
     </ul>
   </nav>
-  <div class="flex items-center space-x-4">
-    <a href="/login" class="text-red-500 hover:text-red-600">Log In</a>
-    <a href="/signup" class="bg-red-500 text-white px-4 py-2 rounded hover:bg-red-600">Sign Up</a>
+
+  <!-- Desktop Auth Buttons -->
+  <div class="hidden md:flex items-center space-x-4">
+    <a href="/login" class="text-red-500 hover:text-red-600 transition duration-300">Log In</a>
+    <a href="/signup" class="bg-red-500 text-white px-4 py-2 rounded-lg shadow-md hover:bg-red-600 transition duration-300">Sign Up</a>
   </div>
+
+  <!-- Mobile Menu Button -->
+  <button class="md:hidden flex items-center p-2 rounded text-gray-600 hover:text-gray-900 transition duration-300 z-50 " id="mobile-menu-button">
+    <!-- Simplified SVG Icon -->
+    <svg class="w-8 h-8" fill="#333" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg" aria-hidden="true">
+      <path d="M4 5h16M4 12h16M4 19h16" stroke="currentColor" stroke-width="2" stroke-linecap="round"></path>
+    </svg>
+  </button>
+
+
 </header>
+
+<!-- Mobile Navigation Menu with Slide-down Animation -->
+<nav class="md:hidden bg-white border-t shadow-md" id="mobile-menu" style="display: none;">
+  <ul class="flex flex-col space-y-4 px-4 py-6">
+    <li><a href="#" class="text-gray-600 hover:text-red-500 transition duration-300">Home</a></li>
+    <li><a href="#" class="text-gray-600 hover:text-red-500 transition duration-300">Contact</a></li>
+    <li><a href="#" class="text-gray-600 hover:text-red-500 transition duration-300">About</a></li>
+
+    <!-- Mobile Categories Dropdown -->
+    <li>
+      <div class="flex items-center justify-between text-gray-600 hover:text-red-500 transition duration-300" onclick="toggleMobileDropdown()">
+        Categories
+        <svg class="w-4 h-4 ml-1" fill="currentColor" viewBox="0 0 20 20">
+          <path fill-rule="evenodd" d="M5.293 7.293a1 1 0 011.414 0L10 10.586l3.293-3.293a1 1 0 011.414 1.414l-4 4a1 1 0 01-1.414 0l-4-4a1 1 0 010-1.414z" clip-rule="evenodd" />
+        </svg>
+      </div>
+      <ul id="mobile-categories-dropdown" class="hidden flex-col space-y-2 ml-4 mt-2">
+        <li><a href="#" class="text-gray-600 hover:text-red-500 transition duration-300">Headphones</a></li>
+        <li><a href="#" class="text-gray-600 hover:text-red-500 transition duration-300">Speakers</a></li>
+        <li><a href="#" class="text-gray-600 hover:text-red-500 transition duration-300">Accessories</a></li>
+      </ul>
+    </li>
+    <li><a href="/login" class="text-red-500 hover:text-red-600 transition duration-300">Log In</a></li>
+    <li><a href="/signup" class="bg-red-500 text-white px-4 py-2 rounded-lg text-center hover:bg-red-600 transition duration-300">Sign Up</a></li>
+  </ul>
+</nav>
+
+<script>
+  // Toggle mobile menu visibility with slide-down effect
+  document.getElementById('mobile-menu-button').addEventListener('click', function() {
+    const mobileMenu = document.getElementById('mobile-menu');
+    mobileMenu.style.display = mobileMenu.style.display === 'none' || !mobileMenu.style.display ? 'block' : 'none';
+  });
+
+  // Toggle mobile categories dropdown
+  function toggleMobileDropdown() {
+    const dropdown = document.getElementById('mobile-categories-dropdown');
+    dropdown.classList.toggle('hidden');
+  }
+</script>
+
+<style>
+  /* Slide-down animation for mobile menu */
+  @keyframes slide-down {
+    from {
+      opacity: 0;
+      transform: translateY(-10%);
+    }
+
+    to {
+      opacity: 1;
+      transform: translateY(0);
+    }
+  }
+
+  .animate-slide-down {
+    animation: slide-down 0.3s ease forwards;
+  }
+</style>

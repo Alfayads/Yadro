@@ -602,22 +602,26 @@
       } = window.jspdf;
       const doc = new jsPDF();
 
-      doc.text("Sales Report", 14, 10);
-      doc.setFontSize(10);
+      doc.text("Sales Report Yadro", 14, 10);
+      doc.setFontSize(8);
 
       // Fetch data for the table
       const data = await fetchSalesDataForPDF();
 
       // AutoTable headers and rows
       const headers = [
-        ["Date", "Orders", "Sales (₹)", "Avg Order Value (₹)", "Items Sold"]
+        ["Date", "Orders", "Sales (₹)", "Avg Order Value (₹)", "Items Sold", "Coupon Used", "Coupon Deduction", "Total Discounts", "Net Revenue"]
       ];
       const rows = data.map(item => [
         item.date,
         item.orders,
         `₹${item.sales.toFixed(2)}`,
         `₹${item.avgOrderValue}`,
-        item.totalItems
+        item.totalItems,
+        item.totalCouponsUsed,
+        item.couponDeductions,
+        item.totalDiscounts,
+        item.netRevenue
       ]);
 
       doc.autoTable({
@@ -635,16 +639,16 @@
 
       // Structure data for the Excel file
       const worksheetData = [
-        ["Date", "Orders", "Sales (₹)", "Avg Order Value (₹)", "Items Sold"]
+        ["Date", "Orders", "Sales (₹)", "Avg Order Value (₹)", "Items Sold", "Coupon Used", "Coupon Deduction", "Total Discounts", "Net Revenue"]
       ];
       data.forEach(item => {
-        worksheetData.push([item.date, item.orders, `₹${item.sales.toFixed(2)}`, `₹${item.avgOrderValue}`, item.totalItems]);
+        worksheetData.push([item.date, item.orders, `₹${item.sales.toFixed(2)}`, `₹${item.avgOrderValue}`, item.totalItems, item.totalCouponsUsed, item.couponDeductions, item.totalDiscounts, item.netRevenue]);
       });
 
       // Create workbook and worksheet
       const wb = XLSX.utils.book_new();
       const ws = XLSX.utils.aoa_to_sheet(worksheetData);
-      XLSX.utils.book_append_sheet(wb, ws, "Sales Report");
+      XLSX.utils.book_append_sheet(wb, ws, "Sales Report Yadro");
 
       // Save the Excel file
       XLSX.writeFile(wb, "Sales_Report.xlsx");

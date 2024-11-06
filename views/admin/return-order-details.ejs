@@ -1,0 +1,333 @@
+<!DOCTYPE html>
+<html lang="en" class="dark">
+
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Return Request Details</title>
+  <script src="https://cdn.tailwindcss.com"></script>
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
+  <style>
+    .modal-overlay {
+      backdrop-filter: blur(4px);
+      animation: fadeIn 0.3s ease-out;
+    }
+
+    .modal-content {
+      animation: slideUp 0.4s ease-out;
+    }
+
+    .timeline-item::before {
+      content: '';
+      position: absolute;
+      left: -35px;
+      top: 0;
+      width: 2px;
+      height: 100%;
+      background: #4B5563;
+    }
+
+    .timeline-dot {
+      position: absolute;
+      left: -41px;
+      top: 0;
+      width: 14px;
+      height: 14px;
+      border-radius: 50%;
+      background: #8B5CF6;
+      border: 3px solid #1F2937;
+    }
+
+    .image-gallery {
+      scroll-behavior: smooth;
+    }
+
+    .status-badge {
+      animation: pulse 2s infinite;
+    }
+
+    @keyframes fadeIn {
+      from {
+        opacity: 0;
+      }
+
+      to {
+        opacity: 1;
+      }
+    }
+
+    @keyframes slideUp {
+      from {
+        opacity: 0;
+        transform: translateY(20px);
+      }
+
+      to {
+        opacity: 1;
+        transform: translateY(0);
+      }
+    }
+
+    @keyframes pulse {
+      0% {
+        box-shadow: 0 0 0 0 rgba(139, 92, 246, 0.4);
+      }
+
+      70% {
+        box-shadow: 0 0 0 10px rgba(139, 92, 246, 0);
+      }
+
+      100% {
+        box-shadow: 0 0 0 0 rgba(139, 92, 246, 0);
+      }
+    }
+
+    .tab-content {
+      display: none;
+      animation: fadeIn 0.3s ease-out;
+    }
+
+    .tab-content.active {
+      display: block;
+    }
+
+    .progress-bar {
+      transition: width 1s ease-in-out;
+    }
+
+    .detail-section {
+      animation: slideUp 0.4s ease-out;
+      animation-fill-mode: both;
+    }
+
+    .detail-section:nth-child(1) {
+      animation-delay: 0.1s;
+    }
+
+    .detail-section:nth-child(2) {
+      animation-delay: 0.2s;
+    }
+
+    .detail-section:nth-child(3) {
+      animation-delay: 0.3s;
+    }
+
+    .detail-section:nth-child(4) {
+      animation-delay: 0.4s;
+    }
+  </style>
+</head>
+
+<body class="bg-gray-900 min-h-screen">
+  <!-- Modal Overlay -->
+  <!-- Modal Overlay -->
+  <div class="modal-overlay fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center p-4">
+    <!-- Modal Content -->
+    <div class="modal-content bg-gray-800 rounded-xl w-full max-w-6xl max-h-[90vh] overflow-hidden flex flex-col">
+      <!-- Modal Header -->
+      <div class="p-6 border-b border-gray-700 flex justify-between items-center">
+        <div>
+          <h2 class="text-2xl font-bold text-gray-100">Return Request #<%= returnOrder._id.toString().substring(0, 8) %></h2>
+          <p class="text-gray-400 mt-1">Submitted on <%= formatDate(returnOrder.requestDate) %></p>
+        </div>
+        <div class="flex items-center gap-4">
+          <span class="status-badge px-4 py-2 rounded-full text-sm font-medium <%= getStatusColor(returnOrder.returnStatus) %>">
+            <%= returnOrder.returnStatus %>
+          </span>
+          <a href="/admin/return/requests" class="text-gray-400 hover:text-gray-200 transition-colors">
+            <i class="fas fa-times text-xl"></i>
+          </a>
+        </div>
+      </div>
+
+      <!-- Modal Body -->
+      <div class="flex-1 overflow-auto">
+        <div class="p-6">
+          <div class="grid grid-cols-1 lg:grid-cols-3 gap-6">
+            <!-- Left Column -->
+            <div class="lg:col-span-2 space-y-6">
+              <!-- Customer Information -->
+              <div class="detail-section bg-gray-750 rounded-xl p-6">
+                <h3 class="text-lg font-semibold text-gray-100 mb-4">Customer Information</h3>
+                <div class="grid grid-cols-2 gap-4">
+                  <div>
+                    <p class="text-gray-400 text-sm">Name</p>
+                    <p class="text-gray-100"><%= // returnOrder.userId.fname %> <%=// returnOrder.userId.lname %></p>
+                  </div>
+                  <div>
+                    <p class="text-gray-400 text-sm">Email</p>
+                    <p class="text-gray-100"><%=// returnOrder.userId.email %></p>
+                  </div>
+                  <div>
+                    <p class="text-gray-400 text-sm">Phone</p>
+                    <p class="text-gray-100"><%=// returnOrder.userId.phone %></p>
+                  </div>
+                  <div>
+                    <p class="text-gray-400 text-sm">Order ID</p>
+                    <p class="text-gray-100">#<%= returnOrder.orderId._id.toString().substring(0, 8) %></p>
+                  </div>
+                </div>
+              </div>
+
+              <!-- Product Information -->
+              <div class="detail-section bg-gray-750 rounded-xl p-6">
+                <h3 class="text-lg font-semibold text-gray-100 mb-4">Product Details</h3>
+                <div class="space-y-4">
+                  <% returnOrder.items.forEach(item => { %>
+                  <!-- Product Card -->
+                  <div class="flex gap-4 bg-gray-700 p-4 rounded-lg">
+                    <img src="<%= item.productId.images[0] || '/images/placeholder.jpg' %>" alt="<%= item.productId.name %>" class="w-24 h-24 object-cover rounded-lg">
+                    <div class="flex-1">
+                      <div class="flex justify-between">
+                        <h4 class="text-gray-100 font-medium"><%= item.productId.name %></h4>
+                        <span class="text-purple-400 font-semibold">₹<%= item.productId.salePrice %></span>
+                      </div>
+                      <p class="text-gray-400 text-sm mt-1">Quantity: <%= item.quantity %></p>
+                    </div>
+                  </div>
+                  <% }); %>
+                </div>
+              </div>
+
+              <!-- Return Details -->
+              <div class="detail-section bg-gray-750 rounded-xl p-6">
+                <h3 class="text-lg font-semibold text-gray-100 mb-4">Return Details</h3>
+                <div class="space-y-4">
+                  <div>
+                    <p class="text-gray-400 text-sm">Reason for Return</p>
+                    <p class="text-gray-100 mt-1"><%= returnOrder.reason %></p>
+                  </div>
+                  <% if (returnOrder.comments) { %>
+                  <div>
+                    <p class="text-gray-400 text-sm">Additional Comments</p>
+                    <p class="text-gray-100 mt-1"><%= returnOrder.comments %></p>
+                  </div>
+                  <% } %>
+                </div>
+              </div>
+            </div>
+
+            <!-- Right Column -->
+            <div class="space-y-6">
+              <!-- Status Card -->
+              <div class="detail-section bg-gray-750 rounded-xl p-6">
+                <h3 class="text-lg font-semibold text-gray-100 mb-4">Return Status</h3>
+                <div class="relative pl-8">
+                  <div class="space-y-6">
+                    <% const statuses = ['Requested', 'Approved', 'Rejected', 'Completed'];
+                       const currentIndex = statuses.indexOf(returnOrder.returnStatus);
+                    %>
+                    <% statuses.forEach((status, index) => { %>
+                    <div class="timeline-item relative pl-6">
+                      <div class="timeline-dot <%= index <= currentIndex ? 'bg-purple-600' : 'bg-gray-600' %>"></div>
+                      <h4 class="<%= index <= currentIndex ? 'text-purple-400' : 'text-gray-400' %> font-medium">
+                        <%= status %>
+                      </h4>
+                      <% if (index <= currentIndex) { %>
+                      <p class="text-gray-400 text-sm"><%= formatDate(returnOrder.requestDate) %></p>
+                      <% } else { %>
+                      <p class="text-gray-500 text-sm">Pending</p>
+                      <% } %>
+                    </div>
+                    <% }); %>
+                  </div>
+                </div>
+              </div>
+
+              <!-- Action Card -->
+              <div class="detail-section bg-gray-750 rounded-xl p-6">
+                <h3 class="text-lg font-semibold text-gray-100 mb-4">Actions</h3>
+                <div class="space-y-3">
+                  <% if (returnOrder.returnStatus === 'Requested') { %>
+                  <form action="/admin/return/approve/<%= returnOrder._id %>" method="POST" class="inline">
+                    <button type="submit" class="w-full bg-purple-600 hover:bg-purple-700 text-white py-2 px-4 rounded-lg transition-colors m-2">
+                      <i class="fas fa-check mr-2"></i>Approve Return
+                    </button>
+                  </form>
+                  <form action="/admin/return/reject/<%= returnOrder._id %>" method="POST" class="inline">
+                    <button type="submit" class="w-full bg-red-600 hover:bg-red-700 text-white py-2 px-4 rounded-lg transition-colors m-2">
+                      <i class="fas fa-times mr-2"></i>Reject Return
+                    </button>
+                  </form>
+                  <% } %>
+                  <a href="mailto:<%= //returnOrder.userId.email %>" class="block w-full bg-gray-700 hover:bg-gray-600 text-white py-2 px-4 rounded-lg transition-colors text-center m-2">
+                    <i class="fas fa-comment mr-2"></i>Contact Customer
+                  </a>
+                </div>
+              </div>
+
+              <!-- Additional Info -->
+              <div class="detail-section bg-gray-750 rounded-xl p-6">
+                <h3 class="text-lg font-semibold text-gray-100 mb-4">Return Summary</h3>
+                <div class="space-y-3">
+                  <div class="flex justify-between">
+                    <span class="text-gray-400">Return Amount</span>
+                    <span class="text-gray-100 font-medium">₹<%= returnOrder.items.reduce((total, item) => total + (item.productId.salePrice * item.quantity), 0) %></span>
+                  </div>
+                  <div class="flex justify-between">
+                    <span class="text-gray-400">Status</span>
+                    <span class="text-gray-100"><%= returnOrder.returnStatus %></span>
+                  </div>
+                  <div class="flex justify-between">
+                    <span class="text-gray-400">Request Date</span>
+                    <span class="text-gray-100"><%= formatDate(returnOrder.requestDate) %></span>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <script>
+    document.addEventListener('DOMContentLoaded', function() {
+      // Close modal functionality
+      const closeBtn = document.querySelector('.modal-overlay button');
+      closeBtn.addEventListener('click', () => {
+        document.querySelector('.modal-overlay').classList.add('opacity-0');
+        setTimeout(() => {
+          window.location.href = '/admin/return/requests';
+        }, 300);
+      });
+
+      // Image gallery navigation
+      const images = document.querySelectorAll('.image-gallery img');
+      images.forEach(img => {
+        img.addEventListener('click', () => {
+          // Create lightbox effect for clicked image
+          const lightbox = document.createElement('div');
+          lightbox.className = 'fixed inset-0 bg-black bg-opacity-90 flex items-center justify-center z-50';
+          lightbox.innerHTML = `
+            <div class="relative">
+              <img src="${img.src}" class="max-h-[80vh] max-w-[90vw] object-contain">
+              <button class="absolute top-4 right-4 text-white text-xl">
+                <i class="fas fa-times"></i>
+              </button>
+            </div>
+          `;
+          document.body.appendChild(lightbox);
+
+          lightbox.addEventListener('click', () => {
+            lightbox.remove();
+          });
+        });
+      });
+
+      // Action button effects
+      const actionButtons = document.querySelectorAll('.detail-section button');
+      actionButtons.forEach(button => {
+        button.addEventListener('click', function() {
+          const originalContent = this.innerHTML;
+          this.innerHTML = '<i class="fas fa-spinner fa-spin"></i>';
+          setTimeout(() => {
+            this.innerHTML = originalContent;
+          }, 1000);
+        });
+      });
+    });
+  </script>
+</body>
+
+</html>

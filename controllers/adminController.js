@@ -12,24 +12,30 @@ const Brand = require('../models/Brand');
 const Order = require('../models/Order');
 const exp = require('constants');
 const Announcement = require('../models/announcement');
+const ReturnOrder = require('../models/Return')
+const User = require('../models/User');
+const Wallet = require('../models/wallet');
 
-const getHome = (req, res) => {
+
+const getHome = (req, res, next) => {
     try {
         res.render('admin/home');
     } catch (error) {
         console.log(error);
+        next(error)
     }
 }
 
-const getLogin = (req, res) => {
+const getLogin = (req, res, next) => {
     try {
         res.render('admin/login');
     } catch (error) {
         console.log(error)
+        next(error)
     }
 }
 
-const checkLogin = async (req, res) => {
+const checkLogin = async (req, res, next) => {
     const Emailregex = /^[a-zA-Z0-9._%+-]+@gmail\.com$/;
     try {
 
@@ -72,11 +78,12 @@ const checkLogin = async (req, res) => {
 
     } catch (error) {
         console.log(error.message);
+        next(error)
     }
 }
 
 
-const logout = (req, res) => {
+const logout = (req, res, next) => {
     try {
         req.session.destroy((err) => {
             if (err) {
@@ -86,12 +93,13 @@ const logout = (req, res) => {
         })
     } catch (error) {
         console.log(error.message)
+        next(error)
     }
 }
 
 // All Products
 
-const getProduct = async (req, res) => {
+const getProduct = async (req, res, next) => {
     try {
         let search = req.query.search || '';
         let page = parseInt(req.query.page) || 1;
@@ -124,12 +132,13 @@ const getProduct = async (req, res) => {
         });
     } catch (error) {
         console.log(error.message)
+        next(error)
     }
 }
 
 // Add product page
 
-const getAddProduct = async (req, res) => {
+const getAddProduct = async (req, res, next) => {
     try {
         const oldValue = req.session.oldValue || {};
         const categories = await Category.find({});
@@ -137,12 +146,13 @@ const getAddProduct = async (req, res) => {
         return res.render('admin/add-product', { categories, oldValue });
     } catch (error) {
         console.log(error.message);
+        next(error)
     }
 }
 
 
 
-const addProduct = async (req, res) => {
+const addProduct = async (req, res, next) => {
     try {
         const { name, description, brand, price, category, quantity, color, discount } = req.body;
 
@@ -218,11 +228,12 @@ const addProduct = async (req, res) => {
         console.error('Error adding product:', error);
         req.flash('error_msg', 'An error occurred while adding the product');
         res.redirect('/admin/add-product');
+        next(error)
     }
 };
 // Edit Product
 
-const editProduct = async (req, res) => {
+const editProduct = async (req, res, next) => {
     try {
         const id = req.params.id;
         const product = await Product.findById({ _id: id });
@@ -236,12 +247,13 @@ const editProduct = async (req, res) => {
         return res.render('admin/editProduct', { product, category, categories });
     } catch (error) {
         console.log(error.message)
+        next(error)
     }
 }
 
 // Editted Product
 
-const edittedProduct = async (req, res) => {
+const edittedProduct = async (req, res, next) => {
     try {
         const id = req.params.id;
         const {
@@ -375,24 +387,24 @@ const edittedProduct = async (req, res) => {
     } catch (error) {
         console.error('Error in edittedProduct:', error);
         req.flash('error_msg', 'An error occurred while updating the product');
-        return res.redirect('/admin/product');
+        next(error)
     }
 }
 
 
-const viewProduct = async (req, res) => {
+const viewProduct = async (req, res, next) => {
     try {
         let id = req.params.id;
-
         const product = await Product.findById({ _id: id });
         const categories = await Category.findById({ _id: product.category });
         return res.render('admin/viewProduct', { product, categories });
     } catch (error) {
         console.log(error.message);
+        next(error)
     }
 }
 
-const deleteProduct = async (req, res) => {
+const deleteProduct = async (req, res, next) => {
     try {
         let id = req.params.id;
         const findProduct = await Product.findById({ _id: id });
@@ -405,10 +417,11 @@ const deleteProduct = async (req, res) => {
         return res.redirect('/admin/product')
     } catch (error) {
         console.log(error.message);
+        next(error)
     }
 }
 
-const blockProduct = async (req, res) => {
+const blockProduct = async (req, res, next) => {
     try {
         const id = req.params.id;
         const findProduct = await Product.findById({ _id: id });
@@ -417,10 +430,11 @@ const blockProduct = async (req, res) => {
         return res.redirect('/admin/product')
     } catch (error) {
         console.log(error.message);
+        next(error)
     }
 }
 
-const unblockProduct = async (req, res) => {
+const unblockProduct = async (req, res, next) => {
     try {
         const id = req.params.id;
         const findProduct = await Product.findById({ _id: id });
@@ -429,11 +443,12 @@ const unblockProduct = async (req, res) => {
         return res.redirect('/admin/product')
     } catch (error) {
         console.log(error.message);
+        next(error)
     }
 }
 
 
-const getCategory = async (req, res) => {
+const getCategory = async (req, res, next) => {
     try {
 
         let search = req.query.search || '';
@@ -470,17 +485,19 @@ const getCategory = async (req, res) => {
         });
     } catch (error) {
         console.log(error.message)
+        next(error)
     }
 }
 
-const getAddCategory = (req, res) => {
+const getAddCategory = (req, res, next) => {
     try {
         return res.render('admin/add-category');
     } catch (error) {
         console.log(error.message);
+        next(error)
     }
 }
-const addCategory = async (req, res) => {
+const addCategory = async (req, res, next) => {
     try {
         console.log(req.body)
         const { CategoryName, CatogoryDescription, offer, isActive } = req.body;
@@ -517,11 +534,12 @@ const addCategory = async (req, res) => {
         console.error('Error adding category:', error);
         req.flash('error_msg', 'Error adding category: ' + error.message);
         res.redirect('/admin/category');
+        next(error)
     }
 };
 
 
-const getEditCategory = async (req, res) => {
+const getEditCategory = async (req, res, next) => {
     try {
         const id = req.params.id;
         const category = await Category.findById({ _id: id });
@@ -533,11 +551,12 @@ const getEditCategory = async (req, res) => {
         return res.render('admin/edit-category', { category });
     } catch (error) {
         console.log(error.message);
+        next(error)
     }
 }
 
 
-const editCategory = async (req, res) => {
+const editCategory = async (req, res, next) => {
     try {
         const id = req.params.id;
         const { name, description, offer, isActive } = req.body;
@@ -569,6 +588,7 @@ const editCategory = async (req, res) => {
         console.log(error.message);
         req.flash('error_msg', 'Error updating category: ' + error.message);
         res.redirect('/admin/category');
+        next(error)
     }
 };
 
@@ -576,7 +596,7 @@ const editCategory = async (req, res) => {
 
 
 
-const deleteCategory = async (req, res) => {
+const deleteCategory = async (req, res, next) => {
     try {
         const id = req.params.id;
         const category = await Category.findById(id);
@@ -594,24 +614,26 @@ const deleteCategory = async (req, res) => {
         console.log(error.message);
         req.flash('error_msg', 'Error deleting category: ' + error.message);
         res.redirect('/admin/category');
+        next(error)
     }
 };
 
 
-const viewCategory = async (req, res) => {
+const viewCategory = async (req, res, next) => {
     try {
         const id = req.params.id;
         const category = await Category.findById({ _id: id });
         return res.render('admin/viewCategory', { category });
     } catch (error) {
         console.log(error.message)
+        next(error)
     }
 }
 
 
 // Customer Controllerr
 
-const getCustomers = async (req, res) => {
+const getCustomers = async (req, res, next) => {
     try {
         let search = req.query.search || '';
         let page = parseInt(req.query.page) || 1;
@@ -661,13 +683,33 @@ const getCustomers = async (req, res) => {
         });
     } catch (error) {
         console.log(error.message);
+        next(error)
     }
 }
 
 
+// const controlCustomer = async (req, res) => {
+//     try {
+//         let id = req.query.id;
+//         const findUser = await Users.findById({ _id: id });
+//         if (findUser.isBlocked) {
+//             Users.updateOne({ _id: id }, { $set: { isBlocked: false } })
+//         } else {
+//             Users.updateOne({ _id: id }, { $set: { isBlocked: true } })
+//         }
+//         findUser.save();
+//         return res.redirect('/admin/customers');
+//     } catch (error) {
+//         console.error('Error blocking customer:', error);
+//         req.flash('error_msg', 'An error occurred while blocking the user.');
+//         res.redirect('/admin/customers');
+//     }
+// }
+
+
 // Block Customer
 
-const blockCustomer = async (req, res) => {
+const blockCustomer = async (req, res, next) => {
     try {
         let id = req.query.id;
         const findUser = await Users.findById({ _id: id });
@@ -678,12 +720,13 @@ const blockCustomer = async (req, res) => {
         console.error('Error blocking customer:', error);
         req.flash('error_msg', 'An error occurred while blocking the user.');
         res.redirect('/admin/customers');
+        next(error)
     }
 }
 
 // UnBlock Customer
 
-const unblockCustomer = async (req, res) => {
+const unblockCustomer = async (req, res, next) => {
     try {
         let id = req.query.id;
         const findUser = await Users.findById({ _id: id });
@@ -694,12 +737,14 @@ const unblockCustomer = async (req, res) => {
         console.error('Error blocking customer:', error);
         req.flash('error_msg', 'An error occurred while blocking the user.');
         res.redirect('/admin/customers');
+        next(error)
     }
 }
 
 // Delete Customer 
 
-const deleteCustomer = async (req, res) => {
+
+const deleteCustomer = async (req, res, next) => {
     try {
         let id = req.query.id;
         const findUser = await Users.findById({ _id: id });
@@ -710,20 +755,22 @@ const deleteCustomer = async (req, res) => {
         console.error('Error blocking customer:', error); // Log the error
         req.flash('error_msg', 'An error occurred while blocking the user.');
         res.redirect('/admin/customers');
+        next(error)
     }
 }
 
 
-const getCoupons = async (req, res) => {
+const getCoupons = async (req, res, next) => {
     try {
         const coupons = await Coupon.find({});
         return res.render('admin/coupons', { coupons });
     } catch (error) {
         console.log(error.message);
+        next(error)
     }
 }
 
-const getAddCoupon = (req, res) => {
+const getAddCoupon = (req, res, next) => {
     try {
         const oldValue = req.session.adminOldValue || {};
         req.session.adminOldValue = null;
@@ -732,10 +779,11 @@ const getAddCoupon = (req, res) => {
         return res.render('admin/add-coupon', { oldValue });
     } catch (error) {
         console.log(error.message);
+        next(error)
     }
 }
 
-const addCoupon = async (req, res) => {
+const addCoupon = async (req, res, next) => {
     try {
         const {
             name,
@@ -781,10 +829,11 @@ const addCoupon = async (req, res) => {
         console.log(error.message);
         req.flash('error_msg', 'An error occurred while adding the coupon.');
         res.redirect('/admin/coupons');
+        next(error)
     }
 };
 
-const getEditCoupon = async (req, res) => {
+const getEditCoupon = async (req, res, next) => {
     try {
         const id = req.params.id;
         const oldValue = req.session.oldValue || {};
@@ -795,11 +844,12 @@ const getEditCoupon = async (req, res) => {
         console.log(error.message);
         req.flash('error_msg', 'An error occurred while editing the coupon.');
         res.redirect('/admin/coupons');
+        next(error)
     }
 }
 
 
-const editCoupon = async (req, res) => {
+const editCoupon = async (req, res, next) => {
     try {
         const userId = req.params.id; // Coupon ID passed as a route parameter
         const {
@@ -834,10 +884,11 @@ const editCoupon = async (req, res) => {
         console.log(error.message);
         req.flash('error_msg', 'An error occurred while editing the coupon.');
         res.redirect('/admin/coupons');
+        next(error)
     }
 };
 
-const viewCoupon = async (req, res) => {
+const viewCoupon = async (req, res, next) => {
     try {
         const id = req.params.id;
         const coupon = await Coupon.findById(id);
@@ -846,12 +897,13 @@ const viewCoupon = async (req, res) => {
         console.log(error.message);
         req.flash('error_msg', 'An error occurred while editing the coupon.');
         res.redirect('/admin/coupons');
+        next(error)
     }
 }
 
 
 
-const deleteCoupon = async (req, res) => {
+const deleteCoupon = async (req, res, next) => {
     try {
         const { id } = req.params;
         const deletedCoupon = await Coupon.findByIdAndDelete(id);
@@ -866,12 +918,14 @@ const deleteCoupon = async (req, res) => {
         console.log(error.message);
         req.flash('error_msg', 'An error occurred while deleting the coupon.');
         res.redirect('/admin/coupons');
+        next(error)
     }
 };
 
-const getOrders = async (req, res) => {
+const getOrders = async (req, res, next) => {
     try {
         const orders = await Order.find()
+            .sort({ orderDate: -1 })
             .populate({
                 path: 'userId',
                 select: 'fname lname',
@@ -890,10 +944,11 @@ const getOrders = async (req, res) => {
     } catch (error) {
         console.error('Error fetching orders:', error);
         res.status(500).json({ message: 'Server error. Could not fetch orders.' });
+        next(error)
     }
 }
 
-const updateOrderStatus = async (req, res) => {
+const updateOrderStatus = async (req, res, next) => {
     try {
         const { orderId, status } = req.body;
 
@@ -933,17 +988,21 @@ const updateOrderStatus = async (req, res) => {
             message: 'Error updating order status',
             error: error.message
         });
+        next(error)
     }
 };
 
 
-const viewOrderDetails = async (req, res) => {
+const viewOrderDetails = async (req, res, next) => {
     try {
         const orderId = req.params.orderId;
 
         // Fetch order with populated references
         const order = await Order.findById(orderId)
-            .populate('userId', 'fname lname email phone') // Populate user details
+            .populate({
+                path: 'userId',
+                select: 'fname lname phone'
+            }) // Populate user details
             .populate({
                 path: 'items.productId',
                 select: 'name price images' // Select the fields you want from product
@@ -979,6 +1038,8 @@ const viewOrderDetails = async (req, res) => {
             ...orderSummary
         };
 
+        console.log(enrichedOrder)
+
         // Render the order details page
         res.render('admin/viewOrder', {
             order: enrichedOrder,
@@ -991,6 +1052,7 @@ const viewOrderDetails = async (req, res) => {
             message: 'Error fetching order details',
             error: { status: 500 }
         });
+        next(error)
     }
 };
 
@@ -1029,24 +1091,26 @@ const viewOrderDetails = async (req, res) => {
 //     }
 // }
 
-const getBrands = async (req, res) => {
+const getBrands = async (req, res, next) => {
     try {
         const brands = await Brand.find({});
         return res.render('admin/brand', { brands });
     } catch (error) {
         console.log(error.message);
+        next(error)
     }
 }
 
-const getAddBrand = (req, res) => {
+const getAddBrand = (req, res, next) => {
     try {
         return res.render('admin/add-brand');
     } catch (error) {
         console.log(error.message);
+        next(error)
     }
 }
 
-const addBrand = async (req, res) => {
+const addBrand = async (req, res, next) => {
     try {
         const { name, description, status } = req.body;
         console.log(name, description, status);
@@ -1069,36 +1133,229 @@ const addBrand = async (req, res) => {
 
     } catch (error) {
         console.log(error.message);
+        next(error)
     }
 }
 
-const getBanners = (req, res) => {
+const getBanners = (req, res, next) => {
     try {
         return res.render('admin/banner');
     } catch (error) {
         console.log(error.message);
+        next(error)
     }
 }
 
-const getAddBanner = (req, res) => {
+const getAddBanner = (req, res, next) => {
     try {
         return res.render('admin/add-banner');
     } catch (error) {
         console.log(error.message);
+        next(error)
+    }
+}
+// Modify the controller to properly fetch and populate data
+const getReturnRequests = async (req, res, next) => {
+    try {
+        // Get return requests with populated data
+        const returnRequests = await ReturnOrder.find()
+            .sort({ requestDate: -1 })
+            .populate('userId', 'fname lname email')
+            .populate('orderId')
+            .populate({
+                path: 'items.productId',
+                model: 'Product',
+                select: 'name salePrice images'
+            })
+            .lean();
+
+        // Process and validate the data
+        const processedRequests = returnRequests.map(request => ({
+            ...request,
+            items: request.items.map(item => ({
+                ...item,
+                productDetails: {
+                    name: item.productId?.name || 'Product Not Found',
+                    price: item.productId?.salePrice || 0,
+                    image: item.productId?.images?.[0] || '/images/placeholder-product.jpg'
+                },
+                quantity: item.quantity,
+                // Keep original IDs for reference
+                productId: item.productId?._id || item.productId,
+                valid: !!item.productId?.name
+            }))
+        }));
+
+        return res.render('admin/return-orders', {
+            returnRequests: processedRequests,
+            formatPrice: (price) => `₹${parseFloat(price).toFixed(2)}`,
+            helpers: {
+                getProductStatus: (item) => {
+                    return item.valid ? 'active' : 'deleted';
+                }
+            }
+        });
+    } catch (error) {
+        console.error('Error fetching return requests:', error);
+        return res.status(500).render('error', {
+            message: 'Error fetching return requests',
+            error: process.env.NODE_ENV === 'development' ? error : {}
+        });
+        next(error)
+    }
+};
+
+
+const getReturnDetails = async (req, res, next) => {
+    try {
+        const returnOrder = await ReturnOrder.findById(req.params.id)
+            .populate('orderId')
+            .populate('userId', 'fname lname email phone')
+            .populate({
+                path: 'items.productId',
+                select: 'name salePrice images'
+            });
+
+        if (!returnOrder) {
+            return res.render('admin/error', {
+                message: 'Return order not found'
+            });
+        }
+
+        res.render('admin/return-order-details', {
+            returnOrder,
+            formatDate: (date) => {
+                return new Date(date).toLocaleString();
+            },
+            getStatusColor: (status) => {
+                const colors = {
+                    'Requested': 'bg-yellow-900 text-yellow-300',
+                    'Approved': 'bg-green-900 text-green-300',
+                    'Rejected': 'bg-red-900 text-red-300',
+                    'Completed': 'bg-blue-900 text-blue-300'
+                };
+                return colors[status] || 'bg-gray-900 text-gray-300';
+            }
+        });
+    } catch (error) {
+        console.error('Error fetching return order details:', error);
+        res.render('admin/error', {
+            message: 'Error fetching return order details'
+        });
+        next(error)
     }
 }
 
 
-const announcement = async (req, res) => {
+const approveReturn = async (req, res, next) => {
+    try {
+        const returnOrder = await ReturnOrder.findByIdAndUpdate(
+            req.params.id,
+            { returnStatus: 'Approved' },
+            { new: true }
+        );
+
+        if (!returnOrder) {
+            return res.status(404).send('Return order not found');
+        }
+
+        // Update the order status in the Order model
+        const order = await Order.findByIdAndUpdate(
+            returnOrder.orderId, // Assuming orderId is the field linking ReturnOrder to Order
+            { orderStatus: 'Return Approved' },
+            { new: true }
+        );
+
+        if (!order) {
+            return res.status(404).send('Order not found');
+        }
+
+
+        // Calculate the total refund amount
+        const items = returnOrder.items; // Assuming items contains productId and quantity
+        let totalRefund = 0;
+
+        // Fetch product details to calculate total refund
+        for (const item of items) {
+            const product = await Product.findById(item.productId);
+            if (product) {
+                totalRefund += product.salePrice * item.quantity; // Calculate total refund based on salePrice
+            }
+        }
+
+        // Update the user's wallet balance
+        const wallet = await Wallet.findOne({ userId: order.userId }); // Find the user's wallet
+
+        console.log(wallet)
+
+        if (wallet) {
+            // Update wallet balance
+            wallet.balance += totalRefund; // Add the refund to the balance
+
+            // Create a new transaction for the refund
+            const transaction = {
+                amount: totalRefund,
+                type: 'credit', // Credit because we are adding funds
+                date: new Date(),
+                description: `Refund for return order ${returnOrder._id}`
+            };
+
+            wallet.transactions.push(transaction); // Add transaction to the wallet
+            await wallet.save(); // Save updated wallet
+        }
+        res.redirect(`/admin/return/order-details/${req.params.id}`);
+    } catch (error) {
+        console.error('Error approving return:', error);
+        res.status(500).send('Error approving return');
+        next(error)
+    }
+};
+
+const rejectReturn = async (req, res, next) => {
+    try {
+        const returnOrder = await ReturnOrder.findByIdAndUpdate(
+            req.params.id,
+            { returnStatus: 'Rejected' },
+            { new: true }
+        );
+
+        if (!returnOrder) {
+            return res.status(404).send('Return order not found');
+        }
+
+
+
+        // Update the order status in the Order model
+        const order = await Order.findByIdAndUpdate(
+            returnOrder.orderId, // Assuming orderId is the field linking ReturnOrder to Order
+            { orderStatus: 'Return Rejected' },
+            { new: true }
+        );
+
+        if (!order) {
+            return res.status(404).send('Order not found');
+        }
+
+        res.redirect(`/admin/return/order-details/${req.params.id}`);
+    } catch (error) {
+        console.error('Error rejecting return:', error);
+        res.status(500).send('Error rejecting return');
+        next(error)
+    }
+};
+
+
+const announcement = async (req, res, next) => {
     try {
         const announcements = await Announcement.find({});
         return res.render('admin/announcement', { announcements });
     } catch (error) {
         console.log(error.message);
+        next(error)
     }
 }
 
-const addAnnouncement = async (req, res) => {
+const addAnnouncement = async (req, res, next) => {
     try {
         console.log('Received data:', req.body); // Log the incoming request data
         const { content } = req.body;
@@ -1112,22 +1369,24 @@ const addAnnouncement = async (req, res) => {
     } catch (error) {
         console.log("Error while adding announcement:", error.message);
         res.status(500).json({ error: "Server Error" });
+        next(error)
     }
 };
 
 
 
-const deleteAnnouncement = async (req, res) => {
+const deleteAnnouncement = async (req, res, next) => {
     try {
         const id = req.params.id;
         await Announcement.findByIdAndDelete(id);
         res.redirect('/admin/announcement');
     } catch (error) {
         console.log(error.message)
+        next(error)
     }
 }
 
-const getSalesReport = async (req, res) => {
+const getSalesReport = async (req, res, next) => {
     try {
         const { startDate, endDate, timeFrame = 'daily' } = req.query;
 
@@ -1234,6 +1493,7 @@ const getSalesReport = async (req, res) => {
             message: 'Error generating sales report',
             error: error.message
         });
+        next(error)
     }
 };
 
@@ -1266,7 +1526,7 @@ const generateSummary = (salesData) => {
 
 
 
-const topSellers = async (req, res) => {
+const topSellers = async (req, res, next) => {
     try {
         // Top Products
         const topProducts = await Order.aggregate([
@@ -1349,6 +1609,7 @@ const topSellers = async (req, res) => {
     } catch (error) {
         console.error('Error fetching top sellers:', error);
         res.status(500).json({ success: false, error: 'Error fetching top sellers' });
+        next(error)
     }
 }
 
@@ -1408,7 +1669,11 @@ module.exports = {
     getAddBanner,
     announcement,
     addAnnouncement,
-    deleteAnnouncement
+    deleteAnnouncement,
+    getReturnRequests,
+    getReturnDetails,
+    approveReturn,
+    rejectReturn
 }
 
 

@@ -6,7 +6,7 @@ const Product = require('../models/Product');
 const Announcement = require('../models/announcement')
 
 
-const getWishList = async (req, res) => {
+const getWishList = async (req, res, next) => {
     try {
         const userId = req.session.user_id;
         const user = await Users.findById({ _id: userId });
@@ -29,11 +29,12 @@ const getWishList = async (req, res) => {
     } catch (error) {
         console.error(error.message);
         let errorMessage = { message: "An error occurred. Please try again later." };
+        next(error)
         return res.render('user/error', { error: errorMessage });
     }
 }
 
-const getWishlistCount = async (req, res) => {
+const getWishlistCount = async (req, res, next) => {
     try {
         const userId = req.session.user_id;
 
@@ -47,11 +48,12 @@ const getWishlistCount = async (req, res) => {
         return res.status(200).json({ success: true, wishlistCount });
     } catch (error) {
         console.error(error.message);
+        next(error)
         return res.status(500).json({ success: false, message: 'Error fetching wishlist count' });
     }
 };
 
-const addWishlist = async (req, res) => {
+const addWishlist = async (req, res, next) => {
     try {
         const { productId } = req.body;
         console.log(productId);
@@ -84,6 +86,7 @@ const addWishlist = async (req, res) => {
     } catch (error) {
         console.error(error.message);
         let errorMessage = { message: "An error occurred. Please try again later." };
+        next(error)
         return res.status(500).json({ success: false, error: errorMessage });
     }
 };

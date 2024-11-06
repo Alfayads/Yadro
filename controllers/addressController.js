@@ -3,7 +3,7 @@ const Category = require("../models/Category");
 const Address = require('../models/address');
 const Announcement = require('../models/announcement')
 
-const getAddress = async (req, res) => {
+const getAddress = async (req, res, next) => {
     try {
         const userId = req.session.user_id;
         const user = await Users.findById({ _id: userId });
@@ -18,10 +18,11 @@ const getAddress = async (req, res) => {
         console.error(error.message);
         let errorMessage = { message: "An error occurred. Please try again later." };
         return res.render('user/error', { error: errorMessage });
+        next();
     }
 }
 
-const getAddAddress = async (req, res) => {
+const getAddAddress = async (req, res, next) => {
     try {
         const oldValue = req.session.oldValue || {};
         const userId = req.session.user_id;
@@ -34,10 +35,11 @@ const getAddAddress = async (req, res) => {
         console.error(error.message);
         let errorMessage = { message: "An error occurred. Please try again later." };
         return res.render('user/error', { error: errorMessage });
+        next()
     }
 }
 
-const addAddress = async (req, res) => {
+const addAddress = async (req, res, next) => {
     try {
         const { addressType, city, street, apartment, postalCode, phone, landMark, name } = req.body;
         const userId = req.session.user_id;
@@ -89,12 +91,14 @@ const addAddress = async (req, res) => {
         await addressRecord.save();
         return res.redirect('/address');
     } catch (error) {
-        console.log(error);
+        const err = new Error('Sever Error Please try Again ' + error);
+        err.statusCode = 500
+        next(err)
     }
 }
 
 
-const addAddressFromCheckout = async (req, res) => {
+const addAddressFromCheckout = async (req, res, next) => {
     try {
         const { addressType, city, street, apartment, postalCode, phone, landMark, name } = req.body;
         const userId = req.session.user_id;
@@ -147,11 +151,13 @@ const addAddressFromCheckout = async (req, res) => {
         await addressRecord.save();
         return res.redirect('/cart/check-out');
     } catch (error) {
-        console.log(error);
+        const err = new Error('Sever Error Please try Again');
+        err.statusCode = 500
+        next(err)
     }
 }
 
-const getEditAddress = async (req, res) => {
+const getEditAddress = async (req, res, next) => {
     try {
         const oldValue = req.session.oldValue || {};
         req.session.oldValue = null;
@@ -173,12 +179,14 @@ const getEditAddress = async (req, res) => {
         })
     } catch (error) {
         console.error(error);
-        res.status(500).send('Server Error of get Edit Address');
+        const err = new Error('Server Error of get Edit Address');
+        err.statusCode = 500
+        next(err)
     }
 };
 
 
-const editAddress = async (req, res) => {
+const editAddress = async (req, res, next) => {
     try {
         const userId = req.session.user_id;
         const addressId = req.params.id;
@@ -232,13 +240,15 @@ const editAddress = async (req, res) => {
         res.redirect('/address');
     } catch (error) {
         console.error(error);
-        res.status(500).send('Server Error in edit Address');
+        const err = new Error('Server Error in edit Address');
+        err.statusCode = 404;
+        next(err)
     }
 };
 
 
 
-const deleteAddress = async (req, res) => {
+const deleteAddress = async (req, res, next) => {
     try {
         const userId = req.session.user_id;
         const addressId = req.params.id;
@@ -254,8 +264,9 @@ const deleteAddress = async (req, res) => {
 
         res.redirect('/address');
     } catch (error) {
-        console.error('Error deleting address:', error);
-        res.status(500).json({ message: 'An error occurred while deleting the address' });
+        const err = new Error('Error Occured while deleting the Address Try again');
+        err.statusCode = 404;
+        next(err)
     }
 };
 

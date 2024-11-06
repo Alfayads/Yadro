@@ -11,8 +11,6 @@ const announcementSchema = mongoose.Schema({
         default: Date.now()
     }
 })
-
-
 const Announcement = mongoose.model('Announcement', announcementSchema);
 
 module.exports = Announcement;

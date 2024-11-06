@@ -5,15 +5,18 @@ const Product = require('../models/Product');
 const Coupon = require('../models/Coupon');
 const mongoose = require('mongoose');
 const Wallet = require('../models/wallet');
-const Announcement = require('../models/announcement')
+const Announcement = require('../models/announcement');
+const ReturnOrder = require('../models/Return');
+const { ObjectId } = require('mongoose').Types;
 
-const getOrders = async (req, res) => {
+
+const getOrders = async (req, res, next) => {
     try {
         const userId = req.session.user_id;
         const user = await Users.findById({ _id: userId });
         const categories = await Category.find({});
         const announcements = await Announcement.find({});
-        const orders = await Order.find({ userId }).sort({ createdAt: -1 }).populate({
+        const orders = await Order.find({ userId }).sort({ orderDate: -1 }).populate({
             path: 'items.productId',
             select: 'name images'
         }).populate({
@@ -29,12 +32,13 @@ const getOrders = async (req, res) => {
     } catch (error) {
         console.error(error.message);
         let errorMessage = { message: "An error occurred. Please try again later." };
+        next(error)
         return res.render('user/error', { error: errorMessage });
     }
 }
 
 
-const cancelOrder = async (req, res) => {
+const cancelOrder = async (req, res, next) => {
     try {
         const userId = req.session.user_id;
         const { reason, comments, cancelDate } = req.body;
@@ -104,15 +108,22 @@ const cancelOrder = async (req, res) => {
         res.status(200).json('Order cancelled successfully');
     } catch (error) {
         console.error(error);
+        next(error)
         res.status(500).send('Internal Server Error');
     }
 }
-
-
-const getOrderReturn = async (req, res) => {
+const getOrderReturn = async (req, res, next) => {
     try {
         const userId = req.session.user_id;
-        const user = await Users.findById({ _id: userId });
+        if (!userId) {
+            return res.status(401).json({ success: false, message: 'User not logged in' });
+        }
+
+        const user = await Users.findById(userId);
+        if (!user) {
+            return res.status(404).json({ success: false, message: 'User not found' });
+        }
+
         const categories = await Category.find({});
         const id = req.params.id;
         const announcements = await Announcement.find({});
@@ -123,47 +134,100 @@ const getOrderReturn = async (req, res) => {
             path: 'couponApplied',
             select: 'code'
         });
-        res.render('user/return', { order, user, categories, announcements })
+        res.render('user/return', { order, user, categories, announcements });
     } catch (error) {
         console.error(error);
         res.status(500).send('Internal Server Error');
+        next(error)
     }
-}
-
-
-const createReturn = async (req, res) => {
+};
+const createReturn = async (req, res, next) => {
     try {
         const userId = req.session.user_id;
-        const orderId = req.params.id;
-
-        if (!mongoose.Types.ObjectId.isValid(orderId)) {
-            return res.status(400).json({ success: false, message: 'Invalid Order ID format' });
+        if (!userId) {
+            return res.status(401).json({ success: false, message: 'User not logged in' });
         }
 
-        const order = await Order.findOne({ _id: orderId, userId });
+        const { orderId } = req.params;
+        const { reason, comments, selectedItems } = req.body;
 
-        if (!order) {
-            return res.status(404).json({ success: false, message: 'Order not found' });
+        // Validate input
+        if (!reason || !comments || !selectedItems?.length) {
+            return res.status(400).json({
+                success: false,
+                message: 'Missing required fields'
+            });
         }
 
-        // Check if the order is eligible for return
-        if (order.orderStatus === 'Returned' || order.orderStatus === 'Cancelled') {
-            return res.status(400).json({ success: false, message: 'Order is not eligible for return' });
+        // Validate order
+        const order = await Order.findById(orderId);
+        if (!order || order.userId.toString() !== userId) {
+            return res.status(404).json({
+                success: false,
+                message: 'Order not found or unauthorized'
+            });
         }
 
-        // Render return request page
-        return res.render('user/return-request', {
-            order,
-            title: `Return Request - Order #${orderId}`,
-            user: await Users.findById(userId),
-            categories: await Category.find({})
+        // Validate products exist
+        const productIds = selectedItems.map(item => item.productId);
+        const products = await Product.find({ _id: { $in: productIds } });
+
+        console.log('Products:', products, 'Product IDs:', productIds);
+
+        // Uncomment this if you want to ensure all products exist
+        // if (products.length !== productIds.length) {
+        //     return res.status(400).json({
+        //         success: false,
+        //         message: 'One or more products not found'
+        //     });
+        // }
+
+        // Create formatted items with validated products
+        const formattedItems = selectedItems.map(item => ({
+            productId: item.productId,
+            quantity: parseInt(item.quantity, 10)
+        }));
+
+        // Create and save return request
+        const returnRequest = new ReturnOrder({
+            orderId,
+            userId,
+            items: formattedItems,
+            reason,
+            comments,
+            returnStatus: 'Requested'
+        });
+
+        await returnRequest.save();
+
+        await Order.findByIdAndUpdate(orderId, { orderStatus: 'Return Requested' });
+
+
+        // Return success with populated data
+        const populatedReturn = await ReturnOrder.findById(returnRequest._id)
+            .populate('items.productId', 'name salePrice')
+            .lean();
+
+        console.log('Populated Return ==> ', populatedReturn);
+        return res.status(200).json({
+            success: true,
+            message: 'Return request submitted successfully',
+            data: populatedReturn
         });
 
     } catch (error) {
-        console.error('Error in createReturn:', error);
-        return res.status(500).json({ success: false, message: 'Internal server error' });
+        console.error('Error creating return request:', error);
+        return res.status(500).json({
+            success: false,
+            message: 'Server error while processing return request',
+            error: process.env.NODE_ENV === 'development' ? error.message : undefined
+        });
+        next(error)
     }
 };
+
+
+
 
 
 module.exports = {

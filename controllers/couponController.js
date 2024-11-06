@@ -3,7 +3,7 @@ const Users = require('../models/User');
 const Cart = require('../models/Cart');
 const Announcement = require('../models/announcement')
 
-const applyCoupon = async (req, res) => {
+const applyCoupon = async (req, res, next) => {
     try {
         const { couponCode } = req.body;
         const userId = req.session.user_id;
@@ -70,6 +70,7 @@ const applyCoupon = async (req, res) => {
 
     } catch (error) {
         console.log(error.message);
+        next(error)
         return res.status(500).json({ message: 'Internal server error' });
     }
 };

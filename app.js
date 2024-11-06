@@ -10,6 +10,7 @@ const flash = require('connect-flash');
 const keys = require('./config/keys');
 const path = require('path')
 const cors = require('cors');
+const errorHandler = require('./config/errorHandler');
 
 
 
@@ -43,6 +44,9 @@ app.use(bodyParser.json())
 app.use(express.urlencoded({ extended: true }));
 app.use(bodyParser.urlencoded({ extended: true }));
 app.use(nocache());
+
+// Error Handling Middleware
+app.use(errorHandler);
 
 // static folder and ejs setup
 app.use(express.static(path.join(__dirname, 'public')));

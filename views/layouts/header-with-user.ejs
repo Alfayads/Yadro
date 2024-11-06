@@ -83,9 +83,158 @@
       transform: translateX(-100%);
     }
   }
+
+
+  /* Mobile Header Styles */
+  @media (max-width: 1024px) {
+    body {
+      padding-bottom: 4rem;
+      /* Space for bottom navigation */
+    }
+
+    .mobile-search-active {
+      position: fixed;
+      top: 0;
+      left: 0;
+      right: 0;
+      bottom: 0;
+      background: white;
+      z-index: 60;
+    }
+
+    /* Slide up animation for menu overlay */
+    .menu-slide-up {
+      transform: translateY(0) !important;
+    }
+
+    /* Badge animation */
+    @keyframes badgePop {
+      0% {
+        transform: scale(0);
+      }
+
+      80% {
+        transform: scale(1.2);
+      }
+
+      100% {
+        transform: scale(1);
+      }
+    }
+
+    .badge-pop {
+      animation: badgePop 0.3s cubic-bezier(0.34, 1.56, 0.64, 1) forwards;
+    }
+
+    /* Smooth header hide/show on scroll */
+    .header-hidden {
+      transform: translateY(-100%);
+    }
+  }
 </style>
 
-<header class="bg-white shadow-md fixed w-full top-0 z-50">
+<!-- Top Header for Mobile -->
+<header class="fixed top-0 left-0 right-0 bg-white shadow-md z-50 transition-transform duration-300">
+  <div class="container mx-auto px-4">
+    <!-- Mobile Top Bar -->
+    <div class="flex items-center justify-between py-4 lg:hidden">
+      <!-- Logo -->
+      <a href="/" class="text-2xl font-bold">Yadro</a>
+
+      <!-- Search Bar -->
+      <div class="flex-1 mx-4 relative">
+        <input type="text" id="mobile-search" class="w-full px-4 py-2 rounded-full border border-gray-300 focus:border-blue-500 focus:ring-1 focus:ring-blue-200 text-sm" placeholder="Search products...">
+        <button class="absolute right-3 top-1/2 -translate-y-1/2">
+          <svg class="w-4 h-4 text-gray-500" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"></path>
+          </svg>
+        </button>
+        <!-- Mobile Search Results -->
+        <div id="mobile-search-results" class="hidden absolute top-full left-0 right-0 bg-white mt-2 rounded-md shadow-lg max-h-96 overflow-y-auto z-50">
+        </div>
+      </div>
+    </div>
+  </div>
+</header>
+
+
+<!-- Bottom Navigation Bar for Mobile -->
+<nav class="fixed bottom-0 left-0 right-0 bg-white shadow-lg lg:hidden z-50">
+  <div class="flex justify-around items-center py-2">
+    <a href="/home" class="flex flex-col items-center p-2 text-gray-600 hover:text-blue-500">
+      <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 12l2-2m0 0l7-7 7 7M5 10v10a1 1 0 001 1h3m10-11l2 2m-2-2v10a1 1 0 01-1 1h-3m-6 0a1 1 0 001-1v-4a1 1 0 011-1h2a1 1 0 011 1v4a1 1 0 001 1m-6 0h6"></path>
+      </svg>
+      <span class="text-xs mt-1">Home</span>
+    </a>
+
+    <a href="/products" class="flex flex-col items-center p-2 text-gray-600 hover:text-blue-500">
+      <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2H6a2 2 0 01-2-2V6zm10 0a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2h-2a2 2 0 01-2-2V6zM4 16a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2H6a2 2 0 01-2-2v-2zm10 0a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2h-2a2 2 0 01-2-2v-2z"></path>
+      </svg>
+      <span class="text-xs mt-1">Products</span>
+    </a>
+
+    <a href="/cart" class="flex flex-col items-center p-2 text-gray-600 hover:text-blue-500 relative">
+      <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M16 11V7a4 4 0 00-8 0v4M5 9h14l1 12H4L5 9z"></path>
+      </svg>
+      <span class="text-xs mt-1">Cart</span>
+      <span id="mobile-cart-badge" class="absolute -top-1 -right-1 bg-red-500 text-white text-xs font-bold w-5 h-5 rounded-full flex items-center justify-center transform scale-0 transition-transform duration-200">0</span>
+    </a>
+
+    <button id="mobile-menu-btn" class="flex flex-col items-center p-2 text-gray-600 hover:text-blue-500">
+      <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6h16M4 12h16m-7 6h7"></path>
+      </svg>
+      <span class="text-xs mt-1">Menu</span>
+    </button>
+  </div>
+</nav>
+
+<!-- Mobile Menu Overlay -->
+<div id="mobile-menu-overlay" class="fixed inset-0 bg-black bg-opacity-50 z-50 hidden transition-opacity duration-300">
+  <div class="fixed bottom-0 left-0 right-0 bg-white rounded-t-3xl transform transition-transform duration-300 translate-y-full">
+    <div class="flex justify-between items-center p-4 border-b">
+      <h2 class="text-lg font-semibold">Menu</h2>
+      <button id="close-menu-btn" class="p-2 hover:bg-gray-100 rounded-full">
+        <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"></path>
+        </svg>
+      </button>
+    </div>
+    <div class="p-4 overflow-y-auto max-h-[70vh]">
+      <nav class="space-y-4">
+        <a href="/home" class="block p-4 rounded-lg bg-gray-50 hover:bg-blue-50 hover:text-blue-600 transition-colors">
+          Home
+        </a>
+        <a href="/products" class="block p-4 rounded-lg bg-gray-50 hover:bg-blue-50 hover:text-blue-600 transition-colors">
+          Products
+        </a>
+        <div class="space-y-2">
+          <button id="mobile-categories-btn" class="w-full p-4 rounded-lg bg-gray-50 hover:bg-blue-50 hover:text-blue-600 transition-colors flex justify-between items-center">
+            Categories
+            <svg class="w-4 h-4 transform transition-transform duration-200" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"></path>
+            </svg>
+          </button>
+          <div id="mobile-categories-content" class="hidden pl-4 space-y-2">
+            <% categories.forEach(category => { %>
+            <a href="/products/category/<%= category._id %>" class="block p-3 rounded-lg hover:bg-blue-50 hover:text-blue-600 transition-colors">
+              <%= category.name %>
+            </a>
+            <% }) %>
+          </div>
+        </div>
+        <a href="/contact" class="block p-4 rounded-lg bg-gray-50 hover:bg-blue-50 hover:text-blue-600 transition-colors">
+          Contact
+        </a>
+      </nav>
+    </div>
+  </div>
+</div>
+
+<header class="bg-white shadow-md fixed w-full top-0 z-50	">
   <div class="container mx-auto px-4">
     <!-- Top bar with announcement marquee -->
     <div class="hidden lg:flex justify-center py-2 bg-gray-50 text-sm text-gray-600 relative overflow-hidden h-8">
@@ -105,21 +254,14 @@
     </div>
     <!-- Main header content -->
     <div class="flex items-center justify-between py-6">
-      <!-- Mobile menu button -->
-      <button id="mobile-menu-button" class="lg:hidden p-2 rounded-md hover:bg-gray-100">
-        <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6h16M4 12h16M4 18h16"></path>
-        </svg>
-      </button>
-
       <a href="/" class="text-4xl mr-8 font-bold">Yadro</a>
       <nav>
         <ul class="flex space-x-6">
-          <li><a href="/home" class="text-gray-600 hover:text-gray-900">Home</a></li>
-          <li><a href="/contact" class="text-gray-600 hover:text-gray-900">Contact</a></li>
-          <li><a href="/products" class="text-gray-600 hover:text-gray-900">Products</a></li>
+          <li><a href="/home" class="hidden lg:block hover:text-gray-900">Home</a></li>
+          <li><a href="/contact" class=" hidden lg:block text-gray-600 hover:text-gray-900">Contact</a></li>
+          <li><a href="/products" class="hidden lg:block text-gray-600 hover:text-gray-900">Products</a></li>
           <li class="relative">
-            <button id="categoryDropdownButton" class="text-gray-600 hover:text-gray-900 flex items-center">
+            <button id="categoryDropdownButton" class=" hidden lg:block text-gray-600 hover:text-gray-900 flex items-center">
               Categories
               <i class="fas fa-chevron-down ml-1 text-xs arrow"></i>
             </button>
@@ -131,6 +273,9 @@
           </li>
         </ul>
       </nav>
+
+
+
 
       <!-- Search Bar -->
       <div class="hidden lg:flex relative flex-1 mx-8">
@@ -147,7 +292,7 @@
       <!-- Right Actions -->
       <div class="flex items-center space-x-4">
         <!-- Wishlist -->
-        <a href="/wishlist" class="relative p-2 hover:bg-gray-100 rounded-full transition-colors duration-200">
+        <a href="/wishlist" class=" relative p-2 hover:bg-gray-100 rounded-full transition-colors duration-200">
           <svg class="w-6 h-6 text-gray-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
             <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4.318 6.318a4.5 4.5 0 000 6.364L12 20.364l7.682-7.682a4.5 4.5 0 00-6.364-6.364L12 7.636l-1.318-1.318a4.5 4.5 0 00-6.364 0z"></path>
           </svg>
@@ -155,7 +300,7 @@
         </a>
 
         <!-- Cart -->
-        <a href="/cart" class="relative p-2 hover:bg-gray-100 rounded-full transition-colors duration-200">
+        <a href="/cart" class="hidden lg:block relative p-2 hover:bg-gray-100 rounded-full transition-colors duration-200">
           <svg class="w-6 h-6 text-gray-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
             <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M16 11V7a4 4 0 00-8 0v4M5 9h14l1 12H4L5 9z"></path>
           </svg>
@@ -182,28 +327,7 @@
     </div>
   </div>
 
-  <!-- Mobile Menu -->
-  <div id="mobile-menu" class="lg:hidden hidden bg-white border-t">
-    <div class="px-4 py-2">
-      <input type="text" placeholder="Search products..." class="w-full px-4 py-2 rounded-full border border-gray-300">
-    </div>
-    <nav class="px-4 py-2">
-      <a href="/home" class="mobile-nav-link">Home</a>
-      <button id="mobile-categories-button" class="mobile-nav-link w-full text-left flex justify-between items-center">
-        Categories
-        <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"></path>
-        </svg>
-      </button>
-      <div id="mobile-categories" class="hidden pl-4">
-        <% categories.forEach(category => { %>
-        <a href="/products/category/<%= category._id %>" class="mobile-nav-link"><%= category.name %></a>
-        <% }) %>
-      </div>
-      <a href="/products" class="mobile-nav-link">Products</a>
-      <a href="/contact" class="mobile-nav-link">Contact</a>
-    </nav>
-  </div>
+
 </header>
 
 <script>
@@ -588,5 +712,188 @@
 
     // Scroll every 3 seconds
     setInterval(scrollAnnouncements, 3000);
+  });
+
+
+  document.addEventListener('DOMContentLoaded', function() {
+    // Mobile menu functionality
+    const menuBtn = document.getElementById('mobile-menu-btn');
+    const closeMenuBtn = document.getElementById('close-menu-btn');
+    const menuOverlay = document.getElementById('mobile-menu-overlay');
+    const menuContent = menuOverlay.querySelector('.transform');
+    const categoriesBtn = document.getElementById('mobile-categories-btn');
+    const categoriesContent = document.getElementById('mobile-categories-content');
+
+    // Mobile search functionality
+    const mobileSearch = document.getElementById('mobile-search');
+    const mobileSearchResults = document.getElementById('mobile-search-results');
+    let searchTimeout;
+
+    // Handle menu open/close
+    menuBtn.addEventListener('click', () => {
+      menuOverlay.classList.remove('hidden');
+      setTimeout(() => {
+        menuContent.classList.add('menu-slide-up');
+      }, 10);
+    });
+
+    closeMenuBtn.addEventListener('click', closeMenu);
+
+    function closeMenu() {
+      menuContent.classList.remove('menu-slide-up');
+      setTimeout(() => {
+        menuOverlay.classList.add('hidden');
+      }, 300);
+    }
+
+    // Handle categories expansion
+    categoriesBtn.addEventListener('click', () => {
+      const arrow = categoriesBtn.querySelector('svg');
+      arrow.style.transform = categoriesContent.classList.contains('hidden') ?
+        'rotate(180deg)' :
+        'rotate(0)';
+      categoriesContent.classList.toggle('hidden');
+    });
+
+    // Mobile search handling
+    mobileSearch.addEventListener('input', () => {
+      clearTimeout(searchTimeout);
+      searchTimeout = setTimeout(performMobileSearch, 300);
+    });
+
+    async function performMobileSearch() {
+      const query = mobileSearch.value.trim();
+      if (!query) {
+        mobileSearchResults.classList.add('hidden');
+        return;
+      }
+
+      try {
+        const response = await fetch(`/search?q=${encodeURIComponent(query)}`);
+        const data = await response.json();
+
+        if (data.success) {
+          displayMobileSearchResults(data.products, data.categories);
+        }
+      } catch (error) {
+        console.error('Search error:', error);
+      }
+    }
+
+    function displayMobileSearchResults(products, categories) {
+      mobileSearchResults.innerHTML = '';
+
+      if (products.length === 0 && categories.length === 0) {
+        mobileSearchResults.innerHTML = `
+        <div class="px-4 py-3 text-sm text-gray-700">
+          No results found
+        </div>
+      `;
+      } else {
+        // Similar to desktop search results display but optimized for mobile
+        // Add your results display logic here
+      }
+
+      mobileSearchResults.classList.remove('hidden');
+    }
+
+    // Close search results when clicking outside
+    document.addEventListener('click', (e) => {
+      if (!mobileSearch.contains(e.target) && !mobileSearchResults.contains(e.target)) {
+        mobileSearchResults.classList.add('hidden');
+      }
+    });
+
+    // Header scroll behavior
+    let lastScroll = 0;
+    const header = document.querySelector('header');
+
+    window.addEventListener('scroll', () => {
+      const currentScroll = window.pageYOffset;
+      if (currentScroll > lastScroll && currentScroll > 50) {
+        header.classList.add('header-hidden');
+      } else {
+        header.classList.remove('header-hidden');
+      }
+      lastScroll = currentScroll;
+    }, {
+      passive: true
+    });
+
+    // Update mobile badges
+    async function updateMobileBadges() {
+      try {
+        const cartResponse = await fetch('/cart/count');
+        const cartData = await cartResponse.json();
+        const mobileBadge = document.getElementById('mobile-cart-badge');
+
+        if (cartData.success && cartData.cartCount > 0) {
+          mobileBadge.textContent = cartData.cartCount;
+          mobileBadge.classList.add('badge-pop');
+          mobileBadge.style.transform = 'scale(1)';
+        }
+      } catch (error) {
+        console.error('Error updating mobile badges:', error);
+      }
+    }
+
+    // Initialize badges
+    updateMobileBadges();
+  });
+
+
+  // Add this to your existing script section
+
+  document.addEventListener('DOMContentLoaded', function() {
+    // Mobile Profile Dropdown functionality
+    const mobileProfileButton = document.querySelector('#userDropdownButton'); // Keep the same ID as desktop
+    const mobileProfileDropdown = document.querySelector('#userDropdown'); // Keep the same ID as desktop
+    let isProfileDropdownOpen = false;
+
+    // Toggle profile dropdown
+    mobileProfileButton.addEventListener('click', (e) => {
+      e.stopPropagation();
+
+      // Toggle dropdown
+      isProfileDropdownOpen = !isProfileDropdownOpen;
+
+      if (isProfileDropdownOpen) {
+        // Show dropdown
+        mobileProfileDropdown.classList.remove('hidden');
+        mobileProfileDropdown.classList.add('animate-slide-down');
+
+        // Position the dropdown correctly for mobile
+        const buttonRect = mobileProfileButton.getBoundingClientRect();
+        mobileProfileDropdown.style.top = `${buttonRect.bottom + window.scrollY}px`;
+        mobileProfileDropdown.style.right = '1rem'; // 16px from right edge
+
+        // Add mobile-specific styles
+        mobileProfileDropdown.classList.add('mobile-profile-dropdown');
+      } else {
+        // Hide dropdown
+        mobileProfileDropdown.classList.add('hidden');
+        mobileProfileDropdown.classList.remove('animate-slide-down');
+      }
+    });
+
+    // Close dropdown when clicking outside
+    document.addEventListener('click', (e) => {
+      if (!mobileProfileButton.contains(e.target) && !mobileProfileDropdown.contains(e.target)) {
+        mobileProfileDropdown.classList.add('hidden');
+        mobileProfileDropdown.classList.remove('animate-slide-down');
+        isProfileDropdownOpen = false;
+      }
+    });
+
+    // Close dropdown when scrolling (optional, but recommended for mobile)
+    window.addEventListener('scroll', () => {
+      if (isProfileDropdownOpen) {
+        mobileProfileDropdown.classList.add('hidden');
+        mobileProfileDropdown.classList.remove('animate-slide-down');
+        isProfileDropdownOpen = false;
+      }
+    }, {
+      passive: true
+    });
   });
 </script>

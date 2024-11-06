@@ -120,7 +120,7 @@
             <div class="space-y-4">
               <% order.items.forEach(item => { %>
               <div class="flex items-center p-4 border rounded-lg hover:border-red-500 transition-colors duration-200">
-                <input type="checkbox" name="items" value="<%= item._id %>" class="w-5 h-5 text-red-600 rounded border-gray-300 focus:ring-red-500">
+                <input type="checkbox" name="items" value="<%= item.productId._id %>" class="w-5 h-5 text-red-600 rounded border-gray-300 focus:ring-red-500">
                 <div class="ml-4 flex items-center flex-1">
                   <div class="w-16 h-16 rounded-lg overflow-hidden">
                     <img src="<%= item.productId.images[0] %>" alt="<%= item.productId.name %>" class="w-full h-full object-cover">
@@ -146,9 +146,8 @@
                 <select name="reason" required class="w-full p-4 rounded-lg border-gray-300 focus:ring-indigo-500 focus:border-indigo-500">
                   <option value="">Select a reason</option>
                   <option value="defective">Item is defective/damaged</option>
-                  <option value="wrong_item">Received wrong item</option>
-                  <option value="not_as_described">Item not as described</option>
-                  <option value="size_issues">Size/fit issues</option>
+                  <option value="Wrong Item">Received wrong item</option>
+                  <option value="Not as Described">Item not as described</option>
                   <option value="changed_mind">Changed my mind</option>
                 </select>
               </div>
@@ -168,26 +167,6 @@
               <div>
                 <label class="block text-sm font-medium text-gray-700 mb-2">Additional Comments</label>
                 <textarea name="comments" rows="4" class=" p-4 w-full rounded-lg border-gray-300 focus:ring-indigo-500 focus:border-indigo-500" placeholder="Please provide any additional details about your return..."></textarea>
-              </div>
-
-              <!-- Image Upload -->
-              <div>
-                <label class="block text-sm font-medium text-gray-700 mb-2">Upload Images (Optional)</label>
-                <div class="mt-2 flex justify-center px-6 pt-5 pb-6 border-2 border-gray-300 border-dashed rounded-lg hover:border-indigo-500 transition-colors duration-200">
-                  <div class="space-y-2 text-center">
-                    <svg class="mx-auto h-12 w-12 text-gray-400" stroke="currentColor" fill="none" viewBox="0 0 48 48">
-                      <path d="M28 8H12a4 4 0 00-4 4v20m32-12v8m0 0v8a4 4 0 01-4 4H12a4 4 0 01-4-4v-4m32-4l-3.172-3.172a4 4 0 00-5.656 0L28 28M8 32l9.172-9.172a4 4 0 015.656 0L28 28m0 0l4-4m4-12h8m-4-4v8m-12 4h.02" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" />
-                    </svg>
-                    <div class="flex text-sm text-gray-600">
-                      <label class="relative cursor-pointer rounded-md font-medium text-indigo-600 hover:text-indigo-500 focus-within:outline-none">
-                        <span>Upload images</span>
-                        <input type="file" name="images" multiple accept="image/*" class="sr-only">
-                      </label>
-                      <p class="pl-1">or drag and drop</p>
-                    </div>
-                    <p class="text-xs text-gray-500">PNG, JPG, GIF up to 10MB</p>
-                  </div>
-                </div>
               </div>
             </div>
           </div>
@@ -225,105 +204,167 @@
   <!-- Footer -->
   <%- include('../layouts/footer.ejs') %>
 
-  <script type="text/javascript">
-    document.addEventListener('DOMContentLoaded', function() {
-      let currentStep = 1;
-      const totalSteps = 3;
-      const form = document.getElementById('returnForm');
-      const nextBtn = document.getElementById('nextBtn');
-      const prevBtn = document.getElementById('prevBtn');
-      const progressBar = document.getElementById('progressBar');
+  <script>
+    // Get DOM elements
+    const form = document.getElementById('returnForm');
+    const step1 = document.getElementById('step1');
+    const step2 = document.getElementById('step2');
+    const step3 = document.getElementById('step3');
+    const nextBtn = document.getElementById('nextBtn');
+    const prevBtn = document.getElementById('prevBtn');
+    const progressBar = document.getElementById('progressBar');
 
-      function updateStep(newStep) {
-        document.querySelectorAll('.step-content').forEach(step => {
-          step.classList.add('hidden');
-        });
-        document.getElementById(`step${newStep}`).classList.remove('hidden');
+    let currentStep = 1;
+    const totalSteps = 3;
 
-        gsap.from(`#step${newStep}`, {
-          opacity: 0,
-          x: newStep > currentStep ? 50 : -50,
-          duration: 0.5,
-          ease: "power2.out"
-        });
+    // Initialize GSAP animations
+    gsap.from('.step-content', {
+      opacity: 0,
+      x: -50,
+      duration: 0.5,
+      ease: 'power2.out'
+    });
 
-        progressBar.style.width = `${(newStep / totalSteps) * 100}%`;
-        prevBtn.classList.toggle('hidden', newStep === 1);
-        nextBtn.textContent = newStep === totalSteps ? 'Submit' : 'Next';
-        currentStep = newStep;
+    // Function to update progress bar
+    const updateProgress = (step) => {
+      const progress = (step / totalSteps) * 100;
+      progressBar.style.width = `${progress}%`;
+    };
+
+    // Function to validate step 1
+    const validateStep1 = () => {
+      const selectedItems = document.querySelectorAll('input[name="items"]:checked');
+      if (selectedItems.length === 0) {
+        showError('Please select at least one item to return');
+        return false;
+      }
+      return true;
+    };
+
+    // Function to validate step 2
+    const validateStep2 = () => {
+      const reason = document.querySelector('select[name="reason"]').value;
+      const condition = document.querySelector('select[name="condition"]').value;
+      const comments = document.querySelector('textarea[name="comments"]').value;
+
+      if (!reason || !condition || !comments.trim()) {
+        showError('Please fill in all required fields');
+        return false;
+      }
+      return true;
+    };
+
+    // Function to show error message
+    const showError = (message) => {
+      const errorDiv = document.createElement('div');
+      errorDiv.className = 'bg-red-100 border border-red-400 text-red-700 px-4 py-3 rounded relative mb-4 slide-in';
+      errorDiv.innerHTML = message;
+
+      // Remove any existing error messages
+      const existingError = form.querySelector('.bg-red-100');
+      if (existingError) {
+        existingError.remove();
       }
 
-      nextBtn.addEventListener('click', () => {
-        if (currentStep === 1) {
-          const selectedItems = document.querySelectorAll('input[name="items"]:checked');
-          if (selectedItems.length === 0) {
-            alert('Please select at least one item to return');
-            return;
-          }
-          updateStep(2);
-        } else if (currentStep === 2) {
-          const reason = document.querySelector('select[name="reason"]').value;
-          const condition = document.querySelector('select[name="condition"]').value;
+      form.insertBefore(errorDiv, form.firstChild);
 
-          if (!reason || !condition) {
-            alert('Please fill in all required fields');
-            return;
-          }
-          handleSubmit();
-        }
-      });
+      // Remove error message after 3 seconds
+      setTimeout(() => {
+        errorDiv.remove();
+      }, 3000);
+    };
 
-      prevBtn.addEventListener('click', () => {
-        if (currentStep > 1) {
-          updateStep(currentStep - 1);
-        }
-      });
+    // Handle next button click
+    nextBtn.addEventListener('click', async () => {
+      if (currentStep === 1 && validateStep1()) {
+        step1.classList.add('hidden');
+        step2.classList.remove('hidden');
+        prevBtn.classList.remove('hidden');
+        currentStep = 2;
+        updateProgress(currentStep);
+      } else if (currentStep === 2 && validateStep2()) {
+        // Prepare form data
+        const formData = {
+          selectedItems: Array.from(document.querySelectorAll('input[name="items"]:checked')).map(checkbox => ({
+            productId: checkbox.value,
+            quantity: 1
+          })),
+          reason: document.querySelector('select[name="reason"]').value,
+          condition: document.querySelector('select[name="condition"]').value,
+          comments: document.querySelector('textarea[name="comments"]').value
+        };
 
-      function handleSubmit() {
-        nextBtn.disabled = true;
-        nextBtn.innerHTML = `
-                <svg class="animate-spin -ml-1 mr-3 h-5 w-5 text-white" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24">
-                    <circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"></circle>
-                    <path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path>
-                </svg> Processing...`;
 
-        const formData = new FormData();
-        const selectedItems = Array.from(document.querySelectorAll('input[name="items"]:checked')).map(checkbox => checkbox.value);
-        selectedItems.forEach(item => formData.append('items[]', item));
-        formData.append('reason', document.querySelector('select[name="reason"]').value);
-        formData.append('condition', document.querySelector('select[name="condition"]').value);
-        formData.append('comments', document.querySelector('textarea[name="comments"]').value);
+        console.log(formData)
 
-        const orderId = form.getAttribute('data-order-id');
-
-        fetch(`/orders/return/${orderId}`, {
+        try {
+          const orderId = form.dataset.orderId;
+          const response = await fetch(`/order/return/${orderId}`, {
             method: 'POST',
-            body: formData
-          })
-          .then(response => {
-            if (!response.ok) throw new Error('Network response was not ok');
-            return response.json();
-          })
-          .then(data => {
-            updateStep(3);
-            gsap.from('#step3 .rounded-full', {
-              scale: 0,
-              rotation: 360,
-              duration: 0.5,
-              ease: "back.out(1.7)"
-            });
-            form.reset();
-          })
-          .catch(error => {
-            console.error('Error:', error);
-            alert('There was an error submitting your return request. Please try again.');
-            nextBtn.disabled = false;
-            nextBtn.textContent = 'Submit';
+            headers: {
+              'Content-Type': 'application/json'
+            },
+            body: JSON.stringify(formData)
           });
+
+          const data = await response.json();
+
+          if (data.success) {
+            step2.classList.add('hidden');
+            step3.classList.remove('hidden');
+            nextBtn.classList.add('hidden');
+            prevBtn.classList.add('hidden');
+            currentStep = 3;
+            updateProgress(currentStep);
+
+            // Animate success message
+            gsap.from('#step3 > div', {
+              scale: 0.5,
+              opacity: 0,
+              duration: 0.5,
+              ease: 'back.out'
+            });
+          } else {
+            showError(data.message || 'Failed to submit return request');
+          }
+        } catch (error) {
+          console.error('Error:', error);
+          showError('An error occurred while submitting your return request');
+        }
       }
     });
-  </script>
 
+    // Handle previous button click
+    prevBtn.addEventListener('click', () => {
+      if (currentStep === 2) {
+        step2.classList.add('hidden');
+        step1.classList.remove('hidden');
+        prevBtn.classList.add('hidden');
+        currentStep = 1;
+        updateProgress(currentStep);
+      }
+    });
+
+    // Add animation to checkboxes
+    document.querySelectorAll('input[name="items"]').forEach(checkbox => {
+      checkbox.addEventListener('change', (e) => {
+        const parent = e.target.closest('.flex');
+        if (e.target.checked) {
+          gsap.to(parent, {
+            scale: 1.02,
+            duration: 0.2,
+            ease: 'power2.out'
+          });
+        } else {
+          gsap.to(parent, {
+            scale: 1,
+            duration: 0.2,
+            ease: 'power2.out'
+          });
+        }
+      });
+    });
+  </script>
 </body>
 
 </html>

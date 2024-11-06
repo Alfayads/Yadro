@@ -2,6 +2,8 @@ const express = require('express');
 const user_router = express.Router();
 const passport = require('passport');
 
+const Order = require('../models/Order');
+
 
 const authController = require('../controllers/authController');
 const auth = require('../middlewares/authMiddleware');
@@ -64,7 +66,9 @@ user_router.get('/order-tracking/:id', auth.isLogout, orderTracking);
 user_router.get('/orders', auth.isLogout, getOrders);
 user_router.post('/order/cancel/:id', cancelOrder)
 user_router.get('/order/return/:id', getOrderReturn);
-user_router.post('/orders/return/:id', createReturn);
+user_router.post('/order/return/:orderId', createReturn);
+
+
 
 // Account
 user_router.get('/account', auth.isLogout, getAccount);

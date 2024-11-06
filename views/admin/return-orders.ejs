@@ -1,0 +1,243 @@
+<!DOCTYPE html>
+<html lang="en" class="dark">
+
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Return Requests - Card Layout</title>
+  <script src="https://cdn.tailwindcss.com"></script>
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
+  <style>
+    .card {
+      transition: all 0.3s ease;
+      animation: fadeIn 0.5s ease-out forwards;
+    }
+
+    @keyframes fadeIn {
+      from {
+        opacity: 0;
+        transform: translateY(20px);
+      }
+
+      to {
+        opacity: 1;
+        transform: translateY(0);
+      }
+    }
+
+    .card:hover {
+      transform: translateY(-5px);
+      box-shadow: 0 8px 24px rgba(139, 92, 246, 0.2);
+    }
+
+    .priority-indicator {
+      width: 4px;
+      height: 100%;
+      position: absolute;
+      left: 0;
+      top: 0;
+      transition: all 0.3s ease;
+    }
+
+    .status-pill {
+      transition: all 0.3s ease;
+    }
+
+    .status-pill:hover {
+      transform: scale(1.05);
+    }
+
+    .action-button {
+      transition: all 0.2s ease;
+    }
+
+    .action-button:hover {
+      transform: scale(1.1);
+    }
+  </style>
+</head>
+
+<body class="bg-gray-900 min-h-screen p-8">
+  <%- include('../layouts/admin-sidebar.ejs') %>
+  <!-- Header Section -->
+  <div class="mb-8 ml-64">
+    <h1 class="text-4xl font-bold bg-gradient-to-r from-purple-400 to-purple-600 text-transparent bg-clip-text">
+      Return Requests Management
+    </h1>
+  </div>
+
+  <!-- Search and Filter Section -->
+  <div class="mb-8 bg-gray-800 p-6 ml-64 rounded-xl shadow-lg">
+    <div class="flex flex-wrap gap-4">
+      <div class="flex-1">
+        <div class="relative">
+          <input type="text" placeholder="Search requests..." class="w-full bg-gray-700 text-gray-100 px-4 py-3 rounded-lg pl-12 focus:ring-2 focus:ring-purple-500 focus:outline-none">
+          <i class="fas fa-search absolute left-4 top-1/2 transform -translate-y-1/2 text-gray-400"></i>
+        </div>
+      </div>
+      <select class="bg-gray-700 text-gray-100 px-4 py-3 rounded-lg focus:ring-2 focus:ring-purple-500 focus:outline-none">
+        <option>All Status</option>
+        <option>Pending</option>
+        <option>Approved</option>
+        <option>Rejected</option>
+      </select>
+      <select class="bg-gray-700 text-gray-100 px-4 py-3 rounded-lg focus:ring-2 focus:ring-purple-500 focus:outline-none">
+        <option>All Priority</option>
+        <option>High</option>
+        <option>Medium</option>
+        <option>Low</option>
+      </select>
+    </div>
+  </div>
+
+  <!-- Cards Grid -->
+  <!-- Loop through each return request -->
+  <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 ml-64">
+    <% returnRequests.forEach((request, index) => { %>
+    <div class="card bg-gray-800 rounded-xl overflow-hidden relative" style="animation-delay: <%= index * 100 %>ms">
+      <!-- Priority Indicator (you can set it dynamically if you have priority data) -->
+      <div class="priority-indicator bg-green-500"></div>
+
+      <!-- Card Content -->
+      <div class="p-6 pl-8">
+        <!-- Header -->
+
+
+        <div class="flex justify-between items-start mb-4">
+          <div>
+            <h3 class="text-lg font-semibold text-gray-100">Request ID: <%=  request._id %></h3>
+            <p class="text-sm text-gray-400">Order ID: <%=  request.orderId._id %></p>
+          </div>
+          <span class="status-pill px-3 py-1 rounded-full text-sm font-medium
+          <%= request.returnStatus === 'Requested' ? 'bg-yellow-900 text-yellow-300' :
+              request.returnStatus === 'Approved' ? 'bg-green-900 text-green-300' :
+              'bg-red-900 text-red-300' %>">
+            <%= request.returnStatus %>
+          </span>
+        </div>
+        <!-- Reason -->
+        <div class="mb-4">
+          <h4 class="text-sm text-gray-400 mb-1">Reason</h4>
+          <p class="text-gray-300 text-sm"><%= request.reason %></p>
+        </div>
+
+        <!-- Comments -->
+        <div class="mb-4">
+          <h4 class="text-sm text-gray-400 mb-1">Comments</h4>
+          <p class="text-gray-300 text-sm"><%= request.comments %></p>
+        </div>
+
+        <div class="mb-4">
+          <h4 class="text-sm text-gray-400 mb-1">Products</h4>
+          <ul class="text-gray-300 text-sm space-y-3">
+            <% request.items.forEach(item => { %>
+            <li class="flex justify-between items-center p-3 <%= item.valid ? 'bg-gray-800' : 'bg-red-900/20' %> rounded-lg">
+              <div class="flex items-center space-x-4">
+                <!-- Product Image -->
+                <div class="flex-shrink-0">
+                  <img src="<%= item.productDetails.image %>" alt="<%= item.productDetails.name %>" class="w-16 h-16 object-cover rounded-lg border border-gray-700" onerror="this.src='/images/placeholder-product.jpg'">
+                </div>
+
+                <!-- Product Details -->
+                <div class="flex flex-col">
+                  <strong class="<%= item.valid ? 'text-purple-400' : 'text-red-400' %> text-base">
+                    <%= item.productDetails.name %>
+                  </strong>
+                  <div class="flex items-center mt-1">
+                    <span class="text-gray-400">Quantity:</span>
+                    <span class="ml-2"><%= item.quantity %></span>
+                  </div>
+                </div>
+              </div>
+
+              <!-- Price and Status -->
+              <div class="text-right">
+                <span class="text-gray-300 font-medium">
+                  <%= formatPrice(item.productDetails.price) %>
+                </span>
+                <% if (!item.valid) { %>
+                <div class="text-xs text-red-400 mt-1">
+                  <i class="fas fa-exclamation-circle mr-1"></i>
+                  Product unavailable
+                </div>
+                <% } %>
+              </div>
+            </li>
+            <% }) %>
+          </ul>
+
+          <!-- Invalid Items Warning -->
+          <div class="mt-4 text-sm">
+            <% const invalidItems = request.items.filter(item => !item.valid); %>
+            <% if (invalidItems.length > 0) { %>
+            <div class="bg-yellow-900/20 text-yellow-500 p-3 rounded-lg flex items-center">
+              <i class="fas fa-exclamation-triangle mr-2"></i>
+              <%= invalidItems.length %> product(s) in this return request are no longer available
+            </div>
+            <% } %>
+          </div>
+        </div>
+
+        <!-- Actions -->
+        <div class="flex gap-3 mt-6">
+          <a href="/admin/return/order-details/<%= request._id %>" class="action-button flex-1 bg-purple-600 hover:bg-purple-700 text-white text-center px-4 py-2 rounded-lg">
+            <i class="fas fa-eye mr-2"></i>View Details
+          </a>
+          <% if (request.returnStatus !== "Approved" && request.returnStatus !== "Rejected") { %>
+          <form action="/admin/return/approve/<%= request._id %>" method="POST" class="inline">
+            <button class="action-button w-12 h-12 bg-green-600 hover:bg-green-700 text-white rounded-lg flex items-center justify-center">
+              <i class="fas fa-check"></i>
+            </button>
+          </form>
+          <form action="/admin/return/reject/<%= request._id %>" method="POST" class="inline">
+            <button class="action-button w-12 h-12 bg-red-600 hover:bg-red-700 text-white rounded-lg flex items-center justify-center">
+              <i class="fas fa-times"></i>
+            </button>
+          </form>
+          <% } %>
+        </div>
+      </div>
+    </div>
+    <% }) %>
+  </div>
+
+  <!-- Empty State -->
+  <% if (returnRequests.length === 0) { %>
+  <div class="text-center py-16 bg-gray-800 ml-64 rounded-xl">
+    <i class="fas fa-inbox text-6xl text-gray-600 mb-4"></i>
+    <h3 class="text-xl text-gray-300 mb-2">No return requests found</h3>
+    <p class="text-gray-500">Try adjusting your search or filter criteria</p>
+  </div>
+  <% } %>
+
+  <script>
+    document.addEventListener('DOMContentLoaded', function() {
+      // Add hover effect to cards
+      document.querySelectorAll('.card').forEach(card => {
+        card.addEventListener('mouseenter', () => {
+          const indicator = card.querySelector('.priority-indicator');
+          indicator.style.width = '6px';
+        });
+
+        card.addEventListener('mouseleave', () => {
+          const indicator = card.querySelector('.priority-indicator');
+          indicator.style.width = '4px';
+        });
+      });
+
+      // Add loading animation when clicking action buttons
+      document.querySelectorAll('.action-button').forEach(button => {
+        button.addEventListener('click', function() {
+          this.classList.add('opacity-75');
+          this.innerHTML = '<i class="fas fa-spinner fa-spin"></i>';
+          setTimeout(() => {
+            this.classList.remove('opacity-75');
+            this.innerHTML = this.originalHTML;
+          }, 1000);
+        });
+      });
+    });
+  </script>
+</body>
+
+</html>

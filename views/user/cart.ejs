@@ -89,28 +89,39 @@
           <% if (cartItems.length > 0) { %>
           <% cartItems.forEach(product => { %>
           <div class="cart-item flex items-center bg-white rounded-xl p-6 shadow-sm hover:shadow-md transition-shadow duration-300">
-            <img src="<%= product.images[0] %>" alt="<%= product.name %>" class="w-24 h-24 object-cover rounded-lg mr-6">
+            <!-- Product Image -->
+            <img src="<%= product.images[0] %>" alt="<%= product.name %>" class="w-24 h-24 object-cover rounded-lg mr-6 sm:w-28 sm:h-28 md:w-32 md:h-32 lg:w-40 lg:h-40">
+
+            <!-- Product Details -->
             <div class="flex-grow">
-              <h3 class="text-lg font-semibold text-gray-800 mb-1"><%= product.name %></h3>
-              <p class="text-sm text-gray-500 line-clamp-2 mb-2"><%= product.description %></p>
+              <h3 class="text-lg font-semibold text-gray-800 mb-1 sm:text-xl md:text-2xl"><%= product.name %></h3>
+              <p class="text-sm text-gray-500 line-clamp-2 mb-2 sm:text-base md:text-lg"><%= product.description %></p>
+
+              <!-- Quantity Control and Price -->
               <div class="flex items-center justify-between">
-                <!-- Quantity Control -->
                 <div class="quantity-control inline-flex items-center bg-gray-100 rounded-full p-1 shadow-sm">
+                  <!-- Decrease Button -->
                   <button class="quantity-btn decrease w-8 h-8 flex items-center justify-center bg-white rounded-full text-red-500 hover:bg-red-100 transition-colors duration-200 focus:outline-none focus:ring-2 focus:ring-red-400" data-product-id="<%= product.productId %>">
                     <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
                       <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M20 12H4"></path>
                     </svg>
                   </button>
+                  <!-- Quantity Input -->
                   <input type="number" maxlength="10" minlength="1" class="quantity-input w-12 text-center bg-transparent font-semibold text-gray-700 focus:outline-none" value="<%= product.quantity %>" min="1" max="99" data-product-id="<%= product.productId %>">
+                  <!-- Increase Button -->
                   <button class="quantity-btn increase w-8 h-8 flex items-center justify-center bg-white rounded-full text-green-500 hover:bg-green-100 transition-colors duration-200 focus:outline-none focus:ring-2 focus:ring-green-400" data-product-id="<%= product.productId %>">
                     <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
                       <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 6v6m0 0v6m0-6h6m-6 0H6"></path>
                     </svg>
                   </button>
                 </div>
-                <span class="font-semibold text-gray-800 text-xl">₹ <span class="product-total-price"><%= Math.round(product.totalPrice) %></span></span>
+
+                <!-- Total Price -->
+                <span class="font-semibold text-gray-800 text-xl sm:text-2xl md:text-3xl">₹ <span class="product-total-price"><%= Math.round(product.totalPrice) %></span></span>
               </div>
             </div>
+
+            <!-- Delete Button -->
             <button class="delete-button ml-4 text-gray-400 hover:text-red-500 transition-colors duration-200" data-product-id="<%= product.productId %>">
               <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
                 <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16"></path>
@@ -119,10 +130,11 @@
           </div>
           <% }) %>
           <% } else { %>
+          <!-- Empty Cart Section -->
           <div class="flex flex-col items-center justify-center py-12 px-4 mb-5 sm:px-6 lg:px-8 bg-white rounded-lg shadow-md">
-            <img src="/images/forgotman.png" alt="Empty Cart" class="w-48 h-48 mb-8" />
-            <h2 class="text-3xl font-extrabold text-gray-900 mb-4">Your Cart is Empty</h2>
-            <p class="text-xl text-gray-600 mb-8 text-center max-w-md">Discover and save items you love to your Cart. Start exploring our products now!</p>
+            <img src="/images/forgotman.png" alt="Empty Cart" class="w-48 h-48 mb-8 sm:w-56 sm:h-56 md:w-64 md:h-64" />
+            <h2 class="text-3xl font-extrabold text-gray-900 mb-4 sm:text-4xl md:text-5xl">Your Cart is Empty</h2>
+            <p class="text-xl text-gray-600 mb-8 text-center max-w-md sm:text-2xl md:text-3xl">Discover and save items you love to your Cart. Start exploring our products now!</p>
             <a href="/products" class="inline-flex items-center px-6 py-3 border border-transparent text-base font-medium rounded-md text-white bg-red-600 hover:bg-red-700 transition duration-150 ease-in-out">
               <svg class="mr-2 -ml-1 w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
                 <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"></path>
@@ -131,42 +143,44 @@
             </a>
           </div>
           <% } %>
+        </div>
 
-          <!-- Order Summary -->
-          <div class="mt-10 flex flex-col md:flex-row justify-between items-start">
-            <div class="w-full md:w-5/12">
-              <div class="bg-gray-50 p-6 rounded-xl">
-                <h3 class="text-lg font-semibold mb-4">Order Summary</h3>
-                <div class="space-y-2 my-10">
+
+        <!-- Order Summary -->
+        <div class="mt-10 flex flex-col md:flex-row justify-between items-start">
+          <div class="w-full md:w-5/12">
+            <div class="bg-gray-50 p-6 rounded-xl">
+              <h3 class="text-lg font-semibold mb-4">Order Summary</h3>
+              <div class="space-y-2 my-10">
+                <div class="flex justify-between">
+                  <span class="text-gray-600">Subtotal</span>
+                  <span class="font-medium">₹ <%= Math.round(totalPrice) %></span>
+                </div>
+                <div class="flex justify-between">
+                  <span class="text-gray-600">Shipping</span>
+                  <span class="text-green-600 font-medium" id="shipping-charge">Free</span>
+                </div>
+                <div class="border-t pt-2 mt-2">
                   <div class="flex justify-between">
-                    <span class="text-gray-600">Subtotal</span>
-                    <span class="font-medium">₹ <%= Math.round(totalPrice) %></span>
-                  </div>
-                  <div class="flex justify-between">
-                    <span class="text-gray-600">Shipping</span>
-                    <span class="text-green-600 font-medium" id="shipping-charge">Free</span>
-                  </div>
-                  <div class="border-t pt-2 mt-2">
-                    <div class="flex justify-between">
-                      <span class="font-semibold">Total</span>
-                      <span class="font-bold text-xl" id="total-order-value">₹ <%= Math.round(totalPrice) %></span>
-                    </div>
+                    <span class="font-semibold">Total</span>
+                    <span class="font-bold text-xl" id="total-order-value">₹ <%= Math.round(totalPrice) %></span>
                   </div>
                 </div>
-                <% if(cartItems.length > 0)  { %>
-                <a href="/cart/check-out" class="checkout-button w-full bg-red-600 text-white font-semibold py-3 px-4 rounded-lg mt-6 hover:bg-red-700 transition-colors duration-300 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500">
-                  Proceed to Checkout
-                </a>
-                <% } else { %>
-                <a href="/products" class="checkout-button w-full bg-red-600 text-white font-semibold py-3 px-4 rounded-lg mt-6 hover:bg-red-700 transition-colors duration-300 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500">
-                  Go to Products
-                </a>
-                <% } %>
               </div>
+              <% if(cartItems.length > 0)  { %>
+              <a href="/cart/check-out" class="checkout-button w-full bg-red-600 text-white font-semibold py-3 px-4 rounded-lg mt-6 hover:bg-red-700 transition-colors duration-300 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500">
+                Proceed to Checkout
+              </a>
+              <% } else { %>
+              <a href="/products" class="checkout-button w-full bg-red-600 text-white font-semibold py-3 px-4 rounded-lg mt-6 hover:bg-red-700 transition-colors duration-300 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500">
+                Go to Products
+              </a>
+              <% } %>
             </div>
           </div>
         </div>
       </div>
+    </div>
     </div>
   </main>
 
@@ -178,7 +192,7 @@
   <script>
     document.addEventListener('DOMContentLoaded', () => {
       // Constants
-      const FREE_SHIPPING_THRESHOLD = 50000; // ₹50,000
+      const FREE_SHIPPING_THRESHOLD = 10000; // ₹50,000
       const BASE_SHIPPING_CHARGE = 400; // ₹400
       const MIN_QUANTITY = 1;
       const MAX_QUANTITY = 10;

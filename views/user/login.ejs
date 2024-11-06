@@ -23,6 +23,44 @@
       color: #E53E3E;
       text-decoration: underline;
     }
+
+    .custom-input {
+      width: 100%;
+      padding: 0.75rem;
+      margin-bottom: 1rem;
+      border: 1px solid #CBD5E0;
+      border-radius: 0.375rem;
+      transition: border-color 0.3s ease;
+    }
+
+    .custom-input:focus {
+      border-color: #3182CE;
+      outline: none;
+    }
+
+    .create-account-btn {
+      background-color: #3182CE;
+      color: white;
+      padding: 0.75rem;
+      border-radius: 0.375rem;
+      font-weight: bold;
+      transition: background-color 0.3s ease;
+    }
+
+    .create-account-btn:hover {
+      background-color: #2B6CB0;
+    }
+
+    .login-link {
+      color: #3182CE;
+      font-weight: bold;
+      transition: color 0.3s ease;
+    }
+
+    .login-link:hover {
+      color: #2B6CB0;
+      text-decoration: underline;
+    }
   </style>
 </head>
 
@@ -30,16 +68,16 @@
   <!-- Navbar including -->
   <%- include('../layouts/header-without-user.ejs') %>
 
-  <main class="container mx-auto px-4 py-8 flex">
-    <div class="w-1/2">
-      <img src="/images/signup.png" alt="Shopping concept" class="w-full h-auto ">
+  <main class="container mx-auto px-4 py-8 flex flex-col md:flex-row items-center justify-center space-y-6 md:space-y-0 md:space-x-8">
+    <div class="w-full md:w-1/2 flex justify-center">
+      <img src="/images/signup.png" alt="Shopping concept" class="w-full h-auto max-w-xs md:max-w-full">
     </div>
-    <div class="w-1/2 pl-8">
-      <h1 class="text-3xl font-bold mb-2">Log In</h1>
-      <p class="text-gray-600 mb-8">Log into your existing account</p>
+    <div class="w-full md:w-1/2 px-6 md:px-0">
+      <h1 class="text-3xl font-bold mb-2 text-center md:text-left">Log In</h1>
+      <p class="text-gray-600 mb-8 text-center md:text-left">Log into your existing account</p>
 
       <!-- Error message section -->
-      <% if (error_msg.length > 0 ) { %>
+      <% if (error_msg.length > 0) { %>
       <div class="bg-red-100 border border-red-400 text-red-700 px-4 py-3 rounded relative mb-6" role="alert" id="error-message">
         <strong class="font-bold">Error!</strong>
         <span class="block sm:inline"><%= error_msg %></span>
@@ -52,7 +90,7 @@
       </div>
       <% } %>
 
-      <% if (success_msg.length > 0 ) { %>
+      <% if (success_msg.length > 0) { %>
       <div class="bg-green-100 border border-green-400 text-green-700 px-4 py-3 rounded relative mb-6" role="alert" id="error-message">
         <strong class="font-bold">Success!</strong>
         <span class="block sm:inline"><%= success_msg %></span>
@@ -65,14 +103,14 @@
       </div>
       <% } %>
 
-      <form action="/login" method="post" autocomplete="off">
+      <form action="/login" method="post" autocomplete="off" class="space-y-4">
         <input name="email" type="text" placeholder="Email or Phone Number" class="custom-input">
         <input name="password" type="password" placeholder="Password" class="custom-input">
         <a href="/forgot-password" class="forgot-password-link">Forgot Password?</a>
-        <button type="submit" class="create-account-btn w-full mb-4">Log In</button>
+        <button type="submit" class="create-account-btn w-full">Log In</button>
       </form>
 
-      <p class="text-center text-gray-600">
+      <p class="text-center text-gray-600 mt-4">
         Don't have an Account? <a href="/signup" class="login-link">Sign up</a>
       </p>
     </div>

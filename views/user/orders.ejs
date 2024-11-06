@@ -69,73 +69,69 @@
     .products-modal {
       backdrop-filter: blur(4px);
     }
+  </style>
 
-    .modal-content {
-      max-height: calc(100vh - 200px);
-      overflow-y: auto;
-    }
-
-    .modal-content::-webkit-scrollbar {
-      width: 6px;
-    }
-
-    .modal-content::-webkit-scrollbar-track {
-      background: transparent;
-    }
-
-    .modal-content::-webkit-scrollbar-thumb {
-      background-color: #E5E7EB;
-      border-radius: 3px;
-    }
-
-    @keyframes progress {
+  <style>
+    @keyframes float {
       0% {
-        width: 0;
+        transform: translateY(0px);
+      }
+
+      50% {
+        transform: translateY(-10px);
       }
 
       100% {
-        width: 100%;
+        transform: translateY(0px);
       }
     }
 
-    .progress-bar {
-      animation: progress 30s linear;
+    .float-animation {
+      animation: float 3s ease-in-out infinite;
     }
 
-    @keyframes shake {
-
-      0%,
-      100% {
-        transform: translateX(0);
-      }
-
-      25% {
-        transform: translateX(-5px);
-      }
-
-      75% {
-        transform: translateX(5px);
-      }
+    .order-card {
+      transition: all 0.3s ease;
+      transform: translateY(0);
     }
 
-    .shake {
-      animation: shake 0.5s cubic-bezier(0.36, 0.07, 0.19, 0.97) both;
+    .order-card:hover {
+      transform: translateY(-5px);
+      box-shadow: 0 10px 30px rgba(0, 0, 0, 0.1);
     }
 
-    .modal-enter {
-      animation: modalEnter 0.3s ease-out forwards;
+    .status-pill {
+      transition: all 0.3s ease;
     }
 
-    @keyframes modalEnter {
-      from {
-        opacity: 0;
-        transform: scale(0.95) translateY(10px);
-      }
+    .status-pill:hover {
+      transform: scale(1.05);
+    }
 
-      to {
-        opacity: 1;
-        transform: scale(1) translateY(0);
-      }
+    .glass-effect {
+      background: rgba(255, 255, 255, 0.95);
+      backdrop-filter: blur(10px);
+    }
+
+    .gradient-border {
+      position: relative;
+      border: double 1px transparent;
+      border-radius: 0.75rem;
+      background-image: linear-gradient(white, white),
+        linear-gradient(to right, #4F46E5, #818CF8);
+      background-origin: border-box;
+      background-clip: padding-box, border-box;
+    }
+
+    .scroll-shadow {
+      background:
+        linear-gradient(to right, white 30%, rgba(255, 255, 255, 0)),
+        linear-gradient(to right, rgba(255, 255, 255, 0), white 70%) 100% 0,
+        radial-gradient(farthest-side at 0 50%, rgba(0, 0, 0, .2), rgba(0, 0, 0, 0)),
+        radial-gradient(farthest-side at 100% 50%, rgba(0, 0, 0, .2), rgba(0, 0, 0, 0)) 100% 0;
+      background-repeat: no-repeat;
+      background-size: 40px 100%, 40px 100%, 14px 100%, 14px 100%;
+      background-attachment: local, local, scroll, scroll;
     }
   </style>
 </head>
@@ -145,267 +141,197 @@
   <%- include('../layouts/header-with-user.ejs') %>
 
   <!-- Main Content -->
-  <main class="flex-grow container mx-auto py-12 px-4 sm:px-6 lg:px-8">
-    <!-- Breadcrumb -->
-    <div class="border-b border-gray-200 pb-4 mb-8">
-      <nav class="flex" aria-label="Breadcrumb">
-        <ol class="flex items-center space-x-4">
-          <li>
-            <div>
-              <a href="#" class="text-gray-400 hover:text-gray-500">Home</a>
-            </div>
-          </li>
-          <li>
-            <div class="flex items-center">
-              <svg class="flex-shrink-0 h-5 w-5 text-gray-300" fill="currentColor" viewBox="0 0 20 20" aria-hidden="true">
-                <path d="M5.555 17.776l8-16 .894.448-8 16-.894-.448z" />
-              </svg>
-              <a href="#" class="ml-4 text-sm font-medium text-gray-500 hover:text-gray-700">My Orders</a>
-            </div>
-          </li>
-        </ol>
-      </nav>
+  <main class="container mx-auto px-4 mt-12 py-8">
+    <!-- Page Header -->
+    <div class="mb-8">
+      <h1 class="text-3xl font-bold text-gray-900">My Orders</h1>
+      <p class="text-gray-600 mt-2">Track and manage your orders</p>
     </div>
 
-    <div class="table-container p-6 rounded-xl shadow-lg mx-auto max-w-9xxl bg-white">
-      <!-- Table header with search and filters -->
-      <div class="mb-6 flex flex-wrap items-center justify-between gap-4">
-        <h2 class="text-2xl font-bold text-gray-800">
-          My Orders
-          <span class="ml-2 text-sm font-normal text-gray-500">
-            (Showing <%= orders.length %> orders)
-          </span>
-        </h2>
-
-        <div class="flex gap-4">
-          <div class="relative">
-            <input type="text" placeholder="Search orders..." id="searchInput" class="pl-10 pr-4 py-2 border border-gray-200 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent outline-none transition-all duration-300">
-            <svg class="w-5 h-5 text-gray-400 absolute left-3 top-1/2 transform -translate-y-1/2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z" />
-            </svg>
+    <!-- Quick Stats -->
+    <div class="grid grid-cols-1 md:grid-cols-4 gap-6 mb-8">
+      <div class="gradient-border p-6 bg-white">
+        <div class="flex items-center">
+          <div class="rounded-full p-3 bg-indigo-100">
+            <i class="fas fa-shopping-bag text-indigo-600"></i>
           </div>
-
-          <select id="statusFilter" class="px-4 py-2 border border-gray-200 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent outline-none transition-all duration-300">
-            <option value="">All Status</option>
-            <option value="placed">Placed</option>
-            <option value="delivered">Delivered</option>
-            <option value="cancelled">Cancelled</option>
-          </select>
+          <div class="ml-4">
+            <h3 class="text-sm font-medium text-gray-500">Total Orders</h3>
+            <p class="text-2xl font-bold text-gray-900"><%= orders.length %></p>
+          </div>
         </div>
       </div>
 
-      <!-- Table wrapper -->
-      <div class="overflow-x-auto custom-scrollbar">
-        <table class="w-full min-w-[1200px] border-collapse">
-          <!-- Table Header -->
-          <thead>
-            <tr class=" bg-gradient-to-r from-gray-50 to-gray-100">
-              <th class="px-6 py-4 text-center text-sm font-semibold text-gray-600 uppercase tracking-wider rounded-tl-lg">Order</th>
-              <th class="px-6 py-4 text-center text-sm font-semibold text-gray-600 uppercase tracking-wider">Products</th>
-              <th class="px-6 py-4 text-center text-sm font-semibold text-gray-600 uppercase tracking-wider">Total Items</th>
-              <th class="px-6 py-4 text-center text-sm font-semibold text-gray-600 uppercase tracking-wider">Price</th>
-              <th class="px-6 py-4 text-center text-sm font-semibold text-gray-600 uppercase tracking-wider">Discount</th>
-              <th class="px-6 py-4 text-center text-sm font-semibold text-gray-600 uppercase tracking-wider">Coupon Used</th>
-              <th class="px-6 py-4 text-center text-sm font-semibold text-gray-600 uppercase tracking-wider">Total</th>
-              <th class="px-6 py-4 text-center text-sm font-semibold text-gray-600 uppercase tracking-wider">Status</th>
-              <th class="px-6 py-4 text-center text-sm font-semibold text-gray-600 uppercase tracking-wider rounded-tr-lg">Actions</th>
-            </tr>
-          </thead>
-
-          <!-- Table Body -->
-          <tbody class="divide-y divide-gray-100">
-            <% orders.forEach((order, orderIndex) => { %>
-            <!-- Order Group Header -->
-            <tr class="bg-blue-50/50">
-              <td colspan="9" class="px-6 py-4">
-                <div class="flex items-center justify-between">
-                  <div class="flex items-center gap-4">
-                    <span class="text-sm font-semibold text-gray-900">
-                      Order #<%= order._id %>
-                    </span>
-                    <span class="text-sm text-gray-500">
-                      <%= new Date(order.orderDate).toLocaleDateString('en-US', { 
-                          year: 'numeric', 
-                          month: 'long', 
-                          day: 'numeric',
-                          hour: '2-digit',
-                          minute: '2-digit'
-                        }) %>
-                    </span>
-                  </div>
-                  <div class="flex items-center gap-2">
-                    <span class="px-3 py-1 text-xs font-medium rounded-full
-                        <%= order.paymentStatus === 'Paid' ? 'bg-green-100 text-green-800' : 'bg-yellow-100 text-yellow-800' %>">
-                      <%= order.paymentStatus %>
-                    </span>
-                  </div>
-                </div>
-              </td>
-            </tr>
-
-            <!-- Order Details -->
-            <tr class="hover:bg-gray-50 transition-colors duration-200" data-order-id="<%= order._id %>">
-              <td class="px-6 py-4 whitespace-nowrap">
-                <span class="text-sm text-gray-500">#<%= orderIndex + 1 %></span>
-              </td>
-
-              <!-- Enhanced Product Display Cell -->
-              <td class="px-6 py-4">
-                <a href="/order-tracking/<%= order._id %>">
-                  <div class="flex items-center gap-4 product-stack" onclick="openProductsModal('<%= order._id %>')">
-                    <div class="flex -space-x-3 relative">
-                      <% 
-                      const maxDisplayProducts = 3;
-                      const products = order.items;
-                      const displayProducts = products.slice(0, maxDisplayProducts);
-                      const remainingProducts = products.length - maxDisplayProducts;
-                      %>
-
-                      <% displayProducts.forEach((product, idx) => { %>
-                      <div class="product-image relative group">
-                        <div class="w-12 h-12 rounded-lg bg-white border-2 border-white shadow-sm overflow-hidden">
-                          <% if (product.productId.images && product.productId.images.length > 0) { %>
-                          <img src="<%= product.productId.images[0] %>" alt="<%= product.productId.name %>" class="w-full h-full object-cover">
-                          <% } else { %>
-                          <div class="w-full h-full bg-gray-100 flex items-center justify-center">
-                            <svg class="w-6 h-6 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 16l4.586-4.586a2 2 0 012.828 0L16 16m-2-2l1.586-1.586a2 2 0 012.828 0L20 14m-6-6h.01M6 20h12a2 2 0 002-2V6a2 2 0 00-2-2H6a2 2 0 00-2 2v12a2 2 0 002 2z" />
-                            </svg>
-                          </div>
-                          <% } %>
-                        </div>
-                        <!-- Tooltip -->
-                        <div class="absolute bottom-full left-1/2 transform -translate-x-1/2 mb-2 px-2 py-1 bg-gray-900 text-white text-xs rounded opacity-0 invisible group-hover:opacity-100 group-hover:visible transition-all duration-200 whitespace-nowrap z-20">
-                          <%= product.productId.name %>
-                        </div>
-                      </div>
-                      <% }); %>
-
-                      <% if (remainingProducts > 0) { %>
-                      <div class="product-image w-12 h-12 rounded-lg bg-gray-100 border-2 border-white shadow-sm flex items-center justify-center">
-                        <span class="text-sm font-medium text-gray-600">+<%= remainingProducts %></span>
-                      </div>
-                      <% } %>
-                    </div>
-
-                    <div class="flex flex-col">
-                      <div class="text-sm font-medium text-gray-900">
-                        <%= displayProducts[0].productId.name %>
-                        <% if (products.length > 1) { %>
-                        <span class="text-xs text-gray-500">and <%= products.length - 1 %> more</span>
-                        <% } %>
-                      </div>
-                      <div class="text-xs text-gray-500">Click to view all</div>
-                    </div>
-                  </div>
-                </a>
-              </td>
-
-              <td class="px-6 py-4 whitespace-nowrap">
-                <span class="text-sm text-gray-900">
-                  <%= order.items.reduce((acc, item) => acc + item.quantity, 0) %>
-                </span>
-              </td>
-
-              <td class="px-6 py-4 whitespace-nowrap">
-                <div class="text-sm text-gray-900">₹<%= order.totalAmount %></div>
-              </td>
-
-              <td class="px-6 py-4 whitespace-nowrap">
-                <% if(order.offerApplied > 0) { %>
-                <div class="text-sm text-green-500">- ₹<%= order.offerApplied %></div>
-                <% } else { %>
-                <div class="text-sm text-green-500">No Discount</div>
-                <% } %>
-              </td>
-
-              <td class="px-6 py-4 whitespace-nowrap">
-                <span class="status-badge px-3 py-1 text-xs font-medium rounded-full inline-flex items-center gap-1 bg-orange-100 text-orange-800">
-                  <!-- <span class="w-1.5 h-1.5 rounded-full bg-orange-500"></span> -->
-                  <% if(order.couponApplied !== null) { %>
-                  <%= order.couponApplied.code %>
-                  <% } else { %>
-                  No Coupons
-                  <% } %>
-                </span>
-              </td>
-
-              <td class="px-6 py-4 whitespace-nowrap">
-                <div class="text-sm font-medium text-gray-900">
-                  ₹<%= order.totalAmount - order.offerApplied %>
-                </div>
-              </td>
-
-              <td class="px-6 py-4 whitespace-nowrap">
-                <span class="status-badge px-3 py-1 text-xs font-medium rounded-full inline-flex items-center gap-1
-                                      <%= order.orderStatus === 'Placed' ? 'bg-yellow-100 text-yellow-800' : 
-                                         order.orderStatus === 'Delivered' ? 'bg-green-100 text-green-800' : 
-                                         'bg-red-100 text-red-800' %>">
-                  <span class="w-1.5 h-1.5 rounded-full 
-                                          <%= order.orderStatus === 'Placed' ? 'bg-yellow-500' :
-                                             order.orderStatus === 'Delivered' ? 'bg-green-500' :
-                                             'bg-red-500' %>">
-                  </span>
-                  <%= order.orderStatus %>
-                </span>
-              </td>
-
-              <td class="px-6 py-4 whitespace-nowrap">
-                <div class="flex items-center gap-3">
-                  <a href="/order-tracking/<%= order._id %>" class="inline-flex items-center px-3 py-1.5 text-sm font-medium text-blue-600 hover:text-blue-800 transition-colors duration-200">
-                    <svg class="w-4 h-4 mr-1" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                      <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2m-3 7h3m-3 4h3m-6-4h.01M9 16h.01" />
-                    </svg>
-                    Track
-                  </a>
-
-                  <% if (order.orderStatus !== "Cancelled" && order.orderStatus !== "Delivered") { %>
-                  <button id="openModal" data-order-id="<%= order._id %>" class="inline-flex items-center px-3 py-1.5 text-sm font-medium text-red-600 hover:text-red-800 transition-colors duration-200">
-                    <svg class="w-4 h-4 mr-1" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                      <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12" />
-                    </svg>
-                    Cancel
-                  </button>
-                  <% } %>
-
-                  <% if (order.orderStatus === "Delivered") { %>
-                  <a href="/order/return/<%= order._id %>" class="inline-flex items-center px-3 py-1.5 text-sm font-medium text-purple-600 hover:text-purple-800 transition-colors duration-200">
-                    <svg class="w-4 h-4 mr-1" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                      <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M16 15v-1a4 4 0 00-4-4H8m0 0l3 3m-3-3l3-3" />
-                    </svg>
-                    Return
-                  </a>
-                  <% } %>
-
-                  <!-- New Button: Download Invoice -->
-                  <% if (order.orderStatus === "Delivered") { %>
-                  <a href="/order/invoice/<%= order._id %>" class="inline-flex items-center px-3 py-1.5 text-sm font-medium text-green-600 hover:text-green-800 transition-colors duration-200">
-                    <svg class="w-4 h-4 mr-1" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                      <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 10v6m0 0l-3-3m3 3l3-3m2 8H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z" />
-                    </svg>
-                    Download Invoice
-                  </a>
-                  <% } %>
-                </div>
-              </td>
-            </tr>
-            <% }); %>
-          </tbody>
-        </table>
+      <div class="gradient-border p-6 bg-white">
+        <div class="flex items-center">
+          <div class="rounded-full p-3 bg-green-100">
+            <i class="fas fa-check-circle text-green-600"></i>
+          </div>
+          <div class="ml-4">
+            <h3 class="text-sm font-medium text-gray-500">Delivered</h3>
+            <p class="text-2xl font-bold text-gray-900">
+              <%= orders.filter(order => order.orderStatus === 'Delivered').length %>
+            </p>
+          </div>
+        </div>
       </div>
 
-      <!-- Empty State -->
+      <div class="gradient-border p-6 bg-white">
+        <div class="flex items-center">
+          <div class="rounded-full p-3 bg-yellow-100">
+            <i class="fas fa-clock text-yellow-600"></i>
+          </div>
+          <div class="ml-4">
+            <h3 class="text-sm font-medium text-gray-500">In Progress</h3>
+            <p class="text-2xl font-bold text-gray-900">
+              <%= orders.filter(order => order.orderStatus === 'Placed').length %>
+            </p>
+          </div>
+        </div>
+      </div>
+
+      <div class="gradient-border p-6 bg-white">
+        <div class="flex items-center">
+          <div class="rounded-full p-3 bg-red-100">
+            <i class="fas fa-times-circle text-red-600"></i>
+          </div>
+          <div class="ml-4">
+            <h3 class="text-sm font-medium text-gray-500">Cancelled</h3>
+            <p class="text-2xl font-bold text-gray-900">
+              <%= orders.filter(order => order.orderStatus === 'Cancelled').length %>
+            </p>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Orders List -->
+    <div class="space-y-6">
       <% if (orders.length === 0) { %>
-      <div class="flex flex-col items-center justify-center py-12">
-        <div class="w-40 h-40 mb-6">
-          <img src="/images/forgotman.png" alt="No orders" class="w-full h-full object-contain">
-        </div>
-        <h3 class="text-xl font-semibold text-gray-900 mb-2">No Orders Yet</h3>
-        <p class="text-gray-500 mb-6 text-center">Start shopping and your orders will appear here</p>
-        <a href="/products" class="inline-flex items-center px-6 py-3 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition duration-200">
+      <div class="text-center py-16">
+        <img src="/images/forgotman.png" alt="No orders" class="w-48 h-48 mx-auto mb-6 float-animation">
+        <h2 class="text-2xl font-bold text-gray-900 mb-2">No Orders Yet</h2>
+        <p class="text-gray-600 mb-6">Start shopping and your orders will appear here</p>
+        <a href="/products" class="inline-flex items-center px-6 py-3 bg-indigo-600 text-white rounded-lg hover:bg-indigo-700 transition duration-300">
+          <i class="fas fa-shopping-cart mr-2"></i>
           Browse Products
         </a>
       </div>
+      <% } else { %>
+      <% orders.forEach((order, index) => { %>
+      <div class="order-card gradient-border bg-white p-6">
+        <!-- Order Header -->
+        <div class="flex flex-wrap items-center justify-between mb-4">
+          <div>
+            <h3 class="text-lg font-semibold text-gray-900">
+              Order #<%= order._id %>
+            </h3>
+            <p class="text-sm text-gray-500">
+              <%= new Date(order.orderDate).toLocaleDateString('en-US', { 
+                                    year: 'numeric', 
+                                    month: 'long', 
+                                    day: 'numeric',
+                                    hour: '2-digit',
+                                    minute: '2-digit'
+                                }) %>
+            </p>
+          </div>
+          <div class="flex items-center space-x-3">
+            <span class="status-pill px-4 py-2 rounded-full text-sm font-medium
+                                <%= order.orderStatus === 'Placed' ? 'bg-yellow-100 text-yellow-800' : 
+                                   order.orderStatus === 'Delivered' ? 'bg-green-100 text-green-800' : 
+                                   'bg-red-100 text-red-800' %>">
+              <i class="fas fa-circle text-xs mr-2"></i>
+              <%= order.orderStatus %>
+            </span>
+            <span class="status-pill px-4 py-2 rounded-full text-sm font-medium
+                                <%= order.paymentStatus === 'Paid' ? 'bg-green-100 text-green-800' : 'bg-yellow-100 text-yellow-800' %>">
+              <i class="fas fa-<%= order.paymentStatus === 'Paid' ? 'check' : 'clock' %> mr-2"></i>
+              <%= order.paymentStatus %>
+            </span>
+          </div>
+        </div>
+
+        <!-- Products Preview -->
+        <div class="flex items-center space-x-4 mb-4">
+          <div class="flex -space-x-3">
+            <% order.items.slice(0, 3).forEach(item => { %>
+            <div class="relative w-12 h-12 rounded-lg border-2 border-white shadow-sm overflow-hidden">
+              <img src="<%= item.productId.images[0] %>" alt="<%= item.productId.name %>" class="w-full h-full object-cover" loading="lazy">
+            </div>
+            <% }) %>
+            <% if (order.items.length > 3) { %>
+            <div class="relative w-12 h-12 rounded-lg bg-gray-100 border-2 border-white shadow-sm flex items-center justify-center">
+              <span class="text-sm font-medium text-gray-600">+<%= order.items.length - 3 %></span>
+            </div>
+            <% } %>
+          </div>
+          <div class="flex-1">
+            <p class="text-sm font-medium text-gray-900">
+              <%= order.items[0].productId.name %>
+              <% if (order.items.length > 1) { %>
+              <span class="text-gray-500">and <%= order.items.length - 1 %> more items</span>
+              <% } %>
+            </p>
+          </div>
+        </div>
+
+        <!-- Order Details -->
+        <div class="grid grid-cols-2 md:grid-cols-4 gap-4 mb-4">
+          <div>
+            <p class="text-sm text-gray-500">Total Amount</p>
+            <p class="text-lg font-semibold text-gray-900">₹<%= order.totalAmount %></p>
+          </div>
+          <div>
+            <p class="text-sm text-gray-500">Items</p>
+            <p class="text-lg font-semibold text-gray-900">
+              <%= order.items.reduce((acc, item) => acc + item.quantity, 0) %>
+            </p>
+          </div>
+          <div>
+            <p class="text-sm text-gray-500">Discount</p>
+            <p class="text-lg font-semibold text-green-600">
+              -₹<%= order.offerApplied || 0 %>
+            </p>
+          </div>
+          <div>
+            <p class="text-sm text-gray-500">Final Amount</p>
+            <p class="text-lg font-semibold text-indigo-600">
+              ₹<%= order.totalAmount - order.offerApplied %>
+            </p>
+          </div>
+        </div>
+
+        <!-- Action Buttons -->
+        <div class="flex flex-wrap items-center gap-3">
+          <a href="/order-tracking/<%= order._id %>" class="inline-flex items-center px-4 py-2 bg-indigo-50 text-indigo-700 rounded-lg hover:bg-indigo-100 transition duration-300">
+            <i class="fas fa-map-marker-alt mr-2"></i>
+            Track Order
+          </a>
+
+          <% if (order.orderStatus === "Delivered") { %>
+          <a href="/order/invoice/<%= order._id %>" class="inline-flex items-center px-4 py-2 bg-green-50 text-green-700 rounded-lg hover:bg-green-100 transition duration-300">
+            <i class="fas fa-download mr-2"></i>
+            Download Invoice
+          </a>
+          <% } %>
+
+          <% if (order.orderStatus !== "Cancelled" && order.orderStatus !== "Delivered" && order.orderStatus !== "Return Requested" && order.orderStatus !== "Return Approved" && order.orderStatus !== "Return Rejected") { %>
+          <button onclick="openModal('<%= order._id %>')" class="inline-flex items-center px-4 py-2 bg-red-50 text-red-700 rounded-lg hover:bg-red-100 transition duration-300">
+            <i class="fas fa-times mr-2"></i>
+            Cancel Order
+          </button>
+          <% } %>
+
+          <% if (order.orderStatus === "Delivered" && order.orderStatus !== "Return Requested") { %>
+          <a href="/order/return/<%= order._id %>" class="inline-flex items-center px-4 py-2 bg-purple-50 text-purple-700 rounded-lg hover:bg-purple-100 transition duration-300">
+            <i class="fas fa-undo mr-2"></i>
+            Return Order
+          </a>
+          <% } %>
+        </div>
+      </div>
+      <% }) %>
       <% } %>
     </div>
   </main>
@@ -438,65 +364,6 @@
     </div>
   </div>
 
-  <!-- Add this modal HTML just before closing body tag -->
-  <div id="returnModal" class="fixed inset-0 z-50 hidden">
-    <!-- Backdrop -->
-    <div class="fixed inset-0 bg-black/50 backdrop-blur-sm transition-opacity duration-300 opacity-0" id="modalBackdrop"></div>
-
-    <!-- Modal -->
-    <div class="fixed left-1/2 top-1/2 -translate-x-1/2 -translate-y-1/2 w-full max-w-md scale-95 opacity-0 transition-all duration-300" id="modalContent">
-      <div class="bg-white rounded-lg shadow-xl overflow-hidden">
-        <!-- Header -->
-        <div class="px-6 py-4 border-b border-gray-200">
-          <div class="flex items-center justify-between">
-            <h3 class="text-lg font-medium text-gray-900">Return Order Request</h3>
-            <button onclick="closeReturnModal()" class="text-gray-400 hover:text-gray-500 transition-colors">
-              <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12" />
-              </svg>
-            </button>
-          </div>
-        </div>
-
-        <!-- Form -->
-        <form id="returnForm" class="px-6 py-4 space-y-4">
-          <input type="hidden" id="orderId" name="orderId">
-
-          <!-- Items Selection -->
-          <div class="space-y-2">
-            <label class="block text-sm font-medium text-gray-700">Select Items to Return</label>
-            <div id="orderItems" class="space-y-2 max-h-40 overflow-y-auto"></div>
-          </div>
-
-          <!-- Reason Selection -->
-          <div class="space-y-2">
-            <label class="block text-sm font-medium text-gray-700">Reason for Return</label>
-            <select name="reason" required class="w-full rounded-md border-gray-300 shadow-sm focus:border-purple-500 focus:ring-purple-500">
-              <option value="">Select a reason</option>
-              <option value="wrong_item">Wrong Item Received</option>
-              <option value="defective">Item is Defective</option>
-              <option value="not_as_described">Item Not as Described</option>
-              <option value="size_issue">Size/Fit Issue</option>
-              <option value="changed_mind">Changed My Mind</option>
-            </select>
-          </div>
-
-          <!-- Additional Comments -->
-          <div class="space-y-2">
-            <label class="block text-sm font-medium text-gray-700">Additional Comments</label>
-            <textarea name="comments" rows="3" class="w-full rounded-md border-gray-300 shadow-sm focus:border-purple-500 focus:ring-purple-500"></textarea>
-          </div>
-
-          <!-- Submit Button -->
-          <div class="flex justify-end pt-4">
-            <button type="submit" class="inline-flex items-center px-4 py-2 border border-transparent rounded-md shadow-sm text-sm font-medium text-white bg-purple-600 hover:bg-purple-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-purple-500 transition-colors duration-200">
-              Submit Return Request
-            </button>
-          </div>
-        </form>
-      </div>
-    </div>
-  </div>
 
   <!-- Footer -->
   <%- include('../layouts/footer.ejs') %>

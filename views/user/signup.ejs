@@ -14,15 +14,18 @@
   <!-- Navbar including -->
   <%- include('../layouts/header-without-user.ejs') %>
 
-  <main class="container mx-auto px-4 py-8 flex">
-    <div class="w-1/2">
-      <img src="/images/signup.png" alt="Shopping concept" class="w-full h-auto">
+  <main class="container mx-auto px-4 py-8 flex flex-col md:flex-row">
+    <!-- Left side image (visible on large screens) -->
+    <div class="w-full md:w-1/2 mb-8 md:mb-0">
+      <img src="/images/signup.png" alt="Shopping concept" class="w-full h-auto rounded-lg shadow-lg">
     </div>
-    <div class="w-1/2 pl-8">
+
+    <!-- Signup form -->
+    <div class="w-full md:w-1/2 pl-0 md:pl-8">
       <h1 class="text-3xl font-bold mb-2">Create an account</h1>
       <p class="text-gray-600 mb-8">Enter your details below</p>
-      <!-- Error showing section  -->
 
+      <!-- Error message -->
       <% if (error_msg.length > 0 ) { %>
       <div class="bg-red-100 border border-red-400 text-red-700 px-4 py-3 rounded relative mb-6" role="alert" id="error-message">
         <strong class="font-bold">Error!</strong>
@@ -36,18 +39,18 @@
       </div>
       <% } %>
 
-      <!-- form  -->
+      <!-- form -->
       <form method="post" action="/signup" autocomplete="off">
         <!-- First Name and Last Name Fields -->
-        <div class="flex space-x-4 mb-4">
-          <input name="fname" type="text" placeholder="First Name" class="custom-input w-1/2">
-          <input name="lname" type="text" placeholder="Last Name" class="custom-input w-1/2">
+        <div class="flex flex-col md:flex-row md:space-x-4 mb-4">
+          <input name="fname" type="text" placeholder="First Name" class="custom-input w-full md:w-1/2 mb-4 md:mb-0">
+          <input name="lname" type="text" placeholder="Last Name" class="custom-input w-full md:w-1/2">
         </div>
 
-        <input name="email" type="text" placeholder="Email" class="custom-input">
-        <input name="phone" type="number" placeholder="Phone Number" class="custom-input">
-        <input name="password" type="password" placeholder="Password" class="custom-input">
-        <input name="cpassword" type="password" placeholder="Confirm Password" class="custom-input">
+        <input name="email" type="text" placeholder="Email" class="custom-input mb-4">
+        <input name="phone" type="number" placeholder="Phone Number" class="custom-input mb-4">
+        <input name="password" type="password" placeholder="Password" class="custom-input mb-4">
+        <input name="cpassword" type="password" placeholder="Confirm Password" class="custom-input mb-4">
 
         <!-- Gender Radio Buttons -->
         <div class="mb-4">
@@ -63,22 +66,21 @@
         <button id="signup-button" type="submit" class="create-account-btn w-full mb-4">Create Account</button>
       </form>
 
-      <a href="/auth/google" class="google-btn w-full mb-6">
+      <!-- Google Sign Up -->
+      <a href="/auth/google" class="google-btn w-full mb-6 flex items-center justify-center">
         <img src="/images/Icon-Google.png" alt="Google" class="w-5 h-5 mr-3">
         Sign up with Google
       </a>
+
+      <!-- Login link -->
       <p class="text-center text-gray-600">
         Already have an account? <a href="/login" class="login-link">Log in</a>
       </p>
     </div>
   </main>
 
-
-
-
   <!-- footer including -->
   <%- include('../layouts/footer.ejs') %>
-
 
 </body>
 

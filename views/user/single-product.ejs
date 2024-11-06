@@ -10,13 +10,37 @@
   <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.3/css/all.min.css" rel="stylesheet">
   <link rel="stylesheet" href="/css/like-button.css">
   <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+  <style>
+    /* Add these styles to your CSS */
+    .zoom-container {
+      position: relative;
+      overflow: hidden;
+    }
+
+    #mainImage {
+      opacity: 1;
+      transition: opacity 0.3s ease;
+    }
+
+    .thumbnail-container {
+      transition: all 0.3s ease;
+    }
+
+    .thumbnail-container:hover {
+      transform: translateY(-2px);
+    }
+
+    .zoomed-image {
+      pointer-events: none;
+    }
+  </style>
 </head>
 
 <body class="bg-gray-100 font-sans">
   <%- include('../layouts/header-with-user.ejs') %>
 
   <!-- Breadcrumbs -->
-  <nav aria-label="Breadcrumb" class="py-4 px-6 bg-white shadow-sm">
+  <nav aria-label="Breadcrumb" class=" hidden lg:block py-4 px-6 bg-white shadow-sm">
     <ol id="breadcrumbs" class="flex items-center space-x-2 text-sm">
       <li class="flex items-center">
         <a href="/home" class="text-gray-500 hover:text-gray-700 transition-colors duration-300 flex items-center">
@@ -30,12 +54,14 @@
     </ol>
   </nav>
 
-  <main class="container mx-auto px-6 py-8">
+  <main class="container mx-auto px-6 py-8 mt-5">
     <div class="flex flex-wrap -mx-4">
+      <!-- Replace the existing image gallery section with this code -->
       <div class="w-full md:w-1/2 px-4 mb-8 md:mb-0">
         <div class="sticky top-0">
-          <div class="mb-6 relative zoom-container rounded-lg shadow-md bg-white">
-            <img id="mainImage" src="<%= product.images[0] %>" alt="<%= product.name %>" class="w-full h-auto rounded-lg transition-transform duration-300">
+          <!-- Primary Image Container -->
+          <div class="mb-6 relative zoom-container rounded-lg shadow-md bg-white overflow-hidden">
+            <img id="mainImage" src="<%= product.images[0] %>" alt="<%= product.name %>" class="w-full h-[500px] object-cover rounded-lg transition-transform duration-300">
             <% if (product.productOffer > 0) { %>
             <div class="absolute top-4 left-4 bg-red-500 text-white text-xs font-bold px-2 py-1 rounded-full z-20 transform -rotate-12 shadow-lg animate-pulse">
               <%= product.productOffer %>% OFF
@@ -43,10 +69,12 @@
             <% } %>
           </div>
 
-          <div class="thumbnail-container">
+          <!-- Thumbnail Gallery -->
+          <div class="grid grid-cols-5 gap-2">
             <% product.images.forEach((img, index) => { %>
-            <div class="aspect-w-1 aspect-h-1">
-              <img src="<%= img %>" alt="Thumbnail <%= index + 1 %>" class="product-thumbnail w-full rounded-lg shadow-sm cursor-pointer hover:opacity-75 transition duration-300 object-cover">
+            <div class="aspect-square rounded-lg overflow-hidden cursor-pointer thumbnail-container
+                    <%= index === 0 ? 'ring-2 ring-red-500' : '' %>" onclick="changeMainImage(this, '<%= img %>')">
+              <img src="<%= img %>" alt="Thumbnail <%= index + 1 %>" class="w-full h-full object-cover hover:opacity-75 transition duration-300">
             </div>
             <% }) %>
           </div>
@@ -362,110 +390,92 @@
     });
 
 
+    // Replace the existing zoom-related JavaScript with this code
+    document.addEventListener('DOMContentLoaded', function() {
+      initializeGallery();
+    });
 
-
-    // Image zoom functionality
-    const zoomContainer = document.querySelector('.zoom-container');
-    const mainImage = document.getElementById('mainImage');
-    let isZoomed = false;
-    let zoomedImage = null;
-
-    function initializeZoom() {
-      const thumbnails = document.querySelectorAll('.product-thumbnail');
-
-      // Thumbnail click handlers
-      thumbnails.forEach((thumb) => {
-        thumb.addEventListener('click', function() {
-          // Remove active class from all thumbnails
-          thumbnails.forEach(t => t.classList.remove('ring-2', 'ring-red-500'));
-
-          // Add active class to clicked thumbnail
-          this.classList.add('ring-2', 'ring-red-500');
-
-          // Update main image
-          mainImage.src = this.src;
-
-          // Reset zoom if active
-          if (isZoomed) {
-            removeZoom();
-          }
-        });
-      });
-
-      // Add active class to first thumbnail initially
-      thumbnails[0]?.classList.add('ring-2', 'ring-red-500');
+    function initializeGallery() {
+      const zoomContainer = document.querySelector('.zoom-container');
+      const mainImage = document.getElementById('mainImage');
+      let isZoomed = false;
+      let zoomedImage = null;
 
       // Zoom functionality
       zoomContainer.addEventListener('mouseenter', initZoom);
       zoomContainer.addEventListener('mouseleave', removeZoom);
       zoomContainer.addEventListener('mousemove', moveZoom);
-    }
 
-    function initZoom(e) {
-      if (isZoomed) return;
+      function initZoom(e) {
+        if (isZoomed) return;
+        isZoomed = true;
 
-      isZoomed = true;
+        zoomedImage = document.createElement('div');
+        zoomedImage.classList.add('zoomed-image');
 
-      // Create zoomed image overlay
-      zoomedImage = document.createElement('div');
-      zoomedImage.classList.add('zoomed-image');
+        Object.assign(zoomedImage.style, {
+          position: 'fixed',
+          top: '50%',
+          left: '50%',
+          transform: 'translate(-50%, -50%)',
+          width: '800px',
+          height: '800px',
+          backgroundColor: 'white',
+          borderRadius: '8px',
+          boxShadow: '0 25px 50px -12px rgba(0, 0, 0, 0.25)',
+          backgroundImage: `url(${mainImage.src})`,
+          backgroundRepeat: 'no-repeat',
+          backgroundPosition: 'center',
+          backgroundSize: '200%',
+          zIndex: 1000,
+          opacity: 0,
+          transition: 'opacity 0.3s ease'
+        });
 
-      // Set styles for zoomed image
-      Object.assign(zoomedImage.style, {
-        position: 'fixed',
-        top: '50%',
-        left: '50%',
-        transform: 'translate(-50%, -50%)',
-        width: '800px',
-        height: '800px',
-        backgroundColor: 'white',
-        borderRadius: '8px',
-        boxShadow: '0 25px 50px -12px rgba(0, 0, 0, 0.25)',
-        backgroundImage: `url(${mainImage.src})`,
-        backgroundRepeat: 'no-repeat',
-        backgroundPosition: 'center',
-        backgroundSize: '200%',
-        zIndex: 1000,
-        opacity: 0,
-        transition: 'opacity 0.3s ease'
-      });
+        document.body.appendChild(zoomedImage);
+        requestAnimationFrame(() => zoomedImage.style.opacity = '1');
+        moveZoom(e);
+      }
 
-      document.body.appendChild(zoomedImage);
+      function removeZoom() {
+        if (!isZoomed) return;
+        isZoomed = false;
 
-      // Fade in
-      requestAnimationFrame(() => {
-        zoomedImage.style.opacity = '1';
-      });
+        if (zoomedImage) {
+          zoomedImage.style.opacity = '0';
+          setTimeout(() => {
+            zoomedImage.remove();
+            zoomedImage = null;
+          }, 300);
+        }
+      }
 
-      moveZoom(e);
-    }
-
-    function removeZoom() {
-      if (!isZoomed) return;
-
-      isZoomed = false;
-
-      if (zoomedImage) {
-        zoomedImage.style.opacity = '0';
-        setTimeout(() => {
-          zoomedImage.remove();
-          zoomedImage = null;
-        }, 300);
+      function moveZoom(e) {
+        if (!isZoomed || !zoomedImage) return;
+        const rect = zoomContainer.getBoundingClientRect();
+        const x = ((e.clientX - rect.left) / rect.width) * 100;
+        const y = ((e.clientY - rect.top) / rect.height) * 100;
+        zoomedImage.style.backgroundPosition = `${x}% ${y}%`;
       }
     }
 
-    function moveZoom(e) {
-      if (!isZoomed || !zoomedImage) return;
+    // Function to change main image when clicking thumbnails
+    function changeMainImage(thumbnailContainer, newSrc) {
+      // Update main image
+      const mainImage = document.getElementById('mainImage');
+      mainImage.src = newSrc;
 
-      const rect = zoomContainer.getBoundingClientRect();
-      const x = ((e.clientX - rect.left) / rect.width) * 100;
-      const y = ((e.clientY - rect.top) / rect.height) * 100;
+      // Update thumbnail styling
+      const allThumbnails = document.querySelectorAll('.thumbnail-container');
+      allThumbnails.forEach(thumb => thumb.classList.remove('ring-2', 'ring-red-500'));
+      thumbnailContainer.classList.add('ring-2', 'ring-red-500');
 
-      zoomedImage.style.backgroundPosition = `${x}% ${y}%`;
+      // Add a subtle fade transition effect
+      mainImage.style.opacity = '0';
+      setTimeout(() => {
+        mainImage.style.opacity = '1';
+      }, 50);
     }
-
-    // Initialize zoom functionality when DOM is loaded
-    document.addEventListener('DOMContentLoaded', initializeZoom);
   </script>
 </body>
 

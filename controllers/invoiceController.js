@@ -320,7 +320,7 @@ function generateInvoiceId() {
     return `INV-${timestamp}-${randomComponent}`;
 }
 
-const downloadInvoice = async (req, res) => {
+const downloadInvoice = async (req, res, next) => {
     const orderId = req.params.id;
 
     try {
@@ -346,7 +346,7 @@ const downloadInvoice = async (req, res) => {
 
         // Stream PDF to response
         res.setHeader('Content-Type', 'application/pdf');
-        res.setHeader('Content-Disposition', `attachment; filename=yadro.pdf`);
+        res.setHeader('Content-Disposition', `attachment; filename=yadro${order._id}.pdf`);
         doc.pipe(res);
 
         // Construct the invoice data
@@ -373,6 +373,7 @@ const downloadInvoice = async (req, res) => {
 
     } catch (error) {
         console.error('Error generating invoice:', error);
+        next(error)
         res.status(500).send('Could not generate invoice');
     }
 };

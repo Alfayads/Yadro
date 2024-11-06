@@ -5,7 +5,7 @@ const Wallet = require('../models/wallet')
 const Announcement = require('../models/announcement')
 
 
-const getAccount = async (req, res) => {
+const getAccount = async (req, res, next) => {
     try {
         const userId = req.session.user_id;
         const user = await Users.findById({ _id: userId });
@@ -15,11 +15,12 @@ const getAccount = async (req, res) => {
     } catch (error) {
         console.error(error.message);
         let errorMessage = { message: "An error occurred. Please try again later." };
+        next(error)
         return res.render('user/error', { error: errorMessage });
     }
 }
 
-const editProfile = async (req, res) => {
+const editProfile = async (req, res, next) => {
     try {
         const emailRegex = /^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$/;
         const userId = req.params.id;
@@ -63,12 +64,13 @@ const editProfile = async (req, res) => {
     } catch (error) {
         console.error(error.message);
         let errorMessage = { message: "An error occurred. Please try again later." };
+        next(error)
         return res.render('user/error', { error: errorMessage });
     }
 }
 
 
-const getWallet = async (req, res) => {
+const getWallet = async (req, res, next) => {
     try {
         const userId = req.session.user_id;
         const announcements = await Announcement.find({});
@@ -76,6 +78,8 @@ const getWallet = async (req, res) => {
         const categories = await Category.find({});
         const wallet = await Wallet.findOne({ userId })
 
+
+        console.log(wallet)
 
 
         if (wallet && wallet.lastUpdated) {
@@ -101,12 +105,13 @@ const getWallet = async (req, res) => {
     } catch (error) {
         console.error(error.message);
         let errorMessage = { message: "An error occurred. Please try again later." };
+        next(error)
         return res.render('user/error', { error: errorMessage });
     }
 }
 
 
-const getWalletDetails = async (req, res) => {
+const getWalletDetails = async (req, res, next) => {
     try {
         // Find the wallet by userId
         let wallet = await Wallet.findOne({ userId: req.user._id });
@@ -137,11 +142,12 @@ const getWalletDetails = async (req, res) => {
         res.json(responseData);
     } catch (error) {
         console.error("Failed to retrieve wallet:", error);
+        next(error)
         res.status(500).json({ message: 'Server error' });
     }
 }
 
-const getTransactionHistory = async (req, res) => {
+const getTransactionHistory = async (req, res, next) => {
     try {
         const userId = req.session.user_id;
         const user = await Users.findById({ _id: userId });
@@ -151,11 +157,12 @@ const getTransactionHistory = async (req, res) => {
     } catch (error) {
         console.error(error.message);
         let errorMessage = { message: "An error occurred. Please try again later." };
+        next(error)
         return res.render('user/error', { error: errorMessage });
     }
 }
 
-const getContact = async (req, res) => {
+const getContact = async (req, res, next) => {
     try {
         const userId = req.session.user_id;
         const user = await Users.findById({ _id: userId });
@@ -165,6 +172,7 @@ const getContact = async (req, res) => {
     } catch (error) {
         console.error(error.message);
         let errorMessage = { message: "An error occurred. Please try again later." };
+        next(error)
         return res.render('user/error', { error: errorMessage });
     }
 }

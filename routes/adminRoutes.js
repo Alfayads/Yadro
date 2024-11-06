@@ -61,7 +61,11 @@ admin_router.post('/add-brand', adminAuth, Controller.addBrand);// for create ne
 admin_router.get('/banners', adminAuth, Controller.getBanners);// for get Banner listing page
 admin_router.get('/add-banner', adminAuth, Controller.getAddBanner); // for get add Banner page 
 
-
+// Return orders Route
+admin_router.get('/return/requests', Controller.getReturnRequests);
+admin_router.get('/return/order-details/:id', Controller.getReturnDetails);
+admin_router.post('/return/approve/:id', Controller.approveReturn);
+admin_router.post('/return/reject/:id', Controller.rejectReturn);
 
 
 //Logout Route

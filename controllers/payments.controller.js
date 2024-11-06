@@ -3,7 +3,7 @@ const crypto = require('crypto');
 require('dotenv').config();
 const razorpayInstance = createRazorpayInstance()
 
-exports.createOrder = async (req, res) => {
+exports.createOrder = async (req, res, next) => {
     const { amount, orderData } = req.body;
 
     console.log('AAAAAAAMOUNT ==> ', amount)
@@ -26,6 +26,7 @@ exports.createOrder = async (req, res) => {
         });
     } catch (error) {
         console.error('Error in createOrder:', error);
+        next(error)
         return res.status(500).json({
             success: false,
             message: 'Something went wrong..',

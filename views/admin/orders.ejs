@@ -337,7 +337,7 @@
                 <span class="text-green-400 font-medium">₹<%= order.totalAmount %></span>
               </td>
               <td class="py-4 px-6">
-                <% if (order.orderStatus !== "Cancelled" && order.orderStatus !== "Delivered") { %>
+                <% if (order.orderStatus !== "Cancelled" && order.orderStatus !== "Delivered" && order.orderStatus !== "Return Requested" && order.orderStatus !== "Return Approved" && order.orderStatus !== "Return Rejected") { %>
                 <form action="/admin/orders/update-status" method="POST" class="flex items-center space-x-2">
                   <input type="hidden" name="orderId" value="<%= order._id %>">
                   <select name="status" class="status-dropdown text-sm">

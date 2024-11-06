@@ -3,7 +3,7 @@ const Category = require('../models/Category');
 const Users = require('../models/User');
 const Announcement = require('../models/announcement');
 
-const productDetails = async (req, res) => {
+const productDetails = async (req, res, next) => {
     try {
         const id = req.params.id;
         const product = await Product.findById({ _id: id });
@@ -11,6 +11,7 @@ const productDetails = async (req, res) => {
         const category = await Category.findById({ _id: product.category })
         const userId = req.session.user_id;
         const user = await Users.findById({ _id: userId });
+        const announcements = await Announcement.find({});
 
         const relatedProducts = await Product.find({
             category: product.category,
@@ -21,16 +22,17 @@ const productDetails = async (req, res) => {
             req.flash('error_msg', 'Something went wrong!!');
             return res.redirect('/');
         }
-        return res.render('user/single-product', { product, category, user, categories, relatedProducts });
+        return res.render('user/single-product', { product, category, user, categories, relatedProducts, announcements });
     } catch (error) {
         console.error(error.message);
         let errorMessage = { message: "An error occurred. Please try again later." };
+        next(error)
         return res.render('user/error', { error: errorMessage });
     }
 }
 
 
-const getProductByCategory = async (req, res) => {
+const getProductByCategory = async (req, res, next) => {
     try {
         const id = req.params.id;
         const userId = req.session.user_id;
@@ -43,12 +45,13 @@ const getProductByCategory = async (req, res) => {
     } catch (error) {
         console.error(error.message);
         let errorMessage = { message: "An error occurred. Please try again later." };
+        next(error)
         return res.render('user/error', { error: errorMessage });
     }
 }
 
 
-const getAllProducts = async (req, res) => {
+const getAllProducts = async (req, res, next) => {
     try {
         const userId = req.session.user_id;
         const user = await Users.findById({ _id: userId });
@@ -92,6 +95,7 @@ const getAllProducts = async (req, res) => {
     } catch (error) {
         console.error(error.message);
         let errorMessage = { message: "An error occurred. Please try again later." };
+        next(error)
         return res.render('user/error', { error: errorMessage });
     }
 }
