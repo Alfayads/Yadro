@@ -149,9 +149,9 @@
 <body class="bg-gray-100">
   <%- include('../layouts/header-with-user.ejs') %>
 
-  <main class="container mx-auto px-4 py-8">
+  <main class="container mx-auto px-4 py-8 mt-16">
     <!-- Breadcrumbs -->
-    <nav aria-label="Breadcrumb" class="container mx-auto px-4 py-4">
+    <nav aria-label="Breadcrumb" class="hidden lg:block container mx-auto px-4 py-4">
       <ol class="flex items-center space-x-1 text-sm">
         <li class="breadcrumb-item">
           <a href="/home" class="text-gray-500 hover:text-red-500 transition duration-300">
@@ -350,19 +350,24 @@
             </div>
             <div class="flex justify-between mb-2">
               <span>Coupon Discount:</span>
-              <span class="font-semibold" id="couponDiscount">₹ -0</span>
+              <span class="font-semibold text-green-500" id="couponDiscount">- ₹ 0</span>
             </div>
             <!-- <div class="flex justify-between mb-2">
               <span>GST:</span>
               <span>18%</span>
             </div> -->
             <div class="flex justify-between mb-2">
-              <span>Shipping:</span>
-              <span>Free</span>
+              <span>Shipping :</span>
+              <div class="flex flex-col items-end">
+                <span class="text-<%= shippingCharge > 0 ? 'red' : 'green' %>-500">+ ₹ <%= shippingCharge > 0 ? shippingCharge : 'Free'%></span>
+                <% if(shippingCharge > 0) { %>
+                <span class="text-green-500 text-sm">Spend ₹<%= freeDelivery %> more to get free delivery.</span>
+                <% } %>
+              </div>
             </div>
             <div class="flex justify-between font-semibold text-lg mt-4">
               <span>Total:</span>
-              <span id="cartTotal">₹ <%= totalPrice %></span>
+              <span id="cartTotal">₹ <%= finalTotal %></span>
             </div>
           </div>
 
@@ -792,7 +797,7 @@
 
       const options = {
         key: 'rzp_test_t4YUM4TLWyBT2D',
-        amount: orderData.totalAmount * 100,
+        amount: Number('<%= finalTotal %>' * 100),
         currency: order.currency,
         name: 'YADRO',
         description: 'Order Payment',

@@ -174,6 +174,14 @@ const getCheckOut = async (req, res, next) => {
 
         const totalPrice = cartItems.reduce((acc, item) => acc + item.totalPrice, 0);
 
+        // Calculate the shipping charge
+        const shippingCharge = totalPrice >= 5000 ? 0 : 400;
+        const finalTotal = totalPrice + shippingCharge;
+        const freeDelivery = 5000 - totalPrice;
+
+        console.log("Total Final Price => ", finalTotal);
+        console.log("Shipping Charge =>", shippingCharge)
+        console.log("Free Delivery = >", freeDelivery)
 
         return res.render('user/checkout', {
             user,
@@ -181,7 +189,10 @@ const getCheckOut = async (req, res, next) => {
             addresses,
             cartItems,
             oldValue,
+            shippingCharge,
             totalPrice,
+            finalTotal,
+            freeDelivery,
             announcements
         });
     } catch (error) {

@@ -72,9 +72,11 @@ document.addEventListener('DOMContentLoaded', function () {
                 couponInput.classList.add('bg-green-50', 'border-green-500');
             } else {
                 showError(result.message || 'Invalid coupon code');
+                couponInput.value = '';
             }
         } catch (error) {
             showError('Error applying coupon. Please try again.');
+            couponInput.value = '';
         } finally {
             stopLoading();
         }
@@ -172,6 +174,7 @@ document.addEventListener('DOMContentLoaded', function () {
     function showError(message) {
         document.getElementById('couponErrorText').textContent = message;
         errorMessage.classList.remove('hidden');
+        couponInput.innerText = ""
         gsap.fromTo(errorMessage, {
             opacity: 0,
             y: -10

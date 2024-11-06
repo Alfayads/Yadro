@@ -31,13 +31,24 @@ const cartSchema = mongoose.Schema({
         status: {
             type: String,
             default: "Placed"
-        },
-        shippingCharge: {
-            type: Number,
-            default: 0
         }
-    }]
-})
+    }],
+    shippingCharge: {
+        type: Number,
+        default: 0
+    }
+});
+
+// Pre-save hook to calculate the shipping charge
+cartSchema.pre('save', function (next) {
+    // Calculate the total price of items
+    const totalCartPrice = this.items.reduce((acc, item) => acc + item.totalPrice, 0);
+
+    // Set the shipping charge based on the total price
+    this.shippingCharge = totalCartPrice >= 5000 ? 0 : 400;
+
+    next();
+});
 
 const Cart = mongoose.model("Cart", cartSchema);
 module.exports = Cart;
