@@ -3,6 +3,7 @@ const user_router = express.Router();
 const passport = require('passport');
 
 const Order = require('../models/Order');
+const Wallet = require('../models/wallet')
 
 
 const authController = require('../controllers/authController');
@@ -67,7 +68,6 @@ user_router.get('/orders', auth.isLogout, getOrders);
 user_router.post('/order/cancel/:id', cancelOrder)
 user_router.get('/order/return/:id', getOrderReturn);
 user_router.post('/order/return/:orderId', createReturn);
-
 
 
 // Account
@@ -138,8 +138,15 @@ user_router.get('/auth/google',
 user_router.get(
     '/google/callback',
     passport.authenticate('google', { failureRedirect: '/signup', failureFlash: true }),
-    (req, res) => {
+    async (req, res) => {
         if (req.user) {
+            const newWallet = new Wallet({
+                userId: req.user._id,
+                balance: 0,
+                transactions: []
+            });
+
+            await newWallet.save();
             req.session.user_id = req.user._id;
             res.redirect('/home');
         } else {

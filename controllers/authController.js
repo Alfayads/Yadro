@@ -106,7 +106,23 @@ const getHomeWithoutUser = async (req, res, next) => {
 
         const products = await Product.find({}).limit(4);
         const categories = await Category.find({});
-        return res.render('user/home-without-user', { products, categories })
+
+        const latestProducts = await Product.find({})
+            .sort({ createdAt: -1 })
+            .limit(4);
+
+        // Get popular products (based on salesCount)
+        const popularProducts = await Product.find({})
+            .sort({ salesCount: -1 })
+            .limit(4);
+
+        // Get budget-friendly products (sorted by salePrice)
+        const budgetProducts = await Product.find({})
+            .sort({ salePrice: 1 })
+            .limit(4);
+
+
+        return res.render('user/home-without-user', { products, categories, latestProducts, popularProducts, budgetProducts })
     } catch (error) {
         console.error(error.message);
         let errorMessage = { message: "An error occurred. Please try again later." };

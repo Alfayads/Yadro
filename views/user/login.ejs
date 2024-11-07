@@ -4,120 +4,323 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Login - Yadro</title>
-  <link rel="stylesheet" href="/css/signup.css">
-  <link rel="icon" href="/images/logo.png" type="image/x-icon">
+  <title>Login - Yadro Premium Headphones</title>
   <script src="https://cdn.tailwindcss.com"></script>
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
   <style>
-    .forgot-password-link {
-      display: block;
-      text-align: right;
-      color: #4A5568;
-      font-size: 0.875rem;
-      margin-top: -0.5rem;
-      margin-bottom: 1rem;
-      transition: color 0.3s ease;
+    @keyframes float {
+
+      0%,
+      100% {
+        transform: translateY(0px);
+      }
+
+      50% {
+        transform: translateY(-20px);
+      }
     }
 
-    .forgot-password-link:hover {
-      color: #E53E3E;
-      text-decoration: underline;
+    @keyframes slideIn {
+      0% {
+        transform: translateX(-100%);
+        opacity: 0;
+      }
+
+      100% {
+        transform: translateX(0);
+        opacity: 1;
+      }
     }
 
-    .custom-input {
+    @keyframes fadeIn {
+      0% {
+        opacity: 0;
+        transform: translateY(20px);
+      }
+
+      100% {
+        opacity: 1;
+        transform: translateY(0);
+      }
+    }
+
+    .floating-headphone {
+      animation: float 6s ease-in-out infinite;
+    }
+
+    .slide-in {
+      animation: slideIn 0.8s ease-out forwards;
+    }
+
+    .fade-in {
+      animation: fadeIn 0.8s ease-out forwards;
+    }
+
+    .input-group {
+      position: relative;
+      margin-bottom: 1.5rem;
+    }
+
+    .input-group input {
       width: 100%;
-      padding: 0.75rem;
-      margin-bottom: 1rem;
-      border: 1px solid #CBD5E0;
-      border-radius: 0.375rem;
-      transition: border-color 0.3s ease;
+      padding: 1rem 1rem 1rem 3rem;
+      border: 2px solid #e2e8f0;
+      border-radius: 0.75rem;
+      transition: all 0.3s ease;
+      background-color: #f8fafc;
     }
 
-    .custom-input:focus {
-      border-color: #3182CE;
+    .input-group input:focus {
+      border-color: #DB2777;
+      box-shadow: 0 0 0 4px rgba(219, 39, 119, 0.1);
       outline: none;
     }
 
-    .create-account-btn {
-      background-color: #3182CE;
-      color: white;
-      padding: 0.75rem;
-      border-radius: 0.375rem;
-      font-weight: bold;
-      transition: background-color 0.3s ease;
+    .input-group i {
+      position: absolute;
+      left: 1rem;
+      top: 50%;
+      transform: translateY(-50%);
+      color: #94a3b8;
+      transition: all 0.3s ease;
     }
 
-    .create-account-btn:hover {
-      background-color: #2B6CB0;
+    .input-group input:focus+i {
+      color: #DB2777;
     }
 
-    .login-link {
-      color: #3182CE;
-      font-weight: bold;
-      transition: color 0.3s ease;
+    .social-btn {
+      transition: all 0.3s ease;
     }
 
-    .login-link:hover {
-      color: #2B6CB0;
-      text-decoration: underline;
+    .social-btn:hover {
+      transform: translateY(-3px);
+      box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06);
+    }
+
+    .gradient-border {
+      position: relative;
+      border-radius: 0.75rem;
+      background: linear-gradient(to right, #DB2777, #9333EA);
+      padding: 2px;
+    }
+
+    .gradient-border>div {
+      background: white;
+      border-radius: 0.75rem;
     }
   </style>
 </head>
 
-<body>
-  <!-- Navbar including -->
-  <%- include('../layouts/header-without-user.ejs') %>
+<body class="bg-gray-50 min-h-screen">
 
-  <main class="container mx-auto px-4 py-8 flex flex-col md:flex-row items-center justify-center space-y-6 md:space-y-0 md:space-x-8">
-    <div class="w-full md:w-1/2 flex justify-center">
-      <img src="/images/signup.png" alt="Shopping concept" class="w-full h-auto max-w-xs md:max-w-full">
-    </div>
-    <div class="w-full md:w-1/2 px-6 md:px-0">
-      <h1 class="text-3xl font-bold mb-2 text-center md:text-left">Log In</h1>
-      <p class="text-gray-600 mb-8 text-center md:text-left">Log into your existing account</p>
+  <header class="fixed w-full top-0 z-50 bg-white/90 backdrop-blur-md shadow-sm">
+    <nav class="container mx-auto px-4 py-4">
+      <div class="flex justify-between items-center">
+        <!-- Logo and Navigation -->
+        <div class="flex items-center space-x-8">
+          <a href="/" class="text-2xl font-bold text-red-600 hover:text-red-700 transition-all duration-300">
+            YADRO
+          </a>
+          <div class="hidden md:flex space-x-6">
+            <a href="#" class="text-gray-700 hover:text-red-600 transition-all duration-300">Home</a>
+            <a href="#categories" class="text-gray-700 hover:text-red-600 transition-all duration-300">Categories</a>
+            <a href="#latest" class="text-gray-700 hover:text-red-600 transition-all duration-300">Latest</a>
+            <a href="#popular" class="text-gray-700 hover:text-red-600 transition-all duration-300">Popular</a>
+          </div>
+        </div>
 
-      <!-- Error message section -->
-      <% if (error_msg.length > 0) { %>
-      <div class="bg-red-100 border border-red-400 text-red-700 px-4 py-3 rounded relative mb-6" role="alert" id="error-message">
-        <strong class="font-bold">Error!</strong>
-        <span class="block sm:inline"><%= error_msg %></span>
-        <span class="absolute top-0 bottom-0 right-0 px-4 py-3">
-          <svg class="fill-current h-6 w-6 text-red-500" role="button" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20" onclick="document.getElementById('error-message').style.display='none'">
-            <title>Close</title>
-            <path d="M14.348 5.652a1 1 0 00-1.414-1.414L10 7.172 7.066 4.238a1 1 0 10-1.414 1.414L8.586 10l-2.934 2.934a1 1 0 101.414 1.414L10 12.828l2.934 2.934a1 1 0 101.414-1.414L11.414 10l2.934-2.934z" />
-          </svg>
-        </span>
+        <!-- Actions -->
+        <div class="flex items-center space-x-4">
+          <button class="p-2 hover:bg-gray-100 rounded-full transition-all duration-300">
+            <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5 text-gray-600" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z" />
+            </svg>
+          </button>
+
+          <button id="cartBtn" class="p-2 hover:bg-gray-100 rounded-full transition-all duration-300 relative">
+            <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5 text-gray-600" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 3h2l.4 2M7 13h10l4-8H5.4M7 13L5.4 5M7 13l-2.293 2.293c-.63.63-.184 1.707.707 1.707H17m0 0a2 2 0 100 4 2 2 0 000-4zm-8 2a2 2 0 11-4 0 2 2 0 014 0z" />
+            </svg>
+            <span class="absolute -top-1 -right-1 bg-red-600 text-white text-xs rounded-full w-4 h-4 flex items-center justify-center">0</span>
+          </button>
+
+          <a href="/login" class="bg-red-600 text-white px-6 py-2 rounded-full hover:bg-red-700 transition-all duration-300 transform hover:scale-105" onclick="openModal('loginModal')">
+            Login
+          </a>
+
+          <a href="/signup" class="bg-gray-800 text-white px-6 py-2 rounded-full hover:bg-gray-900 transition-all duration-300 transform hover:scale-105" onclick="openModal('signupModal')">
+            Sign Up
+          </a>
+        </div>
       </div>
-      <% } %>
+    </nav>
+  </header>
 
-      <% if (success_msg.length > 0) { %>
-      <div class="bg-green-100 border border-green-400 text-green-700 px-4 py-3 rounded relative mb-6" role="alert" id="error-message">
-        <strong class="font-bold">Success!</strong>
-        <span class="block sm:inline"><%= success_msg %></span>
-        <span class="absolute top-0 bottom-0 right-0 px-4 py-3">
-          <svg class="fill-current h-6 w-6 text-green-500" role="button" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20" onclick="document.getElementById('error-message').style.display='none'">
-            <title>Close</title>
-            <path d="M14.348 5.652a1 1 0 00-1.414-1.414L10 7.172 7.066 4.238a1 1 0 10-1.414 1.414L8.586 10l-2.934 2.934a1 1 0 101.414 1.414L10 12.828l2.934 2.934a1 1 0 101.414-1.414L11.414 10l2.934-2.934z" />
-          </svg>
-        </span>
+  <div class="container mx-auto px-4 py-8 lg:py-16 mt-16">
+    <div class="max-w-6xl mx-auto">
+      <div class="flex flex-col lg:flex-row items-center gap-12">
+        <!-- Left side - Login Form -->
+        <div class="w-full lg:w-1/2 slide-in">
+          <div class="gradient-border">
+            <div class="p-8">
+              <div class="text-center mb-8">
+                <a href="/" class="text-3xl font-bold text-red-600 hover:text-red-700 transition-all duration-300">
+                  YADRO
+                </a>
+                <h2 class="text-2xl font-bold text-gray-800 mt-6 mb-2">Welcome Back!</h2>
+                <p class="text-gray-600">Sign in to continue your audio journey</p>
+              </div>
+
+              <form action="/login" method="post" class="space-y-6">
+
+                <!-- Error message -->
+                <% if (error_msg.length > 0 ) { %>
+                <div class="bg-red-100 border border-red-400 text-red-700 px-4 py-3 rounded relative mb-6" role="alert" id="error-message">
+                  <strong class="font-bold">Error!</strong>
+                  <span class="block sm:inline"><%= error_msg %></span>
+                  <span class="absolute top-0 bottom-0 right-0 px-4 py-3">
+                    <svg class="fill-current h-6 w-6 text-red-500" role="button" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20" onclick="document.getElementById('error-message').style.display='none'">
+                      <title>Close</title>
+                      <path d="M14.348 5.652a1 1 0 00-1.414-1.414L10 7.172 7.066 4.238a1 1 0 10-1.414 1.414L8.586 10l-2.934 2.934a1 1 0 101.414 1.414L10 12.828l2.934 2.934a1 1 0 101.414-1.414L11.414 10l2.934-2.934z" />
+                    </svg>
+                  </span>
+                </div>
+                <% } %>
+
+                <% if (success_msg.length > 0 ) { %>
+                <div class="bg-red-100 border border-red-400 text-red-700 px-4 py-3 rounded relative mb-6" role="alert" id="error-message">
+                  <strong class="font-bold">Error!</strong>
+                  <span class="block sm:inline"><%= success_msg %></span>
+                  <span class="absolute top-0 bottom-0 right-0 px-4 py-3">
+                    <svg class="fill-current h-6 w-6 text-red-500" role="button" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20" onclick="document.getElementById('error-message').style.display='none'">
+                      <title>Close</title>
+                      <path d="M14.348 5.652a1 1 0 00-1.414-1.414L10 7.172 7.066 4.238a1 1 0 10-1.414 1.414L8.586 10l-2.934 2.934a1 1 0 101.414 1.414L10 12.828l2.934 2.934a1 1 0 101.414-1.414L11.414 10l2.934-2.934z" />
+                    </svg>
+                  </span>
+                </div>
+                <% } %>
+
+                <div class="input-group">
+                  <input type="email" name="email" placeholder="Email address" required>
+                  <i class="fas fa-envelope"></i>
+                </div>
+
+                <div class="input-group">
+                  <input type="password" name="password" placeholder="Password" required>
+                  <i class="fas fa-lock"></i>
+                </div>
+
+                <div class="flex items-center justify-between mb-6">
+                  <label class="flex items-center">
+                    <input type="checkbox" class="w-4 h-4 text-red-600 border-gray-300 rounded focus:ring-red-500">
+                    <span class="ml-2 text-sm text-gray-600">Remember me</span>
+                  </label>
+                  <a href="/forgot-password" class="text-sm text-red-600 hover:text-red-700 hover:underline">
+                    Forgot password?
+                  </a>
+                </div>
+
+                <button type="submit" class="w-full bg-gradient-to-r from-red-600 to-purple-600 text-white py-3 rounded-lg hover:from-red-700 hover:to-purple-700 transition-all duration-300 transform hover:scale-[1.02]">
+                  Sign In
+                </button>
+              </form>
+
+              <div class="relative my-8">
+                <div class="absolute inset-0 flex items-center">
+                  <div class="w-full border-t border-gray-200"></div>
+                </div>
+                <div class="relative flex justify-center text-sm">
+                  <span class="px-4 bg-white text-gray-500">Or continue with</span>
+                </div>
+              </div>
+
+              <div class="grid grid-cols-3 gap-4">
+                <a href="/auth/google" class="social-btn flex items-center justify-center py-2 px-4 border border-gray-300 rounded-lg hover:bg-gray-50">
+                  <i class="fab fa-google text-red-500"></i>
+                </a>
+                <button class="social-btn flex items-center justify-center py-2 px-4 border border-gray-300 rounded-lg hover:bg-gray-50">
+                  <i class="fab fa-facebook-f text-blue-600"></i>
+                </button>
+                <button class="social-btn flex items-center justify-center py-2 px-4 border border-gray-300 rounded-lg hover:bg-gray-50">
+                  <i class="fab fa-apple text-gray-800"></i>
+                </button>
+              </div>
+
+              <p class="text-center mt-8 text-gray-600">
+                Don't have an account?
+                <a href="/signup" class="text-red-600 hover:text-red-700 font-semibold hover:underline">
+                  Sign up
+                </a>
+              </p>
+            </div>
+          </div>
+        </div>
+
+        <!-- Right side - Image and Features -->
+        <div class="w-full lg:w-1/2 fade-in">
+          <div class="relative">
+            <img src="/images/headphone.png" alt="Premium Headphones" class="floating-headphone">
+
+            <!-- Feature Cards -->
+            <div class="grid grid-cols-2 gap-4 mt-8">
+              <div class="bg-white p-6 rounded-xl shadow-lg hover:shadow-xl transition-shadow duration-300">
+                <div class="text-red-600 mb-4">
+                  <i class="fas fa-shield-alt text-2xl"></i>
+                </div>
+                <h3 class="text-lg font-semibold mb-2">Secure Login</h3>
+                <p class="text-gray-600 text-sm">Your data is protected with enterprise-grade security</p>
+              </div>
+
+              <div class="bg-white p-6 rounded-xl shadow-lg hover:shadow-xl transition-shadow duration-300">
+                <div class="text-purple-600 mb-4">
+                  <i class="fas fa-headset text-2xl"></i>
+                </div>
+                <h3 class="text-lg font-semibold mb-2">24/7 Support</h3>
+                <p class="text-gray-600 text-sm">Our team is here to help you anytime</p>
+              </div>
+            </div>
+          </div>
+        </div>
       </div>
-      <% } %>
-
-      <form action="/login" method="post" autocomplete="off" class="space-y-4">
-        <input name="email" type="text" placeholder="Email or Phone Number" class="custom-input">
-        <input name="password" type="password" placeholder="Password" class="custom-input">
-        <a href="/forgot-password" class="forgot-password-link">Forgot Password?</a>
-        <button type="submit" class="create-account-btn w-full">Log In</button>
-      </form>
-
-      <p class="text-center text-gray-600 mt-4">
-        Don't have an Account? <a href="/signup" class="login-link">Sign up</a>
-      </p>
     </div>
-  </main>
+  </div>
 
-  <!-- footer including -->
-  <%- include('../layouts/footer.ejs') %>
+  <script>
+    // Form validation and animation
+    document.querySelector('form').addEventListener('submit', function(e) {
+      e.preventDefault();
+      const email = this.email.value;
+      const password = this.password.value;
+
+      if (!email || !password) {
+        alert('Please fill in all fields');
+        return;
+      }
+
+      // Add loading state to button
+      const button = this.querySelector('button[type="submit"]');
+      const originalText = button.innerHTML;
+      button.innerHTML = '<i class="fas fa-spinner fa-spin"></i> Signing in...';
+      button.disabled = true;
+
+      // Simulate API call (replace with actual authentication)
+      setTimeout(() => {
+        this.submit();
+      }, 1000);
+    });
+
+    // Input focus effects
+    document.querySelectorAll('input').forEach(input => {
+      input.addEventListener('focus', function() {
+        this.parentElement.querySelector('i').style.transform = 'translateY(-50%) scale(1.1)';
+      });
+
+      input.addEventListener('blur', function() {
+        this.parentElement.querySelector('i').style.transform = 'translateY(-50%) scale(1)';
+      });
+    });
+  </script>
 </body>
 
 </html>
