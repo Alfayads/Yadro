@@ -11,17 +11,15 @@
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
   <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:opsz,wght,FILL,GRAD@20..48,100..700,0..1,-50..200" />
   <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
-
 </head>
 
 <body>
   <%- include('../layouts/header-without-user.ejs') %>
-  <main class="flex  container justify-between items-center p-8">
-    <div class="w-1/2">
-      <!-- Placeholder for the 3D character image -->
-      <img width="660" src="/images/otp-verify.png" alt="otp-verify logo">
+  <main class="flex flex-col md:flex-row container mx-auto justify-between items-center p-8">
+    <div class="w-full md:w-1/2 mb-8 md:mb-0">
+      <img width="660" src="/images/otp-verify.png" alt="otp-verify logo" class="w-full max-w-md mx-auto">
     </div>
-    <div class="w-1/2">
+    <div class="w-full md:w-1/2">
       <h1 class="text-3xl font-bold mb-4">OTP Verification</h1>
 
       <% if (error_msg.length > 0 ) { %>
@@ -50,22 +48,19 @@
       </div>
       <% } %>
 
-      <form action="/verify-otp" method="post" onsubmit="return validateOtpForm()">
+      <form action="/verify-otp" method="post" onsubmit="return validateOtpForm()" class="w-full max-w-md mx-auto">
         <input id="otp" name="otp" type="text" placeholder="Enter OTP here..." class="w-full p-2 mb-4 border rounded">
         <button class="w-full bg-red-500 text-white py-2 rounded" type="submit">Verify OTP</button>
-
       </form>
-      <form action="/resend-otp" method="post" class="mt-4 text-center">
-        <button id="resend-otp" style="display: none;" onclick="resendOtp()" class="w-full text-gray-600 mt-4">Resend OTP</button>
+      <form action="/resend-otp" method="post" class="w-full max-w-md mx-auto mt-4 text-center">
+        <button id="resend-otp" style="display: none;" onclick="resendOtp()" class="w-full text-gray-600">Resend OTP</button>
       </form>
-      <div class="mt-4 text-center">
-
+      <div class="w-full max-w-md mx-auto mt-4 text-center">
         <span id="timer" class="inline-flex items-center justify-center bg-black text-white rounded w-16 h-10">
           <strong></strong>
         </span>
       </div>
     </div>
-
   </main>
   <%- include('../layouts/footer.ejs') %>
 
@@ -172,8 +167,6 @@
       });
     }
   </script>
-
-
 </body>
 
 </html>

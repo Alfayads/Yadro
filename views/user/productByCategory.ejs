@@ -70,6 +70,7 @@
     </div>
 
     <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-8">
+      <% if(products.length > 0)  { %>
       <% products.forEach( product => { %>
       <!-- Product Card -->
       <div class="product-card bg-white rounded-lg shadow-lg overflow-hidden transform hover:scale-105 transition-all duration-300 animate-fade-in">
@@ -149,8 +150,19 @@
       </button>
     </div>
     <% }) %>
-
-
+    <% } else { %>
+    <div class="flex flex-col items-center w-full justify-center py-12 px-4 mb-5 sm:px-6 lg:px-8 bg-white rounded-lg shadow-md">
+      <img src="/images/forgotman.png" alt="Empty Wishlist" class="w-48 h-48 mb-8" />
+      <h2 class="text-3xl font-extrabold text-gray-900 mb-4"><%= category.name %> Products is Empty</h2>
+      <p class="text-xl text-gray-600 mb-8 text-center max-w-md">Discover another Category Start exploring our products now!</p>
+      <a href="/products" class="inline-flex items-center px-6 py-3 border border-transparent text-base font-medium rounded-md text-white bg-red-600 hover:bg-red-700 transition duration-150 ease-in-out">
+        <svg class="mr-2 -ml-1 w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"></path>
+        </svg>
+        Explore Products
+      </a>
+    </div>
+    <% } %>
     </div>
   </main>
 

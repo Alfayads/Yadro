@@ -404,7 +404,7 @@ const verifyOtp = async (req, res, next) => {
             });
 
             await newWallet.save();
-            req.flash('success_msg', `Welcome ${fname} ${lname} Login to Your account ...`);
+            req.flash('success_msg', `Welcome ${fname} Login to Your account ...`);
             res.redirect('/login')
         } else {
             req.flash('error_msg', 'OTP is Incorrect !! Try again ');

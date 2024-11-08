@@ -159,81 +159,26 @@
 <body>
   <%- include('../layouts/header-with-user.ejs') %>
   <main class="container mx-auto px-4 py-8">
-    <!-- Carousel Section -->
-    <section class="carousel-container hidden lg:block w-full mb-12 relative mx-auto overflow-hidden rounded-lg shadow-lg animate-on-scroll mt-16">
-      <div class="carousel-track flex transition-transform ease-in-out duration-700">
-        <!-- Slide 1 -->
-        <div class="carousel-slide w-full flex-shrink-0">
-          <div class="relative p-16 rounded-lg overflow-hidden bg-gradient-to-r from-blue-500 via-purple-500 to-pink-500">
-            <img src="/images/headphone2.png" alt="Headphone" class="absolute right-20 top-1/4 h-3/4 object-contain">
-            <div class="relative z-10 text-white">
-              <h2 class="text-4xl font-bold mb-4">Up to 10% off Voucher</h2>
-              <p class="text-lg mb-4">Limited time offer. Shop Now!</p>
-              <button class="bg-white text-blue-500 px-6 py-2 rounded-full hover:bg-opacity-90 transition duration-300">Shop Now</button>
-            </div>
-          </div>
-        </div>
 
-        <!-- Slide 2 -->
-        <div class="carousel-slide w-full flex-shrink-0">
-          <div class="relative p-16 rounded-lg overflow-hidden bg-gradient-to-r from-green-400 via-blue-500 to-purple-600">
-            <img src="/images/headphone2.png" alt="Accessory" class="absolute right-20 top-1/4 h-3/4 object-contain">
-            <div class="relative z-10 text-white">
-              <h2 class="text-4xl font-bold mb-4">Up to 20% off Accessories</h2>
-              <p class="text-lg mb-4">Exclusive deals on latest accessories.</p>
-              <button class="bg-white text-green-500 px-6 py-2 rounded-full hover:bg-opacity-90 transition duration-300">Explore</button>
-            </div>
-          </div>
+    <section class="relative min-h-[500px] md:h-[600px] rounded-3xl overflow-hidden mb-16 mt-16 bg-gradient-to-r from-red-600 to-purple-600">
+      <div class="absolute inset-0 bg-pattern opacity-10"></div>
+      <div class="relative h-full flex flex-col md:flex-row items-center">
+        <div class="w-full md:w-1/2 p-8 md:p-16 text-white text-center md:text-left">
+          <h1 class="text-4xl md:text-6xl font-bold mb-6 fade-in">Experience Pure Sound</h1>
+          <p class="text-lg md:text-xl mb-8 fade-in">Discover our premium collection of headphones designed for audiophiles.</p>
+          <a href="#latest-arrivals" class="bg-white text-red-600 px-8 py-3 rounded-full hover:bg-gray-100 transition-all duration-300 transform hover:scale-105 fade-in">
+            Shop Now
+          </a>
         </div>
-
-        <!-- Slide 3 -->
-        <div class="carousel-slide w-full flex-shrink-0">
-          <div class="relative p-16 rounded-lg overflow-hidden bg-gradient-to-r from-yellow-400 via-red-500 to-pink-500">
-            <img src="/images/headphone2.png" alt="Headphone" class="absolute right-20 top-1/4 h-3/4 object-contain">
-            <div class="relative z-10 text-white">
-              <h2 class="text-4xl font-bold mb-4">Up to 30% off Headphones</h2>
-              <p class="text-lg mb-4">Best prices on premium headphones!</p>
-              <button class="bg-white text-red-500 px-6 py-2 rounded-full hover:bg-opacity-90 transition duration-300">Get Yours</button>
-            </div>
-          </div>
-        </div>
-
-        <!-- Slide 4 -->
-        <div class="carousel-slide w-full flex-shrink-0">
-          <div class="relative p-16 rounded-lg overflow-hidden bg-gradient-to-r from-indigo-500 via-purple-500 to-pink-500">
-            <img src="/images/headphone2.png" alt="Gadget" class="absolute right-20 top-1/4 h-3/4 object-contain">
-            <div class="relative z-10 text-white">
-              <h2 class="text-4xl font-bold mb-4">Up to 50% off Gadgets</h2>
-              <p class="text-lg mb-4">Unbeatable discounts on top gadgets!</p>
-              <button class="bg-white text-indigo-500 px-6 py-2 rounded-full hover:bg-opacity-90 transition duration-300">Discover</button>
-            </div>
-          </div>
+        <div class="w-full md:w-1/2 relative p-8">
+          <img src="/images/headphone.png" alt="Premium Headphones" class="hero-image mx-auto" style="animation: float 6s ease-in-out infinite;">
         </div>
       </div>
-
-      <!-- Navigation dots -->
-      <div class="absolute bottom-6 left-1/2 transform -translate-x-1/2 flex space-x-3">
-        <button class="dot w-3 h-3 bg-white bg-opacity-50 rounded-full focus:outline-none transition-all duration-300" data-index="0"></button>
-        <button class="dot w-3 h-3 bg-white bg-opacity-50 rounded-full focus:outline-none transition-all duration-300" data-index="1"></button>
-        <button class="dot w-3 h-3 bg-white bg-opacity-50 rounded-full focus:outline-none transition-all duration-300" data-index="2"></button>
-        <button class="dot w-3 h-3 bg-white bg-opacity-50 rounded-full focus:outline-none transition-all duration-300" data-index="3"></button>
-      </div>
-
-      <!-- Previous Button -->
-      <button class="prev absolute left-4 top-1/2 transform -translate-y-1/2 bg-white bg-opacity-30 hover:bg-opacity-50 text-white w-10 h-10 rounded-full flex items-center justify-center transition-all duration-300">
-        <i class="fas fa-chevron-left"></i>
-      </button>
-
-      <!-- Next Button -->
-      <button class="next absolute right-4 top-1/2 transform -translate-y-1/2 bg-white bg-opacity-30 hover:bg-opacity-50 text-white w-10 h-10 rounded-full flex items-center justify-center transition-all duration-300">
-        <i class="fas fa-chevron-right"></i>
-      </button>
     </section>
 
 
-
     <!-- Flash Sales -->
-    <section class="mb-12">
+    <section class="mb-12" id="latest-arrivals">
       <div class="flex justify-between items-center mb-4">
         <h2 class="text-2xl m-5 font-bold">Latest Arrivals</h2>
         <div class="flex items-center hidden lg:block space-x-4">

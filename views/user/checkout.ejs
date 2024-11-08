@@ -255,7 +255,7 @@
             </div>
 
             <!-- Street Address & Apartment -->
-            <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+            <div class="grid grid-cols-2 md:grid-cols-1 gap-6">
               <div class="col-span-2">
                 <label class="block text-sm font-medium text-gray-700 mb-2">Full Name</label>
                 <input type="text" value="<%= oldValue.name || '' %>" name="name" class="w-full px-4 py-3 rounded-lg border border-gray-300 focus:outline-none focus:ring-2 focus:ring-red-500 input-focus-effect">
@@ -264,11 +264,11 @@
                 <label class="block text-sm font-medium text-gray-700 mb-2">Street Address</label>
                 <input type="text" value="<%= oldValue.street || '' %>" name="street" class="w-full px-4 py-3 rounded-lg border border-gray-300 focus:outline-none focus:ring-2 focus:ring-red-500 input-focus-effect">
               </div>
-              <div>
+              <div class="col-span-2">
                 <label class="block text-sm font-medium text-gray-700 mb-2">Apartment/Suite</label>
                 <input type="text" value="<%= oldValue.apartment || '' %>" name="apartment" class="w-full px-4 py-3 rounded-lg border border-gray-300 focus:outline-none focus:ring-2 focus:ring-red-500 input-focus-effect">
               </div>
-              <div>
+              <div class="col-span-2">
                 <label class="block text-sm font-medium text-gray-700 mb-2">Landmark</label>
                 <input type="text" value="<%= oldValue.landMark || '' %>" name="landMark" class="w-full px-4 py-3 rounded-lg border border-gray-300 focus:outline-none focus:ring-2 focus:ring-red-500 input-focus-effect">
               </div>
@@ -396,30 +396,30 @@
                 <!-- Cash on Delivery Option -->
                 <div class="relative">
                   <input type="radio" id="cashOnDelivery" name="paymentMethod" value="cash" class="absolute w-0 h-0 opacity-0 peer">
-                  <label for="cashOnDelivery" class="flex items-center p-4 border rounded-lg cursor-pointer transition-all duration-300 peer-checked:border-red-500 peer-checked:bg-red-50 hover:bg-gray-50 block">
+                  <label for="cashOnDelivery" class="flex items-center p-4 border rounded-lg cursor-pointer transition-all duration-300 peer-checked:border-red-500 peer-checked:bg-red-100 hover:bg-gray-50 block">
                     <i class="fas fa-money-bill-wave text-xl mr-3 text-gray-600"></i>
                     <div class="flex flex-col">
                       <span class="font-medium text-gray-800">Cash on Delivery</span>
                       <span class="text-sm text-gray-500">Pay when you receive your order</span>
                     </div>
-                    <div class="ml-auto flex items-center justify-center w-6 h-6 border-2 rounded-full peer-checked:border-red-500 peer-checked:bg-red-500">
+                    <!-- <div class="ml-auto flex items-center justify-center w-6 h-6 border-2 rounded-full peer-checked:border-red-500 peer-checked:bg-red-500">
                       <i class="fas fa-check text-white transform scale-0 peer-checked:scale-100 transition-transform"></i>
-                    </div>
+                    </div> -->
                   </label>
                 </div>
 
                 <!-- Razorpay Option -->
                 <div class="relative">
                   <input type="radio" id="razorpay" name="paymentMethod" value="razorpay" class="absolute w-0 h-0 opacity-0 peer">
-                  <label for="razorpay" class="flex items-center p-4 border rounded-lg cursor-pointer transition-all duration-300 peer-checked:border-red-500 peer-checked:bg-red-50 hover:bg-gray-50 block">
+                  <label for="razorpay" class="flex items-center p-4 border rounded-lg cursor-pointer transition-all duration-300 peer-checked:border-red-500 peer-checked:bg-red-100 hover:bg-gray-50 block">
                     <i class="fas fa-credit-card text-xl mr-3 text-gray-600"></i>
                     <div class="flex flex-col">
                       <span class="font-medium text-gray-800">Pay Online (Card/UPI/Netbanking)</span>
                       <span class="text-sm text-gray-500">Pay securely with Razorpay</span>
                     </div>
-                    <div class="ml-auto flex items-center justify-center w-6 h-6 border-2 rounded-full peer-checked:border-red-500 peer-checked:bg-red-500">
+                    <!-- <div class="ml-auto flex items-center justify-center w-6 h-6 border-2 rounded-full peer-checked:border-red-500 peer-checked:bg-red-500">
                       <i class="fas fa-check text-white transform scale-0 peer-checked:scale-100 transition-transform"></i>
-                    </div>
+                    </div> -->
                   </label>
                 </div>
               </div>

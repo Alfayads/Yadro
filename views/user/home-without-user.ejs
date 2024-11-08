@@ -114,49 +114,217 @@
       opacity: 1;
       transform: translateY(0);
     }
+
+
+    /* Enhanced Responsive Animations */
+    @keyframes float {
+
+      0%,
+      100% {
+        transform: translateY(0);
+      }
+
+      50% {
+        transform: translateY(-20px);
+      }
+    }
+
+    @keyframes shine {
+      0% {
+        background-position: -200% center;
+      }
+
+      100% {
+        background-position: 200% center;
+      }
+    }
+
+    /* Mobile-First Approach */
+    .nav-menu {
+      display: none;
+      position: fixed;
+      top: 0;
+      left: 0;
+      right: 0;
+      bottom: 0;
+      background: rgba(0, 0, 0, 0.9);
+      z-index: 999;
+    }
+
+    .nav-menu.active {
+      display: flex;
+      flex-direction: column;
+      justify-content: center;
+      align-items: center;
+    }
+
+    /* Base Animations */
+    @keyframes float {
+
+      0%,
+      100% {
+        transform: translateY(0);
+      }
+
+      50% {
+        transform: translateY(-20px);
+      }
+    }
+
+    @keyframes shine {
+      0% {
+        background-position: -200% center;
+      }
+
+      100% {
+        background-position: 200% center;
+      }
+    }
+
+    @keyframes fadeIn {
+      from {
+        opacity: 0;
+        transform: translateY(20px);
+      }
+
+      to {
+        opacity: 1;
+        transform: translateY(0);
+      }
+    }
+
+    /* Responsive Classes */
+    .fade-in {
+      opacity: 0;
+      transform: translateY(20px);
+      transition: all 0.6s ease-out;
+    }
+
+    .fade-in.visible {
+      opacity: 1;
+      transform: translateY(0);
+    }
+
+    /* Enhanced Mobile Menu */
+    .mobile-menu {
+      transform: translateX(-100%);
+      transition: transform 0.3s ease-in-out;
+    }
+
+    .mobile-menu.active {
+      transform: translateX(0);
+    }
+
+    /* Product Card Enhancements */
+    .product-card {
+      transition: all 0.3s ease;
+      height: 100%;
+    }
+
+    .product-card:hover {
+      transform: translateY(-5px);
+      box-shadow: 0 10px 20px rgba(0, 0, 0, 0.1);
+    }
+
+    /* Responsive Images */
+    .product-image {
+      aspect-ratio: 1;
+      object-fit: contain;
+    }
+
+    /* Custom Scrollbar */
+    ::-webkit-scrollbar {
+      width: 8px;
+    }
+
+    ::-webkit-scrollbar-track {
+      background: #f1f1f1;
+    }
+
+    ::-webkit-scrollbar-thumb {
+      background: #DB2777;
+      border-radius: 4px;
+    }
+
+    /* Media Queries */
+    @media (max-width: 768px) {
+      .desktop-menu {
+        display: none;
+      }
+
+      .hero-content {
+        text-align: center;
+        padding: 2rem !important;
+      }
+
+      .hero-image {
+        max-width: 300px;
+        margin: 0 auto;
+      }
+    }
   </style>
 </head>
 
 <body class="bg-gray-50">
-  <!-- navigation.ejs -->
+  <!-- Header -->
   <header class="fixed w-full top-0 z-50 bg-white/90 backdrop-blur-md shadow-sm">
     <nav class="container mx-auto px-4 py-4">
       <div class="flex justify-between items-center">
-        <!-- Logo and Navigation -->
-        <div class="flex items-center space-x-8">
-          <a href="/" class="text-2xl font-bold text-red-600 hover:text-red-700 transition-all duration-300">
-            YADRO
-          </a>
-          <div class="hidden md:flex space-x-6">
-            <a href="#" class="text-gray-700 hover:text-red-600 transition-all duration-300">Home</a>
-            <a href="#categories" class="text-gray-700 hover:text-red-600 transition-all duration-300">Categories</a>
-            <a href="#latest" class="text-gray-700 hover:text-red-600 transition-all duration-300">Latest</a>
-            <a href="#popular" class="text-gray-700 hover:text-red-600 transition-all duration-300">Popular</a>
-          </div>
+        <!-- Logo -->
+        <a href="/" class="text-2xl font-bold text-red-600 hover:text-red-700">
+          YADRO
+        </a>
+
+        <!-- Desktop Navigation -->
+        <div class=" hidden md:flex items-center space-x-6">
+          <a href="#" class="nav-link hover:text-red-600 transition-colors">Home</a>
+          <a href="#categories" class="nav-link hover:text-red-600 transition-colors">Categories</a>
+          <a href="#latest" class="nav-link hover:text-red-600 transition-colors">Latest</a>
+          <a href="#popular" class="nav-link hover:text-red-600 transition-colors">Popular</a>
         </div>
 
-        <!-- Actions -->
+        <!-- Action Buttons -->
         <div class="flex items-center space-x-4">
           <button class="p-2 hover:bg-gray-100 rounded-full transition-all duration-300">
-            <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5 text-gray-600" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z" />
-            </svg>
+            <i class="fas fa-search text-gray-600"></i>
           </button>
 
           <button id="cartBtn" class="p-2 hover:bg-gray-100 rounded-full transition-all duration-300 relative">
-            <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5 text-gray-600" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 3h2l.4 2M7 13h10l4-8H5.4M7 13L5.4 5M7 13l-2.293 2.293c-.63.63-.184 1.707.707 1.707H17m0 0a2 2 0 100 4 2 2 0 000-4zm-8 2a2 2 0 11-4 0 2 2 0 014 0z" />
-            </svg>
+            <i class="fas fa-shopping-cart text-gray-600"></i>
             <span class="absolute -top-1 -right-1 bg-red-600 text-white text-xs rounded-full w-4 h-4 flex items-center justify-center">0</span>
           </button>
 
-          <a href="/login" class="bg-red-600 text-white px-6 py-2 rounded-full hover:bg-red-700 transition-all duration-300 transform hover:scale-105" onclick="openModal('loginModal')">
-            Login
-          </a>
 
-          <a href="/signup" class="bg-gray-800 text-white px-6 py-2 rounded-full hover:bg-gray-900 transition-all duration-300 transform hover:scale-105" onclick="openModal('signupModal')">
+          <!-- Auth Buttons (Hidden on Mobile) -->
+          <div class="md:flex items-center space-x-4">
+            <a href="/login" class="bg-red-600 text-white px-6 py-2 rounded-full hover:bg-red-700 transition-all duration-300">
+              Login
+            </a>
+            <a href="/signup" class="bg-gray-800 text-white px-6 py-2 rounded-full hover:bg-gray-900 transition-all duration-300">
+              Sign Up
+            </a>
+          </div>
+        </div>
+      </div>
+
+      <!-- Mobile Menu -->
+      <div class="mobile-menu fixed inset-0 bg-white z-50 hidden">
+        <div class="flex justify-end p-4">
+          <button onclick="toggleMobileMenu()">
+            <i class="fas fa-times text-xl"></i>
+          </button>
+        </div>
+        <div class="flex flex-col items-center space-y-6 p-8">
+          <a href="#" class="text-xl">Home</a>
+          <a href="#categories" class="text-xl">Categories</a>
+          <a href="#latest" class="text-xl">Latest</a>
+          <a href="#popular" class="text-xl">Popular</a>
+          <button onclick="openModal('loginModal')" class="w-full bg-red-600 text-white px-6 py-2 rounded-full">
+            Login
+          </button>
+          <button onclick="openModal('signupModal')" class="w-full bg-gray-800 text-white px-6 py-2 rounded-full">
             Sign Up
-          </a>
+          </button>
         </div>
       </div>
     </nav>
@@ -174,12 +342,12 @@
         <h2 class="text-2xl font-bold mb-4">Authentication Required</h2>
         <p class="text-gray-600 mb-6">Please login or sign up to access your cart</p>
         <div class="flex space-x-4 justify-center">
-          <button onclick="openModal('loginModal')" class="bg-red-600 text-white px-6 py-2 rounded-full hover:bg-red-700 transition-all duration-300">
+          <a href="/login" class="bg-red-600 text-white px-6 py-2 rounded-full hover:bg-red-700 transition-all duration-300">
             Login
-          </button>
-          <button onclick="openModal('signupModal')" class="bg-gray-800 text-white px-6 py-2 rounded-full hover:bg-gray-900 transition-all duration-300">
+          </a>
+          <a href="/signup" class="bg-gray-800 text-white px-6 py-2 rounded-full hover:bg-gray-900 transition-all duration-300">
             Sign Up
-          </button>
+          </a>
         </div>
       </div>
     </div>
@@ -187,19 +355,19 @@
 
   <!-- Main Content -->
   <main class="container mx-auto px-4 pt-24">
-    <!-- Enhanced Hero Section -->
-    <section class="relative h-[600px] rounded-3xl overflow-hidden mb-16 bg-gradient-to-r from-red-600 to-purple-600">
-      <div class="absolute inset-0 opacity-10 bg-[url('data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHdpZHRoPSI2MCIgaGVpZ2h0PSI2MCI+CiAgPHBhdGggZD0iTTAgMGg2MHY2MEgweiIgZmlsbD0ibm9uZSIvPgogIDxwYXRoIGQ9Ik0wIDBoNjB2NjBIMHoiIGZpbGw9IiNmZmYiIGZpbGwtb3BhY2l0eT0iMC4xIi8+Cjwvc3ZnPg==')]"></div>
-      <div class="relative h-full flex items-center">
-        <div class="w-1/2 p-16 text-white">
-          <h1 class="text-6xl font-bold mb-6 fade-in">Experience Pure Sound</h1>
-          <p class="text-xl mb-8 fade-in">Discover our premium collection of headphones designed for audiophiles.</p>
+    <!-- Hero Section -->
+    <section class="relative min-h-[500px] md:h-[600px] rounded-3xl overflow-hidden mb-16 bg-gradient-to-r from-red-600 to-purple-600">
+      <div class="absolute inset-0 bg-pattern opacity-10"></div>
+      <div class="relative h-full flex flex-col md:flex-row items-center">
+        <div class="w-full md:w-1/2 p-8 md:p-16 text-white text-center md:text-left">
+          <h1 class="text-4xl md:text-6xl font-bold mb-6 fade-in">Experience Pure Sound</h1>
+          <p class="text-lg md:text-xl mb-8 fade-in">Discover our premium collection of headphones designed for audiophiles.</p>
           <button class="bg-white text-red-600 px-8 py-3 rounded-full hover:bg-gray-100 transition-all duration-300 transform hover:scale-105 fade-in">
             Shop Now
           </button>
         </div>
-        <div class="w-1/2 relative">
-          <img src="/images/headphone.png" alt="Premium Headphones" class=" transform -translate-x-1/2 -translate-y-1/2 w-[600px]" style="animation: float 6s ease-in-out infinite;">
+        <div class="w-full md:w-1/2 relative p-8">
+          <img src="/images/headphone.png" alt="Premium Headphones" class="hero-image mx-auto" style="animation: float 6s ease-in-out infinite;">
         </div>
       </div>
     </section>
@@ -208,35 +376,35 @@
     <section id="categories" class="mb-16">
       <h2 class="text-3xl font-bold mb-8 fade-in">Browse Categories</h2>
       <div class="grid grid-cols-2 md:grid-cols-4 gap-6">
-        <% categories.forEach(category => { %>
-        <div class="category-card bg-white rounded-xl p-6 text-center cursor-pointer fade-in">
-          <div class="mb-4 relative">
-            <img src="/images/dummy.png" alt="<%= category.name %>" class="w-24 h-24 mx-auto object-contain">
+        <% ['Wireless', 'Sport', 'Professional', 'Gaming'].forEach(category => { %>
+        <div class="category-card bg-white rounded-xl p-6 text-center cursor-pointer fade-in hover:shadow-lg transition-all duration-300">
+          <div class="mb-4">
+            <img src="/images/dummy.png" alt="<%= category %>" class="w-24 h-24 mx-auto object-contain">
           </div>
-          <h3 class="font-semibold"><%= category.name %></h3>
+          <h3 class="font-semibold"><%= category %></h3>
         </div>
         <% }) %>
       </div>
     </section>
 
-    <!-- Latest Arrivals -->
+    <!-- Latest Products Section -->
     <section id="latest" class="mb-16">
       <div class="flex justify-between items-center mb-8">
         <h2 class="text-3xl font-bold fade-in">Latest Arrivals</h2>
         <div class="flex space-x-2">
-          <button class="latest-prev p-2 rounded-full bg-gray-100 hover:bg-red-600 hover:text-white transition-all duration-300">
+          <button class="p-2 rounded-full bg-gray-100 hover:bg-red-600 hover:text-white transition-all duration-300">
             <i class="fas fa-chevron-left"></i>
           </button>
-          <button class="latest-next p-2 rounded-full bg-gray-100 hover:bg-red-600 hover:text-white transition-all duration-300">
+          <button class="p-2 rounded-full bg-gray-100 hover:bg-red-600 hover:text-white transition-all duration-300">
             <i class="fas fa-chevron-right"></i>
           </button>
         </div>
       </div>
-      <div class="grid grid-cols-1 md:grid-cols-4 gap-6">
+      <div class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-4 gap-6">
         <% latestProducts.forEach(product => { %>
         <div class="product-card bg-white rounded-xl p-6 fade-in">
           <div class="relative mb-4 overflow-hidden rounded-lg">
-            <img src="<%= product.images[0] %>" alt="<%= product.name %>" class="w-full h-48 object-contain">
+            <img src="<%= product.images[0] %>" alt="Product" class="w-full h-48 object-contain">
             <div class="absolute top-2 right-2">
               <button class="p-2 bg-white rounded-full hover:bg-red-600 hover:text-white transition-all duration-300">
                 <i class="fas fa-heart"></i>
@@ -246,13 +414,13 @@
           <h3 class="font-semibold text-lg mb-2"><%= product.name %></h3>
           <div class="flex items-center justify-between mb-4">
             <div class="flex items-center space-x-2">
-              <span class="text-red-600 font-bold">₹<%= product.salePrice %></span>
-              <span class="text-gray-400 line-through">₹<%= product.regularPrice %></span>
+              <span class="text-red-600 font-bold">₹ <%= product.salePrice %></span>
+              <span class="text-gray-400 line-through">₹ <%= product.regularPrice%></span>
             </div>
             <div class="flex items-center">
-              <% for(let i = 0; i < 5; i++) { %>
+              <% Array(5).fill().forEach(() => { %>
               <i class="fas fa-star text-yellow-400 text-sm"></i>
-              <% } %>
+              <% }) %>
             </div>
           </div>
           <button class="w-full bg-gray-100 text-gray-700 py-2 rounded-lg hover:bg-red-600 hover:text-white transition-all duration-300">
@@ -339,53 +507,49 @@
     <!-- Services Section -->
     <section id="services" class="mb-16">
       <h2 class="text-3xl font-bold mb-8 fade-in">Why Choose Yadro?</h2>
-      <div class="grid grid-cols-1 md:grid-cols-4 gap-6">
-        <!-- Free & Fast Delivery -->
+      <div class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-4 gap-6">
         <div class="service-card bg-white rounded-xl p-8 text-center fade-in hover:shadow-lg transition-all duration-300">
           <div class="mb-6 text-red-600">
             <i class="fas fa-truck text-4xl"></i>
           </div>
-          <h3 class="text-xl font-semibold mb-3">Free & Fast Delivery</h3>
-          <p class="text-gray-600">Free delivery for all orders over ₹999</p>
+          <h3 class="text-xl font-semibold mb-3">Free Delivery</h3>
+          <p class="text-gray-600">On orders above ₹999</p>
         </div>
 
-        <!-- 24/7 Customer Service -->
         <div class="service-card bg-white rounded-xl p-8 text-center fade-in hover:shadow-lg transition-all duration-300">
           <div class="mb-6 text-red-600">
             <i class="fas fa-headset text-4xl"></i>
           </div>
-          <h3 class="text-xl font-semibold mb-3">24/7 Customer Service</h3>
-          <p class="text-gray-600">Dedicated support anytime you need</p>
+          <h3 class="text-xl font-semibold mb-3">24/7 Support</h3>
+          <p class="text-gray-600">Expert assistance</p>
         </div>
 
-        <!-- Money Back Guarantee -->
         <div class="service-card bg-white rounded-xl p-8 text-center fade-in hover:shadow-lg transition-all duration-300">
           <div class="mb-6 text-red-600">
             <i class="fas fa-shield-alt text-4xl"></i>
           </div>
-          <h3 class="text-xl font-semibold mb-3">Money Back Guarantee</h3>
-          <p class="text-gray-600">30-day money-back guarantee</p>
+          <h3 class="text-xl font-semibold mb-3">Secure Payment</h3>
+          <p class="text-gray-600">100% secure checkout</p>
         </div>
 
-        <!-- Secure Payment -->
         <div class="service-card bg-white rounded-xl p-8 text-center fade-in hover:shadow-lg transition-all duration-300">
           <div class="mb-6 text-red-600">
-            <i class="fas fa-lock text-4xl"></i>
+            <i class="fas fa-exchange-alt text-4xl"></i>
           </div>
-          <h3 class="text-xl font-semibold mb-3">Secure Payment</h3>
-          <p class="text-gray-600">100% secure payment methods</p>
+          <h3 class="text-xl font-semibold mb-3">Easy Returns</h3>
+          <p class="text-gray-600">30-day return policy</p>
         </div>
       </div>
     </section>
 
     <!-- Newsletter Section -->
-    <section class="mb-16 bg-gradient-to-r from-red-600 to-purple-600 rounded-3xl p-12 text-white">
+    <section class="mb-16 bg-gradient-to-r from-red-600 to-purple-600 rounded-3xl p-8 md:p-12 text-white">
       <div class="max-w-2xl mx-auto text-center">
         <h2 class="text-3xl font-bold mb-4 fade-in">Stay Updated</h2>
-        <p class="mb-8 fade-in">Subscribe to our newsletter and get exclusive offers every week</p>
-        <form class="flex gap-4 max-w-md mx-auto fade-in">
+        <p class="mb-8 fade-in">Subscribe to our newsletter for exclusive offers</p>
+        <form class="flex flex-col md:flex-row gap-4 max-w-md mx-auto fade-in">
           <input type="email" placeholder="Enter your email" class="flex-1 px-4 py-2 rounded-full focus:outline-none focus:ring-2 focus:ring-red-400 text-gray-800">
-          <button class="bg-white text-red-600 px-6 py-2 rounded-full hover:bg-gray-100 transition-all duration-300 transform hover:scale-105">
+          <button class="bg-white text-red-600 px-6 py-2 rounded-full hover:bg-gray-100 transition-all duration-300">
             Subscribe
           </button>
         </form>
@@ -544,6 +708,39 @@
         modal.classList.add('hidden');
       }, 300);
     }
+
+    // Mobile Menu Toggle
+    function toggleMobileMenu() {
+      const mobileMenu = document.querySelector('.mobile-menu');
+      mobileMenu.classList.toggle('hidden');
+    }
+
+    // Close mobile menu when clicking a link
+    document.querySelectorAll('.mobile-menu a').forEach(link => {
+      link.addEventListener('click', () => {
+        document.querySelector('.mobile-menu').classList.add('hidden');
+      });
+    });
+
+    // Responsive Image Loading
+    function handleResponsiveImages() {
+      const images = document.querySelectorAll('img[data-src]');
+      images.forEach(img => {
+        if (window.innerWidth <= 768) {
+          img.src = img.getAttribute('data-src-mobile');
+        } else {
+          img.src = img.getAttribute('data-src');
+        }
+      });
+    }
+
+    // Initialize responsive features
+    window.addEventListener('load', handleResponsiveImages);
+    window.addEventListener('resize', handleResponsiveImages);
+
+    document.querySelectorAll('.fade-in').forEach(element => {
+      observer.observe(element);
+    });
   </script>
 </body>
 
