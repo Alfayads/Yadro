@@ -214,7 +214,7 @@
 
     <button id="mobile-menu-btn" class="flex flex-col items-center p-2 text-gray-600 hover:text-blue-500">
       <div class="w-8 h-8 rounded-full bg-gray-200 flex items-center justify-center">
-        <span class="text-sm font-medium text-gray-600"><%= user.fname[0] %></span>
+        <span class="text-sm font-medium text-gray-600"><%= user.fname[0] %><%= user.lname[0] %></span>
       </div>
       <span class="text-xs mt-1">Menu</span>
     </button>
@@ -378,7 +378,7 @@
         <div class="hidden lg:block relative">
           <button id="userDropdownButton" class="flex items-center space-x-2 p-2 hover:bg-gray-100 rounded-full transition-colors duration-200">
             <div class="hidden lg:flex w-8 h-8 rounded-full bg-gray-200 flex items-center justify-center">
-              <span class=" text-sm font-medium text-gray-600 text-center"><%= user.fname[0] %></span>
+              <span class=" text-sm font-medium text-gray-600 text-center"><%= user.fname[0] %><%= user.lname[0] %></span>
             </div>
             <span class="hidden lg:block text-sm font-medium text-gray-700"><%= user.fname %> <%= user.lname %></span>
           </button>

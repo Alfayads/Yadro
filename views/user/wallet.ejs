@@ -4,751 +4,401 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Yadro - Wallet</title>
+  <title>Wallet - Dashboard</title>
   <script src="https://cdn.tailwindcss.com"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.2/gsap.min.js"></script>
   <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css" rel="stylesheet">
-  <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.11.4/gsap.min.js"></script>
+
   <style>
-    @import url('https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap');
+    @import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap');
 
     body {
-      font-family: 'Poppins', sans-serif;
-      background-color: #F3F4F6;
+      font-family: 'Inter', sans-serif;
+      background-color: #f8fafc;
     }
 
-    .red-gradient-bg {
-      background: linear-gradient(135deg, #FF6B6B 0%, #FF8787 100%);
+    .glassmorphism {
+      background: rgba(255, 255, 255, 0.2);
+      backdrop-filter: blur(10px);
+      border: 1px solid rgba(255, 255, 255, 0.3);
     }
 
-    .card-shadow {
-      box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.1), 0 4px 6px -2px rgba(0, 0, 0, 0.05);
+    .profile-gradient {
+      background: linear-gradient(135deg, #ff3e3e 0%, #ff6e6e 100%);
     }
 
-    .transaction-row {
+    .transaction-card {
       transition: all 0.3s ease;
+      transform: translateZ(0);
     }
 
-    .transaction-row:hover {
-      transform: translateY(-5px);
-      box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.1), 0 4px 6px -2px rgba(0, 0, 0, 0.05);
+    .transaction-card:hover {
+      transform: translateY(-2px) translateZ(0);
+      box-shadow: 0 8px 16px rgba(0, 0, 0, 0.1);
     }
 
     .balance-card {
-      background: linear-gradient(135deg, #FF6B6B 0%, #FF8787 100%);
+      background: linear-gradient(135deg, #ff3e3e 0%, #ff6e6e 100%);
       transition: all 0.3s ease;
     }
 
     .balance-card:hover {
       transform: translateY(-5px);
-      box-shadow: 0 15px 30px -5px rgba(0, 0, 0, 0.3);
+      box-shadow: 0 20px 40px rgba(0, 0, 0, 0.2);
     }
 
-    .action-button {
+    .stat-card {
+      background: white;
+      border-radius: 1rem;
+      padding: 1.5rem;
       transition: all 0.3s ease;
     }
 
-    .action-button:hover {
-      transform: translateY(-2px);
+    .stat-card:hover {
+      transform: translateY(-3px);
+      box-shadow: 0 12px 24px rgba(0, 0, 0, 0.1);
     }
 
-    .glassmorphism {
-      background: rgba(255, 255, 255, 0.25);
-      backdrop-filter: blur(10px);
-      border-radius: 10px;
-      border: 1px solid rgba(255, 255, 255, 0.18);
-    }
+    @keyframes pulse {
 
-    .card-container {
-      perspective: 1000px;
-      width: 100%;
-      max-width: 400px;
-      height: 250px;
-      margin: 2rem auto;
-    }
-
-    .card {
-      position: relative;
-      width: 100%;
-      height: 100%;
-      transition: transform 0.8s;
-      transform-style: preserve-3d;
-      cursor: pointer;
-    }
-
-    .card-face {
-      position: absolute;
-      width: 100%;
-      height: 100%;
-      backface-visibility: hidden;
-      border-radius: 15px;
-      overflow: hidden;
-      box-shadow: 0 15px 35px rgba(0, 0, 0, 0.2);
-    }
-
-    .card-front {
-      background: linear-gradient(45deg, #1a237e, #3949ab);
-    }
-
-    .card-back {
-      background: linear-gradient(45deg, #303f9f, #3f51b5);
-      transform: rotateY(180deg);
-    }
-
-    .card.is-flipped {
-      transform: rotateY(180deg);
-    }
-
-    .chip {
-      width: 60px;
-      height: 45px;
-      background: linear-gradient(135deg, #ffd700 0%, #ffaa00 100%);
-      border-radius: 8px;
-      position: relative;
-      overflow: hidden;
-    }
-
-    .chip::before,
-    .chip::after {
-      content: '';
-      position: absolute;
-      top: 0;
-      left: 0;
-      right: 0;
-      bottom: 0;
-      background-image:
-        linear-gradient(90deg, transparent 50%, rgba(255, 255, 255, 0.1) 50%),
-        linear-gradient(90deg, transparent 50%, rgba(255, 255, 255, 0.1) 50%);
-      background-size: 4px 100%, 4px 100%;
-      background-position: 0 0, 2px 0;
-    }
-
-    .chip::after {
-      transform: rotate(90deg);
-    }
-
-    .logo {
-      font-size: 24px;
-      font-weight: bold;
-      color: #fff;
-      text-transform: uppercase;
-      letter-spacing: 2px;
-    }
-
-    .contactless {
-      width: 30px;
-      height: 30px;
-      background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='%23ffffff'%3E%3Cpath d='M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm0 18c-4.42 0-8-3.58-8-8s3.58-8 8-8 8 3.58 8 8-3.58 8-8 8z'/%3E%3Cpath d='M0 0h24v24H0z' fill='none'/%3E%3Cpath d='M7.1 10.9c.5-.5 1.2-.8 1.9-.8s1.4.3 1.9.8c.1.1.3.1.4 0 .1-.1.1-.3 0-.4-.6-.6-1.4-.9-2.3-.9-.9 0-1.7.3-2.3.9-.1.1-.1.3 0 .4.1.1.3.1.4 0zm3.8 1.6c-.3-.3-.7-.4-1.1-.4-.4 0-.8.1-1.1.4-.1.1-.1.3 0 .4.1.1.3.1.4 0 .2-.2.4-.3.7-.3.3 0 .5.1.7.3.1.1.3.1.4 0 .1-.1.1-.3 0-.4z'/%3E%3C/svg%3E");
-      background-size: contain;
-      background-repeat: no-repeat;
-    }
-
-    .wave {
-      position: absolute;
-      bottom: 0;
-      left: 0;
-      width: 100%;
-      height: 50%;
-      background: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 1440 320'%3E%3Cpath fill='rgba(255,255,255,0.1)' fill-opacity='1' d='M0,32L48,37.3C96,43,192,53,288,90.7C384,128,480,192,576,186.7C672,181,768,107,864,101.3C960,96,1056,160,1152,170.7C1248,181,1344,139,1392,117.3L1440,96L1440,320L1392,320C1344,320,1248,320,1152,320C1056,320,960,320,864,320C768,320,672,320,576,320C480,320,384,320,288,320C192,320,96,320,48,320L0,320Z'%3E%3C/path%3E%3C/svg%3E");
-      background-size: cover;
-      opacity: 0.5;
-    }
-
-    .magnetic-strip {
-      width: 100%;
-      height: 50px;
-      background-color: #000;
-      margin: 20px 0;
-    }
-
-    .signature {
-      width: 200px;
-      height: 40px;
-      background-color: #fff;
-      margin-left: auto;
-    }
-
-    .card-face::before {
-      content: '';
-      position: absolute;
-      top: 0;
-      left: 0;
-      right: 0;
-      bottom: 0;
-      background: linear-gradient(105deg,
-          transparent 0%,
-          rgba(255, 255, 255, 0.2) 25%,
-          transparent 50%);
-      opacity: 0;
-      transition: opacity 0.3s;
-      pointer-events: none;
-    }
-
-    .card-container:hover .card-face::before {
-      opacity: 1;
-      background-position: var(--glare-x) var(--glare-y);
-    }
-
-    .hologram {
-      width: 60px;
-      height: 40px;
-      background: linear-gradient(135deg, #c4e0e5 0%, #4ca1af 100%);
-      border-radius: 4px;
-      position: relative;
-      overflow: hidden;
-    }
-
-    .hologram::before {
-      content: '';
-      position: absolute;
-      top: -50%;
-      left: -50%;
-      width: 200%;
-      height: 200%;
-      background: linear-gradient(to bottom right,
-          rgba(255, 255, 255, 0) 0%,
-          rgba(255, 255, 255, 0.1) 50%,
-          rgba(255, 255, 255, 0) 100%);
-      transform: rotate(45deg);
-      animation: hologramShine 2s linear infinite;
-    }
-
-    @keyframes hologramShine {
-      0% {
-        transform: translateX(-50%) rotate(45deg);
-      }
-
+      0%,
       100% {
-        transform: translateX(50%) rotate(45deg);
+        transform: scale(1);
+      }
+
+      50% {
+        transform: scale(1.05);
       }
     }
 
-    .card-number span {
-      display: inline-block;
+    .animate-pulse-slow {
+      animation: pulse 3s infinite;
     }
 
-    @keyframes fadeIn {
-      from {
-        opacity: 0;
-        transform: translateY(10px);
-      }
 
-      to {
-        opacity: 1;
-        transform: translateY(0);
-      }
+    /* Custom animations */
+    .transaction-card {
+      transition: transform 0.2s ease-in-out;
     }
 
-    .transaction-row {
-      animation: fadeIn 0.3s ease-out;
-      transition: all 0.2s ease;
+    .transaction-card:hover {
+      transform: translateX(4px);
     }
 
-    .transaction-row:hover {
-      transform: translateX(5px);
-      background-color: rgba(249, 250, 251, 0.8);
+    /* Custom scrollbar for transaction list */
+    .transaction-list::-webkit-scrollbar {
+      width: 8px;
     }
 
-    .shimmer {
-      background: linear-gradient(90deg,
-          rgba(255, 255, 255, 0) 0%,
-          rgba(255, 255, 255, 0.2) 50%,
-          rgba(255, 255, 255, 0) 100%);
-      background-size: 200% 100%;
-      animation: shimmer 1.5s infinite;
+    .transaction-list::-webkit-scrollbar-track {
+      background: #f1f1f1;
+      border-radius: 10px;
     }
 
+    .transaction-list::-webkit-scrollbar-thumb {
+      background: #888;
+      border-radius: 10px;
+    }
+
+    .transaction-list::-webkit-scrollbar-thumb:hover {
+      background: #555;
+    }
+
+    /* Shimmer loading effect */
     @keyframes shimmer {
       0% {
-        background-position: -200% 0;
+        background-position: -1000px 0;
       }
 
       100% {
-        background-position: 200% 0;
+        background-position: 1000px 0;
       }
     }
 
-    .card-shadow {
-      box-shadow: 0 0 20px rgba(0, 0, 0, 0.05);
-      transition: box-shadow 0.3s ease;
-    }
-
-    .card-shadow:hover {
-      box-shadow: 0 0 30px rgba(0, 0, 0, 0.1);
+    .loading-shimmer {
+      animation: shimmer 2s infinite linear;
+      background: linear-gradient(to right, #f6f7f8 0%, #edeef1 20%, #f6f7f8 40%, #f6f7f8 100%);
+      background-size: 1000px 100%;
     }
   </style>
 </head>
 
-<body class="bg-gray-100">
+<body class="min-h-screen">
   <%- include('../layouts/header-with-user.ejs') %>
 
-  <main class="container mx-auto px-4 py-8">
-    <div class="flex justify-between items-center mb-8 mt-16">
-      <div class="text-sm breadcrumbs">
-        <ul class="flex">
-          <li><a href="/home" class="text-gray-500">Home / </a></li>
-          <li class="text-red-500 font-semibold ml-1">Wallet</li>
+
+  <main class="container mx-auto px-4 py-8 space-y-8 mt-16 mb-16">
+
+    <div class="flex flex-col lg:flex-row justify-between items-start lg:items-center mb-8">
+      <div class="text-sm breadcrumbs mb-4 lg:mb-0">
+        <ul class="flex flex-wrap items-center">
+          <li><a href="/home" class="text-gray-500 hover:text-gray-700">Home</a></li>
+          <li><i class="fas fa-chevron-right mx-2 text-gray-400 text-xs"></i></li>
+          <li><a href="#" class="text-red-500 hover:text-red-700">Wallet</a></li>
         </ul>
       </div>
-      <div class="text-gray-600">Welcome! <span class="text-red-500 font-semibold"><%= user.fname %> <%= user.lname %></span></div>
+      <div class="text-gray-600 bg-white px-4 py-2 rounded-lg shadow-sm">
+        Welcome! <span class="text-red-500 font-semibold" id="userName"><%= user.fname %> <%= user.lname %></span>
+      </div>
     </div>
 
-    <div class="flex flex-col lg:flex-row space-y-8 lg:space-y-0 lg:space-x-8">
-      <div class="w-full lg:w-1/3">
-        <!-- Enhanced Credit Card -->
-        <div class="card-container" id="cardContainer">
-          <div class="card" id="card">
-            <div class="card-face card-front flex flex-col justify-between p-6">
-              <div class="flex justify-between items-center">
-                <div class="chip"></div>
-                <div class="logo">Yadro</div>
-              </div>
-              <div class="text-white text-2xl font-mono tracking-wider card-number" id="cardNumber">1234 5678 9012 3456</div>
-              <div class="flex justify-between items-end text-white">
-                <div>
-                  <div class="text-xs opacity-80">Card Holder</div>
-                  <div class="font-semibold" id="cardHolder"><%= user.fname %> <%= user.lname %></div>
-                </div>
-                <div>
-                  <div class="text-xs opacity-80">Expires</div>
-                  <div class="font-semibold">12/28</div>
-                </div>
-              </div>
-              <div class="flex justify-between items-center mt-4">
-                <div class="contactless"></div>
-                <div class="text-white text-xs">Debit</div>
-              </div>
-              <div class="wave"></div>
-            </div>
-            <div class="card-face card-back flex flex-col justify-between p-6">
-              <div class="magnetic-strip"></div>
-              <div class="flex flex-col items-end">
-                <div class="w-full bg-white h-8 mb-4"></div>
-                <div class="w-16 h-8 bg-white rounded flex items-center justify-center">
-                  <p class="text-black font-mono">***</p>
-                </div>
-              </div>
-              <div class="flex justify-between items-center">
-                <div class="signature"></div>
-                <div class="hologram"></div>
-              </div>
-              <div class="text-white text-xs opacity-80 mt-4">
-                This card is property of Yadro Bank. If found, please return to the nearest branch.
-              </div>
-            </div>
-          </div>
 
-        </div>
-        <!-- Profile Card -->
-        <div class="bg-white rounded-xl shadow-lg p-4 text-center card-shadow">
-          <div class="red-gradient-bg w-32 h-32 rounded-full flex items-center justify-center mx-auto mb-4">
-            <i class="fas fa-user text-white text-5xl"></i>
+    <!-- Profile Section -->
+    <div class="flex flex-col lg:flex-row gap-8">
+      <!-- Left Column - Profile Card -->
+      <div class="lg:w-1/3 space-y-6">
+        <div class="bg-white rounded-2xl shadow-lg overflow-hidden">
+          <div class="profile-gradient p-6 text-center">
+            <div class="w-32 h-32 mx-auto bg-white rounded-full p-2 shadow-lg">
+              <div class="w-full h-full rounded-full bg-gray-200 flex items-center justify-center">
+                <span class="text-4xl font-bold text-gray-600">
+                  <%= user.fname[0] %><%= user.lname[0] %>
+                </span>
+              </div>
+            </div>
+            <h2 class="mt-4 text-2xl font-bold text-white"><%= user.fname %> <%= user.lname %></h2>
+            <p class="text-white/80"><%= user.email %></p>
           </div>
-          <h2 class="text-2xl font-bold mb-2"><%= user.fname %> <%= user.lname %></h2>
-          <p class="text-gray-600"><%= user.email %></p>
-          <div class="mt-4 flex justify-center space-x-2">
-            <a href="/account" class="red-gradient-bg text-white px-4 py-2 rounded-full hover:opacity-90 transition duration-300">Edit Profile</a>
-            <button class="bg-gray-200 text-gray-700 px-4 py-2 rounded-full hover:bg-gray-300 transition duration-300">Settings</button>
+          <div class="p-6 space-y-4">
+            <div class="flex justify-between items-center">
+              <span class="text-gray-600">Account Status</span>
+              <span class="px-3 py-1 bg-green-100 text-green-600 rounded-full text-sm">Active</span>
+            </div>
+            <div class="flex justify-between items-center">
+              <span class="text-gray-600">Member Since</span>
+              <span class="text-gray-800">June 2023</span>
+            </div>
+            <div class="pt-4 border-t">
+              <a href="account" class="w-full p-4 bg-red-600 text-white py-2 rounded-lg hover:bg-red-700 transition-colors">
+                Edit Profile
+              </a>
+            </div>
           </div>
         </div>
       </div>
-      <div class="w-full lg:w-2/3">
-        <div class="bg-white rounded-xl shadow-lg p-6 mb-8 card-shadow">
-          <h2 class="text-2xl font-bold mb-4">Wallet Overview</h2>
-          <div class="flex flex-col md:flex-row space-y-4 md:space-y-0 md:space-x-4">
-            <div class="balance-card text-white p-6 rounded-lg flex-grow">
-              <h3 class="text-xl mb-2">Current Balance</h3>
-              <p class="text-4xl font-bold" id="balance">₹ <%= wallet.balance %></p>
-              <div class="mt-4 flex justify-between items-center">
-                <span class="text-sm">Last updated: <span id="lastUpdated"><%= wallet.formattedLastUpdated %></span></span>
-                <button class="glassmorphism px-3 py-1 text-sm" onclick="refresh()">Refresh</button>
+
+      <!-- Right Column - Balance and Stats -->
+      <div class="lg:w-2/3 space-y-6">
+        <!-- Balance Card -->
+        <div class="balance-card rounded-2xl p-6 text-white">
+          <div class="flex justify-between items-start">
+            <div>
+              <h3 class="text-lg font-medium opacity-90">Total Balance</h3>
+              <p class="text-4xl font-bold mt-2">₹<%= wallet.balance %></p>
+            </div>
+            <button onclick="refresh()" class="glassmorphism px-4 py-2 rounded-lg hover:bg-white/30 transition-colors">
+              Refresh
+            </button>
+          </div>
+          <div class="grid grid-cols-2 gap-4 mt-6">
+            <button class="glassmorphism p-3 rounded-lg text-center hover:bg-white/30 transition-colors">
+              <i class="fas fa-arrow-up mb-2"></i>
+              <span class="block">Send Money</span>
+            </button>
+            <button class="glassmorphism p-3 rounded-lg text-center hover:bg-white/30 transition-colors">
+              <i class="fas fa-arrow-down mb-2"></i>
+              <span class="block">Receive Money</span>
+            </button>
+          </div>
+        </div>
+
+        <div class="flex flex-col md:flex-row justify-between items-start md:items-center mb-6 gap-4">
+          <h3 class="text-xl font-bold text-gray-800">Recent Transactions</h3>
+          <div class="flex gap-2 w-full md:w-auto">
+            <div class="relative flex-grow md:flex-grow-0">
+              <input type="text" id="searchTransaction" placeholder="Search transactions..." class="w-full px-4 py-2 text-sm bg-gray-50 rounded-lg focus:outline-none focus:ring-2 focus:ring-red-500 border border-gray-200">
+              <i class="fas fa-search absolute right-3 top-1/2 -translate-y-1/2 text-gray-400"></i>
+            </div>
+            <button id="filterBtn" class="px-4 py-2 text-sm bg-gray-50 rounded-lg hover:bg-gray-100 transition-colors flex items-center gap-2">
+              <i class="fas fa-filter"></i>
+              <span class="hidden md:inline">Filter</span>
+            </button>
+            <button id="exportBtn" class="px-4 py-2 text-sm bg-gray-50 rounded-lg hover:bg-gray-100 transition-colors flex items-center gap-2">
+              <i class="fas fa-download"></i>
+              <span class="hidden md:inline">Export</span>
+            </button>
+          </div>
+        </div>
+
+        <!-- Transactions List -->
+        <div class="transaction-list space-y-4 max-h-[600px] overflow-y-auto">
+          <% if(wallet.transactions && wallet.transactions.length > 0) { %>
+          <% wallet.transactions.forEach((transaction, index) => { %>
+          <div class="transaction-card flex items-center justify-between p-4 rounded-lg bg-gray-50 hover:bg-gray-100">
+            <div class="flex items-center space-x-4">
+              <div class="w-10 h-10 rounded-full flex items-center justify-center <%= transaction.type === 'credit' ? 'bg-green-100 text-green-600' : 'bg-red-100 text-red-600' %>">
+                <i class="fas <%= transaction.type === 'credit' ? 'fa-arrow-down' : 'fa-arrow-up' %>"></i>
+              </div>
+              <div class="flex-grow min-w-0">
+                <p class="font-medium text-gray-900 truncate"><%= transaction.description %></p>
+                <div class="flex items-center gap-2 text-sm text-gray-500">
+                  <span><%= new Date(transaction.date).toLocaleDateString() %></span>
+                  <span>•</span>
+                  <span><%= transaction.time %></span>
+                </div>
               </div>
             </div>
-            <div class="space-y-4">
-              <button class="action-button bg-green-500 text-white py-3 px-6 rounded-lg w-full hover:bg-green-600 transition duration-300 ease-in-out">
-                <i class="fas fa-plus mr-2"></i>Deposit Money
-              </button>
-              <button class="action-button bg-red-500 text-white py-3 px-6 rounded-lg w-full hover:bg-red-600 transition duration-300 ease-in-out">
-                <i class="fas fa-minus mr-2"></i>Withdraw Money
-              </button>
+            <div class="text-right ml-4">
+              <p class="font-medium whitespace-nowrap <%= transaction.type === 'credit' ? 'text-green-600' : 'text-red-600' %>">
+                <%= transaction.type === 'credit' ? '+' : '-' %>₹<%= transaction.amount.toLocaleString() %>
+              </p>
+              <p class="text-sm text-gray-500"><%= transaction.status %></p>
             </div>
           </div>
+          <% }) %>
+          <% } else { %>
+          <div class="text-center py-12">
+            <div class="w-24 h-24 mx-auto mb-4 bg-gray-100 rounded-full flex items-center justify-center">
+              <i class="fas fa-receipt text-3xl text-gray-400"></i>
+            </div>
+            <h3 class="text-lg font-medium text-gray-900">No transactions yet</h3>
+            <p class="text-gray-500 mt-2">Your transaction history will appear here</p>
+          </div>
+          <% } %>
         </div>
-        <div class="bg-white rounded-xl shadow-lg p-6 card-shadow" x-data="{ showAll: false }">
-          <div class="flex justify-between items-center mb-6">
-            <h2 class="text-2xl font-bold text-gray-800">
-              Transaction History
-              <span class="text-sm font-normal text-gray-500 ml-2">Recent activity</span>
-            </h2>
-            <div class="flex gap-2">
-              <button class="px-3 py-1 text-sm bg-gray-100 hover:bg-gray-200 rounded-full transition-colors">
-                Filter
-              </button>
-              <button class="px-3 py-1 text-sm bg-gray-100 hover:bg-gray-200 rounded-full transition-colors">
-                Export
-              </button>
-            </div>
-          </div>
 
-          <div class="overflow-x-auto rounded-lg border border-gray-100">
-            <table class="w-full">
-              <thead class="bg-gray-50">
-                <tr>
-                  <th class="py-4 px-6 text-left text-xs font-semibold text-gray-600 uppercase tracking-wider">Type</th>
-                  <th class="py-4 px-6 text-left text-xs font-semibold text-gray-600 uppercase tracking-wider">Amount</th>
-                  <th class="py-4 px-6 text-left text-xs font-semibold text-gray-600 uppercase tracking-wider">Description</th>
-                  <th class="py-4 px-6 text-left text-xs font-semibold text-gray-600 uppercase tracking-wider">Date</th>
-                  <th class="py-4 px-6 text-left text-xs font-semibold text-gray-600 uppercase tracking-wider">Time</th>
-                </tr>
-              </thead>
-              <tbody id="transactionBody">
-                <% if(wallet.transactions.length > 0) { %>
-
-                <% wallet.transactions.forEach((transaction, index) => { %>
-                <tr class="transaction-row border-t border-gray-100" style="animation-delay: <%= index * 50 %>ms">
-                  <td class="py-4 px-6">
-                    <div class="flex items-center">
-                      <div class="w-8 h-8 rounded-full flex items-center justify-center <%= transaction.type === 'credit' ? 'bg-green-100 text-green-600' : 'bg-red-100 text-red-600' %>">
-                        <%= transaction.type === 'credit' ? '↓' : '↑' %>
-                      </div>
-                      <span class="ml-3 font-medium <%= transaction.type === 'credit' ? 'text-green-600' : 'text-red-600' %>">
-                        <%= transaction.type %>
-                      </span>
-                    </div>
-                  </td>
-                  <td class="py-4 px-6 font-medium">
-                    <%= transaction.type === 'credit' ? '+' : '-' %>₹<%= transaction.amount %>
-                  </td>
-                  <td class="py-4 px-6 text-gray-600">
-                    <%= transaction.description %>
-                  </td>
-                  <td class="py-4 px-6 text-gray-500">
-                    <%= transaction.date %>
-                  </td>
-                  <td class="py-4 px-6 text-gray-500">
-                    <%= transaction.time %>
-                  </td>
-                </tr>
-                <% }) %>
-                <% } else { %>
-                <div class="flex flex-col items-center justify-center py-12 px-4 mb-5 sm:px-6 lg:px-8 bg-white rounded-lg shadow-md">
-                  <img src="/images/forgotman.png" alt="Empty Wishlist" class="w-48 h-48 mb-8" />
-                  <h2 class="text-3xl font-extrabold text-gray-900 mb-4">Your Wallet History is Empty</h2>
-                  <a href="/products" class="inline-flex items-center px-6 py-3 border border-transparent text-base font-medium rounded-md text-white bg-red-600 hover:bg-red-700 transition duration-150 ease-in-out">
-                    <svg class="mr-2 -ml-1 w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
-                      <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"></path>
-                    </svg>
-                    Explore Products
-                  </a>
-                </div>
-                <% } %>
-              </tbody>
-            </table>
-          </div>
-
-          <div class="text-center mt-6">
-            <a href="/wallet/history" class="inline-flex items-center px-4 py-2 text-sm text-red-600 hover:text-red-700 transition-colors">
-              Show more transactions
-              <svg class="w-4 h-4 ml-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7" />
-              </svg>
-            </a>
-          </div>
+        <!-- Footer Section -->
+        <div class="mt-6 flex justify-between items-center border-t pt-4">
+          <p class="text-sm text-gray-500">
+            Showing <span id="transactionCount">0</span> transactions
+          </p>
+          <a href="/wallet/history" class="text-red-600 hover:text-red-700 font-medium text-sm flex items-center gap-2">
+            View All
+            <i class="fas fa-arrow-right"></i>
+          </a>
         </div>
       </div>
+    </div>
     </div>
   </main>
 
   <%- include('../layouts/footer.ejs') %>
 
   <script>
-    const card = document.getElementById('card');
-    const cardContainer = document.getElementById('cardContainer');
-    const cardNumber = document.getElementById('cardNumber');
-    const cardHolder = document.getElementById('cardHolder');
+    // Animate elements on page load
+    document.addEventListener('DOMContentLoaded', () => {
+      gsap.from(".balance-card", {
+        y: 30,
+        opacity: 0,
+        duration: 0.8,
+        ease: "power3.out"
+      });
 
+      gsap.from(".transaction-card", {
+        y: 20,
+        opacity: 0,
+        duration: 0.5,
+        stagger: 0.1,
+        ease: "power2.out"
+      });
 
+      // Animate profile card
+      gsap.from(".profile-gradient", {
+        scale: 0.95,
+        opacity: 0,
+        duration: 1,
+        ease: "elastic.out(1, 0.7)"
+      });
+    });
 
+    // Refresh function
     function refresh() {
-
       window.location.reload();
-
     }
 
-    // document.addEventListener('DOMContentLoaded', () => {
-    //   fetchWalletData();
-    // });
-
-    // // Fetch wallet data from backend
-    // async function fetchWalletData() {
-    //   try {
-    //     const response = await fetch('/wallet'); // Adjust this endpoint based on your backend route
-    //     const data = await response.json();
-
-    //     // Update balance and transactions
-    //     updateBalance(data.balance);
-    //     populateTransactions(data.transactions);
-    //   } catch (error) {
-    //     console.error("Failed to fetch wallet data:", error);
-    //   }
-    // }
-
-
-    // Flip card on click
-    card.addEventListener('click', () => {
-      card.classList.toggle('is-flipped');
-    });
-
-    // Tilt effect
-    cardContainer.addEventListener('mousemove', (e) => {
-      if (!card.classList.contains('is-flipped')) {
-        const rect = cardContainer.getBoundingClientRect();
-        const x = e.clientX - rect.left;
-        const y = e.clientY - rect.top;
-        const centerX = rect.width / 2;
-        const centerY = rect.height / 2;
-        const rotateX = (y - centerY) / 10;
-        const rotateY = (centerX - x) / 10;
-
-        gsap.to(card, {
-          rotateX: rotateX,
-          rotateY: rotateY,
-          duration: 0.5,
-          ease: 'power2.out'
+    // Add intersection observer for transaction cards
+    const observer = new IntersectionObserver(
+      (entries) => {
+        entries.forEach(entry => {
+          if (entry.isIntersecting) {
+            entry.target.style.opacity = "1";
+            entry.target.style.transform = "translateY(0)";
+          }
         });
+      }, {
+        threshold: 0.1
       }
+    );
+
+    document.querySelectorAll('.transaction-card').forEach(card => {
+      observer.observe(card);
     });
 
-    cardContainer.addEventListener('mouseleave', () => {
-      if (!card.classList.contains('is-flipped')) {
-        gsap.to(card, {
-          rotateX: 0,
-          rotateY: 0,
-          duration: 0.5,
-          ease: 'power2.out'
+
+    document.addEventListener('DOMContentLoaded', function() {
+      // Initialize variables
+      const searchInput = document.getElementById('searchTransaction');
+      const filterBtn = document.getElementById('filterBtn');
+      const exportBtn = document.getElementById('exportBtn');
+      const transactionCount = document.getElementById('transactionCount');
+      const transactionCards = document.querySelectorAll('.transaction-card');
+
+      // Update transaction count
+      transactionCount.textContent = transactionCards.length;
+
+      // Search functionality
+      searchInput.addEventListener('input', function(e) {
+        const searchTerm = e.target.value.toLowerCase();
+
+        transactionCards.forEach(card => {
+          const description = card.querySelector('.font-medium').textContent.toLowerCase();
+          const amount = card.querySelector('.whitespace-nowrap').textContent;
+
+          if (description.includes(searchTerm) || amount.includes(searchTerm)) {
+            card.style.display = 'flex';
+          } else {
+            card.style.display = 'none';
+          }
         });
+      });
+
+      // Filter button click handler
+      filterBtn.addEventListener('click', function() {
+        // Add your filter logic here
+        alert('Filter functionality can be implemented based on your requirements');
+      });
+
+      // Export button click handler
+      exportBtn.addEventListener('click', function() {
+        // Add your export logic here
+        alert('Export functionality can be implemented based on your requirements');
+      });
+
+      // Add loading state for transaction cards
+      function addLoadingState(card) {
+        card.classList.add('opacity-50');
+        card.style.pointerEvents = 'none';
       }
-    });
 
-    // Animate card number
-    function animateCardNumber() {
-      const numbers = cardNumber.textContent.split(' ');
-      cardNumber.textContent = '';
-      numbers.forEach((number, index) => {
-        const span = document.createElement('span');
-        span.textContent = number;
-        cardNumber.appendChild(span);
-        if (index < 3) cardNumber.appendChild(document.createTextNode(' '));
+      function removeLoadingState(card) {
+        card.classList.remove('opacity-50');
+        card.style.pointerEvents = 'auto';
+      }
 
-        gsap.from(span, {
-          opacity: 0,
-          y: 20,
-          duration: 0.5,
-          delay: index * 0.1,
-          ease: 'power2.out'
-        });
-      });
-    }
+      // Example of using loading state (e.g., when fetching more transactions)
+      function loadMoreTransactions() {
+        transactionCards.forEach(addLoadingState);
 
-    // Animate card holder
-    function animateCardHolder() {
-      const letters = cardHolder.textContent.split('');
-      cardHolder.textContent = '';
-      letters.forEach((letter, index) => {
-        const span = document.createElement('span');
-        span.textContent = letter;
-        cardHolder.appendChild(span);
+        // Simulate loading delay
+        setTimeout(() => {
+          transactionCards.forEach(removeLoadingState);
+        }, 1000);
+      }
 
-        gsap.from(span, {
-          opacity: 0,
-          x: -10,
-          duration: 0.3,
-          delay: index * 0.05,
-          ease: 'power2.out'
-        });
-      });
-    }
+      // Optional: Implement infinite scroll
+      const transactionList = document.querySelector('.transaction-list');
+      let isLoading = false;
 
-    // Run animations
-    animateCardNumber();
-    animateCardHolder();
+      transactionList.addEventListener('scroll', function() {
+        if (isLoading) return;
 
-    // Glare effect
-    cardContainer.addEventListener('mousemove', (e) => {
-      const rect = cardContainer.getBoundingClientRect();
-      const x = e.clientX - rect.left;
-      const y = e.clientY - rect.top;
-      const glareX = (x / rect.width) * 100;
-      const glareY = (y / rect.height) * 100;
-
-      gsap.to(card, {
-        '--glare-x': `${glareX}%`,
-        '--glare-y': `${glareY}%`,
-        duration: 0.3
-      });
-    });
-
-    // Pulse animation for contactless icon
-    const contactless = document.querySelector('.contactless');
-    gsap.to(contactless, {
-      scale: 1.1,
-      duration: 0.5,
-      repeat: -1,
-      yoyo: true,
-      ease: 'power1.inOut'
-    });
-
-    // Subtle floating animation for the entire card
-    gsap.to(card, {
-      y: -10,
-      duration: 2,
-      repeat: -1,
-      yoyo: true,
-      ease: 'power1.inOut'
-    });
-
-    // Shine effect for hologram
-    const hologram = document.querySelector('.hologram');
-    gsap.to(hologram, {
-      backgroundPosition: '200% 0',
-      duration: 1.5,
-      repeat: -1,
-      ease: 'linear'
-    });
-
-    // // Animate balance counter
-    // const balanceElement = document.getElementById('balance');
-    // const targetBalance = 10000;
-    // let currentBalance = 0;
-    // const duration = 2000; // 2 seconds
-    // const frameRate = 60;
-    // const increment = targetBalance / (duration / 1000 * frameRate);
-
-    // function updateBalance(balance) {
-    //   const balanceElement = document.getElementById('balance');
-    //   let currentBalance = 0;
-    //   const duration = 2000; // 2 seconds
-    //   const frameRate = 60;
-    //   const increment = balance / (duration / 1000 * frameRate);
-
-    //   const balanceInterval = setInterval(() => {
-    //     currentBalance += increment;
-    //     if (currentBalance >= balance) {
-    //       currentBalance = balance;
-    //       clearInterval(balanceInterval);
-    //     }
-    //     balanceElement.textContent = `₹ ${Math.round(currentBalance).toLocaleString()}`;
-    //   }, 1000 / frameRate);
-    // }
-
-    // const balanceInterval = setInterval(updateBalance, 1000 / frameRate);
-
-
-    // function populateTransactions(transactions) {
-    //   const transactionBody = document.getElementById('transactionBody');
-    //   transactionBody.innerHTML = ''; // Clear existing rows
-
-    //   transactions.forEach((transaction) => {
-    //     const row = document.createElement('tr');
-    //     row.className = 'transaction-row';
-    //     row.innerHTML = `
-    //   <td class="py-3 px-4">${transaction.type}</td>
-    //   <td class="py-3 px-4 ${transaction.amount < 0 ? 'text-red-500' : 'text-green-500'}">
-    //     ${transaction.amount.toLocaleString('en-IN', { style: 'currency', currency: 'INR' })}
-    //   </td>
-    //   <td class="py-3 px-4">${transaction.description}</td>
-    //   <td class="py-3 px-4">${transaction.date}</td>
-    //   <td class="py-3 px-4">${transaction.time}</td>
-    // `;
-    //     transactionBody.appendChild(row);
-    //   });
-
-    //   // Re-run animation on new rows
-    //   gsap.from(".transaction-row", {
-    //     opacity: 0,
-    //     y: 20,
-    //     stagger: 0.1,
-    //     duration: 0.5,
-    //     ease: "power2.out"
-    //   });
-    // }
-    // // Update last updated date
-    // const lastUpdatedElement = document.getElementById('lastUpdated');
-    // const currentDate = new Date();
-    // lastUpdatedElement.textContent = currentDate.toLocaleDateString('en-US', {
-    //   year: 'numeric',
-    //   month: '2-digit',
-    //   day: '2-digit'
-    // });
-
-    // Add hover animation for action buttons
-    const actionButtons = document.querySelectorAll('.action-button');
-    actionButtons.forEach(button => {
-      button.addEventListener('mouseenter', () => {
-        gsap.to(button, {
-          scale: 1.05,
-          duration: 0.3
-        });
-      });
-      button.addEventListener('mouseleave', () => {
-        gsap.to(button, {
-          scale: 1,
-          duration: 0.3
-        });
-      });
-    });
-
-    // Add parallax effect to balance card
-    const balanceCard = document.querySelector('.balance-card');
-    balanceCard.addEventListener('mousemove', (e) => {
-      const rect = balanceCard.getBoundingClientRect();
-      const x = e.clientX - rect.left;
-      const y = e.clientY - rect.top;
-
-      const xPercent = (x / rect.width - 0.5) * 20;
-      const yPercent = (y / rect.height - 0.5) * 20;
-
-      gsap.to(balanceCard, {
-        rotationY: xPercent,
-        rotationX: -yPercent,
-        duration: 0.5,
-        ease: 'power2.out'
-      });
-    });
-
-    balanceCard.addEventListener('mouseleave', () => {
-      gsap.to(balanceCard, {
-        rotationY: 0,
-        rotationX: 0,
-        duration: 0.5,
-        ease: 'power2.out'
-      });
-    });
-
-
-    // Add intersection observer to animate rows as they come into view
-    const observer = new IntersectionObserver((entries) => {
-      entries.forEach(entry => {
-        if (entry.isIntersecting) {
-          entry.target.style.opacity = 1;
-          entry.target.style.transform = 'translateX(0)';
+        if (transactionList.scrollHeight - transactionList.scrollTop === transactionList.clientHeight) {
+          isLoading = true;
+          loadMoreTransactions();
+          setTimeout(() => {
+            isLoading = false;
+          }, 1000);
         }
-      });
-    }, {
-      threshold: 0.1
-    });
-
-    document.querySelectorAll('.transaction-row').forEach(row => {
-      observer.observe(row);
-    });
-
-    // Add hover effect for rows
-    document.querySelectorAll('.transaction-row').forEach(row => {
-      row.addEventListener('mouseenter', () => {
-        row.style.backgroundColor = '#F9FAFB';
-      });
-
-      row.addEventListener('mouseleave', () => {
-        row.style.backgroundColor = 'transparent';
       });
     });
   </script>

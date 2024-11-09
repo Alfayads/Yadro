@@ -16,13 +16,50 @@
       background-color: #F3F4F6;
     }
 
-    .transaction-row {
+    .transaction-item {
       transition: all 0.3s ease;
     }
 
-    .transaction-row:hover {
+    .transaction-item:hover {
       transform: translateY(-2px);
       box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06);
+    }
+
+    /* Custom scrollbar for better UX */
+    .custom-scrollbar {
+      scrollbar-width: thin;
+      scrollbar-color: #CBD5E0 #F3F4F6;
+    }
+
+    .custom-scrollbar::-webkit-scrollbar {
+      width: 6px;
+      height: 6px;
+    }
+
+    .custom-scrollbar::-webkit-scrollbar-track {
+      background: #F3F4F6;
+    }
+
+    .custom-scrollbar::-webkit-scrollbar-thumb {
+      background-color: #CBD5E0;
+      border-radius: 3px;
+    }
+
+    /* Loading skeleton animation */
+    @keyframes shimmer {
+      0% {
+        background-position: -1000px 0;
+      }
+
+      100% {
+        background-position: 1000px 0;
+      }
+    }
+
+    .skeleton {
+      background: linear-gradient(90deg, #f0f0f0 25%, #e0e0e0 50%, #f0f0f0 75%);
+      background-size: 1000px 100%;
+      animation: shimmer 2s infinite;
     }
   </style>
 </head>
@@ -30,79 +67,207 @@
 <body class="bg-gray-100">
   <%- include('../layouts/header-with-user.ejs') %>
 
-  <main class="container mx-auto px-4 py-8">
-    <div class="flex justify-between items-center mb-8">
-      <div class="text-sm breadcrumbs">
-        <ul class="flex">
-          <li><a href="/home" class="text-gray-500">Home</a></li>
-          <li><a href="/wallet" class="text-gray-500 ml-2">/ Wallet</a></li>
-          <li class="text-red-500 font-semibold ml-2">/ Transaction History</li>
+  <main class="container mx-auto px-4 py-8 mt-16">
+    <!-- Breadcrumbs and Welcome -->
+    <div class="flex flex-col lg:flex-row justify-between items-start lg:items-center mb-8">
+      <div class="text-sm breadcrumbs mb-4 lg:mb-0">
+        <ul class="flex flex-wrap items-center">
+          <li><a href="/home" class="text-gray-500 hover:text-gray-700">Home</a></li>
+          <li><i class="fas fa-chevron-right mx-2 text-gray-400 text-xs"></i></li>
+          <li><a href="/wallet" class="text-gray-500 hover:text-gray-700">Wallet</a></li>
+          <li><i class="fas fa-chevron-right mx-2 text-gray-400 text-xs"></i></li>
+          <li class="text-red-500 font-semibold">Transaction History</li>
         </ul>
       </div>
-      <div class="text-gray-600">Welcome! <span class="text-red-500 font-semibold" id="userName"><%= user.fname %> <%= user.lname %></span></div>
+      <div class="text-gray-600 bg-white px-4 py-2 rounded-lg shadow-sm">
+        Welcome! <span class="text-red-500 font-semibold" id="userName"><%= user.fname %> <%= user.lname %></span>
+      </div>
     </div>
 
-    <div class="bg-white rounded-xl shadow-lg p-6 mb-8">
-      <h2 class="text-2xl font-bold mb-4">Transaction History</h2>
+    <!-- Main Content Card -->
+    <div class="bg-white rounded-xl shadow-lg p-4 md:p-6 mb-8">
+      <!-- Header with Stats -->
+      <div class="mb-6">
+        <h2 class="text-2xl font-bold mb-4">Transaction History</h2>
+        <div class="grid grid-cols-1 md:grid-cols-3 gap-4 mb-6">
+          <div class="bg-blue-50 p-4 rounded-lg">
+            <h3 class="text-sm text-blue-600 mb-1">Total Transactions</h3>
+            <p class="text-2xl font-bold text-blue-700" id="totalTransactions"><%= totalTransactions %></p>
+          </div>
+          <div class="bg-green-50 p-4 rounded-lg">
+            <h3 class="text-sm text-green-600 mb-1">Total Credits</h3>
+            <p class="text-2xl font-bold text-green-700" id="totalCredits">₹<%= totalCredits.toFixed(2) %></p>
+          </div>
+          <div class="bg-red-50 p-4 rounded-lg">
+            <h3 class="text-sm text-red-600 mb-1">Total Debits</h3>
+            <p class="text-2xl font-bold text-red-700" id="totalDebits">₹<%= totalDebits.toFixed(2) %></p>
+          </div>
+        </div>
+      </div>
 
-      <div class="mb-6 flex flex-wrap gap-4">
-        <div class="flex-grow">
-          <label for="search" class="block text-sm font-medium text-gray-700 mb-1">Search</label>
-          <input type="text" id="search" class="w-full px-3 py-2 border border-gray-300 rounded-md" placeholder="Search transactions...">
+      <!-- Filters -->
+      <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4 mb-6">
+        <div class="relative">
+          <span class="absolute inset-y-0 left-0 pl-3 flex items-center">
+            <i class="fas fa-search text-gray-400"></i>
+          </span>
+          <input type="text" id="search" class="pl-10 w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500" placeholder="Search transactions...">
         </div>
         <div>
-          <label for="dateFrom" class="block text-sm font-medium text-gray-700 mb-1">From</label>
-          <input type="date" id="dateFrom" class="w-full px-3 py-2 border border-gray-300 rounded-md">
+          <div class="relative">
+            <span class="absolute inset-y-0 left-0 pl-3 flex items-center">
+              <i class="fas fa-calendar text-gray-400"></i>
+            </span>
+            <input type="date" id="dateFrom" class="pl-10 w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500">
+          </div>
         </div>
         <div>
-          <label for="dateTo" class="block text-sm font-medium text-gray-700 mb-1">To</label>
-          <input type="date" id="dateTo" class="w-full px-3 py-2 border border-gray-300 rounded-md">
+          <div class="relative">
+            <span class="absolute inset-y-0 left-0 pl-3 flex items-center">
+              <i class="fas fa-calendar text-gray-400"></i>
+            </span>
+            <input type="date" id="dateTo" class="pl-10 w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500">
+          </div>
         </div>
         <div>
-          <label for="type" class="block text-sm font-medium text-gray-700 mb-1">Type</label>
-          <select id="type" class="w-full px-3 py-2 border border-gray-300 rounded-md">
-            <option value="">All</option>
-            <option value="debit">Debit</option>
-            <option value="credit">Credit</option>
+          <select id="type" class="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 bg-white">
+            <option value="">All Transactions</option>
+            <option value="debit">Debits Only</option>
+            <option value="credit">Credits Only</option>
           </select>
         </div>
       </div>
 
-      <div class="overflow-x-auto">
+      <!-- Desktop Table View -->
+      <div class="hidden md:block overflow-x-auto custom-scrollbar">
         <table class="w-full">
           <thead class="bg-gray-50">
             <tr>
-              <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Date</th>
-              <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Description</th>
-              <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Type</th>
-              <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Amount</th>
-              <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Balance</th>
+              <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                <div class="flex items-center">
+                  Date <i class="fas fa-sort ml-1"></i>
+                </div>
+              </th>
+              <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                <div class="flex items-center">
+                  Description <i class="fas fa-sort ml-1"></i>
+                </div>
+              </th>
+              <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                <div class="flex items-center">
+                  Type <i class="fas fa-sort ml-1"></i>
+                </div>
+              </th>
+              <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                <div class="flex items-center">
+                  Amount <i class="fas fa-sort ml-1"></i>
+                </div>
+              </th>
+              <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                <div class="flex items-center">
+                  Balance <i class="fas fa-sort ml-1"></i>
+                </div>
+              </th>
             </tr>
           </thead>
-          <tbody class="bg-white divide-y divide-gray-200" id="transactionBody">
-            <!-- Transaction rows will be dynamically inserted here -->
+          <tbody class="bg-white divide-y divide-gray-200" id="transactionTableBody">
+            <% transactions.forEach(transaction => { %>
+            <tr class="transaction-item hover:bg-gray-50">
+              <td class="px-6 py-4 whitespace-nowrap">
+                <div class="text-sm text-gray-900"><%= new Date(transaction.date).toLocaleDateString('en-IN', { year: 'numeric', month: 'short', day: 'numeric' }) %></div>
+              </td>
+              <td class="px-6 py-4">
+                <div class="text-sm text-gray-900"><%= transaction.description %></div>
+              </td>
+              <td class="px-6 py-4 whitespace-nowrap">
+                <span class="px-2 inline-flex text-xs leading-5 font-semibold rounded-full <%= transaction.type === 'credit' ? 'bg-green-100 text-green-800' : 'bg-red-100 text-red-800' %>">
+                  <%= transaction.type.charAt(0).toUpperCase() + transaction.type.slice(1) %>
+                </span>
+              </td>
+              <td class="px-6 py-4 whitespace-nowrap">
+                <div class="text-sm <%= transaction.amount >= 0 ? 'text-green-600' : 'text-red-600' %> font-medium">
+                  ₹<%= Math.abs(transaction.amount).toFixed(2) %>
+                </div>
+              </td>
+              <td class="px-6 py-4 whitespace-nowrap">
+                <div class="text-sm <%= wallet.balance >= 0 ? 'text-gray-900' : 'text-red-600' %> font-medium">
+                  ₹<%= wallet.balance.toFixed(2) %>
+                </div>
+              </td>
+            </tr>
+            <% }); %>
           </tbody>
         </table>
       </div>
 
-      <div class="mt-4 flex justify-between items-center">
-        <div>
-          <span class="text-sm text-gray-700">
-            Showing <span class="font-medium">1</span> to <span class="font-medium">10</span> of <span class="font-medium">20</span> results
-          </span>
+      <!-- Mobile Card View -->
+      <div class="md:hidden space-y-4" id="transactionCardBody">
+        <% transactions.forEach(transaction => { %>
+        <div class="transaction-item bg-white p-4 rounded-lg shadow-sm border border-gray-200">
+          <div class="flex justify-between items-start mb-3">
+            <div>
+              <div class="font-medium text-gray-900"><%= transaction.description %></div>
+              <div class="text-sm text-gray-500">
+                <%= new Date(transaction.date).toLocaleDateString('en-IN', { year: 'numeric', month: 'short', day: 'numeric' }) %>
+              </div>
+            </div>
+            <span class="px-2 py-1 text-xs font-semibold rounded-full <%= transaction.type === 'credit' ? 'bg-green-100 text-green-800' : 'bg-red-100 text-red-800' %>">
+              <%= transaction.type.charAt(0).toUpperCase() + transaction.type.slice(1) %>
+            </span>
+          </div>
+          <div class="flex justify-between items-end">
+            <div>
+              <div class="text-sm text-gray-500">Balance</div>
+              <div class="font-medium <%= wallet.balance >= 0 ? 'text-gray-900' : 'text-red-600' %>">
+                ₹<%= wallet.balance.toFixed(2) %>
+              </div>
+            </div>
+            <div>
+              <div class="text-sm text-gray-500">Amount</div>
+              <div class="font-medium <%= transaction.amount >= 0 ? 'text-green-600' : 'text-red-600' %>">
+                ₹<%= Math.abs(transaction.amount).toFixed(2) %>
+              </div>
+            </div>
+          </div>
         </div>
-        <div>
+        <% }); %>
+      </div>
+
+      <!-- Empty State -->
+      <div id="emptyState" class="hidden text-center py-8">
+        <i class="fas fa-receipt text-gray-400 text-5xl mb-4"></i>
+        <h3 class="text-lg font-medium text-gray-600">No Transactions Found</h3>
+        <p class="text-gray-500">Try adjusting your search or filter criteria</p>
+      </div>
+
+      <!-- Loading State -->
+      <div id="loadingState" class="hidden">
+        <div class="space-y-4">
+          <div class="skeleton h-12 rounded-lg"></div>
+          <div class="skeleton h-12 rounded-lg"></div>
+          <div class="skeleton h-12 rounded-lg"></div>
+        </div>
+      </div>
+
+      <!-- Pagination -->
+      <div class="mt-6 flex flex-col sm:flex-row justify-between items-center gap-4">
+        <div class="text-sm text-gray-700 text-center sm:text-left">
+          Showing <span class="font-medium" id="showingStart">1</span> to
+          <span class="font-medium" id="showingEnd">10</span> of
+          <span class="font-medium" id="totalItems">20</span> results
+        </div>
+        <div class="flex justify-center">
           <nav class="relative z-0 inline-flex rounded-md shadow-sm -space-x-px" aria-label="Pagination">
-            <a href="#" class="relative inline-flex items-center px-2 py-2 rounded-l-md border border-gray-300 bg-white text-sm font-medium text-gray-500 hover:bg-gray-50">
+            <button class="relative inline-flex items-center px-2 py-2 rounded-l-md border border-gray-300 bg-white text-sm font-medium text-gray-500 hover:bg-gray-50">
               <span class="sr-only">Previous</span>
               <i class="fas fa-chevron-left"></i>
-            </a>
-            <a href="#" class="relative inline-flex items-center px-4 py-2 border border-gray-300 bg-white text-sm font-medium text-gray-700 hover:bg-gray-50">1</a>
-            <a href="#" class="relative inline-flex items-center px-4 py-2 border border-gray-300 bg-white text-sm font-medium text-gray-700 hover:bg-gray-50">2</a>
-            <a href="#" class="relative inline-flex items-center px-2 py-2 rounded-r-md border border-gray-300 bg-white text-sm font-medium text-gray-500 hover:bg-gray-50">
+            </button>
+            <button class="relative inline-flex items-center px-4 py-2 border border-gray-300 bg-white text-sm font-medium text-gray-700 hover:bg-gray-50">1</button>
+            <button class="relative inline-flex items-center px-4 py-2 border border-gray-300 bg-white text-sm font-medium text-gray-700 hover:bg-gray-50">2</button>
+            <button class="relative inline-flex items-center px-2 py-2 rounded-r-md border border-gray-300 bg-white text-sm font-medium text-gray-500 hover:bg-gray-50">
               <span class="sr-only">Next</span>
               <i class="fas fa-chevron-right"></i>
-            </a>
+            </button>
           </nav>
         </div>
       </div>
@@ -112,76 +277,53 @@
   <%- include('../layouts/footer.ejs') %>
 
   <script>
-    // Sample transaction data
-    const transactions = [{
-        date: '2024-10-08',
-        description: 'Grocery Store',
-        type: 'debit',
-        amount: -75.50,
-        balance: 2424.50
-      },
-      {
-        date: '2024-10-07',
-        description: 'Salary Deposit',
-        type: 'credit',
-        amount: 3000.00,
-        balance: 2500.00
-      },
-      {
-        date: '2024-10-05',
-        description: 'Electric Bill',
-        type: 'debit',
-        amount: -120.00,
-        balance: -500.00
-      },
-      {
-        date: '2024-10-03',
-        description: 'Restaurant',
-        type: 'debit',
-        amount: -45.75,
-        balance: -380.00
-      },
-      {
-        date: '2024-10-01',
-        description: 'Gas Station',
-        type: 'debit',
-        amount: -50.00,
-        balance: -334.25
-      },
-    ];
+    // Get the server-rendered data
+    const transactions = <%- JSON.stringify(transactions) %>;
 
-    const transactionBody = document.getElementById('transactionBody');
-    const searchInput = document.getElementById('search');
-    const dateFromInput = document.getElementById('dateFrom');
-    const dateToInput = document.getElementById('dateTo');
-    const typeSelect = document.getElementById('type');
+    // Format currency
+    const formatCurrency = (amount) => {
+      return new Intl.NumberFormat('en-IN', {
+        style: 'currency',
+        currency: 'INR',
+        minimumFractionDigits: 2
+      }).format(Math.abs(amount));
+    };
 
-    function renderTransactions(filteredTransactions) {
-      transactionBody.innerHTML = '';
-      filteredTransactions.forEach(transaction => {
-        const row = document.createElement('tr');
-        row.className = 'transaction-row';
-        row.innerHTML = `
-          <td class="px-6 py-4 whitespace-nowrap">${transaction.date}</td>
-          <td class="px-6 py-4 whitespace-nowrap">${transaction.description}</td>
-          <td class="px-6 py-4 whitespace-nowrap">${transaction.type}</td>
-          <td class="px-6 py-4 whitespace-nowrap ${transaction.amount >= 0 ? 'text-green-600' : 'text-red-600'}">${transaction.amount.toFixed(2)}</td>
-          <td class="px-6 py-4 whitespace-nowrap">${transaction.balance.toFixed(2)}</td>
-        `;
-        transactionBody.appendChild(row);
+    // Format date
+    const formatDate = (dateStr) => {
+      return new Date(dateStr).toLocaleDateString('en-IN', {
+        year: 'numeric',
+        month: 'short',
+        day: 'numeric'
       });
+    };
+
+    // Update statistics based on filtered results
+    function updateStatistics(filteredTransactions) {
+      const totalCredits = filteredTransactions
+        .filter(t => t.type === 'credit')
+        .reduce((sum, t) => sum + t.amount, 0);
+
+      const totalDebits = filteredTransactions
+        .filter(t => t.type === 'debit')
+        .reduce((sum, t) => sum + Math.abs(t.amount), 0);
+
+      document.getElementById('totalTransactions').textContent = filteredTransactions.length;
+      document.getElementById('totalCredits').textContent = formatCurrency(totalCredits);
+      document.getElementById('totalDebits').textContent = formatCurrency(totalDebits);
     }
 
+    // Filter functionality
     function filterTransactions() {
-      const searchTerm = searchInput.value.toLowerCase();
-      const dateFrom = dateFromInput.value;
-      const dateTo = dateToInput.value;
-      const type = typeSelect.value;
+      const searchTerm = document.getElementById('search').value.toLowerCase();
+      const dateFrom = document.getElementById('dateFrom').value;
+      const dateTo = document.getElementById('dateTo').value;
+      const type = document.getElementById('type').value;
 
       const filteredTransactions = transactions.filter(transaction => {
         const matchesSearch = transaction.description.toLowerCase().includes(searchTerm);
-        const matchesDateFrom = !dateFrom || transaction.date >= dateFrom;
-        const matchesDateTo = !dateTo || transaction.date <= dateTo;
+        const matchesDateFrom = !dateFrom || new Date(transaction.date) >= new Date(dateFrom);
+        const matchesDateTo = !dateTo || new Date(transaction.date) <= new Date(dateTo);
         const matchesType = !type || transaction.type === type;
 
         return matchesSearch && matchesDateFrom && matchesDateTo && matchesType;
@@ -190,22 +332,25 @@
       renderTransactions(filteredTransactions);
     }
 
-    searchInput.addEventListener('input', filterTransactions);
-    dateFromInput.addEventListener('change', filterTransactions);
-    dateToInput.addEventListener('change', filterTransactions);
-    typeSelect.addEventListener('change', filterTransactions);
+    // Add event listeners for filters
+    document.getElementById('search').addEventListener('input', filterTransactions);
+    document.getElementById('dateFrom').addEventListener('change', filterTransactions);
+    document.getElementById('dateTo').addEventListener('change', filterTransactions);
+    document.getElementById('type').addEventListener('change', filterTransactions);
 
-    // Initial render
-    renderTransactions(transactions);
+    // Animation function remains the same
+    function animateItems() {
+      gsap.from(".transaction-item", {
+        opacity: 0,
+        y: 20,
+        stagger: 0.1,
+        duration: 0.5,
+        ease: "power2.out"
+      });
+    }
 
-    // Animation for transaction rows
-    gsap.from(".transaction-row", {
-      opacity: 0,
-      y: 20,
-      stagger: 0.1,
-      duration: 0.5,
-      ease: "power2.out"
-    });
+    // Initial animation
+    animateItems();
   </script>
 </body>
 

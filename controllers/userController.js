@@ -99,9 +99,16 @@ const getWallet = async (req, res, next) => {
             wallet.formattedLastUpdated = `${formattedDate}, ${formattedTime}`;
         }
 
+        const cardData = {
+            cardNumber: '4532 9856 0987 1234',
+            cardHolder: 'JOHN DOE',
+            validThru: '12/25',
+            cvv: '123'
+        };
+
 
         console.log(wallet)
-        return res.render('user/wallet', { user, categories, wallet, announcements });
+        return res.render('user/wallet', { user, categories, wallet, announcements, ...cardData });
     } catch (error) {
         console.error(error.message);
         let errorMessage = { message: "An error occurred. Please try again later." };
@@ -153,7 +160,36 @@ const getTransactionHistory = async (req, res, next) => {
         const user = await Users.findById({ _id: userId });
         const categories = await Category.find({});
         const announcements = await Announcement.find({});
-        return res.render('user/transaction-history', { user, categories, announcements });
+
+        const wallet = await Wallet.findOne({ userId });
+
+        if (!wallet) {
+            return res.status(404).render('user/error', { error: { message: "Wallet not found" } });
+        }
+
+        const transactions = wallet.transactions;
+
+        // Calculate total credits and debits
+        let totalCredits = 0;
+        let totalDebits = 0;
+        transactions.forEach(transaction => {
+            if (transaction.type === 'credit') {
+                totalCredits += transaction.amount;
+            } else if (transaction.type === 'debit') {
+                totalDebits += transaction.amount;
+            }
+        });
+
+        return res.render('user/transaction-history', {
+            user,
+            categories,
+            announcements,
+            transactions,
+            totalTransactions: transactions.length,
+            totalCredits,
+            totalDebits,
+            wallet
+        });
     } catch (error) {
         console.error(error.message);
         let errorMessage = { message: "An error occurred. Please try again later." };

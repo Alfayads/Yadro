@@ -78,7 +78,7 @@ const cancelOrder = async (req, res, next) => {
                 balance: refundAmount,
                 transactions: [
                     {
-                        type: 'Refund',
+                        type: 'credit',
                         amount: refundAmount,
                         description: `Refund for order ${orderId}`,
                         date: new Date()
@@ -90,7 +90,7 @@ const cancelOrder = async (req, res, next) => {
             // Update the existing wallet by adding the refund amount
             wallet.balance += refundAmount;
             wallet.transactions.push({
-                type: 'Refund',
+                type: 'credit',
                 amount: refundAmount,
                 description: `Refund for order ${orderId}`,
                 date: new Date()
