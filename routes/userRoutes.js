@@ -111,8 +111,6 @@ user_router.post('/login', authController.checkUser);
 user_router.get('/forgot-password', auth.isLogout, authController.forgotPassword);
 user_router.post('/reset-password', authController.resetPassword)
 
-
-
 //logout
 user_router.get('/logout', authController.getLogout);
 
