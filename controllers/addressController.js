@@ -43,7 +43,7 @@ const addAddress = async (req, res, next) => {
     try {
         const { addressType, city, street, apartment, postalCode, phone, landMark, name } = req.body;
         const userId = req.session.user_id;
-        console.log(addressType, city, street, apartment, postalCode, phone, landMark)
+        console.log(addressType, city, street, apartment, postalCode, phone, landMark);
 
         if (!name || !street || !apartment || !city || !postalCode || !phone) {
             const oldValues = { name, street, apartment, city, postalCode, phone, landMark }

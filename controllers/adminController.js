@@ -1024,12 +1024,15 @@ const viewOrderDetails = async (req, res, next) => {
             }];
         }
 
+        const deliveryCharge = order.totalAmount > 5000 ? 0 : 400;
+        const totalPrice = (order.totalAmount + deliveryCharge - order.offerApplied);
+
         // Calculate order summary
         const orderSummary = {
             subtotal: order.items.reduce((sum, item) => sum + (item.price * item.quantity), 0),
-            shippingCost: order.shippingCost || 0,
-            discount: order.discount || 0,
-            totalAmount: order.totalAmount
+            shippingCost: deliveryCharge,
+            discount: order.offerApplied,
+            totalAmount: totalPrice,
         };
 
         // Merge orderSummary with order object
@@ -1273,13 +1276,17 @@ const approveReturn = async (req, res, next) => {
 
         // Calculate the total refund amount
         const items = returnOrder.items; // Assuming items contains productId and quantity
+        const itemsLength = items.length;
         let totalRefund = 0;
+
+        let refundAmount = order.offerApplied / itemsLength;
+        console.log('order Refund total include the offer of 1/2 ', refundAmount);
 
         // Fetch product details to calculate total refund
         for (const item of items) {
             const product = await Product.findById(item.productId);
             if (product) {
-                totalRefund += product.salePrice * item.quantity; // Calculate total refund based on salePrice
+                totalRefund += product.salePrice * item.quantity - (order.offerApplied / itemsLength); // Calculate total refund based on salePrice
             }
         }
 

@@ -7,6 +7,7 @@ const Order = require('../models/Order');
 const Coupon = require('../models/Coupon');
 const Announcement = require('../models/announcement')
 const { default: mongoose, Types } = require('mongoose');
+const Wallet = require('../models/wallet')
 
 const getCart = async (req, res, next) => {
     try {
@@ -324,6 +325,26 @@ const placeOrder = async (req, res, next) => {
         }
 
         await newOrder.save();
+
+
+        // Update the user's wallet balance
+        const wallet = await Wallet.findOne({ userId }); // Find the user's wallet
+
+        console.log(wallet)
+
+        if (wallet) {
+
+            // Create a new transaction for the refund
+            const transaction = {
+                amount: newOrder.totalAmount,
+                type: 'debit', // Credit because we are adding funds
+                date: new Date(),
+                description: `Order Placed ${newOrder._id}`
+            };
+
+            wallet.transactions.push(transaction); // Add transaction to the wallet
+            await wallet.save(); // Save updated wallet
+        }
 
 
 

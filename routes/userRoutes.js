@@ -65,7 +65,7 @@ user_router.get('/order-tracking/:id', auth.isLogout, orderTracking);
 
 // All Orders page
 user_router.get('/orders', auth.isLogout, getOrders);
-user_router.post('/order/cancel/:id', cancelOrder)
+user_router.post('/order/cancel/:id', cancelOrder);
 user_router.get('/order/return/:id', getOrderReturn);
 user_router.post('/order/return/:orderId', createReturn);
 

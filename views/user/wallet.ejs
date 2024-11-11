@@ -24,7 +24,7 @@
     }
 
     .profile-gradient {
-      background: linear-gradient(135deg, #ff3e3e 0%, #ff6e6e 100%);
+      background: linear-gradient(135deg, #ee2e2e 0%, #ff5c5c 100%);
     }
 
     .transaction-card {
@@ -38,7 +38,7 @@
     }
 
     .balance-card {
-      background: linear-gradient(135deg, #ff3e3e 0%, #ff6e6e 100%);
+      background: linear-gradient(135deg, #ee2e2e 0%, #ff5c5c 100%);
       transition: all 0.3s ease;
     }
 
@@ -120,6 +120,250 @@
       background: linear-gradient(to right, #f6f7f8 0%, #edeef1 20%, #f6f7f8 40%, #f6f7f8 100%);
       background-size: 1000px 100%;
     }
+
+    .profile-gradient {
+      background: linear-gradient(135deg, #ef4444 0%, #b91c1c 100%);
+    }
+
+    /* Add subtle animation on hover */
+    .transform {
+      transition: transform 0.3s ease;
+    }
+
+    .hover\:scale-102:hover {
+      transform: scale(1.02);
+    }
+
+    /* Add smooth shadow transition */
+    .shadow-xl {
+      transition: box-shadow 0.3s ease;
+    }
+
+    .transaction-card {
+      transform: translateY(0);
+      transition: all 0.3s ease;
+    }
+
+    .transaction-card:hover {
+      transform: translateY(-2px);
+      box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06);
+    }
+
+    /* Balance card gradient animation */
+    .balance-card {
+      background: linear-gradient(-45deg, #ef4444, #dc2626, #991b1b, #b91c1c);
+      background-size: 400% 400%;
+      animation: gradient 15s ease infinite;
+    }
+
+    @keyframes gradient {
+      0% {
+        background-position: 0% 50%;
+      }
+
+      50% {
+        background-position: 100% 50%;
+      }
+
+      100% {
+        background-position: 0% 50%;
+      }
+    }
+
+    /* Glassmorphism effect */
+    .glassmorphism {
+      background: rgba(255, 255, 255, 0.1);
+      backdrop-filter: blur(10px);
+      border: 1px solid rgba(255, 255, 255, 0.2);
+    }
+
+    /* Button hover effects */
+    .hover-lift {
+      transition: transform 0.2s ease, box-shadow 0.2s ease;
+    }
+
+    .hover-lift:hover {
+      transform: translateY(-2px);
+      box-shadow: 0 6px 12px rgba(0, 0, 0, 0.1);
+    }
+
+    /* Status badge styles */
+    .status-badge {
+      padding: 0.25rem 0.75rem;
+      border-radius: 9999px;
+      font-size: 0.75rem;
+      font-weight: 500;
+      text-transform: uppercase;
+      letter-spacing: 0.05em;
+    }
+
+    .status-badge.completed {
+      background-color: rgba(16, 185, 129, 0.1);
+      color: rgb(6, 95, 70);
+    }
+
+    .status-badge.pending {
+      background-color: rgba(245, 158, 11, 0.1);
+      color: rgb(146, 64, 14);
+    }
+
+    /* Loading animation for refresh button */
+    @keyframes spin {
+      from {
+        transform: rotate(0deg);
+      }
+
+      to {
+        transform: rotate(360deg);
+      }
+    }
+
+    .loading .refresh-icon {
+      animation: spin 1s linear infinite;
+    }
+
+    /* Empty state animation */
+    @keyframes float {
+      0% {
+        transform: translateY(0px);
+      }
+
+      50% {
+        transform: translateY(-10px);
+      }
+
+      100% {
+        transform: translateY(0px);
+      }
+    }
+
+    .empty-state-icon {
+      animation: float 3s ease-in-out infinite;
+    }
+
+    /* Search input focus effect */
+    .search-input:focus {
+      box-shadow: 0 0 0 3px rgba(239, 68, 68, 0.2);
+    }
+
+    /* Filter and export button hover states */
+    .action-button {
+      position: relative;
+      overflow: hidden;
+    }
+
+    .action-button::after {
+      content: '';
+      position: absolute;
+      top: 50%;
+      left: 50%;
+      width: 100%;
+      height: 100%;
+      background: radial-gradient(circle, rgba(255, 255, 255, 0.2) 0%, transparent 50%);
+      transform: translate(-50%, -50%) scale(0);
+      transition: transform 0.3s ease;
+    }
+
+    .action-button:hover::after {
+      transform: translate(-50%, -50%) scale(2);
+    }
+
+    /* Transaction list scroll fade */
+    .transaction-list::after {
+      content: '';
+      position: absolute;
+      bottom: 0;
+      left: 0;
+      right: 0;
+      height: 40px;
+      background: linear-gradient(to bottom, transparent, white);
+      pointer-events: none;
+    }
+
+    /* Amount text gradient for credits */
+    .amount-credit {
+      background: linear-gradient(90deg, #059669, #10B981);
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+    }
+
+    /* Amount text gradient for debits */
+    .amount-debit {
+      background: linear-gradient(90deg, #DC2626, #EF4444);
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+    }
+
+    /* Card hover transition */
+    .transition-card {
+      transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+    }
+
+    .transition-card:hover {
+      transform: translateY(-4px) scale(1.01);
+      box-shadow: 0 20px 25px -5px rgba(0, 0, 0, 0.1), 0 10px 10px -5px rgba(0, 0, 0, 0.04);
+    }
+
+    /* Responsive adjustments */
+    @media (max-width: 768px) {
+      .balance-card {
+        padding: 1.5rem;
+      }
+
+      .transaction-card {
+        padding: 1rem;
+      }
+
+      .action-buttons {
+        grid-template-columns: 1fr;
+        gap: 0.75rem;
+      }
+    }
+
+    @import url('https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@300;400;500&display=swap');
+
+    .credit-card-container {
+      perspective: 1000px;
+    }
+
+    .credit-card {
+      transform-style: preserve-3d;
+      transition: transform 0.8s cubic-bezier(0.4, 0, 0.2, 1);
+    }
+
+    .credit-card:hover {
+      transform: rotateY(180deg);
+    }
+
+    .card-side {
+      backface-visibility: hidden;
+    }
+
+    .card-back {
+      transform: rotateY(180deg);
+    }
+
+    .chip-gradient {
+      background: linear-gradient(135deg, #ffd700, #ffa500);
+    }
+
+    .card-shine {
+      background: linear-gradient(125deg,
+          rgba(255, 255, 255, 0) 0%,
+          rgba(255, 255, 255, 0.1) 10%,
+          rgba(255, 255, 255, 0) 20%);
+      animation: shine 5s linear infinite;
+    }
+
+    @keyframes shine {
+      0% {
+        transform: translateX(-100%);
+      }
+
+      100% {
+        transform: translateX(100%);
+      }
+    }
   </style>
 </head>
 
@@ -143,132 +387,313 @@
     </div>
 
 
+
     <!-- Profile Section -->
     <div class="flex flex-col lg:flex-row gap-8">
-      <!-- Left Column - Profile Card -->
-      <div class="lg:w-1/3 space-y-6">
-        <div class="bg-white rounded-2xl shadow-lg overflow-hidden">
-          <div class="profile-gradient p-6 text-center">
-            <div class="w-32 h-32 mx-auto bg-white rounded-full p-2 shadow-lg">
-              <div class="w-full h-full rounded-full bg-gray-200 flex items-center justify-center">
-                <span class="text-4xl font-bold text-gray-600">
-                  <%= user.fname[0] %><%= user.lname[0] %>
-                </span>
+      <!-- Profile Card -->
+      <div class="lg:w-1/3 p-4">
+        <div class="bg-white rounded-3xl shadow-xl overflow-hidden transform hover:scale-102 transition-all duration-300">
+          <!-- Gradient Header -->
+          <div class="bg-gradient-to-br from-red-500 via-red-600 to-red-800 p-8 text-center relative overflow-hidden">
+            <!-- Decorative circles in background -->
+            <div class="absolute top-0 left-0 w-40 h-40 bg-white/10 rounded-full -translate-x-20 -translate-y-20"></div>
+            <div class="absolute bottom-0 right-0 w-32 h-32 bg-white/10 rounded-full translate-x-16 translate-y-16"></div>
+
+            <!-- Profile Image Container -->
+            <div class="relative">
+              <div class="w-36 h-36 mx-auto bg-white rounded-full p-3 shadow-2xl ring-4 ring-red-400/30">
+                <div class="w-full h-full rounded-full bg-gradient-to-br from-gray-100 to-gray-200 flex items-center justify-center transform transition-transform duration-300 hover:rotate-12">
+                  <span class="text-5xl font-bold text-red-600">
+                    <%= user.fname[0] %><%= user.lname[0] %>
+                  </span>
+                </div>
               </div>
             </div>
-            <h2 class="mt-4 text-2xl font-bold text-white"><%= user.fname %> <%= user.lname %></h2>
-            <p class="text-white/80"><%= user.email %></p>
+
+            <!-- User Info -->
+            <h2 class="mt-6 text-3xl font-bold text-white tracking-wide">
+              <%= user.fname %> <%= user.lname %>
+            </h2>
+            <p class="mt-2 text-red-100 flex items-center justify-center gap-2">
+              <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" viewBox="0 0 20 20" fill="currentColor">
+                <path d="M2.003 5.884L10 9.882l7.997-3.998A2 2 0 0016 4H4a2 2 0 00-1.997 1.884z" />
+                <path d="M18 8.118l-8 4-8-4V14a2 2 0 002 2h12a2 2 0 002-2V8.118z" />
+              </svg>
+              <%= user.email %>
+            </p>
           </div>
-          <div class="p-6 space-y-4">
-            <div class="flex justify-between items-center">
-              <span class="text-gray-600">Account Status</span>
-              <span class="px-3 py-1 bg-green-100 text-green-600 rounded-full text-sm">Active</span>
+
+          <div class="bg-gray-100 flex items-center justify-center p-4">
+            <div class="credit-card-container w-[400px] h-[250px]">
+              <div class="credit-card relative w-full h-full cursor-pointer">
+                <!-- Front of the card -->
+                <div class="card-side absolute w-full h-full rounded-2xl overflow-hidden">
+                  <div class="w-full h-full p-6 relative bg-gradient-to-br from-red-700 via-red-600 to-red-800">
+                    <!-- Shine effect -->
+                    <div class="card-shine absolute inset-0"></div>
+
+                    <!-- Chip -->
+                    <div class="relative mb-8">
+                      <div class="w-12 h-10 chip-gradient rounded-md relative">
+                        <div class="absolute w-full h-[1px] bg-black/10 top-3"></div>
+                        <div class="absolute w-full h-[1px] bg-black/10 top-5"></div>
+                        <div class="absolute w-full h-[1px] bg-black/10 top-7"></div>
+                      </div>
+
+                      <!-- Contactless -->
+                      <div class="absolute top-0 right-0 text-white/50">
+                        <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" class="opacity-75">
+                          <path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10"></path>
+                          <path d="M8 12s-1.08-.63-1.08-3"></path>
+                          <path d="M12 12s-1.08-.63-1.08-3"></path>
+                          <path d="M16 12s-1.08-.63-1.08-3"></path>
+                        </svg>
+                      </div>
+                    </div>
+
+                    <!-- Card Number -->
+                    <div class="text-xl text-white font-mono tracking-wider mb-8">
+                      <span class="mr-4">4582</span>
+                      <span class="mr-4">7593</span>
+                      <span class="mr-4">1239</span>
+                      <span>5678</span>
+                    </div>
+
+                    <!-- Card Details -->
+                    <div class="flex justify-between items-end">
+                      <div>
+                        <div class="text-xs text-white/70 uppercase tracking-wider mb-1">Card Holder</div>
+                        <div class="text-white tracking-wide"><%= user.fname %> <%= user.lname %></div>
+                      </div>
+                      <div class="text-right">
+                        <div class="text-xs text-white/70 uppercase tracking-wider mb-1">Expires</div>
+                        <div class="text-white tracking-wide">12/25</div>
+                      </div>
+                    </div>
+
+                    <!-- Card Logo -->
+                    <div class="absolute bottom-6 right-6">
+                      <svg class="w-12 h-4" viewBox="0 0 1000 324" fill="white">
+                        <path d="M651.19,0l-106.36,323.73h-84.44L397.06,72.39c-3.87-15.27-7.22-20.89-19-27.27c-19.37-10.56-51.33-20.44-79.38-26.54L300.35,0h129.58c16.53,0,31.39,11,35.11,30.06l32.04,170.53L576.98,0H651.19z" />
+                      </svg>
+                    </div>
+                  </div>
+                </div>
+
+                <!-- Back of the card -->
+                <div class="card-side card-back absolute w-full h-full rounded-2xl overflow-hidden">
+                  <div class="w-full h-full bg-gradient-to-br from-red-800 via-red-700 to-red-900">
+                    <!-- Magnetic Strip -->
+                    <div class="w-full h-12 bg-black/80 my-6"></div>
+
+                    <!-- Signature Panel -->
+                    <div class="mx-6 bg-white p-3 rounded flex justify-between items-center">
+                      <div class="text-gray-600 italic"><%= user.fname %> <%= user.lname %></div>
+                      <div class="font-mono font-bold">***</div>
+                    </div>
+
+                    <!-- Back Text -->
+                    <div class="text-center text-xs text-white/50 mt-6 px-6">
+                      This card is property of Bank Name. If found, please return to nearest branch.
+                    </div>
+                  </div>
+                </div>
+              </div>
             </div>
-            <div class="flex justify-between items-center">
-              <span class="text-gray-600">Member Since</span>
-              <span class="text-gray-800">June 2023</span>
+          </div>
+          <!-- Card Body -->
+          <div class="p-8 space-y-6">
+            <!-- Status -->
+            <div class="flex justify-between items-center bg-gray-50 p-4 rounded-2xl">
+              <div class="flex items-center gap-3">
+                <div class="w-10 h-10 bg-green-100 rounded-full flex items-center justify-center">
+                  <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6 text-green-600" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z" />
+                  </svg>
+                </div>
+                <div>
+                  <p class="text-gray-600 text-sm">Account Status</p>
+                  <p class="font-semibold text-gray-800">Active</p>
+                </div>
+              </div>
+              <span class="px-4 py-2 bg-green-100 text-green-600 rounded-full text-sm font-medium">
+                Verified
+              </span>
             </div>
-            <div class="pt-4 border-t">
-              <a href="account" class="w-full p-4 bg-red-600 text-white py-2 rounded-lg hover:bg-red-700 transition-colors">
+
+            <!-- Member Since -->
+            <div class="flex justify-between items-center bg-gray-50 p-4 rounded-2xl">
+              <div class="flex items-center gap-3">
+                <div class="w-10 h-10 bg-red-100 rounded-full flex items-center justify-center">
+                  <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6 text-red-600" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z" />
+                  </svg>
+                </div>
+                <div>
+                  <p class="text-gray-600 text-sm">Member Since</p>
+                  <p class="font-semibold text-gray-800">June 2023</p>
+                </div>
+              </div>
+            </div>
+
+
+
+
+            <!-- Edit Profile Button -->
+            <div class="pt-6">
+              <a href="/account" class="group w-full flex items-center justify-center gap-2 p-4 bg-gradient-to-r from-red-600 to-red-700 text-white font-semibold rounded-xl hover:from-red-700 hover:to-red-800 transition-all duration-300 shadow-lg hover:shadow-xl">
+                <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5 group-hover:rotate-12 transition-transform duration-300" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M11 5H6a2 2 0 00-2 2v11a2 2 0 002 2h11a2 2 0 002-2v-5m-1.414-9.414a2 2 0 112.828 2.828L11.828 15H9v-2.828l8.586-8.586z" />
+                </svg>
                 Edit Profile
               </a>
             </div>
           </div>
         </div>
+
       </div>
 
-      <!-- Right Column - Balance and Stats -->
-      <div class="lg:w-2/3 space-y-6">
+
+
+      <!-- Right Column - Balance and Transactions -->
+      <div class="lg:w-2/3 space-y-6 p-4">
         <!-- Balance Card -->
-        <div class="balance-card rounded-2xl p-6 text-white">
-          <div class="flex justify-between items-start">
-            <div>
-              <h3 class="text-lg font-medium opacity-90">Total Balance</h3>
-              <p class="text-4xl font-bold mt-2">₹<%= wallet.balance %></p>
+        <div class="bg-gradient-to-br from-red-500 via-red-600 to-red-800 rounded-3xl p-8 text-white shadow-xl transform hover:scale-102 transition-all duration-300 relative overflow-hidden">
+          <!-- Decorative Elements -->
+          <div class="absolute top-0 right-0 w-64 h-64 bg-white/10 rounded-full translate-x-32 -translate-y-32"></div>
+          <div class="absolute bottom-0 left-0 w-48 h-48 bg-white/10 rounded-full -translate-x-24 translate-y-24"></div>
+
+          <!-- Balance Section -->
+          <div class="flex justify-between items-start relative">
+            <div class="space-y-1">
+              <h3 class="text-xl font-medium text-red-100">Total Balance</h3>
+              <p class="text-5xl font-bold mt-2 tracking-tight">₹<%= wallet.balance.toLocaleString() %></p>
             </div>
-            <button onclick="refresh()" class="glassmorphism px-4 py-2 rounded-lg hover:bg-white/30 transition-colors">
+            <button onclick="refresh()" class="px-6 py-3 rounded-xl bg-white/10 backdrop-blur-md border border-white/20 hover:bg-white/20 transition-all duration-300 flex items-center gap-2 group">
+              <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5 group-hover:rotate-180 transition-transform duration-500" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 4v5h.582m15.356 2A8.001 8.001 0 004.582 9m0 0H9m11 11v-5h-.581m0 0a8.003 8.003 0 01-15.357-2m15.357 2H15" />
+              </svg>
               Refresh
             </button>
           </div>
-          <div class="grid grid-cols-2 gap-4 mt-6">
-            <button class="glassmorphism p-3 rounded-lg text-center hover:bg-white/30 transition-colors">
-              <i class="fas fa-arrow-up mb-2"></i>
-              <span class="block">Send Money</span>
+
+          <!-- Action Buttons -->
+          <div class="grid grid-cols-2 gap-6 mt-8">
+            <button class="group p-6 rounded-xl bg-white/10 backdrop-blur-md border border-white/20 hover:bg-white/20 transition-all duration-300">
+              <div class="flex flex-col items-center">
+                <div class="w-12 h-12 bg-white/20 rounded-full flex items-center justify-center mb-3 group-hover:scale-110 transition-transform">
+                  <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-8l-4-4m0 0L8 8m4-4v12" />
+                  </svg>
+                </div>
+                <span class="text-lg font-semibold">Send Money</span>
+              </div>
             </button>
-            <button class="glassmorphism p-3 rounded-lg text-center hover:bg-white/30 transition-colors">
-              <i class="fas fa-arrow-down mb-2"></i>
-              <span class="block">Receive Money</span>
+            <button class="group p-6 rounded-xl bg-white/10 backdrop-blur-md border border-white/20 hover:bg-white/20 transition-all duration-300">
+              <div class="flex flex-col items-center">
+                <div class="w-12 h-12 bg-white/20 rounded-full flex items-center justify-center mb-3 group-hover:scale-110 transition-transform">
+                  <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-4l-4 4m0 0l-4-4m4 4V4" />
+                  </svg>
+                </div>
+                <span class="text-lg font-semibold">Receive Money</span>
+              </div>
             </button>
           </div>
         </div>
 
-        <div class="flex flex-col md:flex-row justify-between items-start md:items-center mb-6 gap-4">
-          <h3 class="text-xl font-bold text-gray-800">Recent Transactions</h3>
-          <div class="flex gap-2 w-full md:w-auto">
+        <!-- Transactions Header -->
+        <div class="flex flex-col md:flex-row justify-between items-start md:items-center gap-6 p-2">
+          <h3 class="text-2xl font-bold text-gray-800">Recent Transactions</h3>
+          <div class="flex gap-3 w-full md:w-auto">
             <div class="relative flex-grow md:flex-grow-0">
-              <input type="text" id="searchTransaction" placeholder="Search transactions..." class="w-full px-4 py-2 text-sm bg-gray-50 rounded-lg focus:outline-none focus:ring-2 focus:ring-red-500 border border-gray-200">
-              <i class="fas fa-search absolute right-3 top-1/2 -translate-y-1/2 text-gray-400"></i>
+              <input type="text" id="searchTransaction" placeholder="Search transactions..." class="w-full px-4 py-3 text-sm bg-white rounded-xl focus:outline-none focus:ring-2 focus:ring-red-500 border border-gray-200 shadow-sm">
+              <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5 absolute right-3 top-1/2 -translate-y-1/2 text-gray-400" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z" />
+              </svg>
             </div>
-            <button id="filterBtn" class="px-4 py-2 text-sm bg-gray-50 rounded-lg hover:bg-gray-100 transition-colors flex items-center gap-2">
-              <i class="fas fa-filter"></i>
+            <button id="filterBtn" class="px-4 py-3 text-sm bg-white rounded-xl hover:bg-gray-50 transition-all duration-300 flex items-center gap-2 border border-gray-200 shadow-sm">
+              <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 4a1 1 0 011-1h16a1 1 0 011 1v2.586a1 1 0 01-.293.707l-6.414 6.414a1 1 0 00-.293.707V17l-4 4v-6.586a1 1 0 00-.293-.707L3.293 7.293A1 1 0 013 6.586V4z" />
+              </svg>
               <span class="hidden md:inline">Filter</span>
             </button>
-            <button id="exportBtn" class="px-4 py-2 text-sm bg-gray-50 rounded-lg hover:bg-gray-100 transition-colors flex items-center gap-2">
-              <i class="fas fa-download"></i>
+            <button id="exportBtn" class="px-4 py-3 text-sm bg-white rounded-xl hover:bg-gray-50 transition-all duration-300 flex items-center gap-2 border border-gray-200 shadow-sm">
+              <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-4l-4 4m0 0l-4-4m4 4V4" />
+              </svg>
               <span class="hidden md:inline">Export</span>
             </button>
           </div>
         </div>
 
         <!-- Transactions List -->
-        <div class="transaction-list space-y-4 max-h-[600px] overflow-y-auto">
-          <% if(wallet.transactions && wallet.transactions.length > 0) { %>
-          <% wallet.transactions.forEach((transaction, index) => { %>
-          <div class="transaction-card flex items-center justify-between p-4 rounded-lg bg-gray-50 hover:bg-gray-100">
-            <div class="flex items-center space-x-4">
-              <div class="w-10 h-10 rounded-full flex items-center justify-center <%= transaction.type === 'credit' ? 'bg-green-100 text-green-600' : 'bg-red-100 text-red-600' %>">
-                <i class="fas <%= transaction.type === 'credit' ? 'fa-arrow-down' : 'fa-arrow-up' %>"></i>
-              </div>
-              <div class="flex-grow min-w-0">
-                <p class="font-medium text-gray-900 truncate"><%= transaction.description %></p>
-                <div class="flex items-center gap-2 text-sm text-gray-500">
-                  <span><%= new Date(transaction.date).toLocaleDateString() %></span>
-                  <span>•</span>
-                  <span><%= transaction.time %></span>
+        <div class="bg-white rounded-3xl shadow-lg p-6">
+          <div class="transaction-list space-y-4 max-h-[600px] overflow-y-auto custom-scrollbar">
+            <% if(wallet.transactions && wallet.transactions.length > 0) { %>
+            <% wallet.transactions.forEach((transaction, index) => { %>
+            <div class="transaction-card flex items-center justify-between p-4 rounded-xl bg-gray-50 hover:bg-gray-100 transition-all duration-300 group">
+              <div class="flex items-center space-x-4">
+                <div class="w-12 h-12 rounded-xl flex items-center justify-center <%= transaction.type === 'credit' ? 'bg-green-100 text-green-600' : 'bg-red-100 text-red-600' %> group-hover:scale-110 transition-transform">
+                  <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="<%= transaction.type === 'credit' ? 'M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-4l-4 4m0 0l-4-4m4 4V4' : 'M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-8l-4-4m0 0L8 8m4-4v12' %>" />
+                  </svg>
+                </div>
+                <div class="flex-grow min-w-0">
+                  <p class="font-semibold text-gray-900 truncate"><%= transaction.description %></p>
+                  <div class="flex items-center gap-2 text-sm text-gray-500">
+                    <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                      <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z" />
+                    </svg>
+                    <span><%= new Date(transaction.date).toLocaleDateString() %></span>
+                    <span>•</span>
+                    <span><%= transaction.time %></span>
+                  </div>
                 </div>
               </div>
+              <div class="text-right ml-4">
+                <p class="text-lg font-bold whitespace-nowrap <%= transaction.type === 'credit' ? 'text-green-600' : 'text-red-600' %>">
+                  <%= transaction.type === 'credit' ? '+' : '-' %>₹<%= transaction.amount.toLocaleString() %>
+                </p>
+                <span class="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium <%= transaction.status === 'Completed' ? 'bg-green-100 text-green-800' : 'bg-yellow-100 text-yellow-800' %>">
+                  <%= transaction.status %>
+                </span>
+              </div>
             </div>
-            <div class="text-right ml-4">
-              <p class="font-medium whitespace-nowrap <%= transaction.type === 'credit' ? 'text-green-600' : 'text-red-600' %>">
-                <%= transaction.type === 'credit' ? '+' : '-' %>₹<%= transaction.amount.toLocaleString() %>
-              </p>
-              <p class="text-sm text-gray-500"><%= transaction.status %></p>
+            <% }) %>
+            <% } else { %>
+            <div class="text-center py-16">
+              <div class="w-24 h-24 mx-auto mb-6 bg-gray-100 rounded-full flex items-center justify-center">
+                <svg xmlns="http://www.w3.org/2000/svg" class="h-12 w-12 text-gray-400" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2" />
+                </svg>
+              </div>
+              <h3 class="text-xl font-bold text-gray-900">No transactions yet</h3>
+              <p class="text-gray-500 mt-2 mb-8">Your transaction history will appear here</p>
+              <a href="/products" class="inline-flex items-center px-6 py-3 border border-transparent text-base font-medium rounded-xl text-white bg-gradient-to-r from-red-600 to-red-700 hover:from-red-700 hover:to-red-800 transition-all duration-300 shadow-lg hover:shadow-xl">
+                Order Now
+                <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5 ml-2" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 7l5 5m0 0l-5 5m5-5H6" />
+                </svg>
+              </a>
             </div>
+            <% } %>
           </div>
-          <% }) %>
-          <% } else { %>
-          <div class="text-center py-12">
-            <div class="w-24 h-24 mx-auto mb-4 bg-gray-100 rounded-full flex items-center justify-center">
-              <i class="fas fa-receipt text-3xl text-gray-400"></i>
-            </div>
-            <h3 class="text-lg font-medium text-gray-900">No transactions yet</h3>
-            <p class="text-gray-500 mt-2">Your transaction history will appear here</p>
-          </div>
-          <% } %>
-        </div>
 
-        <!-- Footer Section -->
-        <div class="mt-6 flex justify-between items-center border-t pt-4">
-          <p class="text-sm text-gray-500">
-            Showing <span id="transactionCount">0</span> transactions
-          </p>
-          <a href="/wallet/history" class="text-red-600 hover:text-red-700 font-medium text-sm flex items-center gap-2">
-            View All
-            <i class="fas fa-arrow-right"></i>
-          </a>
+          <!-- Footer Section -->
+          <div class="mt-8 flex justify-between items-center border-t pt-6">
+            <p class="text-sm text-gray-500">
+              Showing <span id="transactionCount" class="font-medium">0</span> transactions
+            </p>
+            <a href="/wallet/history" class="group text-red-600 hover:text-red-700 font-medium text-sm flex items-center gap-2">
+              View All
+              <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4 group-hover:translate-x-1 transition-transform" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 7l5 5m0 0l-5 5m5-5H6" />
+              </svg>
+            </a>
+          </div>
         </div>
       </div>
-    </div>
     </div>
   </main>
 
@@ -400,6 +825,49 @@
           }, 1000);
         }
       });
+    });
+
+
+
+
+    document.addEventListener('DOMContentLoaded', function() {
+      // Update transaction count
+      const transactionList = document.querySelectorAll('.transaction-card');
+      const transactionCount = document.getElementById('transactionCount');
+      transactionCount.textContent = transactionList.length;
+
+      // Refresh button animation
+      const refreshBtn = document.querySelector('[onclick="refresh()"]');
+      refreshBtn.addEventListener('click', function() {
+        this.classList.add('loading');
+        setTimeout(() => {
+          this.classList.remove('loading');
+        }, 1000);
+      });
+
+      // Search functionality
+      const searchInput = document.getElementById('searchTransaction');
+      searchInput.addEventListener('input', function() {
+        const searchTerm = this.value.toLowerCase();
+        transactionList.forEach(card => {
+          const description = card.querySelector('.transaction-description').textContent.toLowerCase();
+          card.style.display = description.includes(searchTerm) ? 'flex' : 'none';
+        });
+        updateTransactionCount();
+      });
+
+      function updateTransactionCount() {
+        const visibleTransactions = document.querySelectorAll('.transaction-card[style*="flex"]').length;
+        transactionCount.textContent = visibleTransactions;
+      }
+    });
+
+    anime({
+      targets: '.card-shine',
+      translateX: ['0%', '100%'],
+      duration: 5000,
+      loop: true,
+      easing: 'linear'
     });
   </script>
 </body>

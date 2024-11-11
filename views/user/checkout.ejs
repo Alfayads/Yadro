@@ -347,7 +347,7 @@
           <div class="border-t pt-4">
             <div class="flex justify-between mb-2">
               <span>Subtotal:</span>
-              <span class="font-semibold">₹ <%= totalPrice %></span>
+              <span class="font-semibold">₹ <%= totalPrice.toFixed(2) %></span>
             </div>
             <div class="flex justify-between mb-2">
               <span>Coupon Discount:</span>
@@ -368,7 +368,7 @@
             </div>
             <div class="flex justify-between font-semibold text-lg mt-4">
               <span>Total:</span>
-              <span id="cartTotal">₹ <%= finalTotal %></span>
+              <span id="cartTotal">₹ <%= finalTotal.toFixed(2) %></span>
             </div>
           </div>
 

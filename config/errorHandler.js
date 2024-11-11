@@ -8,7 +8,6 @@ const errorHandler = (err, req, res, next) => {
     res.status(statusCode).json({
         success: false,
         message: message,
-        // Only show stack trace in development mode
         ...(process.env.NODE_ENV === "development" && { stack: err.stack })
     });
 };

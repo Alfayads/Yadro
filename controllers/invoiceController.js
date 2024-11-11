@@ -36,7 +36,7 @@ function createInvoice(doc, invoice) {
     createBillToSection(doc, invoice, colors);
 
     // Beautiful table design
-    createItemsTable(doc, invoice, colors);
+    createItemsList(doc, invoice, colors);
 
     // Refined total section
     createTotalSection(doc, invoice, colors);
@@ -163,86 +163,50 @@ function createBillToSection(doc, invoice, colors) {
     });
 }
 
-function createItemsTable(doc, invoice, colors) {
-    console.log('invoooooooooooooice', invoice)
-    const tableTop = 300;
-    const tableLeft = 20;
-    // const tableWidth = doc.page.width - 80;
-    const tableWidth = 570
+function createItemsList(doc, invoice, colors) {
+    const listTop = 300;
+    const itemSpacing = 85; // Adjust vertical spacing between items
 
-    // Column configuration with better proportions
-    const columns = [
-        { label: 'Item', width: 0.2, align: 'center' },
-        { label: 'Payment Method', width: 0.35, align: 'center' },
-        { label: 'Qty', width: 0.1, align: 'center' },
-        { label: 'Unit Price', width: 0.15, align: 'center' },
-        { label: 'Amount', width: 0.2, align: 'center' }
-    ];
-
-    // Enhanced table header
-    doc.rect(tableLeft, tableTop, tableWidth, 30)
+    doc.fontSize(14)
+        .font('Helvetica-Bold')
         .fillColor(colors.primary)
-        .fill();
+        .text('Items Purchased', 40, listTop);
 
-    let xPos = tableLeft + 15;
-    columns.forEach(column => {
-        const columnWidth = tableWidth * column.width;
-        doc.fontSize(11)
-            .font('Helvetica-Bold')
-            .fillColor('#ffffff')
-            .text(
-                column.label,
-                xPos,
-                tableTop + 10,
-                {
-                    width: columnWidth - 15,
-                    align: column.align || 'left'
-                }
-            );
-        xPos += columnWidth;
-    });
+    let yPos = listTop + 60;
 
-    // Enhanced table rows
-    let yPos = tableTop + 40;
-    invoice.items.forEach((item, i) => {
-        // Zebra striping with subtle background
-        if (i % 2 === 0) {
-            doc.rect(tableLeft, yPos - 5, tableWidth, 30)
-                .fillColor(colors.lightGray)
-                .fill();
+    invoice.items.forEach((item, index) => {
+        // Draw a subtle separator between items
+        if (index > 0) {
+            doc.moveTo(40, yPos - 10)
+                .lineTo(doc.page.width - 40, yPos - 10)
+                .strokeColor(colors.lightGray)
+                .lineWidth(0.5)
+                .stroke();
         }
 
-        xPos = tableLeft + 15;
-        const row = [
-            item.name,
-            item.paymentMethod,
-            item.quantity.toString(),
-            `${Math.round(item.unitPrice)}`,
-            `${Math.round((item.quantity * item.unitPrice))}`
-        ];
+        // Display item details in a list format
+        doc.fontSize(12)
+            .font('Helvetica-Bold')
+            .fillColor(colors.text)
+            .text(`Item: ${item.name}`, 40, yPos);
 
-        columns.forEach((column, j) => {
-            const columnWidth = tableWidth * column.width;
-            doc.fontSize(10)
-                .font('Helvetica')
-                .fillColor(colors.text)
-                .text(
-                    row[j],
-                    xPos,
-                    yPos,
-                    {
-                        width: columnWidth - 15,
-                        align: column.align || 'left'
-                    }
-                );
-            xPos += columnWidth;
-        });
+        doc.fontSize(10)
+            .font('Helvetica')
+            .fillColor(colors.text)
+            .text(`Payment Method: ${item.paymentMethod}`, 40, yPos + 15)
+            .text(`Quantity: ${item.quantity}`, 40, yPos + 30)
+            .text(`Unit Price: ₹${item.unitPrice}`, 40, yPos + 45)
+            .text(`Delivery Charge : ₹${item.deliveryCharge}`, 40, yPos + 60)
+            .text(`Coupon : ${item.coupon}`, 40, yPos + 75)
+            .text(`Discount: ₹${item.discount.toFixed(2)}`, 40, yPos + 95)
+            .text(`Total: ₹${(item.quantity * item.unitPrice - item.discount + item.deliveryCharge).toFixed(2)}`, 40, yPos + 115);
 
-        yPos += 30;
+        yPos += itemSpacing + 60; // Adjust spacing for the next item
     });
 
     return yPos;
 }
+
 
 function createTotalSection(doc, invoice, colors) {
     const totalSectionY = 500;
@@ -257,9 +221,14 @@ function createTotalSection(doc, invoice, colors) {
         .lineWidth(1)
         .stroke();
 
+    const discount = invoice.items[0].discount;
+
     const totals = [
-        { label: 'Subtotal:', amount: invoice.subtotal, align: 'center' },
+        { label: 'Subtotal:', amount: (invoice.subtotal - discount).toFixed(2), align: 'center' },
     ];
+
+    console.log("Creating Total Seciton :  ", invoice);
+
 
     let yPos = totalSectionY + 15;
     totals.forEach((total, i) => {
@@ -306,7 +275,7 @@ function createFooter(doc, invoice, colors) {
     // Better positioned company info
     doc.fontSize(10)
         .text(
-            'www.yadro.com',
+            'yadro.site',
             40,
             footerTop + 60,
             { width: doc.page.width - 80, align: 'right' }
@@ -319,7 +288,6 @@ function generateInvoiceId() {
     const randomComponent = Math.floor(Math.random() * 1e6).toString(36);
     return `INV-${timestamp}-${randomComponent}`;
 }
-
 const downloadInvoice = async (req, res, next) => {
     const orderId = req.params.id;
 
@@ -331,7 +299,10 @@ const downloadInvoice = async (req, res, next) => {
                 path: 'items.productId',
                 select: 'name description salePrice' // Specify required fields
             })
-            .populate('couponApplied');
+            .populate({
+                path: 'couponApplied',
+                select: 'code name offerValue'
+            });
 
         if (!order) {
             return res.status(404).send("Order not found");
@@ -349,6 +320,13 @@ const downloadInvoice = async (req, res, next) => {
         res.setHeader('Content-Disposition', `attachment; filename=yadro${order._id}.pdf`);
         doc.pipe(res);
 
+        console.log(order.items.map((item) => item));
+
+        // Calculate delivery charge and discount
+        const deliveryCharge = order.totalAmount > 5000 ? 0 : 400;
+        const discount = order.offerApplied; // Amount discounted by the offer
+        const couponCode = order.couponApplied ? order.couponApplied.code : '';
+
         // Construct the invoice data
         const invoice = {
             invoiceNumber: generateInvoiceId(),
@@ -361,6 +339,9 @@ const downloadInvoice = async (req, res, next) => {
             items: order.items.map(item => ({
                 name: item.productId.name,
                 paymentMethod: order.paymentMethod,
+                deliveryCharge,
+                discount,
+                coupon: couponCode,
                 quantity: item.quantity,
                 unitPrice: item.productId.salePrice
             })),
@@ -373,7 +354,7 @@ const downloadInvoice = async (req, res, next) => {
 
     } catch (error) {
         console.error('Error generating invoice:', error);
-        next(error)
+        next(error);
         res.status(500).send('Could not generate invoice');
     }
 };

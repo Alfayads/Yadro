@@ -171,6 +171,7 @@
             </tr>
           </thead>
           <tbody class="bg-white divide-y divide-gray-200" id="transactionTableBody">
+            <% if(transactions.length > 0) { %>
             <% transactions.forEach(transaction => { %>
             <tr class="transaction-item hover:bg-gray-50" style="opacity: 100;">
               <td class="px-6 py-4 whitespace-nowrap">
@@ -196,6 +197,19 @@
               </td>
             </tr>
             <% }); %>
+            <% } else { %>
+            <div class="text-center py-12">
+              <div class="w-24 h-24 mx-auto mb-4 bg-gray-100 rounded-full flex items-center justify-center">
+                <i class="fas fa-receipt text-3xl text-gray-400"></i>
+              </div>
+              <h3 class="text-lg font-medium text-gray-900">No transactions yet</h3>
+              <p class="text-gray-500 mt-2 mb-4">Your transaction history will appear here</p>
+              <a href="/products" class="checkout-button mt-5 w-full bg-red-600 text-white font-semibold py-3 px-4 rounded-lg mt-6 hover:bg-red-700 transition-colors duration-300 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500">
+                Order Now
+              </a>
+            </div>
+
+            <% } %>
           </tbody>
         </table>
       </div>
