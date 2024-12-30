@@ -109,35 +109,6 @@ cp .env.example .env
 npm run dev
 ```
 
-## 📈 Performance Metrics
-
-<div align="center">
-<table>
-<tr>
-<td align="center">
-<img src="https://via.placeholder.com/80" width="60" height="60" /><br>
-<strong>99.9%</strong><br>
-Uptime
-</td>
-<td align="center">
-<img src="https://via.placeholder.com/80" width="60" height="60" /><br>
-<strong>< 800ms</strong><br>
-Response Time
-</td>
-<td align="center">
-<img src="https://via.placeholder.com/80" width="60" height="60" /><br>
-<strong>50K+</strong><br>
-Daily Transactions
-</td>
-<td align="center">
-<img src="https://via.placeholder.com/80" width="60" height="60" /><br>
-<strong>100K+</strong><br>
-Active Users
-</td>
-</tr>
-</table>
-</div>
-
 ## 🔮 Roadmap 2024
 
 <div align="center">
@@ -183,7 +154,7 @@ Need help? We've got you covered!
 
 <div align="center">
 
-### Made with ❤️ by the Yadro Team
+### Made ❤️ by Alfayad the Yadro
 
 [🌐 Website](https://yadro.com) • [🐦 Twitter](https://twitter.com/yadro) • [👥 LinkedIn](https://linkedin.com/company/yadro)
 
