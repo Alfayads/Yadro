@@ -2,7 +2,7 @@
 
 # 🛍️ YADRO E-COMMERCE
 
-<img src="https://via.placeholder.com/150" alt="Yadro Logo" width="200" style="border-radius: 20px"/>
+<img src="yadro.png" alt="Yadro Logo" width="200" style="border-radius: 20px"/>
 
 ### _Transform Your Business with Enterprise-Grade E-commerce_
 
