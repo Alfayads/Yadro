@@ -14,7 +14,7 @@
 
 [Live Demo](https://demo.yadro.com) • [Documentation](https://docs.yadro.com) • [Report Bug](https://github.com/Alfayads/Yadro/issues) • [Request Feature](https://github.com/Alfayads/Yadro/issues)
 
-<img src="https://via.placeholder.com/800x400" alt="Yadro Dashboard Preview" width="80%" />
+<img src="Screenshot from 2024-11-13 16-15-21.png" alt="Yadro Dashboard Preview" width="80%" />
 
 </div>
 
